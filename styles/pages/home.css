@@ -927,18 +927,6 @@
 
   .site-footer { margin-top: 64px; }
 
-  /* Карточки популярного растягивались в одну колонку и обрезались */
-  .popular__cards {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px;
-  }
-  .popular__cards .place-card {
-    max-width: none;
-    min-height: 0;
-    aspect-ratio: 3 / 4;
-  }
-
   /* Панель фильтров карты занимала весь экран до карты */
   .map-panel { padding: 16px; }
   .map-container { height: 320px; }
@@ -962,17 +950,37 @@
 }
 
 /* Узкие карточки в две колонки на телефоне: мельче подписи и плашки */
+/* «Избранное от города» на телефоне и планшете — один ряд с прокруткой
+   вбок, как карточки настроений в hero: край следующей карточки
+   подсказывает, что их больше */
+@media (max-width: 767px) {
+  .popular__cards {
+    display: flex;
+    gap: 12px;
+    width: calc(100% + 32px);
+    margin-inline: -16px;
+    padding: 4px 16px 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 16px;
+    scrollbar-width: none;
+  }
+  .popular__cards::-webkit-scrollbar { display: none; }
+  .popular__cards .place-card {
+    flex: 0 0 min(64%, 260px);
+    max-width: none;
+    min-height: 0;
+    aspect-ratio: 3 / 4;
+    scroll-snap-align: start;
+  }
+}
+
 @media (max-width: 575px) {
-  .places-grid .place-card__top,
-  .popular__cards .place-card__top { top: 10px; left: 10px; right: 10px; gap: 4px; }
+  .places-grid .place-card__top { top: 10px; left: 10px; right: 10px; gap: 4px; }
   .places-grid .place-card__category,
-  .places-grid .badge-temporary,
-  .popular__cards .place-card__category,
-  .popular__cards .badge-temporary { font-size: 0.64rem; padding: 3px 8px; }
-  .places-grid .place-card__info,
-  .popular__cards .place-card__info { padding: 10px 12px; }
-  .places-grid .place-card__info h3,
-  .popular__cards .place-card__info h3 { font-size: 0.98rem; line-height: 1.2; }
+  .places-grid .badge-temporary { font-size: 0.64rem; padding: 3px 8px; }
+  .places-grid .place-card__info { padding: 10px 12px; }
+  .places-grid .place-card__info h3 { font-size: 0.98rem; line-height: 1.2; }
 }
 
 @media (max-width: 480px) {
