@@ -582,8 +582,11 @@
   border: 1px solid var(--line);
 }
 
+/* Растягивается по высоте панели фильтров только на главной, где карта
+   стоит с ней в одном ряду. Без .map-section правило ловило и карту на
+   странице места: там ряда нет, и высота схлопывалась в полоску ~2px. */
 @media (min-width: 769px) {
-  .map-container {
+  .map-section .map-container {
     height: auto;
     flex: 3;
   }
