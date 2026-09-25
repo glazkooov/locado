@@ -10,6 +10,9 @@ html, body {
   max-width: 100%;
 }
 
+/* Атрибут hidden должен скрывать элемент, даже если у класса задан display */
+[hidden] { display: none !important; }
+
 :where(a, button, input, textarea, [tabindex]):focus-visible {
   outline: 3px solid var(--primary);
   outline-offset: 2px;

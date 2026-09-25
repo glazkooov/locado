@@ -4,7 +4,7 @@
   justify-content: center;
   text-align: center;
   min-height: 100svh;
-  background-image: url(../assets/images/ui/hero.jpg);
+  background-image: url(../../assets/images/ui/hero_bg2.jpg);
   background-color: var(--ink);
   background-size: cover;
   background-position: center;
@@ -252,12 +252,6 @@
   gap: 16px;
 }
 
-@media (max-width: 420px) {
-  .cat-col-left .category-masonry-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
 .cat-col-right .collections-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -400,6 +394,26 @@
   z-index: 1;
 }
 
+/* На телефоне — две компактные колонки: в одну колонку шесть плиток
+   по 160px занимали почти два экрана */
+@media (max-width: 420px) {
+  .cat-col-left .category-masonry-grid {
+    gap: 10px;
+  }
+  .category-masonry {
+    min-height: 96px;
+    padding: 16px 14px 14px;
+    border-radius: 20px;
+  }
+  .masonry-icon {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+  }
+  .masonry-label {
+    font-size: 0.85rem;
+  }
+}
+
 .category-masonry:hover {
   transform: translateY(-4px);
   background: linear-gradient(165deg, #ffffff 0%, #eef0fc 100%);
@@ -477,15 +491,6 @@
 .collection-btn:hover {
   background: white;
   color: #222;
-}
-
-@media (max-width: 380px) {
-  .masonry-icon {
-    font-size: 1.9rem;
-  }
-  .masonry-label {
-    font-size: 0.9rem;
-  }
 }
 
 .map {
@@ -739,40 +744,16 @@
 }
 
 #show-more-btn {
+  display: block;
   margin: 36px auto 8px;
-  width: fit-content;
-  max-width: none;
-  align-self: center;
-  display: flex;
-  align-items: center;
-  gap: 8px;
   background: transparent;
-  color: var(--text-lighter);
-  font-size: 0.85rem;
-  font-weight: 500;
-  padding: 10px 4px;
-  cursor: default;
+  border: 2px solid var(--primary);
+  color: var(--primary);
 }
 
-#show-more-btn::before,
-#show-more-btn::after,
-#show-more-btn span.dot {
-  content: '';
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
+#show-more-btn:hover {
   background: var(--primary);
-  display: inline-block;
-  animation: dotPulse 1.2s ease-in-out infinite;
-}
-
-#show-more-btn::after { animation-delay: 0.2s; }
-
-#show-more-btn span.dot { animation-delay: 0.4s; }
-
-@keyframes dotPulse {
-  0%, 80%, 100% { opacity: 0.25; transform: scale(0.85); }
-  40% { opacity: 1; transform: scale(1.1); }
+  color: #fff;
 }
 
 #show-more-btn.invisible { opacity: 0; pointer-events: none; height: 0; margin: 0; overflow: hidden; transition: opacity 0.3s ease, height 0.3s ease, margin 0.3s ease; }
@@ -903,7 +884,10 @@
   .add-place-illustration { max-width: 220px; margin: 0 auto; }
   .add-action-card { gap: 14px; }
 
-  .section-head { flex-wrap: wrap; gap: 6px; }
+  /* Подпись #… всегда под заголовком: раньше у коротких заголовков
+     («Карта») она уезжала вправо, у длинных — переносилась вниз */
+  .section-head { flex-direction: column; align-items: flex-start; gap: 6px; margin-bottom: 24px; }
+  .section-head .section-mini { margin-bottom: 0; }
 
   /* Длинные слова и адреса больше не распирают карточки */
   .info-card p,

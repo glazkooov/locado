@@ -4,6 +4,7 @@ import { $, $$, on } from '../core/dom.js';
 import { escapeHtml } from '../core/format.js';
 import { categoryLabel, pickRandom, recordView, placeUrl } from '../core/places.js';
 import { createModal } from './modal.js';
+import { setPressed } from './category-buttons.js';
 
 export function initRandomizer(places) {
   const modalEl = $('#randomizer-modal');
@@ -69,11 +70,14 @@ export function initRandomizer(places) {
     window.location.href = placeUrl(current.slug);
   };
 
+  // Окно сразу показывает случайное место: пользователь и так «затрудняется
+  // выбрать», поэтому категория — лишь необязательное уточнение.
   const modal = createModal(modalEl, {
     onOpen: () => {
       category = 'all';
-      chips.forEach((c) => c.classList.toggle('active', c.dataset.category === 'all'));
+      setPressed(chips, (c) => c.dataset.category === 'all');
       resetState();
+      roll();
     }
   });
 
@@ -81,10 +85,10 @@ export function initRandomizer(places) {
 
   chips.forEach((chip) => {
     on(chip, 'click', () => {
-      chips.forEach((c) => c.classList.remove('active'));
-      chip.classList.add('active');
       category = chip.dataset.category;
+      setPressed(chips, (c) => c === chip);
       resetState();
+      roll();
     });
   });
 

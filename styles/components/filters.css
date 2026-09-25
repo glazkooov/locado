@@ -240,3 +240,44 @@
   color: var(--text);
   margin-bottom: 16px;
 }
+
+/* Плашка «Настроение: … · N мест ✕» над лентой */
+.feed-active {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin: 16px 0 4px;
+  padding: 10px 10px 10px 16px;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-line);
+  border-radius: 16px;
+  font-size: 0.92rem;
+  color: var(--text);
+}
+
+.feed-active__label {
+  font-weight: 600;
+  min-width: 0;
+}
+
+.feed-active__reset {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 20px;
+  background: #fff;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.feed-active__reset:hover {
+  background: var(--primary);
+  color: #fff;
+}

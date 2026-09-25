@@ -5,7 +5,7 @@
 // scripts/pages/home.js) — просто третий источник того же действия.
 
 import { $$, on } from '../core/dom.js';
-import { resolveMoodFilters } from '../core/moods.js';
+import { MOODS, resolveMoodFilters } from '../core/moods.js';
 
 export function initHeroMoods(feed, places, { onSelect } = {}) {
   if (!feed) return;
@@ -16,7 +16,8 @@ export function initHeroMoods(feed, places, { onSelect } = {}) {
     on(pill, 'click', () => {
       const moodId = pill.dataset.mood;
       const patch = resolveMoodFilters(places, moodId);
-      feed.setFilters(patch, { syncInput: true });
+      const mood = MOODS.find((m) => m.id === moodId);
+      feed.setFilters(patch, { syncInput: true, label: mood && { kind: 'Настроение', text: mood.label } });
       pills.forEach((p) => p.classList.toggle('active', p === pill));
       onSelect?.();
     });
@@ -25,6 +26,6 @@ export function initHeroMoods(feed, places, { onSelect } = {}) {
   // Любой другой способ отфильтровать ленту отменяет настроение — снимаем
   // подсветку с pill, чтобы она не «врала» о текущем фильтре.
   const clearActive = () => pills.forEach((p) => p.classList.remove('active'));
-  on(document, 'click', '.scroll__category-btn, .category-masonry, .collection-card, #feed-reset-btn', clearActive);
+  on(document, 'click', '.scroll__category-btn, .category-masonry, .collection-card, #feed-reset-btn, #feed-active-reset', clearActive);
   on(document, 'input', '#categories-search-input', clearActive);
 }
