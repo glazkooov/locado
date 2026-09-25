@@ -19,10 +19,10 @@ function favButtonHtml(place, isFavorite) {
         </button>`;
 }
 
-export function cardHtml(place, isFavorite) {
+export function cardHtml(place, isFavorite, extraClass = '') {
   const badge = place.temporary ? '<div class="badge-temporary">Успей посетить</div>' : '';
   return `
-    <div class="place-card" data-category="${escapeHtml(place.category)}" data-slug="${escapeHtml(place.slug)}">
+    <div class="place-card${extraClass ? ` ${extraClass}` : ''}" data-category="${escapeHtml(place.category)}" data-slug="${escapeHtml(place.slug)}">
       <div class="place-card__top">
         <div class="place-card__category">${escapeHtml(place.type || categoryLabel(place.category))}</div>${favButtonHtml(place, isFavorite)}
         ${badge}

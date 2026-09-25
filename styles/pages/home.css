@@ -803,18 +803,6 @@
 }
 
 @media (min-width: 576px) {
-  .places-grid { column-count: 2; }
-}
-
-@media (min-width: 900px) {
-  .places-grid { column-count: 3; }
-}
-
-@media (min-width: 1200px) {
-  .places-grid { column-count: 4; }
-}
-
-@media (min-width: 576px) {
   .place-card {
     max-width: 270px;
     min-height: 370px;
@@ -973,10 +961,21 @@
   .suggested-content p { overflow-wrap: anywhere; }
 }
 
-@media (max-width: 480px) {
-  .popular__cards { grid-template-columns: 1fr; }
-  .popular__cards .place-card { aspect-ratio: 4 / 3; }
+/* Узкие карточки в две колонки на телефоне: мельче подписи и плашки */
+@media (max-width: 575px) {
+  .places-grid .place-card__top,
+  .popular__cards .place-card__top { top: 10px; left: 10px; right: 10px; gap: 4px; }
+  .places-grid .place-card__category,
+  .places-grid .badge-temporary,
+  .popular__cards .place-card__category,
+  .popular__cards .badge-temporary { font-size: 0.64rem; padding: 3px 8px; }
+  .places-grid .place-card__info,
+  .popular__cards .place-card__info { padding: 10px 12px; }
+  .places-grid .place-card__info h3,
+  .popular__cards .place-card__info h3 { font-size: 0.98rem; line-height: 1.2; }
+}
 
+@media (max-width: 480px) {
   .category-btn { padding: 10px 16px; font-size: 0.85rem; }
 
   .state-screen { padding: 48px 0; }
