@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Страница не найдена — Локадо</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#FF570A">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,400;0,500;0,600;0,700&family=Unbounded:wght@500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="error-page">
+  <header class="main-header">
+    <div class="container header-content">
+      <a href="index.html" class="logo" aria-label="Локадо — главная">Локадо</a>
+      <nav class="nav nav--simple">
+        <ul class="nav-list">
+          <li><a href="index.html#map-section" class="nav-item">Карта</a></li>
+          <li><a href="index.html#places-container" class="nav-item">Все места</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="state-screen">
+    <div class="container state-screen__inner">
+      <p class="state-screen__code" aria-hidden="true">404</p>
+      <h1 class="state-screen__title">Эта страница потерялась в городе</h1>
+      <p class="state-screen__text">
+        Такого адреса на Локадо нет. Бывает: ссылка устарела или в ней опечатка.
+        Ниже — куда можно пойти отсюда.
+      </p>
+
+      <div class="state-screen__actions">
+        <a href="index.html" class="btn state-screen__btn">На главную</a>
+        <a href="index.html#places-container" class="state-screen__link">Посмотреть все места</a>
+      </div>
+
+      <div class="state-screen__suggested">
+        <h2 class="state-screen__subtitle">Может быть, сюда</h2>
+        <div class="state-screen__cards" id="error-suggestions"></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-wave" aria-hidden="true">
+      <svg viewBox="0 0 1200 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0,60 C200,10 400,0 600,20 C800,40 1000,10 1200,30 L1200,60 L0,60 Z"></path>
+      </svg>
+    </div>
+    <div class="container site-footer__bottom">
+      <p>© 2026 Локадо. Сделано с любовью к прогулкам.</p>
+    </div>
+  </footer>
+
+  <script type="module" src="scripts/ui.js"></script>
+  <script type="module">
+    // Три случайных места, чтобы со страницы ошибки был выход, а не тупик.
+    import { loadPlaces, sample, placeUrl, categoryLabel } from './scripts/core/places.js';
+    import { escapeHtml } from './scripts/core/format.js';
+
+    (async () => {
+      const box = document.getElementById('error-suggestions');
+      if (!box) return;
+      try {
+        const places = await loadPlaces();
+        const picks = sample(places, 3);
+        box.innerHTML = picks.map((p) => `
+          <a class="state-card" href="${placeUrl(p.slug)}">
+            <img src="${escapeHtml(p.photo)}" alt="" loading="lazy">
+            <span class="state-card__name">${escapeHtml(p.name)}</span>
+            <span class="state-card__type">${escapeHtml(p.type || categoryLabel(p.category))}</span>
+          </a>`).join('');
+        box.querySelectorAll('img').forEach((img) => {
+          img.addEventListener('error', () => img.classList.add('is-broken'), { once: true });
+        });
+      } catch {
+        box.closest('.state-screen__suggested')?.remove();
+      }
+    })();
+  </script>
+</body>
+</html>

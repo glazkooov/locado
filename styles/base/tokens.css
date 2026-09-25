@@ -1,0 +1,47 @@
+:root {
+  --primary: #FF570A;
+  --primary-light: #FF661F;
+  --text: #2E2E2E;
+  --text-light: #666666;
+  --text-lighter: #999999;
+  --bg: #FBF7F2;
+  --card-bg: #ffffff;
+  --border: #E0E0E0;
+  --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.15);
+  --radius: 12px;
+  --transition: all 0.3s ease;
+
+  /* Тёплая акцентная палитра для "уюта" */
+  --cream: #FBF7F2;
+  --cream-deep: #F3EBDF;
+  --ink: #2A2521;
+  --accent-soft: #FFE8D6;
+  --accent-line: #FFD9BE;
+
+  /* Шрифты */
+  --font-heading: 'Unbounded', sans-serif;
+  --font-body: 'Raleway', sans-serif;
+
+  /* Category colors */
+  --category-text-active: white;
+  --color-all: #8312da;
+  --color-nature: #34A853;
+  --color-art: #d316f5;
+  --color-food: #f83ac9;
+  --color-photo: #0699fa;
+  --color-theater: #FF7043;
+  --color-entertainment: #FF4E50;
+
+  /* Gradients for category tiles */
+  --gradient-nature: linear-gradient(135deg, #34A853, #5BE584);
+  --gradient-art: linear-gradient(135deg, #d316f5, #f86ef8);
+  --gradient-food: linear-gradient(135deg, #f83ac9, #ff7ad4);
+  --gradient-photo: linear-gradient(135deg, #0699fa, #00C9FF);
+  --gradient-theater: linear-gradient(135deg, #FF7043, #FF9472);
+  --gradient-entertainment: linear-gradient(135deg, #FF4E50, #FF6B6B);
+}
+
+:root {
+  --header-h: 68px;
+}

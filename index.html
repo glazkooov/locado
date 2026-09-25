@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Локадо — куда сходить в Москве</title>
+  <meta name="description" content="Локадо помогает выбрать место в Москве по настроению: парки, кафе, музеи, театры и арт-пространства на одной карте.">
+  <meta name="theme-color" content="#FF570A">
+  <link rel="canonical" href="https://locado.ru/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Локадо — куда сходить в Москве">
+  <meta property="og:description" content="Город, рассказанный простыми словами. Места и маршруты по настроению.">
+  <meta property="og:image" content="assets/images/ui/hero.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="styles/main.css">
+  <script src="https://api-maps.yandex.ru/2.1/?apikey=890530b4-68be-4d58-823b-82baae7d9530&lang=ru_RU" type="text/javascript" defer></script>
+
+  <!-- Подключение шрифтов Unbounded + Raleway -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Unbounded:wght@500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <main class="main-content">
+    <!-- 1. Хедер -->
+    <header class="main-header">
+      <div class="container header-content">
+        <a href="index.html" class="logo" aria-label="Локадо — главная">Локадо</a>
+
+        <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Открыть меню" aria-expanded="false" aria-controls="main-nav">
+          <i class="fas fa-bars" aria-hidden="true"></i>
+        </button>
+
+        <nav class="nav" id="main-nav">
+          <ul class="nav-list">
+            <li><a href="index.html#map-section" class="nav-item">Карта</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <!-- 2. Герой-секция -->
+    <section class="hero">
+      <div class="container hero__content">
+        <h1 class="hero__title"><span>Локадо</span> — город, рассказанный простыми словами</h1>
+
+        <div class="hero__pills" aria-hidden="true">
+          <span class="hero__pill"><i class="fas fa-leaf" aria-hidden="true"></i> тихо и спокойно</span>
+          <span class="hero__pill"><i class="fas fa-palette" aria-hidden="true"></i> вдохновиться</span>
+          <span class="hero__pill"><i class="fas fa-city" aria-hidden="true"></i> романтично вечером</span>
+          <span class="hero__pill"><i class="fas fa-mug-hot" aria-hidden="true"></i> провести время в одиночку</span>
+        </div>
+
+        <div class="hero__search-group">
+          <div class="hero__search-wrapper">
+            <i class="fas fa-search hero__search-icon" aria-hidden="true"></i>
+            <input type="text" class="search-input hero__search-input" id="main-search-input"
+                   placeholder="Куда пойдем?" autocomplete="off">
+            <button class="hero__random-icon" id="hero-random-icon" aria-label="Случайное место" title="Случайное место">
+              <i class="fas fa-dice" aria-hidden="true"></i>
+            </button>
+            <div class="random-tooltip" id="random-tooltip" role="tooltip">Выбрать случайное место</div>
+            <button class="hero__search-clear search-clear" id="hero-clear-btn" aria-label="Очистить поиск">
+              <i class="fas fa-times" aria-hidden="true"></i>
+            </button>
+          </div>
+          <button type="button" id="main-search-btn" class="hero__search-btn">Найти</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Избранное от города (популярные места) -->
+    <section class="popular">
+      <div class="container">
+        <div class="section-head">
+          <h2 class="section-title">Избранное от города</h2>
+          <span class="section-mini" aria-hidden="true">#в центре внимания</span>
+        </div>
+        <div class="popular__cards" id="popular-places-container"></div>
+      </div>
+    </section>
+
+    <!-- 4. Советуем заглянуть -->
+    <section class="suggested-places">
+      <div class="container">
+        <div class="section-head">
+          <h2 class="section-title">Советуем заглянуть</h2>
+          <span class="section-mini" aria-hidden="true">#может подойти</span>
+        </div>
+        <div class="suggested-grid" id="suggested-grid"></div>
+      </div>
+    </section>
+
+    <!-- 5. Категории и подборки -->
+    <section class="categories-collections">
+      <div class="container">
+        <div class="section-head">
+          <h2 class="section-title">Категории и подборки</h2>
+          <span class="section-mini">#выбирай по настроению</span>
+        </div>
+
+        <div class="cat-col-grid">
+          <!-- Левая колонка: Категории -->
+          <div class="cat-col-left">
+            <div class="category-masonry-grid" id="categoryGrid">
+              <button type="button" class="category-masonry nature" data-category="nature">
+                <div class="masonry-bg-shape"></div>
+                <i class="fas fa-tree masonry-icon" aria-hidden="true"></i>
+                <span class="masonry-label">Природа</span>
+              </button>
+              <button type="button" class="category-masonry food" data-category="food">
+                <div class="masonry-bg-shape"></div>
+                <i class="fas fa-utensils masonry-icon" aria-hidden="true"></i>
+                <span class="masonry-label">Еда</span>
+              </button>
+              <button type="button" class="category-masonry art" data-category="art">
+                <div class="masonry-bg-shape"></div>
+                <i class="fas fa-landmark masonry-icon" aria-hidden="true"></i>
+                <span class="masonry-label">Музеи</span>
+              </button>
+              <button type="button" class="category-masonry theater" data-category="theater">
+                <div class="masonry-bg-shape"></div>
+                <i class="fas fa-theater-masks masonry-icon" aria-hidden="true"></i>
+                <span class="masonry-label">Театры</span>
+              </button>
+              <button type="button" class="category-masonry entertainment" data-category="entertainment">
+                <div class="masonry-bg-shape"></div>
+                <i class="fas fa-ticket masonry-icon" aria-hidden="true"></i>
+                <span class="masonry-label">Развлечения</span>
+              </button>
+              <button type="button" class="category-masonry photo" data-category="photo">
+                <div class="masonry-bg-shape"></div>
+                <i class="fas fa-camera masonry-icon" aria-hidden="true"></i>
+                <span class="masonry-label">Фото</span>
+              </button>
+            </div>
+          </div>
+
+  <!-- Правая колонка: Подборки -->
+  <div class="cat-col-right">
+    <div class="collections-grid">
+      <article class="collection-card" style="background-image: url('assets/images/ui/kuzminki.jpg')" data-tag="прогулки" tabindex="0" role="link">
+        <h3 class="collection-title">Долгие прогулки</h3>
+        <p class="collection-desc">Парки и усадьбы, где можно ходить часами и никуда не спешить.</p>
+        <span class="collection-btn">Смотреть</span>
+      </article>
+      <article class="collection-card" style="background-image: url('assets/images/ui/sirovarnya.jpg')" data-tag="завтраки" tabindex="0" role="link">
+        <h3 class="collection-title">Завтрак не дома</h3>
+        <p class="collection-desc">Места, ради которых стоит встать пораньше в выходной.</p>
+        <span class="collection-btn">Смотреть</span>
+      </article>
+      <article class="collection-card" style="background-image: url('assets/images/ui/tretyakov.jpg')" data-tag="современное искусство" tabindex="0" role="link">
+        <h3 class="collection-title">Современное искусство</h3>
+        <p class="collection-desc">Арт-кластеры и галереи, где показывают то, что делают сейчас.</p>
+        <span class="collection-btn">Смотреть</span>
+      </article>
+    </div>
+  </div>
+</div>
+      </div>
+    </section>
+
+    <!-- 6. Карта -->
+    <section class="map" id="map-section">
+      <div class="container">
+        <div class="section-head">
+          <h2 class="section-title">Карта</h2>
+          <span class="section-mini" aria-hidden="true">#весь город на ладони</span>
+        </div>
+        <div class="map-section">
+          <div class="map-container" id="map" aria-label="Интерактивная карта мест"></div>
+          <div class="map-panel">
+            <div class="map__categories-buttons" role="tablist">
+              <button type="button" data-category="all" class="category-btn map__categories-button active" role="tab" aria-selected="true">
+                <i class="fas fa-map-marker-alt" aria-hidden="true"></i> Все места
+              </button>
+              <button type="button" data-category="nature" class="category-btn map__categories-button" role="tab">
+                <i class="fas fa-tree" aria-hidden="true"></i> Природа
+              </button>
+              <button type="button" data-category="food" class="category-btn map__categories-button" role="tab">
+                <i class="fas fa-utensils" aria-hidden="true"></i> Еда
+              </button>
+              <button type="button" data-category="art" class="category-btn map__categories-button" role="tab">
+                <i class="fas fa-landmark" aria-hidden="true"></i> Искусство
+              </button>
+              <button type="button" data-category="theater" class="category-btn map__categories-button" role="tab">
+                <i class="fas fa-theater-masks" aria-hidden="true"></i> Театры
+              </button>
+              <button type="button" data-category="photo" class="category-btn map__categories-button" role="tab">
+                <i class="fas fa-camera" aria-hidden="true"></i> Фото
+              </button>
+              <button type="button" data-category="entertainment" class="category-btn map__categories-button" role="tab">
+                <i class="fas fa-star" aria-hidden="true"></i> Развлечения
+              </button>
+            </div>
+
+            <aside class="sidebar-filters">
+              <h3 class="filters-title"><i class="fas fa-sliders-h" aria-hidden="true"></i> Фильтры</h3>
+
+              <div class="map-search-group">
+                <input type="text" class="map-filter-search" id="map-search-input" placeholder="Найти..." autocomplete="off">
+                <button class="category-search-clear search-clear" id="map-clear-btn" aria-label="Очистить поиск">
+                  <i class="fas fa-times" aria-hidden="true"></i>
+                </button>
+              </div>
+
+              <!-- Метро -->
+              <div class="dropdown-filter">
+                <button class="filter-btn" data-toggle="metro" aria-expanded="false">
+                  Метро <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                </button>
+                <div id="filter-metro" class="dropdown-content"></div>
+              </div>
+
+              <!-- Стоимость -->
+              <div class="dropdown-filter">
+                <button class="filter-btn" data-toggle="price" aria-expanded="false">
+                  Стоимость <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                </button>
+                <div class="dropdown-content" id="filter-price">
+                  <label><input type="radio" name="price" value="" checked> Любая</label>
+                  <label><input type="radio" name="price" value="free"> Бесплатно</label>
+                  <label><input type="radio" name="price" value="₽"> ₽</label>
+                  <label><input type="radio" name="price" value="₽₽"> ₽₽</label>
+                  <label><input type="radio" name="price" value="₽₽₽"> ₽₽₽</label>
+                </div>
+              </div>
+
+              <!-- Чекбоксы -->
+              <div class="checkbox-group">
+                <label><input type="checkbox" name="open-now" id="open-now-checkbox"> Сейчас открыто</label>
+              </div>
+
+              <!-- Сброс -->
+              <div class="filter-buttons">
+                <button class="filter-clear-btn">Сбросить</button>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. Добавить место -->
+    <section class="add-place-section">
+      <div class="container">
+        <div class="add-place-wrapper">
+          <!-- Левая часть – текст + иллюстрация -->
+          <div class="add-place-atmosphere">
+            <h2 class="add-place-heading">
+              Знаешь<br>классное место?
+            </h2>
+            <p class="add-place-desc">
+              Помоги другим открыть его. Мы ценим любой вклад – от уютных лавочек до атмосферных галерей.
+            </p>
+            <img
+              src="assets/images/ui/city-girl.svg"
+              alt=""
+              class="add-place-illustration"
+              loading="lazy"
+            />
+          </div>
+
+          <!-- Правая часть – две крупные карточки -->
+          <div class="add-place-actions">
+            <!-- Пользователь -->
+            <a href="suggest-user.html" class="add-action-card user-action">
+              <span class="action-icon-wrap">
+                <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+              </span>
+              <div class="action-text">
+                <h3 class="action-title">Расскажи о любимом месте</h3>
+                <p class="action-sub">Твоя находка может стать чьим‑то открытием</p>
+              </div>
+              <span class="action-arrow">→</span>
+            </a>
+
+            <!-- Бизнес -->
+            <a href="add_place-business.html" class="add-action-card biz-action">
+              <span class="action-icon-wrap">
+                <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="3"/>
+                  <line x1="3" y1="9" x2="21" y2="9"/>
+                  <line x1="9" y1="21" x2="9" y2="9"/>
+                </svg>
+              </span>
+              <div class="action-text">
+                <h3 class="action-title">Владелец или управляющий?</h3>
+                <p class="action-sub">Добавьте заведение на нашу карту</p>
+              </div>
+              <span class="action-arrow">→</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. Лента всех мест -->
+    <section class="place-section">
+      <div class="container">
+        <div class="section-head">
+          <h2 class="section-title">Посмотрим на все?</h2>
+          <span class="section-mini" aria-hidden="true">#для вдохновения</span>
+        </div>
+
+        <div class="categories_menu">
+          <div class="categories_scroll" id="categories-scroll" role="tablist">
+            <button type="button" data-category="all" class="category-btn scroll__category-btn active" role="tab" aria-selected="true">
+              <i class="fas fa-map-marker-alt" aria-hidden="true"></i> Все
+            </button>
+            <button type="button" data-category="nature" class="category-btn scroll__category-btn" role="tab">
+              <i class="fas fa-tree" aria-hidden="true"></i> Природа
+            </button>
+            <button type="button" data-category="art" class="category-btn scroll__category-btn" role="tab">
+              <i class="fas fa-landmark" aria-hidden="true"></i> Искусство
+            </button>
+            <button type="button" data-category="theater" class="category-btn scroll__category-btn" role="tab">
+              <i class="fas fa-theater-masks" aria-hidden="true"></i> Театры
+            </button>
+            <button type="button" data-category="food" class="category-btn scroll__category-btn" role="tab">
+              <i class="fas fa-utensils" aria-hidden="true"></i> Еда
+            </button>
+            <button type="button" data-category="photo" class="category-btn scroll__category-btn" role="tab">
+              <i class="fas fa-camera" aria-hidden="true"></i> Фото
+            </button>
+            <button type="button" data-category="entertainment" class="category-btn scroll__category-btn" role="tab">
+              <i class="fas fa-star" aria-hidden="true"></i> Развлечения
+            </button>
+
+          </div>
+
+          <!-- Поиск в ленте: отдельная строка, не участвует в горизонтальном скролле -->
+          <div class="category-search-group">
+            <i class="fas fa-search category-search-icon" aria-hidden="true"></i>
+            <label class="visually-hidden" for="categories-search-input">Поиск по местам</label>
+            <input type="text" class="category-search-input" id="categories-search-input" placeholder="Поиск по названию или тегу" autocomplete="off">
+            <button class="category-search-clear search-clear" id="categories-clear-btn" aria-label="Очистить поиск" hidden>
+              <i class="fas fa-times" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Контейнер для карточек мест -->
+        <div class="places-grid" id="places-container" aria-live="polite"></div>
+        <div class="feed-empty" id="feed-empty" hidden>
+          <p>Пока ничего не нашли — попробуйте другое слово или сбросьте фильтр</p>
+          <button type="button" class="btn feed-empty__btn" id="feed-reset-btn">Показать все места</button>
+        </div>
+        <button class="btn" id="show-more-btn">
+          <span class="visually-hidden">Загружаем ещё места</span>
+          <span class="dot" aria-hidden="true"></span>
+        </button>
+        <div class="feed-end" aria-live="polite">
+          <p>Это все места на сегодня ✨</p>
+          <span>Новые локации добавляются каждую неделю — загляните ещё раз</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Футер -->
+  <footer class="site-footer">
+    <div class="footer-wave" aria-hidden="true">
+      <svg viewBox="0 0 1200 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0,60 C200,10 400,0 600,20 C800,40 1000,10 1200,30 L1200,60 L0,60 Z"></path>
+      </svg>
+    </div>
+    <div class="container site-footer__top">
+      <div class="site-footer__brand">
+        <span class="logo footer-logo">Локадо</span>
+        <p class="site-footer__tagline">Pinterest для городских впечатлений. Находи места и маршруты через настроение, а не через фильтры.</p>
+        <div class="site-footer__social" aria-label="Мы в соцсетях">
+          <a href="#" aria-label="Локадо в Telegram"><i class="fab fa-telegram" aria-hidden="true"></i></a>
+          <a href="#" aria-label="Локадо ВКонтакте"><i class="fab fa-vk" aria-hidden="true"></i></a>
+          <a href="#" aria-label="Локадо в Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <nav class="site-footer__col" aria-label="Навигация">
+        <h4>Навигация</h4>
+        <a href="index.html#map-section">Карта</a>
+        <a href="collections.html">Подборки</a>
+        <a href="favorites.html">Избранное</a>
+        <a href="events.html">События</a>
+      </nav>
+
+      <nav class="site-footer__col" aria-label="Проект">
+        <h4>О проекте</h4>
+        <a href="/about">О Локадо</a>
+        <a href="suggest-user.html">Предложить место</a>
+        <a href="add_place-business.html">Для бизнеса</a>
+        <a href="/ads">Реклама</a>
+      </nav>
+
+      <div class="site-footer__col">
+        <h4>Связь</h4>
+        <a href="/contact"><i class="far fa-envelope" aria-hidden="true"></i> Контакты</a>
+        <p class="site-footer__note">Москва и область.<br>Скоро — другие города.</p>
+      </div>
+    </div>
+
+    <div class="container site-footer__bottom">
+      <p>© 2026 Локадо. Сделано с любовью к прогулкам.</p>
+    </div>
+  </footer>
+
+  <!-- Кнопка "наверх" -->
+  <button id="back-to-top" class="back-to-top" aria-label="Наверх">
+    <i class="fas fa-arrow-up" aria-hidden="true"></i>
+  </button>
+
+  <!-- Модальное окно рандомайзера -->
+  <div id="randomizer-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="randomizer-title">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="randomizer-title"><i class="fas fa-dice" aria-hidden="true"></i> Случайное место</h3>
+        <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Выберите категорию:</p>
+        <div class="category-chips" id="randomizer-categories">
+          <button data-category="all" class="chip active"><i class="fas fa-map-marker-alt" aria-hidden="true"></i> Любая</button>
+          <button data-category="nature" class="chip"><i class="fas fa-tree" aria-hidden="true"></i> Природа</button>
+          <button data-category="art" class="chip"><i class="fas fa-landmark" aria-hidden="true"></i> Искусство</button>
+          <button data-category="food" class="chip"><i class="fas fa-utensils" aria-hidden="true"></i> Еда</button>
+          <button data-category="theater" class="chip"><i class="fas fa-theater-masks" aria-hidden="true"></i> Театр</button>
+          <button data-category="photo" class="chip"><i class="fas fa-camera" aria-hidden="true"></i> Фото</button>
+          <button data-category="entertainment" class="chip"><i class="fas fa-star" aria-hidden="true"></i> Развлечения</button>
+        </div>
+
+        <!-- Превью места -->
+        <div id="randomizer-preview" class="randomizer-preview" style="display: none;" tabindex="0" role="button" aria-label="Перейти к месту">
+          <img id="preview-img" src="" alt="">
+          <div class="preview-info">
+            <h4 id="preview-name"></h4>
+            <p id="preview-category"></p>
+            <p id="preview-desc" class="preview-desc"></p>
+          </div>
+        </div>
+
+        <div class="randomizer-actions">
+          <button id="randomizer-submit" class="btn randomizer-btn">Подбросить кубик</button>
+          <button id="randomizer-accept" class="btn randomizer-accept" style="display: none;">Мне подходит →</button>
+          <button id="randomizer-reroll" class="btn randomizer-reroll" style="display: none;">Перебросить ↺</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="scripts/ui.js"></script>
+  <script type="module" src="scripts/pages/home.js"></script>
+</body>
+</html>

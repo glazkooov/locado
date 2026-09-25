@@ -1,0 +1,242 @@
+.map__categories-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.map__categories-button {
+  padding: 10px 12px;
+  font-size: 0.9rem;
+}
+
+.dropdown-filter {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.checkbox-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  background: #f5f5f5;
+  padding: 8px 12px;
+  border-radius: 10px;
+}
+
+.metro-filter-input-wrapper { position: relative; padding: 10px; }
+
+#metro-autocomplete { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+
+.metro-suggestions {
+  position: absolute;
+  background: white;
+  border: 1px solid #ccc;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 1000;
+  width: calc(100% - 20px);
+}
+
+.metro-suggestion-item {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.metro-suggestion-item:hover {
+  background-color: #f0f0f0;
+}
+
+.metro-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 10px;
+  border-top: 1px solid #eee;
+}
+
+.metro-chip {
+  background: #e0e0e0;
+  border-radius: 16px;
+  padding: 4px 10px;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.metro-chip-remove {
+  cursor: pointer;
+  font-weight: bold;
+  color: #666;
+}
+
+.metro-chip-remove:hover {
+  color: #f00;
+}
+
+.popular-metros {
+  padding: 8px 12px;
+  border-top: 1px solid #eee;
+  margin-top: 4px;
+}
+
+.popular-metros-label {
+  font-size: 0.7rem;
+  color: #888;
+  margin-bottom: 8px;
+}
+
+.popular-metros-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.popular-metro-btn {
+  background: #f0f0f0;
+  border: none;
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.popular-metro-btn:hover {
+  background: #e0e0e0;
+  transform: translateY(-1px);
+}
+
+.filter-btn {
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 10px 14px;
+  width: 100%;
+  text-align: left;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dropdown-content {
+  display: none;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+  padding: 10px 12px;
+  margin-top: 8px;
+  position: absolute;
+  width: 100%;
+  z-index: 10;
+}
+.dropdown-content.is-open { display: flex; }
+
+.filter-clear-btn {
+  display: inline-block;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  padding: 8px 23px;
+  border-radius: 30px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: center;
+}
+
+.categories_menu { margin-top: 20px; }
+
+.categories_scroll {
+  display: flex;
+  gap: 10px;
+  padding: 15px 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.categories_scroll::-webkit-scrollbar { display: none; }
+
+.category-btn {
+  flex-shrink: 0;
+  padding: 12px 20px;
+  border-radius: 20px;
+  background: var(--card-bg);
+  border: 1px solid #ddd;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-family: var(--font-heading);
+  white-space: nowrap;
+  font-size: 0.9rem;
+}
+
+.category-btn:hover { transform: translateY(-2px); box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); }
+
+.category-search-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 420px;
+  background: var(--card-bg);
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  padding: 0 14px;
+  margin-top: 4px;
+}
+
+.category-search-group:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(255, 87, 10, 0.12);
+}
+
+.category-search-icon {
+  color: var(--text-lighter);
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}
+
+.category-search-input {
+  flex: 1;
+  min-width: 0; /* без этого input не сжимается и распирает контейнер */
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 12px 0;
+  /* 16px — ниже этого значения iOS Safari зумит страницу при фокусе */
+  font-size: 16px;
+  font-family: inherit;
+}
+
+.category-search-clear[hidden] { display: none; }
+
+.categories_scroll {
+  scroll-padding-inline: 16px;
+}
+
+.feed-empty {
+  text-align: center;
+  padding: 48px 16px 8px;
+}
+
+.feed-empty[hidden] { display: none; }
+
+.feed-empty p {
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  color: var(--text);
+  margin-bottom: 16px;
+}

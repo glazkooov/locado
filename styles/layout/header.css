@@ -1,0 +1,216 @@
+.main-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* flex-wrap здесь переносил навигацию на вторую строку и ломал вёрстку хедера */
+  flex-wrap: nowrap;
+  gap: 1rem;
+  min-height: var(--header-h);
+  padding: 0.6rem 0;
+}
+
+.logo {
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.logo {
+  font-size: 1.6rem; /* mobile */
+  font-weight: 800;
+  color: var(--primary);
+  letter-spacing: -0.5px;
+}
+@media (min-width: 576px) {
+  .logo {
+    font-size: 1.8rem;
+  }
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.nav-list {
+  display: flex;
+  gap: 1.8rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-item {
+  text-decoration: none;
+  font-weight: 500;
+  color: #2c2c2c;
+  transition: color 0.2s;
+  font-size: 1.1rem; /* чуть крупнее */
+}
+
+.nav-item:hover {
+  color: var(--primary);
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+}
+
+.header-calendar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  color: #2c2c2c;
+  font-size: 1.3rem;
+  transition: background 0.2s, color 0.2s;
+  margin-right: 0.5rem;
+  text-decoration: none;
+}
+
+.header-calendar:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: var(--primary);
+}
+
+.user-menu {
+  position: relative;
+}
+
+.user-btn {
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0.5rem 0.8rem;
+  border-radius: 40px;
+  transition: background 0.2s;
+  font-size: 1rem;
+  color: #2c2c2c;
+}
+
+.user-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.user-btn i:first-child {
+  font-size: 1.4rem;
+  color: #666;
+}
+
+.user-dropdown {
+  position: absolute;
+  top: 110%;
+  right: 0;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  min-width: 180px;
+  padding: 0.5rem 0;
+  display: none;
+  z-index: 100;
+  backdrop-filter: blur(8px);
+  background: rgba(255,255,255,0.98);
+}
+
+.user-dropdown a {
+  display: block;
+  padding: 0.6rem 1.2rem;
+  text-decoration: none;
+  color: #333;
+  transition: background 0.1s;
+  font-size: 0.95rem;
+}
+
+.user-dropdown a:hover {
+  background: #f5f5f5;
+}
+
+.user-menu.active .user-dropdown {
+  display: block;
+}
+
+.mobile-menu-toggle {
+  display: block; /* показываем на мобильных */
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #333;
+  padding: 10px;
+}
+
+@media (min-width: 769px) {
+  .mobile-menu-toggle {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav {
+    position: fixed;
+    top: var(--header-h);
+    left: -100%;
+    width: min(80%, 300px);
+    max-width: 300px;
+    height: calc(100dvh - var(--header-h));
+    overflow-y: auto;
+    background: white;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1.5rem;
+    box-shadow: 2px 0 12px rgba(0,0,0,0.1);
+    transition: left 0.3s;
+    z-index: 999;
+    gap: 1.5rem;
+  }
+  .nav.open {
+    left: 0;
+  }
+  /* Затемняем страницу за открытым меню */
+  .nav.open::after {
+    content: '';
+    position: fixed;
+    inset: var(--header-h) 0 0 min(80%, 300px);
+    background: rgba(0, 0, 0, 0.35);
+    z-index: -1;
+  }
+  body.nav-open {
+    overflow: hidden;
+  }
+  .nav-list {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .nav-right {
+    margin-top: 1rem;
+  }
+  .user-dropdown {
+    position: static;
+    box-shadow: none;
+    padding-left: 1rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .user-btn span {
+    display: none;
+  }
+}

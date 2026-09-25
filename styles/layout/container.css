@@ -1,0 +1,22 @@
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-inline: max(16px, env(safe-area-inset-left)) max(16px, env(safe-area-inset-right));
+}
+
+@media (min-width: 768px) {
+  .container { padding-inline: 24px; }
+}
+
+@media (min-width: 576px) {
+  .section-title {
+    font-size: 1.8rem;
+  }
+}
+
+@media (min-width: 992px) {
+  .section-title {
+    font-size: 2rem;
+  }
+}

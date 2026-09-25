@@ -1,0 +1,102 @@
+.state-screen {
+  display: flex;
+  align-items: center;
+  min-height: calc(100dvh - var(--header-h) - 160px);
+  padding: 72px 0;
+}
+
+.state-screen[hidden] { display: none; }
+
+.state-screen__inner {
+  max-width: 640px;
+  text-align: left;
+}
+
+.state-screen__code {
+  font-family: var(--font-heading);
+  font-size: clamp(4rem, 18vw, 8rem);
+  font-weight: 700;
+  line-height: 0.9;
+  color: var(--accent-line);
+  margin-bottom: 8px;
+}
+
+.state-screen__title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.5rem, 5vw, 2.2rem);
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.25;
+  margin-bottom: 14px;
+}
+
+.state-screen__text {
+  font-size: 1.02rem;
+  line-height: 1.65;
+  color: var(--text-light);
+  max-width: 48ch;
+  margin-bottom: 28px;
+}
+
+.state-screen__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 24px;
+}
+
+.state-screen__btn {
+  text-decoration: none;
+  display: inline-block;
+}
+
+.state-screen__link {
+  color: var(--text-light);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  font-size: 0.95rem;
+}
+
+.state-screen__link:hover { color: var(--primary); }
+
+.state-screen__suggested { margin-top: 56px; }
+
+.state-screen__subtitle {
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 18px;
+}
+
+.state-screen__cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 16px;
+}
+
+.state-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-decoration: none;
+  color: var(--text);
+}
+
+.state-card img,
+.state-card__ph {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 14px;
+  background: var(--cream-deep);
+  margin-bottom: 6px;
+}
+
+.state-card__name { font-weight: 600; font-size: 0.95rem; }
+
+.state-card__type { font-size: 0.82rem; color: var(--text-light); }
+
+.state-card img.is-broken { background: var(--cream-deep); }
+
+.state-card:hover .state-card__name { color: var(--primary); }

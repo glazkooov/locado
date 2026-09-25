@@ -1,0 +1,22 @@
+/* Локадо — единая точка входа для стилей. Порядок каскада важен:
+   base -> layout -> components -> pages. Ничего, кроме этого файла,
+   в <head> подключать не нужно. */
+
+@import url('base/tokens.css');
+@import url('base/reset.css');
+@import url('base/typography.css');
+
+@import url('layout/container.css');
+@import url('layout/header.css');
+@import url('layout/footer.css');
+
+@import url('components/button.css');
+@import url('components/card.css');
+@import url('components/filters.css');
+@import url('components/search.css');
+@import url('components/state-screen.css');
+@import url('components/modal.css');
+@import url('components/toast.css');
+
+@import url('pages/home.css');
+@import url('pages/place.css');

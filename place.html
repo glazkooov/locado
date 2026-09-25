@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Место — Локадо</title>
+  <meta name="description" content="Подробно о месте: адрес, часы работы, как добраться, отзывы.">
+  <meta name="theme-color" content="#FF570A">
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Локадо">
+  <meta property="og:description" content="">
+  <meta property="og:image" content="">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="styles/main.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Unbounded:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <script src="https://api-maps.yandex.ru/2.1/?apikey=890530b4-68be-4d58-823b-82baae7d9530&lang=ru_RU" type="text/javascript" defer></script>
+</head>
+<body class="place-page">
+  <!-- Хедер -->
+  <header class="main-header">
+    <div class="container header-content">
+      <a href="index.html" class="logo" aria-label="Локадо — главная">Локадо</a>
+
+      <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Открыть меню" aria-expanded="false" aria-controls="main-nav">
+        <i class="fas fa-bars" aria-hidden="true"></i>
+      </button>
+
+      <nav class="nav" id="main-nav">
+        <ul class="nav-list">
+          <li><a href="index.html#map-section" class="nav-item">Карта</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Состояние "место не найдено" (показывается вместо контента) -->
+  <section class="state-screen" id="place-error" hidden>
+    <div class="container state-screen__inner">
+      <p class="state-screen__code" aria-hidden="true">404</p>
+      <h1 class="state-screen__title" id="place-error-title">Такого места у нас нет</h1>
+      <p class="state-screen__text" id="place-error-text">
+        Возможно, ссылка устарела или в адресе опечатка. Посмотрите другие места — их уже больше двадцати.
+      </p>
+      <div class="state-screen__actions">
+        <a href="index.html#places-container" class="btn state-screen__btn">Открыть все места</a>
+        <a href="index.html" class="state-screen__link">Вернуться на главную</a>
+      </div>
+    </div>
+  </section>
+
+  <main id="place-content">
+    <!-- Hero -->
+    <section class="place-hero">
+      <div class="hero-bg" id="hero-bg"></div>
+      <div class="hero-overlay" aria-hidden="true"></div>
+      <div class="container hero-content">
+        <div class="hero-meta">
+          <span class="hero-category" id="place-category"></span>
+          <div class="hero-actions">
+            <button type="button" id="fav-btn-hero" class="fav-btn-hero">
+              <i class="far fa-heart" aria-hidden="true"></i><span>В избранное</span>
+            </button>
+            <button type="button" id="visited-btn" class="visited-btn">
+              <i class="fas fa-check" aria-hidden="true"></i><span>Я здесь был</span>
+            </button>
+            <button type="button" id="call-btn" class="call-btn">
+              <i class="fas fa-phone" aria-hidden="true"></i><span>Позвонить</span>
+            </button>
+            <button type="button" id="share-btn" class="share-btn" aria-label="Поделиться">
+              <i class="fas fa-share-alt" aria-hidden="true"></i><span>Поделиться</span>
+            </button>
+          </div>
+        </div>
+
+        <h1 class="hero-title" id="place-name">Загружаем…</h1>
+        <p class="hero-subtitle" id="place-subtitle"></p>
+
+        <div class="hero-stats">
+          <span><i class="far fa-eye" aria-hidden="true"></i> <span id="place-views">0</span> просмотров</span>
+          <span><i class="fas fa-star" aria-hidden="true"></i> <span id="place-rating">—</span></span>
+          <span><i class="fas fa-heart" aria-hidden="true"></i> <span id="favorites-count">0</span> в избранном</span>
+          <span><i class="fas fa-shoe-prints" aria-hidden="true"></i> <span id="visited-count">0</span> побывали</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Инфо-карточки -->
+    <section class="place-info container">
+      <div class="info-grid">
+        <div class="info-card">
+          <i class="fas fa-location-dot" aria-hidden="true"></i>
+          <div>
+            <h3>Адрес</h3>
+            <p id="place-address">—</p>
+            <button type="button" class="map-link-btn" id="show-on-map">Показать на карте</button>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <i class="fas fa-subway" aria-hidden="true"></i>
+          <div>
+            <h3>Метро</h3>
+            <p id="place-metro">—</p>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <i class="far fa-clock" aria-hidden="true"></i>
+          <div>
+            <h3>Часы работы</h3>
+            <div id="place-schedule"></div>
+            <span class="open-status" id="open-status"></span>
+            <span class="closing-timer" id="closing-timer"></span>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <i class="fas fa-phone" aria-hidden="true"></i>
+          <div>
+            <h3>Контакты</h3>
+            <p id="place-phone">—</p>
+            <p id="place-website">—</p>
+          </div>
+        </div>
+
+        <div class="info-card" id="directions-card">
+          <i class="fas fa-route" aria-hidden="true"></i>
+          <div>
+            <h3>Как добраться</h3>
+            <p id="place-directions"></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="tags-section" id="place-tags"></div>
+    </section>
+
+    <!-- Описание -->
+    <section class="place-description container">
+      <h2 class="section-title">О месте</h2>
+      <div class="description-text" id="place-description"></div>
+
+      <div class="amenities-section" id="place-amenities"></div>
+
+      <button type="button" class="suggestion-edit" id="suggest-edit">
+        <i class="far fa-pen-to-square" aria-hidden="true"></i> Нашли неточность? Напишите нам
+      </button>
+    </section>
+
+    <!-- Галерея -->
+    <section class="place-gallery-section container" id="gallery-section">
+      <h2 class="section-title">Фотографии</h2>
+      <div class="gallery-grid" id="place-gallery"></div>
+    </section>
+
+    <!-- Карта -->
+    <section class="place-map container">
+      <h2 class="section-title">На карте</h2>
+      <div class="map-container" id="place-map-container" aria-label="Карта места"></div>
+      <div class="map-actions">
+        <a class="route-btn" id="route-link" href="https://yandex.ru/maps/" target="_blank" rel="noopener">
+          <i class="fas fa-diamond-turn-right" aria-hidden="true"></i> Построить маршрут
+        </a>
+      </div>
+    </section>
+
+    <!-- Отзывы -->
+    <section class="place-reviews container">
+      <div class="reviews-header">
+        <h2 class="section-title">Отзывы</h2>
+        <div class="reviews-summary">
+          <span class="average-rating" id="average-rating">0</span>
+          <span class="stars-container" id="average-stars"></span>
+          <span class="reviews-count" id="reviews-count">0 отзывов</span>
+        </div>
+      </div>
+
+      <div class="reviews-list" id="reviews-list"></div>
+
+      <div class="add-review">
+        <h3>Оставить отзыв</h3>
+        <form id="review-form" novalidate>
+          <label class="visually-hidden" for="review-name">Имя</label>
+          <input type="text" id="review-name" name="name" placeholder="Как вас зовут" maxlength="40" required>
+
+          <div class="rating-input">
+            <span>Оценка:</span>
+            <div class="star-rating" id="star-rating">
+              <i class="far fa-star" data-value="1" role="button" tabindex="0" aria-label="1 из 5"></i>
+              <i class="far fa-star" data-value="2" role="button" tabindex="0" aria-label="2 из 5"></i>
+              <i class="far fa-star" data-value="3" role="button" tabindex="0" aria-label="3 из 5"></i>
+              <i class="far fa-star" data-value="4" role="button" tabindex="0" aria-label="4 из 5"></i>
+              <i class="far fa-star" data-value="5" role="button" tabindex="0" aria-label="5 из 5"></i>
+            </div>
+            <input type="hidden" id="review-rating" name="rating" value="0">
+          </div>
+
+          <label class="visually-hidden" for="review-text">Отзыв</label>
+          <textarea id="review-text" name="text" rows="4" placeholder="Что понравилось, а что нет" maxlength="1000" required></textarea>
+
+          <button type="submit" class="btn">Отправить отзыв</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- Похожие -->
+    <section class="place-similar container">
+      <h2 class="section-title">Похожие места</h2>
+      <div class="similar-scroll" id="similar-places-container"></div>
+    </section>
+  </main>
+
+  <!-- Мобильная панель быстрых действий -->
+  <div class="mobile-actions-bar" id="mobile-actions-bar">
+    <button type="button" id="action-fav"><i class="far fa-heart" aria-hidden="true"></i><span>В избранное</span></button>
+    <button type="button" id="action-call"><i class="fas fa-phone" aria-hidden="true"></i><span>Позвонить</span></button>
+    <button type="button" id="action-route"><i class="fas fa-route" aria-hidden="true"></i><span>Маршрут</span></button>
+    <button type="button" id="action-share"><i class="fas fa-share-alt" aria-hidden="true"></i><span>Поделиться</span></button>
+  </div>
+
+  <!-- Модалка шеринга -->
+  <div class="share-modal" id="share-modal" role="dialog" aria-modal="true" aria-labelledby="share-modal-title">
+    <div class="share-modal-content">
+      <h3 id="share-modal-title">Поделиться местом</h3>
+      <div class="share-buttons">
+        <button type="button" class="share-vk">ВКонтакте</button>
+        <button type="button" class="share-telegram">Telegram</button>
+        <button type="button" class="share-whatsapp">WhatsApp</button>
+        <button type="button" class="share-copy">Скопировать ссылку</button>
+      </div>
+      <button type="button" class="share-close" id="share-close" data-modal-close>Закрыть</button>
+    </div>
+  </div>
+
+  <!-- Футер -->
+  <footer class="site-footer">
+    <div class="footer-wave" aria-hidden="true">
+      <svg viewBox="0 0 1200 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0,60 C200,10 400,0 600,20 C800,40 1000,10 1200,30 L1200,60 L0,60 Z"></path>
+      </svg>
+    </div>
+    <div class="container site-footer__bottom">
+      <p>© 2026 Локадо. Сделано с любовью к прогулкам.</p>
+    </div>
+  </footer>
+
+  <script type="module" src="scripts/ui.js"></script>
+  <script type="module" src="scripts/pages/place.js"></script>
+</body>
+</html>
