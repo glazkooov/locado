@@ -10,11 +10,13 @@ import { initHeroMoods } from '../components/hero-moods.js';
 import { initPlacesMap } from '../components/map.js';
 import { showToast } from '../components/toast.js';
 
+// Скроллим к заголовку ленты, а не к карточкам: так видны вкладки и
+// плашка выбранного настроения/подборки над ними.
 function scrollToFeed() {
-  const target = $('#places-container');
+  const target = $('#all-places');
   if (!target) return;
   const header = $('.main-header');
-  const offset = (header ? header.offsetHeight : 0) + 110;
+  const offset = header ? header.offsetHeight : 0;
   window.scrollTo({ top: Math.max(0, target.getBoundingClientRect().top + window.scrollY - offset), behavior: 'smooth' });
 }
 
@@ -61,7 +63,8 @@ function initCollections(feed) {
     const open = () => {
       const tag = card.dataset.tag;
       if (!tag) return;
-      feed?.setFilters({ category: 'all', query: tag, tags: null }, { syncInput: true });
+      const title = card.querySelector('.collection-title')?.textContent.trim();
+      feed?.setFilters({ category: 'all', query: tag, tags: null }, { syncInput: true, label: title && { kind: 'Подборка', text: title } });
       scrollToFeed();
     };
     on(card, 'click', open);

@@ -69,11 +69,14 @@ export function initRandomizer(places) {
     window.location.href = placeUrl(current.slug);
   };
 
+  // Окно сразу показывает случайное место: пользователь и так «затрудняется
+  // выбрать», поэтому категория — лишь необязательное уточнение.
   const modal = createModal(modalEl, {
     onOpen: () => {
       category = 'all';
       chips.forEach((c) => c.classList.toggle('active', c.dataset.category === 'all'));
       resetState();
+      roll();
     }
   });
 
@@ -85,6 +88,7 @@ export function initRandomizer(places) {
       chip.classList.add('active');
       category = chip.dataset.category;
       resetState();
+      roll();
     });
   });
 

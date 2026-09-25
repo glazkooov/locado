@@ -35,7 +35,9 @@
 
         <nav class="nav" id="main-nav">
           <ul class="nav-list">
+            <li><a href="index.html#collections" class="nav-item">Подборки</a></li>
             <li><a href="index.html#map-section" class="nav-item">Карта</a></li>
+            <li><a href="index.html#all-places" class="nav-item">Все места</a></li>
           </ul>
         </nav>
       </div>
@@ -66,7 +68,7 @@
 
         <div class="hero__random">
           <button type="button" class="hero__random-icon" id="hero-random-icon">
-            <i class="fas fa-dice" aria-hidden="true"></i> Затрудняюсь выбрать — подберите за меня
+            <i class="fas fa-dice" aria-hidden="true"></i> Не могу выбрать — удивите меня
           </button>
         </div>
 
@@ -354,6 +356,14 @@
           </div>
         </div>
 
+        <!-- Что сейчас выбрано вне ленты (настроение, подборка) — заполняет feed.js -->
+        <div class="feed-active" id="feed-active" hidden>
+          <span class="feed-active__label" id="feed-active-label" aria-live="polite"></span>
+          <button type="button" class="feed-active__reset" id="feed-active-reset">
+            Сбросить <i class="fas fa-times" aria-hidden="true"></i>
+          </button>
+        </div>
+
         <!-- Контейнер для карточек мест -->
         <div class="places-grid" id="places-container" aria-live="polite"></div>
         <div class="feed-empty" id="feed-empty" hidden>
@@ -416,7 +426,7 @@
         <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">&times;</button>
       </div>
       <div class="modal-body">
-        <p>Выберите категорию:</p>
+        <p>Можно уточнить категорию:</p>
         <div class="category-chips" id="randomizer-categories">
           <button data-category="all" class="chip active"><i class="fas fa-map-marker-alt" aria-hidden="true"></i> Любая</button>
           <button data-category="nature" class="chip"><i class="fas fa-tree" aria-hidden="true"></i> Природа</button>

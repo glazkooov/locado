@@ -3,6 +3,7 @@
 
 import { $, $$, on, toggleClear } from '../core/dom.js';
 import { filterPlaces } from '../core/places.js';
+import { pluralize } from '../core/format.js';
 import { renderCards } from './card.js';
 
 const PAGE_SIZE = 9;
@@ -14,9 +15,13 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
   const showMoreBtn = $('#show-more-btn');
   const emptyBlock = $('#feed-empty');
   const endBlock = $('.feed-end');
+  const activeBar = $('#feed-active');
+  const activeLabel = $('#feed-active-label');
   const tabs = $$('.scroll__category-btn');
 
-  let state = { category: 'all', query: '', tags: null };
+  // label — что выбрал пользователь вне ленты (настроение из hero, подборка):
+  // { kind: 'Настроение', text: 'Тихая прогулка на природе' } или null.
+  let state = { category: 'all', query: '', tags: null, label: null };
   let shown = 0;
   let isLoading = false;
 
@@ -34,8 +39,18 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
     });
   };
 
+  // Плашка над лентой: после клика по настроению/подборке страница уезжает
+  // далеко вниз, и без неё непонятно, почему лента отфильтрована.
+  const syncActiveBar = (count) => {
+    if (!activeBar) return;
+    activeBar.hidden = !state.label;
+    if (!state.label || !activeLabel) return;
+    activeLabel.textContent = `${state.label.kind}: ${state.label.text} · ${count} ${pluralize(count, ['место', 'места', 'мест'])}`;
+  };
+
   const renderPage = (reset) => {
     const list = filtered();
+    syncActiveBar(list.length);
     if (emptyBlock) emptyBlock.hidden = list.length > 0;
     // «Это все места» уместно только после непустой ленты — иначе рядом
     // с «Пока ничего не нашли» получалось два противоречащих сообщения.
@@ -61,8 +76,8 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
     isLoading = false;
   };
 
-  const setFilters = (next, { syncInput = false } = {}) => {
-    state = { ...state, ...next };
+  const setFilters = (next, { syncInput = false, label = null } = {}) => {
+    state = { ...state, ...next, label };
     syncTabs();
     if (syncInput) {
       const input = $('#categories-search-input');
@@ -118,6 +133,7 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
 
   // --- UI: пустое состояние ---
   on($('#feed-reset-btn'), 'click', reset);
+  on($('#feed-active-reset'), 'click', reset);
 
   // --- UI: "Показать ещё" + автоподгрузка ---
   if (showMoreBtn) {

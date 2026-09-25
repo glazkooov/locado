@@ -6,16 +6,25 @@ import { escapeHtml, cssUrl } from '../core/format.js';
 import { placeUrl, categoryLabel } from '../core/places.js';
 import * as Storage from '../core/storage.js';
 
+// Избранное не входит в MVP (см. CLAUDE.md) и страницы favorites.html пока
+// нет — сердечко на карточках скрыто. Вернуть: SHOW_FAVORITES = true.
+const SHOW_FAVORITES = false;
+
+function favButtonHtml(place, isFavorite) {
+  if (!SHOW_FAVORITES) return '';
+  return `
+        <button type="button" class="fav-btn${isFavorite ? ' active' : ''}" data-slug="${escapeHtml(place.slug)}"
+                aria-pressed="${isFavorite}" aria-label="${isFavorite ? 'Удалить из избранного' : 'Добавить в избранное'}">
+          <i class="fas fa-heart" aria-hidden="true"></i>
+        </button>`;
+}
+
 export function cardHtml(place, isFavorite) {
   const badge = place.temporary ? '<div class="badge-temporary">Успей посетить</div>' : '';
   return `
     <div class="place-card" data-category="${escapeHtml(place.category)}" data-slug="${escapeHtml(place.slug)}">
       <div class="place-card__top">
-        <div class="place-card__category">${escapeHtml(place.type || categoryLabel(place.category))}</div>
-        <button type="button" class="fav-btn${isFavorite ? ' active' : ''}" data-slug="${escapeHtml(place.slug)}"
-                aria-pressed="${isFavorite}" aria-label="${isFavorite ? 'Удалить из избранного' : 'Добавить в избранное'}">
-          <i class="fas fa-heart" aria-hidden="true"></i>
-        </button>
+        <div class="place-card__category">${escapeHtml(place.type || categoryLabel(place.category))}</div>${favButtonHtml(place, isFavorite)}
         ${badge}
       </div>
       <img src="${escapeHtml(place.photo || '')}" alt="${escapeHtml(place.name)}" class="place-card__img" loading="lazy">
