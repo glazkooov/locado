@@ -62,7 +62,7 @@ h1, h2, h3, h4, h5, h6,
 .hero__title {
   font-size: 2.2rem; /* мобильный */
   line-height: 1.3;
-  color: #fff;
+  color: var(--hero-fg);
   max-width: 800px;
   padding: 0 10px;
 }

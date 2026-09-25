@@ -45,3 +45,67 @@
 :root {
   --header-h: 68px;
 }
+
+/* Первый экран главной: фон и цвета по времени суток. data-daypart на <html>
+   ставит inline-скрипт в <head> index.html (пороги — scripts/core/daypart.js).
+   Без атрибута — вечерняя палитра. Фото на фоне нет: только градиент и зерно. */
+:root,
+:root[data-daypart="evening"] {
+  --hero-fg: #fff;
+  --hero-muted: rgba(255, 255, 255, 0.74);
+  --hero-accent: #FF8A4C;
+  --hero-logo: #fff;
+  --hero-glass: rgba(255, 255, 255, 0.10);
+  --hero-glass-hover: rgba(255, 255, 255, 0.16);
+  --hero-line: rgba(255, 255, 255, 0.38);
+  --hero-card-line: rgba(255, 255, 255, 0.18);
+  --hero-bg:
+    radial-gradient(ellipse 60% 45% at 72% 100%, rgba(255, 122, 48, 0.75), transparent 70%),
+    radial-gradient(ellipse 45% 35% at 10% 20%, rgba(160, 70, 120, 0.45), transparent 70%),
+    linear-gradient(180deg, #2E1A33 0%, #5A2539 50%, #9A3B2E 100%);
+}
+
+:root[data-daypart="morning"] {
+  --hero-fg: #2A2521;
+  --hero-muted: rgba(42, 37, 33, 0.66);
+  --hero-accent: #E2560F;
+  --hero-logo: var(--primary);
+  --hero-glass: rgba(255, 255, 255, 0.42);
+  --hero-glass-hover: rgba(255, 255, 255, 0.62);
+  --hero-line: rgba(42, 37, 33, 0.28);
+  --hero-card-line: rgba(255, 255, 255, 0.8);
+  --hero-bg:
+    radial-gradient(ellipse 55% 45% at 82% 12%, rgba(255, 206, 150, 0.95), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 8% 95%, rgba(250, 190, 175, 0.55), transparent 70%),
+    linear-gradient(180deg, #FDE9DA 0%, #F9DCC8 55%, #F4E7DA 100%);
+}
+
+:root[data-daypart="day"] {
+  --hero-fg: #2A2521;
+  --hero-muted: rgba(42, 37, 33, 0.66);
+  --hero-accent: #D9480F;
+  --hero-logo: var(--primary);
+  --hero-glass: rgba(255, 255, 255, 0.38);
+  --hero-glass-hover: rgba(255, 255, 255, 0.58);
+  --hero-line: rgba(42, 37, 33, 0.28);
+  --hero-card-line: rgba(255, 255, 255, 0.8);
+  --hero-bg:
+    radial-gradient(ellipse 60% 50% at 18% 0%, rgba(255, 232, 170, 0.95), transparent 70%),
+    radial-gradient(ellipse 55% 45% at 95% 100%, rgba(236, 150, 100, 0.45), transparent 70%),
+    linear-gradient(180deg, #FCEBC8 0%, #F7D6A8 55%, #F0C497 100%);
+}
+
+:root[data-daypart="night"] {
+  --hero-fg: #fff;
+  --hero-muted: rgba(255, 255, 255, 0.7);
+  --hero-accent: #FF9A5C;
+  --hero-logo: #fff;
+  --hero-glass: rgba(255, 255, 255, 0.08);
+  --hero-glass-hover: rgba(255, 255, 255, 0.14);
+  --hero-line: rgba(255, 255, 255, 0.32);
+  --hero-card-line: rgba(255, 255, 255, 0.16);
+  --hero-bg:
+    radial-gradient(ellipse 55% 35% at 50% 105%, rgba(255, 140, 70, 0.40), transparent 70%),
+    radial-gradient(ellipse 35% 30% at 85% 15%, rgba(120, 140, 220, 0.22), transparent 70%),
+    linear-gradient(180deg, #0E1428 0%, #19203F 55%, #2A2442 100%);
+}

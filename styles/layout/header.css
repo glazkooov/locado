@@ -16,7 +16,9 @@
   flex-wrap: nowrap;
   gap: 1rem;
   min-height: var(--header-h);
-  padding: 0.6rem 0;
+  /* только по вертикали: сокращение padding обнуляло боковые отступы
+     .container, и на телефоне логотип прилипал к краю */
+  padding-block: 0.6rem;
 }
 
 .logo {
@@ -175,6 +177,7 @@
     background: white;
     flex-direction: column;
     align-items: stretch;
+    justify-content: flex-start; /* иначе пункты уезжали к низу панели */
     padding: 1.5rem;
     box-shadow: 2px 0 12px rgba(0,0,0,0.1);
     transition: left 0.3s;
@@ -213,4 +216,35 @@
   .user-btn span {
     display: none;
   }
+}
+
+/* Главная: шапка прозрачная поверх hero и берёт цвета его палитры
+   (tokens.css, --hero-*). После прокрутки или с открытым меню — обычная
+   белая. Класс is-scrolled ставит scripts/ui.js. */
+.main-header--overlay {
+  position: fixed;
+  left: 0;
+  right: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.main-header--overlay.is-scrolled,
+body.nav-open .main-header--overlay {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+}
+
+body:not(.nav-open) .main-header--overlay:not(.is-scrolled) .logo,
+body:not(.nav-open) .main-header--overlay:not(.is-scrolled) .mobile-menu-toggle {
+  color: var(--hero-logo);
+}
+
+@media (min-width: 769px) {
+  .main-header--overlay:not(.is-scrolled) .nav-item { color: var(--hero-fg); }
+  .main-header--overlay:not(.is-scrolled) .nav-item:hover { color: var(--hero-accent); }
 }
