@@ -177,3 +177,20 @@ export function scheduleHtml(schedule, now = new Date()) {
     </div>
   `;
 }
+
+/** Ссылка tel: с сохранением ведущего «+» — без него номер «+7 (495) …»
+ *  превращался в tel:7495…, и набор мог не сработать (роуминг, часть
+ *  телефонов). */
+export function telHref(phone = '') {
+  const digits = phone.replace(/\D/g, '');
+  return digits ? `tel:${phone.trim().startsWith('+') ? '+' : ''}${digits}` : '';
+}
+
+/** «https://www.park-gorkogo.ru/» → «park-gorkogo.ru» для подписи ссылки. */
+export function displayHost(url = '') {
+  try {
+    return new URL(url).hostname.replace(/^www\./, '');
+  } catch (e) {
+    return url;
+  }
+}

@@ -2,7 +2,7 @@
 
 import { $, $$, on } from '../core/dom.js';
 import { escapeHtml } from '../core/format.js';
-import { categoryLabel, pickRandom, recordView, placeUrl } from '../core/places.js';
+import { categoryLabel, pickRandom, placeUrl } from '../core/places.js';
 import { createModal } from './modal.js';
 import { setPressed } from './category-buttons.js';
 
@@ -66,7 +66,6 @@ export function initRandomizer(places) {
 
   const goToPlace = () => {
     if (!current) return;
-    recordView(current);
     window.location.href = placeUrl(current.slug);
   };
 

@@ -60,7 +60,8 @@
 
   <main id="place-content">
     <!-- Hero -->
-    <section class="place-hero">
+    <!-- is-loading — заглушка до загрузки данных, снимает place.js -->
+    <section class="place-hero is-loading">
       <div class="hero-bg" id="hero-bg"></div>
       <div class="hero-overlay" aria-hidden="true"></div>
       <div class="container hero-content">
@@ -76,7 +77,7 @@
             <button type="button" id="visited-btn" class="visited-btn" hidden>
               <i class="fas fa-check" aria-hidden="true"></i><span>Я здесь был</span>
             </button>
-            <button type="button" id="call-btn" class="call-btn">
+            <button type="button" id="call-btn" class="call-btn" aria-label="Позвонить">
               <i class="fas fa-phone" aria-hidden="true"></i><span>Позвонить</span>
             </button>
             <button type="button" id="share-btn" class="share-btn" aria-label="Поделиться">
@@ -101,15 +102,8 @@
           <div>
             <h3>Адрес</h3>
             <p id="place-address">—</p>
+            <p class="info-card__sub" id="place-metro" hidden></p>
             <button type="button" class="map-link-btn" id="show-on-map">Показать на карте</button>
-          </div>
-        </div>
-
-        <div class="info-card">
-          <i class="fas fa-subway" aria-hidden="true"></i>
-          <div>
-            <h3>Метро</h3>
-            <p id="place-metro">—</p>
           </div>
         </div>
 
@@ -118,7 +112,6 @@
           <div>
             <h3>Часы работы</h3>
             <div id="place-schedule"></div>
-            <span class="open-status" id="open-status"></span>
             <span class="closing-timer" id="closing-timer"></span>
           </div>
         </div>
@@ -140,8 +133,6 @@
           </div>
         </div>
       </div>
-
-      <div class="tags-section" id="place-tags"></div>
     </section>
 
     <!-- Описание -->
@@ -150,13 +141,22 @@
         <span class="section-mini" aria-hidden="true">Почему стоит заглянуть</span>
         <h2 class="section-title">О месте</h2>
       </div>
-      <div class="description-text" id="place-description"></div>
+      <!-- На компьютере — текст слева, теги справа; на телефоне — друг под другом -->
+      <div class="place-description__layout">
+        <div class="place-description__main">
+          <div class="description-text" id="place-description"></div>
+          <div class="amenities-section" id="place-amenities"></div>
+          <button type="button" class="suggestion-edit" id="suggest-edit">
+            <i class="far fa-pen-to-square" aria-hidden="true"></i> Нашли неточность? Напишите нам
+          </button>
+        </div>
 
-      <div class="amenities-section" id="place-amenities"></div>
-
-      <button type="button" class="suggestion-edit" id="suggest-edit">
-        <i class="far fa-pen-to-square" aria-hidden="true"></i> Нашли неточность? Напишите нам
-      </button>
+        <aside class="place-description__aside" id="place-tags-aside" aria-labelledby="place-tags-title">
+          <h3 class="place-aside__title" id="place-tags-title">Настроение места</h3>
+          <div class="tags-section" id="place-tags"></div>
+          <p class="place-aside__hint">Нажмите на тег — покажем похожие места</p>
+        </aside>
+      </div>
     </section>
 
     <!-- Галерея -->
@@ -233,6 +233,11 @@
       </div>
       <div class="similar-scroll" id="similar-places-container"></div>
     </section>
+
+    <!-- Выход дальше, если пришли по ссылке прямо на место -->
+    <section class="place-more container">
+      <a href="index.html#all-places" class="btn place-more__btn">Посмотреть другие места →</a>
+    </section>
   </main>
 
   <!-- Мобильная панель быстрых действий -->
@@ -264,6 +269,25 @@
         <path d="M0,60 C200,10 400,0 600,20 C800,40 1000,10 1200,30 L1200,60 L0,60 Z"></path>
       </svg>
     </div>
+    <div class="container site-footer__top">
+      <div class="site-footer__brand">
+        <span class="logo footer-logo">Локадо</span>
+        <p class="site-footer__tagline">Места в Москве под настроение — для дней, когда хочется выбраться, но непонятно куда.</p>
+      </div>
+
+      <nav class="site-footer__col" aria-label="Навигация">
+        <h4>Навигация</h4>
+        <a href="index.html#map-section">Карта</a>
+        <a href="index.html#collections">Подборки</a>
+        <a href="index.html#all-places">Все места</a>
+      </nav>
+
+      <div class="site-footer__col">
+        <h4>Где работаем</h4>
+        <p class="site-footer__note">Москва и область.<br>Скоро — другие города.</p>
+      </div>
+    </div>
+
     <div class="container site-footer__bottom">
       <p>© 2026 Локадо. Сделано с любовью к прогулкам.</p>
     </div>

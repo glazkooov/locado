@@ -150,12 +150,15 @@
   .hero-title { font-size: 3.2rem; }
 }
 
+/* На телефоне те же действия есть в нижней панели — круглые значки поверх
+   фото только дублировали их (и «Позвонить» оставалась без подписи) */
+@media (max-width: 768px) {
+  .hero-actions { display: none; }
+}
+
 @media (max-width: 480px) {
   .hero-title { font-size: 2rem; }
   .hero-subtitle { font-size: 0.98rem; }
-  /* на телефоне кнопки — только иконки; дублируются панелью снизу */
-  .hero-actions button span { display: none; }
-  .hero-actions button { width: 40px; height: 40px; padding: 0; justify-content: center; }
 }
 
 .place-info {
@@ -224,39 +227,30 @@
   text-decoration: underline;
 }
 
-.open-status {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  margin-top: 8px;
-}
-
-.open-status.open {
-  background: #e8f5e9;
-  color: #2e7d32;
-}
-
-.open-status.closed {
-  background: #ffebee;
-  color: #c62828;
-}
-
 .closing-timer {
   display: block;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #c62828;
+  margin-top: 6px;
+}
+
+.closing-timer--open { color: #2e7d32; }
+
+.info-card .info-card__sub {
+  font-weight: 500;
   color: var(--text-light);
-  margin-top: 5px;
 }
 
 .tags-section {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
 }
 
 .tag-chip {
+  text-decoration: none;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
   background: var(--card-bg);
   border: 1px solid var(--line);
   padding: 6px 14px;
@@ -283,11 +277,50 @@
   margin-bottom: 20px;
 }
 
+/* Описание + теги: на компьютере в две колонки, чтобы справа не пустовало */
+.place-description__layout {
+  display: grid;
+  gap: 28px;
+}
+
+@media (min-width: 992px) {
+  .place-description__layout {
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 56px;
+    align-items: start;
+  }
+}
+
+.place-description__aside {
+  padding: 22px;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--line);
+  background:
+    radial-gradient(ellipse 70% 60% at 95% 0%, rgba(255, 206, 150, 0.45), transparent 70%),
+    linear-gradient(160deg, #FFF6EE 0%, #FBE6D6 100%);
+}
+
+.place-aside__title {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: 14px;
+}
+
+.place-aside__hint {
+  margin-top: 14px;
+  font-size: 0.85rem;
+  color: var(--text-light);
+}
+
 .suggestion-edit {
   background: none;
   border: none;
   color: var(--primary);
-  font-weight: 500;
+  font-family: inherit; /* у <button> шрифт по умолчанию системный */
+  font-weight: 600;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -617,4 +650,88 @@
 @media (prefers-reduced-motion: reduce) {
   .gallery-item img { transition: none; }
   .gallery-item:hover img { transform: none; }
+}
+
+.tag-chip:hover {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+
+/* Последняя карточка «Похожих мест» — вся категория */
+.similar-card--more {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 4px;
+  min-height: 236px;
+  padding: 18px;
+  background:
+    radial-gradient(ellipse 70% 60% at 90% 0%, rgba(255, 206, 150, 0.55), transparent 70%),
+    linear-gradient(160deg, #FFF6EE 0%, #FBE6D6 100%);
+}
+
+.similar-card__more-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.similar-card__more-title {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.place-more {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.place-more__btn {
+  text-decoration: none;
+  background: transparent;
+  border: 2px solid var(--primary);
+  color: var(--primary);
+}
+
+.place-more__btn:hover {
+  background: var(--primary);
+  color: #fff;
+}
+
+/* Заглушка hero до загрузки данных: вместо тёмного экрана с «Загружаем…» —
+   мерцающий фон и плашки на месте заголовка и описания */
+.place-hero.is-loading .hero-bg {
+  background: linear-gradient(110deg, #2A2521 30%, #3A322C 50%, #2A2521 70%);
+  background-size: 200% 100%;
+  animation: placeHeroShimmer 1.6s linear infinite;
+}
+
+.place-hero.is-loading .hero-category,
+.place-hero.is-loading .hero-actions,
+.place-hero.is-loading .hero-facts { visibility: hidden; }
+
+.place-hero.is-loading .hero-title,
+.place-hero.is-loading .hero-subtitle {
+  color: transparent;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.place-hero.is-loading .hero-title { width: min(420px, 80%); }
+
+.place-hero.is-loading .hero-subtitle { width: min(560px, 90%); min-height: 1.5em; }
+
+@keyframes placeHeroShimmer {
+  from { background-position: 100% 0; }
+  to { background-position: -100% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .place-hero.is-loading .hero-bg { animation: none; }
 }

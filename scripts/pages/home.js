@@ -2,7 +2,7 @@
 
 import { $, $$, on } from '../core/dom.js';
 import { escapeHtml, cssUrl } from '../core/format.js';
-import { loadPlaces, popular, sample, categoryLabel } from '../core/places.js';
+import { loadPlaces, popular, sample, categoryLabel, CATEGORIES } from '../core/places.js';
 import { bindCards, renderCards } from '../components/card.js';
 import { initFeed } from '../components/feed.js';
 import { initRandomizer } from '../components/randomizer.js';
@@ -14,12 +14,32 @@ import { showToast } from '../components/toast.js';
 
 // Скроллим к заголовку ленты, а не к карточкам: так видны вкладки и
 // плашка выбранного настроения/подборки над ними.
-function scrollToFeed() {
+function scrollToFeed({ instant = false } = {}) {
   const target = $('#all-places');
   if (!target) return;
   const header = $('.main-header');
   const offset = header ? header.offsetHeight : 0;
-  window.scrollTo({ top: Math.max(0, target.getBoundingClientRect().top + window.scrollY - offset), behavior: 'smooth' });
+  window.scrollTo({
+    top: Math.max(0, target.getBoundingClientRect().top + window.scrollY - offset),
+    behavior: instant ? 'instant' : 'smooth'
+  });
+}
+
+/** Ссылки со страницы места: index.html?tag=спорт или ?category=nature —
+ *  сразу открывают ленту с этим фильтром. */
+function applyUrlFilter(feed) {
+  if (!feed || feed.restored) return; // «Назад» важнее параметров в адресе
+  const params = new URLSearchParams(window.location.search);
+  const tag = params.get('tag');
+  const category = params.get('category');
+  if (tag) {
+    feed.setFilters({ category: 'all', query: '', tags: [tag] }, { syncInput: true, label: { kind: 'Тег', text: `#${tag}` } });
+  } else if (category && CATEGORIES[category]) {
+    feed.setFilters({ category, query: '', tags: null }, { syncInput: true });
+  } else {
+    return;
+  }
+  requestAnimationFrame(() => scrollToFeed({ instant: true }));
 }
 
 function renderSuggested(places) {
@@ -111,7 +131,8 @@ async function main() {
   renderSuggested(places);
 
   const feed = initFeed(places);
-  initHeroMoods(feed, places, { onSelect: scrollToFeed });
+  applyUrlFilter(feed);
+  initHeroMoods(feed, places, { onSelect: () => scrollToFeed() });
   initCategoryTiles(feed);
   initCollections(feed);
   initRandomizer(places);
