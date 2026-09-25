@@ -101,15 +101,8 @@
           <div>
             <h3>Адрес</h3>
             <p id="place-address">—</p>
+            <p class="info-card__sub" id="place-metro" hidden></p>
             <button type="button" class="map-link-btn" id="show-on-map">Показать на карте</button>
-          </div>
-        </div>
-
-        <div class="info-card">
-          <i class="fas fa-subway" aria-hidden="true"></i>
-          <div>
-            <h3>Метро</h3>
-            <p id="place-metro">—</p>
           </div>
         </div>
 
@@ -118,7 +111,6 @@
           <div>
             <h3>Часы работы</h3>
             <div id="place-schedule"></div>
-            <span class="open-status" id="open-status"></span>
             <span class="closing-timer" id="closing-timer"></span>
           </div>
         </div>
@@ -233,6 +225,11 @@
       </div>
       <div class="similar-scroll" id="similar-places-container"></div>
     </section>
+
+    <!-- Выход дальше, если пришли по ссылке прямо на место -->
+    <section class="place-more container">
+      <a href="index.html#all-places" class="btn place-more__btn">Посмотреть другие места →</a>
+    </section>
   </main>
 
   <!-- Мобильная панель быстрых действий -->
@@ -264,6 +261,25 @@
         <path d="M0,60 C200,10 400,0 600,20 C800,40 1000,10 1200,30 L1200,60 L0,60 Z"></path>
       </svg>
     </div>
+    <div class="container site-footer__top">
+      <div class="site-footer__brand">
+        <span class="logo footer-logo">Локадо</span>
+        <p class="site-footer__tagline">Места в Москве под настроение — для дней, когда хочется выбраться, но непонятно куда.</p>
+      </div>
+
+      <nav class="site-footer__col" aria-label="Навигация">
+        <h4>Навигация</h4>
+        <a href="index.html#map-section">Карта</a>
+        <a href="index.html#collections">Подборки</a>
+        <a href="index.html#all-places">Все места</a>
+      </nav>
+
+      <div class="site-footer__col">
+        <h4>Где работаем</h4>
+        <p class="site-footer__note">Москва и область.<br>Скоро — другие города.</p>
+      </div>
+    </div>
+
     <div class="container site-footer__bottom">
       <p>© 2026 Локадо. Сделано с любовью к прогулкам.</p>
     </div>

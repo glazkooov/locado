@@ -148,8 +148,29 @@ export function popular(places, count = 4) {
     .map((x) => x.p);
 }
 
+/** Похожие места: та же категория весит чуть больше одного общего тега
+ *  (иначе к парку первым шёл фудкорт с общим «атмосферно»), дальше — число
+ *  общих тегов, при равенстве — ближе по координатам. Раньше это была просто та
+ *  же категория в порядке из файла, у всех парков — один и тот же список. */
 export function similar(places, place, count = 6) {
-  return places.filter((p) => p.slug !== place.slug && p.category === place.category).slice(0, count);
+  const tags = new Set(place.tags || []);
+  const distance = (p) => {
+    if (!place.coords || !p.coords) return Infinity;
+    const dLat = p.coords[0] - place.coords[0];
+    const dLon = (p.coords[1] - place.coords[1]) * Math.cos((place.coords[0] * Math.PI) / 180);
+    return dLat * dLat + dLon * dLon;
+  };
+  return places
+    .filter((p) => p.slug !== place.slug)
+    .map((p) => ({
+      p,
+      score: (p.tags || []).filter((t) => tags.has(t)).length * 2 + (p.category === place.category ? 3 : 0),
+      d: distance(p)
+    }))
+    .filter((x) => x.score > 0)
+    .sort((a, b) => b.score - a.score || a.d - b.d)
+    .slice(0, count)
+    .map((x) => x.p);
 }
 
 /** Fisher–Yates: случайная выборка без повторов. */

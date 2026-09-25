@@ -227,30 +227,19 @@
   text-decoration: underline;
 }
 
-.open-status {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  margin-top: 8px;
-}
-
-.open-status.open {
-  background: #e8f5e9;
-  color: #2e7d32;
-}
-
-.open-status.closed {
-  background: #ffebee;
-  color: #c62828;
-}
-
 .closing-timer {
   display: block;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #c62828;
+  margin-top: 6px;
+}
+
+.closing-timer--open { color: #2e7d32; }
+
+.info-card .info-card__sub {
+  font-weight: 500;
   color: var(--text-light);
-  margin-top: 5px;
 }
 
 .tags-section {
@@ -260,6 +249,8 @@
 }
 
 .tag-chip {
+  text-decoration: none;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
   background: var(--card-bg);
   border: 1px solid var(--line);
   padding: 6px 14px;
@@ -621,4 +612,56 @@
 @media (prefers-reduced-motion: reduce) {
   .gallery-item img { transition: none; }
   .gallery-item:hover img { transform: none; }
+}
+
+.tag-chip:hover {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+
+/* Последняя карточка «Похожих мест» — вся категория */
+.similar-card--more {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 4px;
+  min-height: 236px;
+  padding: 18px;
+  background:
+    radial-gradient(ellipse 70% 60% at 90% 0%, rgba(255, 206, 150, 0.55), transparent 70%),
+    linear-gradient(160deg, #FFF6EE 0%, #FBE6D6 100%);
+}
+
+.similar-card__more-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.similar-card__more-title {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.place-more {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.place-more__btn {
+  text-decoration: none;
+  background: transparent;
+  border: 2px solid var(--primary);
+  color: var(--primary);
+}
+
+.place-more__btn:hover {
+  background: var(--primary);
+  color: #fff;
 }

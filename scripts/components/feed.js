@@ -237,8 +237,9 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
   };
 
   const snapshot = isBackForward() ? readSnapshot() : null;
-  if (snapshot?.state) restore(snapshot);
+  const restored = Boolean(snapshot?.state);
+  if (restored) restore(snapshot);
   else renderPage(true);
 
-  return { setFilters, setCategory, setQuery, reset };
+  return { setFilters, setCategory, setQuery, reset, restored };
 }

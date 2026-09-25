@@ -5,7 +5,7 @@ import {
   escapeHtml, safeUrl, cssUrl, getOpenStatus, describeStatusTimer, scheduleHtml, telHref, displayHost
 } from '../core/format.js';
 import {
-  loadPlaces, bySlug, similar, toggleFavoritePlace, markVisited, placeUrl, metroList
+  loadPlaces, bySlug, similar, toggleFavoritePlace, markVisited, placeUrl, metroList, categoryLabel
 } from '../core/places.js';
 import * as Storage from '../core/storage.js';
 import { similarCardHtml, bindImageFallback } from '../components/card.js';
@@ -90,8 +90,13 @@ function renderFacts(place) {
 
 function renderInfo(place) {
   $('#place-address').textContent = place.address || 'Не указан';
-  const metro = Array.isArray(place.metro) ? place.metro.join(', ') : (place.metro || 'Не указано');
-  $('#place-metro').textContent = metro;
+  // Метро — строкой в карточке адреса, а не отдельной карточкой из одной строки
+  const metro = metroList(place);
+  const metroEl = $('#place-metro');
+  if (metroEl) {
+    metroEl.textContent = metro.length ? `м. ${metro.join(', м. ')}` : '';
+    metroEl.hidden = !metro.length;
+  }
 
   const scheduleContainer = $('#place-schedule');
   scheduleContainer.innerHTML = scheduleHtml(place.schedule);
@@ -119,15 +124,15 @@ function renderInfo(place) {
   }
 }
 
+/** «Закроется через …» / «Откроется через …» — статус «Открыто» уже есть в
+ *  hero, отдельная плашка в карточке его только дублировала. */
 function refreshOpenStatus(place) {
   const status = getOpenStatus(place);
-  const statusSpan = $('#open-status');
-  if (statusSpan) {
-    statusSpan.textContent = status.isOpen ? 'Открыто' : 'Закрыто';
-    statusSpan.className = `open-status ${status.isOpen ? 'open' : 'closed'}`;
-  }
   const timerSpan = $('#closing-timer');
-  if (timerSpan) timerSpan.textContent = describeStatusTimer(status);
+  if (timerSpan) {
+    timerSpan.textContent = describeStatusTimer(status);
+    timerSpan.classList.toggle('closing-timer--open', status.isOpen);
+  }
 }
 
 function renderDescription(place) {
@@ -139,7 +144,9 @@ function renderTags(place) {
   const container = $('#place-tags');
   if (!place.tags || !place.tags.length) { container.style.display = 'none'; return; }
   container.style.display = '';
-  container.innerHTML = place.tags.map((t) => `<span class="tag-chip">#${escapeHtml(t)}</span>`).join('');
+  // Тег ведёт в ленту на главной с этим тегом — повод пойти дальше
+  container.innerHTML = place.tags.map((t) =>
+    `<a class="tag-chip" href="index.html?tag=${encodeURIComponent(t)}">#${escapeHtml(t)}</a>`).join('');
 }
 
 const AMENITY_ICONS = { wifi: 'fa-wifi', parking: 'fa-parking', card: 'fa-credit-card', kids: 'fa-child', outdoor: 'fa-tree', delivery: 'fa-truck', takeaway: 'fa-shopping-bag' };
@@ -187,8 +194,13 @@ async function renderMap(place) {
 function renderSimilar(place, allPlaces) {
   const container = $('#similar-places-container');
   const list = similar(allPlaces, place, 6);
-  if (!list.length) { container.innerHTML = '<p>Нет похожих мест</p>'; return; }
-  container.innerHTML = list.map(similarCardHtml).join('');
+  // В конце ряда — вся категория места
+  const moreCard = `
+    <a href="index.html?category=${encodeURIComponent(place.category)}" class="similar-card similar-card--more">
+      <span class="similar-card__more-label">Все места</span>
+      <span class="similar-card__more-title">${escapeHtml(categoryLabel(place.category))} →</span>
+    </a>`;
+  container.innerHTML = list.map(similarCardHtml).join('') + moreCard;
   bindImageFallback(container);
 }
 
@@ -242,14 +254,24 @@ function attachEventListeners(place, allPlaces) {
 
   // Шеринг
   const shareModal = createModal($('#share-modal'));
-  on($('#share-btn'), 'click', () => shareModal?.open());
+  // На телефоне — системное меню «Поделиться» (сразу все мессенджеры
+  // человека), на компьютере и без поддержки — наше окно
+  const canShareNatively = 'share' in navigator && window.matchMedia('(pointer: coarse)').matches;
+  const share = () => {
+    if (!canShareNatively) { shareModal?.open(); return; }
+    navigator.share({ title: place.name, text: place.description || '', url: window.location.href })
+      .catch((err) => { if (err?.name !== 'AbortError') shareModal?.open(); });
+  };
+  on($('#share-btn'), 'click', share);
   on($('#share-close'), 'click', () => shareModal?.close());
   const shareUrl = () => window.location.href;
   on($('.share-vk'), 'click', () => window.open(`https://vk.com/share.php?url=${encodeURIComponent(shareUrl())}&title=${encodeURIComponent(place.name)}`, '_blank'));
   on($('.share-telegram'), 'click', () => window.open(`https://t.me/share/url?url=${encodeURIComponent(shareUrl())}&text=${encodeURIComponent(place.name)}`, '_blank'));
   on($('.share-whatsapp'), 'click', () => window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(place.name + ' ' + shareUrl())}`, '_blank'));
   on($('.share-copy'), 'click', () => {
-    navigator.clipboard.writeText(shareUrl()).then(() => { showToast('Ссылка скопирована'); shareModal?.close(); });
+    navigator.clipboard.writeText(shareUrl())
+      .then(() => { showToast('Ссылка скопирована'); shareModal?.close(); })
+      .catch(() => showToast('Не удалось скопировать ссылку', true));
   });
 
   // Мобильная панель быстрых действий
@@ -260,7 +282,7 @@ function attachEventListeners(place, allPlaces) {
     else actionCall.style.display = 'none';
   }
   on($('#action-route'), 'click', () => { if (place.coords) window.open(routeUrl(place), '_blank'); });
-  on($('#action-share'), 'click', () => shareModal?.open());
+  on($('#action-share'), 'click', share);
 
   // Скролл к карте
   on($('#show-on-map'), 'click', () => $('.place-map')?.scrollIntoView({ behavior: 'smooth' }));
