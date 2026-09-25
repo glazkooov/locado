@@ -333,6 +333,14 @@
   text-decoration: underline;
 }
 
+.place-map .map-container {
+  height: 320px;
+}
+
+@media (min-width: 769px) {
+  .place-map .map-container { height: 420px; }
+}
+
 .map-actions {
   margin-top: 20px;
 }
