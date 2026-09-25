@@ -6,7 +6,8 @@ import { loadPlaces, popular, sample, categoryLabel } from '../core/places.js';
 import { bindCards, renderCards } from '../components/card.js';
 import { initFeed } from '../components/feed.js';
 import { initRandomizer } from '../components/randomizer.js';
-import { initHeroMoods } from '../components/hero-moods.js';
+import { initHeroMoods, renderHeroMoods } from '../components/hero-moods.js';
+import { heroGreeting } from '../core/daypart.js';
 import { renderCategoryButtons } from '../components/category-buttons.js';
 import { initPlacesMap } from '../components/map.js';
 import { showToast } from '../components/toast.js';
@@ -34,6 +35,16 @@ function renderSuggested(places) {
         <p>${escapeHtml(p.description)}</p>
       </div>
     </a>`).join('');
+}
+
+/** «Пятница, вечер» + вопрос под время суток; возвращает daypart для порядка настроений. */
+function renderHeroGreeting() {
+  const greeting = heroGreeting();
+  const when = $('#hero-when');
+  const question = $('#hero-question');
+  if (when) { when.textContent = greeting.when; when.hidden = false; }
+  if (question) question.textContent = greeting.question;
+  return greeting.daypart;
 }
 
 function skeletonCards(n, cardClass) {
@@ -74,6 +85,7 @@ function initCollections(feed) {
 }
 
 async function main() {
+  renderHeroMoods(renderHeroGreeting());
   renderCategoryButtons();
   bindCards(document.body);
 
