@@ -73,8 +73,11 @@ export async function loadPlaces() {
 
 // ---------- Выборки ----------
 export const bySlug = (places, slug) => places.find((p) => p.slug === slug);
-export const byCategory = (places, category) =>
-  category === 'all' || !category ? places.slice() : places.filter((p) => p.category === category);
+export const byCategory = (places, category) => {
+  if (!category || category === 'all') return places.slice();
+  if (Array.isArray(category)) return places.filter((p) => category.includes(p.category));
+  return places.filter((p) => p.category === category);
+};
 
 export const metroList = (place) => (Array.isArray(place.metro) ? place.metro : [place.metro]).filter(Boolean);
 
@@ -93,7 +96,7 @@ export function search(places, query) {
   });
 }
 
-export function filterPlaces(places, { category = 'all', query = '', metros = [], price = '', openNow = false } = {}) {
+export function filterPlaces(places, { category = 'all', query = '', metros = [], price = '', openNow = false, tags = null } = {}) {
   let list = byCategory(places, category);
   list = search(list, query);
   if (metros.length) {
@@ -105,6 +108,9 @@ export function filterPlaces(places, { category = 'all', query = '', metros = []
   if (openNow) {
     // импортируем лениво, чтобы не тянуть format.js туда, где он не нужен
     list = list.filter((p) => isPlaceOpenNow(p));
+  }
+  if (tags && tags.length) {
+    list = list.filter((p) => (p.tags || []).some((t) => tags.includes(t)));
   }
   return list;
 }

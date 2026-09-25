@@ -15,15 +15,19 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
   const emptyBlock = $('#feed-empty');
   const tabs = $$('.scroll__category-btn');
 
-  let state = { category: 'all', query: '' };
+  let state = { category: 'all', query: '', tags: null };
   let shown = 0;
   let isLoading = false;
 
   const filtered = () => filterPlaces(allPlaces, state);
 
   const syncTabs = () => {
+    // Пока действует настроение из hero-pill (tags или список категорий),
+    // ни одна вкладка не подсвечивается — иначе «Все» выглядела бы активной
+    // при уже отфильтрованной ленте.
+    const moodActive = Boolean(state.tags) || Array.isArray(state.category);
     tabs.forEach((btn) => {
-      const active = btn.dataset.category === state.category;
+      const active = !moodActive && btn.dataset.category === state.category;
       btn.classList.toggle('active', active);
       btn.setAttribute('aria-selected', String(active));
     });
@@ -67,9 +71,19 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
     renderPage(true);
   };
 
-  const setCategory = (category) => setFilters({ category });
-  const setQuery = (query) => setFilters({ query });
-  const reset = () => setFilters({ category: 'all', query: '' }, { syncInput: true });
+  // Явный клик по категории/ручной ввод в поиске отменяет ранее выбранное
+  // настроение (tags), иначе старый фильтр pill'а продолжал бы действовать
+  // «невидимо» поверх нового выбора.
+  const setCategory = (category) => setFilters({ category, tags: null });
+  // Если настроение сработало через запасной план (список категорий), ручной
+  // поиск тоже его сбрасывает — иначе текст искался бы только внутри
+  // невидимого набора категорий этого настроения.
+  const setQuery = (query) => setFilters({
+    query,
+    tags: null,
+    ...(Array.isArray(state.category) ? { category: 'all' } : {})
+  });
+  const reset = () => setFilters({ category: 'all', query: '', tags: null }, { syncInput: true });
 
   // --- UI: вкладки категорий ---
   on($('#categories-scroll'), 'click', '.scroll__category-btn', (e, btn) => {

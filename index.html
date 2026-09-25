@@ -46,28 +46,35 @@
       <div class="container hero__content">
         <h1 class="hero__title"><span>Локадо</span> — город, рассказанный простыми словами</h1>
 
-        <div class="hero__pills" aria-hidden="true">
-          <span class="hero__pill"><i class="fas fa-leaf" aria-hidden="true"></i> тихо и спокойно</span>
-          <span class="hero__pill"><i class="fas fa-palette" aria-hidden="true"></i> вдохновиться</span>
-          <span class="hero__pill"><i class="fas fa-city" aria-hidden="true"></i> романтично вечером</span>
-          <span class="hero__pill"><i class="fas fa-mug-hot" aria-hidden="true"></i> провести время в одиночку</span>
+        <div class="hero__pills" role="group" aria-label="Подобрать место по настроению">
+          <button type="button" class="hero__pill" data-mood="quiet-nature">
+            <i class="fas fa-leaf" aria-hidden="true"></i> тихая прогулка на природе
+          </button>
+          <button type="button" class="hero__pill" data-mood="romantic-evening">
+            <i class="fas fa-city" aria-hidden="true"></i> романтично вечером
+          </button>
+          <button type="button" class="hero__pill" data-mood="culture-art">
+            <i class="fas fa-palette" aria-hidden="true"></i> культура и искусство
+          </button>
+          <button type="button" class="hero__pill" data-mood="food">
+            <i class="fas fa-utensils" aria-hidden="true"></i> вкусно поесть
+          </button>
+          <button type="button" class="hero__pill" data-mood="active-fun">
+            <i class="fas fa-ticket" aria-hidden="true"></i> активности и развлечения
+          </button>
         </div>
 
-        <div class="hero__search-group">
-          <div class="hero__search-wrapper">
-            <i class="fas fa-search hero__search-icon" aria-hidden="true"></i>
-            <input type="text" class="search-input hero__search-input" id="main-search-input"
-                   placeholder="Куда пойдем?" autocomplete="off">
-            <button class="hero__random-icon" id="hero-random-icon" aria-label="Случайное место" title="Случайное место">
-              <i class="fas fa-dice" aria-hidden="true"></i>
-            </button>
-            <div class="random-tooltip" id="random-tooltip" role="tooltip">Выбрать случайное место</div>
-            <button class="hero__search-clear search-clear" id="hero-clear-btn" aria-label="Очистить поиск">
-              <i class="fas fa-times" aria-hidden="true"></i>
-            </button>
-          </div>
-          <button type="button" id="main-search-btn" class="hero__search-btn">Найти</button>
+        <div class="hero__random">
+          <button type="button" class="hero__random-icon" id="hero-random-icon">
+            <i class="fas fa-dice" aria-hidden="true"></i> Затрудняюсь выбрать — подберите за меня
+          </button>
         </div>
+
+        <!--
+          Hero-поиск отключён для MVP (25.09.2026) — сохранён целиком и
+          готов к переиспользованию, ничего не удалено:
+            scripts/_archive/hero-search.html, .legacy.js, styles/_archive/hero-search.css
+        -->
       </div>
     </section>
 

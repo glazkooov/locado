@@ -1,0 +1,142 @@
+/*
+  АРХИВ: стили hero-поиска. См. scripts/_archive/hero-search.html для статуса
+  и инструкции по возврату. Этот файл НЕ импортирован в styles/main.css —
+  чтобы снова подключить, раскомментируйте @import в main.css.
+
+  Примечание: .hero__random-icon здесь НЕ дублируется — кнопка-рандомайзер
+  осталась на живой странице (отдельный блок .hero__random) и её стили
+  активны в styles/components/search.css. При возврате поиска кнопку нужно
+  будет снова спозиционировать внутри поля — нужные правила (position:
+  absolute; right: 15px; top: 50%; transform: translateY(-50%)) см. в
+  разделе «Кубик внутри поля» ниже.
+*/
+
+.hero__search-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 15px 30px;
+}
+
+.hero__search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.search-input {
+  width: 100%;
+  padding: 18px 50px 18px 45px; /* правый отступ для иконок */
+  border: none;
+  border-radius: 15px;
+  font-size: 1rem;
+  outline: none;
+}
+
+.hero__search-input {
+  position: relative;
+  z-index: 2;
+}
+
+.hero__search-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+  font-size: 1.2rem;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.hero__search-btn {
+  padding: 18px 28px;
+  white-space: nowrap;
+}
+
+.hero__search-clear {
+  display: none;
+  font-size: 1.5rem;
+  position: absolute;
+  right: 50px; /* освобождаем место для рандомайзера */
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 15;
+  padding: 5px;
+}
+
+/* Кубик внутри поля (как было до отключения поиска) */
+.hero__search-wrapper .hero__random-icon {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.4rem;
+  color: #999;
+  z-index: 3;
+  padding: 8px;
+}
+
+.hero__search-wrapper .hero__random-icon:hover {
+  color: var(--primary);
+  transform: translateY(-50%) scale(1.05);
+}
+
+/* Подсказка «Выбрать случайное место» слева от кубика */
+.random-tooltip {
+  position: absolute;
+  right: 70px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #333;
+  color: white;
+  font-size: 0.75rem;
+  padding: 6px 14px;
+  border-radius: 40px;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.random-tooltip::after {
+  content: '';
+  position: absolute;
+  right: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 6px 0 6px 6px;
+  border-color: transparent transparent transparent #333;
+}
+
+.random-tooltip.show {
+  opacity: 1;
+}
+
+@media (min-width: 768px) {
+  .hero__search-group {
+    flex-direction: row;
+    gap: 7px;
+    max-width: 800px;
+    padding-bottom: 50px;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero__search-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero__search-btn { padding: 16px 20px; }
+}

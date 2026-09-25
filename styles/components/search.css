@@ -1,115 +1,27 @@
-.hero__search-group {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 0 15px 30px;
-}
-
-.hero__search-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-  width: 100%;
-}
-
-.search-input {
-  width: 100%;
-  padding: 18px 50px 18px 45px; /* правый отступ для иконок */
-  border: none;
-  border-radius: 15px;
-  font-size: 1rem;
-  outline: none;
-}
-
-.hero__search-input {
-  position: relative;
-  z-index: 2;
-}
-
-.hero__search-icon {
-  position: absolute;
-  left: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #999;
-  font-size: 1.2rem;
-  z-index: 3;
-  pointer-events: none;
-}
-
-.hero__search-btn {
-  padding: 18px 28px;
-  white-space: nowrap;
-}
-
-.hero__search-clear {
-  display: none;
-  font-size: 1.5rem;
-  position: absolute;
-  right: 50px; /* освобождаем место для рандомайзера */
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 15;
-  padding: 5px;
-}
+/*
+  Hero-поиск (поле, кнопка «Найти», подсказка у кубика) отключён для MVP и
+  перенесён в архив: styles/_archive/hero-search.css (не импортирован в
+  main.css). Здесь осталась только кнопка-рандомайзер — она переехала в
+  отдельный блок .hero__random на главной (index.html) и по-прежнему активна.
+*/
 
 .hero__random-icon {
-  position: absolute;
-  right: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  font-size: 1.4rem;
-  color: #999;
-  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 4px;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.75);
   transition: color 0.2s, transform 0.1s;
-  z-index: 3;
-  padding: 8px;
-  display: flex; /* всегда виден */
+}
+
+.hero__random-icon i {
+  font-size: 1rem;
 }
 
 .hero__random-icon:hover {
-  color: var(--primary);
-  transform: translateY(-50%) scale(1.05);
-}
-
-.random-tooltip {
-  position: absolute;
-  right: 70px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: #333;
-  color: white;
-  font-size: 0.75rem;
-  padding: 6px 14px;
-  border-radius: 40px;
-  white-space: nowrap;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-  z-index: 10;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-}
-
-.random-tooltip::after {
-  content: '';
-  position: absolute;
-  right: -6px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 6px 0 6px 6px;
-  border-color: transparent transparent transparent #333;
-}
-
-.random-tooltip.show {
-  opacity: 1;
+  color: #fff;
+  transform: scale(1.03);
 }
 
 .map-search-group {

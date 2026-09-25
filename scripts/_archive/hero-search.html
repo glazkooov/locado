@@ -1,0 +1,39 @@
+<!--
+  АРХИВ: hero-поиск (большое поле поиска в hero-блоке главной страницы).
+
+  Статус: отключён для MVP (решение от 25.09.2026) — свободный текстовый
+  ввод на самом видном месте страницы слишком легко давал пустую выдачу на
+  произвольный запрос пользователя. Вместо него в hero теперь стоят
+  кликабельные hero-pills с настроениями (см. index.html и scripts/core/moods.js).
+
+  Ничего не удалено — это рабочий, самодостаточный кусок разметки на случай,
+  если понадобится вернуть его сюда или перенести в другой проект.
+
+  Чтобы вернуть на сайт:
+  1. Вставить этот блок обратно в index.html внутри <div class="container hero__content">,
+     на место, где сейчас стоит комментарий-заглушка.
+  2. Подключить стили: styles/_archive/hero-search.css (раскомментировать
+     импорт в styles/main.css).
+  3. Подключить логику: импортировать initHeroSearch, initPlaceholderTyping и
+     initRandomTooltip из scripts/_archive/hero-search.legacy.js в
+     scripts/pages/home.js и вызвать их в main() (как это было раньше).
+  4. Кнопка-рандомайзер (#hero-random-icon) сейчас живёт на странице в
+     отдельном блоке .hero__random с видимой подписью. Если возвращаете
+     поиск целиком, как ниже — удалите блок .hero__random из index.html,
+     чтобы не было двух кнопок с одинаковым id.
+-->
+<div class="hero__search-group">
+  <div class="hero__search-wrapper">
+    <i class="fas fa-search hero__search-icon" aria-hidden="true"></i>
+    <input type="text" class="search-input hero__search-input" id="main-search-input"
+           placeholder="Куда пойдем?" autocomplete="off">
+    <button class="hero__random-icon" id="hero-random-icon" aria-label="Случайное место" title="Случайное место">
+      <i class="fas fa-dice" aria-hidden="true"></i>
+    </button>
+    <div class="random-tooltip" id="random-tooltip" role="tooltip">Выбрать случайное место</div>
+    <button class="hero__search-clear search-clear" id="hero-clear-btn" aria-label="Очистить поиск">
+      <i class="fas fa-times" aria-hidden="true"></i>
+    </button>
+  </div>
+  <button type="button" id="main-search-btn" class="hero__search-btn">Найти</button>
+</div>

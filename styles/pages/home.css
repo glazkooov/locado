@@ -49,7 +49,7 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: 10px;
-  max-width: 640px;
+  max-width: 760px;
   padding: 0 15px;
 }
 
@@ -64,7 +64,26 @@
   border-radius: 40px;
   font-size: 0.8rem;
   color: rgba(255, 255, 255, 0.92);
-  cursor: default;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.hero__pill:hover {
+  background: rgba(255, 255, 255, 0.22);
+  transform: translateY(-2px);
+}
+
+.hero__pill.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+
+.hero__random {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding-bottom: 10px;
 }
 
 @media (min-width: 576px) {
@@ -84,20 +103,6 @@
   font-weight: 800;
 }
 
-@media (min-width: 768px) {
-  .hero__search-group {
-    flex-direction: row;
-    gap: 7px;
-    max-width: 800px;
-    padding-bottom: 50px;
-  }
-}
-
-@media (max-width: 767px) {
-  .hero__search-btn {
-    width: 100%;
-  }
-}
 
 .manifesto {
   margin-top: -1px;
@@ -911,7 +916,6 @@
   .popular__cards { grid-template-columns: 1fr; }
   .popular__cards .place-card { aspect-ratio: 4 / 3; }
 
-  .hero__search-btn { padding: 16px 20px; }
   .category-btn { padding: 10px 16px; font-size: 0.85rem; }
 
   .state-screen { padding: 48px 0; }
