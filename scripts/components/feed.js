@@ -1,13 +1,30 @@
-// components/feed.js — лента мест на главной: категории, поиск, пагинация
-// (кнопка "Показать ещё N").
+// components/feed.js — лента мест на главной: категории, поиск, бесконечная
+// подгрузка и раскладка «как в Pinterest» (колонки разной высоты).
 
 import { $, $$, on, toggleClear } from '../core/dom.js';
 import { filterPlaces } from '../core/places.js';
 import { pluralize } from '../core/format.js';
-import { renderCards } from './card.js';
+import * as Storage from '../core/storage.js';
+import { cardHtml } from './card.js';
 import { setPressed } from './category-buttons.js';
 
-const PAGE_SIZE = 9;
+// 12 делится на 2, 3 и 4 колонки — страница заполняет ряды ровно
+const PAGE_SIZE = 12;
+
+// Пропорции карточек (высота / ширина) — классы .place-card--r0…r4 в
+// card.css. По ним без замеров DOM знаем высоту каждой колонки.
+const CARD_RATIOS = [5 / 4, 4 / 3, 1, 1.4, 4 / 5];
+
+/** Пропорция карточки зависит от самого места (простой хеш slug): у места
+ *  одна и та же форма при любом фильтре, а соседние карточки различаются. */
+function ratioIndex(slug = '') {
+  let hash = 0;
+  for (let i = 0; i < slug.length; i++) hash = (hash * 31 + slug.charCodeAt(i)) >>> 0;
+  return hash % CARD_RATIOS.length;
+}
+
+// Подгружаем следующую страницу заранее, пока до конца ленты ещё ~2 экрана
+const PRELOAD_MARGIN = 800;
 
 export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
   const container = $('#places-container');
@@ -24,6 +41,32 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
   // { kind: 'Настроение', text: 'Тихая прогулка на природе' } или null.
   let state = { category: 'all', query: '', tags: null, label: null };
   let shown = 0;
+  let list = [];
+
+  // --- Раскладка по колонкам ---
+  // Не CSS column-count: при подгрузке он перераскладывает всё заново, и уже
+  // показанные карточки прыгают между колонками. Здесь каждая новая карточка
+  // встаёт в самую короткую колонку, а старые остаются на месте. Число
+  // колонок задаёт CSS (grid-template-columns у .places-grid).
+  let columns = [];
+  let heights = [];
+  const columnCount = () => getComputedStyle(container).gridTemplateColumns.split(' ').length || 1;
+
+  const resetColumns = () => {
+    container.innerHTML = Array.from({ length: columnCount() }, () => '<div class="places-grid__col"></div>').join('');
+    columns = [...container.children];
+    heights = columns.map(() => 0);
+  };
+
+  const appendCards = (places) => {
+    const favorites = Storage.getFavorites();
+    places.forEach((place) => {
+      const ratio = ratioIndex(place.slug);
+      const col = heights.indexOf(Math.min(...heights));
+      columns[col].insertAdjacentHTML('beforeend', cardHtml(place, favorites.includes(place.slug), `place-card--r${ratio}`));
+      heights[col] += CARD_RATIOS[ratio];
+    });
+  };
 
   const filtered = () => filterPlaces(allPlaces, state);
 
@@ -45,7 +88,7 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
   };
 
   const renderPage = (reset) => {
-    const list = filtered();
+    if (reset) list = filtered();
     syncActiveBar(list.length);
     if (emptyBlock) emptyBlock.hidden = list.length > 0;
     // «Это все места» уместно только после непустой ленты — иначе рядом
@@ -53,23 +96,30 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
     if (endBlock) endBlock.hidden = list.length === 0;
 
     if (reset) {
-      shown = Math.min(pageSize, list.length);
-      renderCards(container, list.slice(0, shown));
-    } else {
-      const next = list.slice(shown, shown + pageSize);
-      if (next.length) {
-        renderCards(container, next, { append: true });
-        shown += next.length;
-      }
+      resetColumns();
+      shown = 0;
     }
+    const next = list.slice(shown, shown + pageSize);
+    appendCards(next);
+    shown += next.length;
+
     if (showMoreBtn) {
       const rest = list.length - shown;
       showMoreBtn.classList.toggle('invisible', rest <= 0);
       showMoreBtn.textContent = `Показать ещё ${Math.min(rest, pageSize)}`;
     }
+    requestAnimationFrame(maybeLoadMore);
   };
 
-  const loadMore = () => renderPage(false);
+  const loadMore = () => { if (shown < list.length) renderPage(false); };
+
+  // Бесконечная лента: когда конец ленты близко, подгружаем следующую
+  // страницу. Проверяем и после каждой подгрузки — если карточки короткие и
+  // конец всё ещё на экране, IntersectionObserver второй раз не сработает.
+  function maybeLoadMore() {
+    if (!showMoreBtn || shown >= list.length) return;
+    if (showMoreBtn.getBoundingClientRect().top < window.innerHeight + PRELOAD_MARGIN) loadMore();
+  }
 
   const setFilters = (next, { syncInput = false, label = null } = {}) => {
     state = { ...state, ...next, label };
@@ -130,10 +180,27 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
   on($('#feed-reset-btn'), 'click', reset);
   on($('#feed-active-reset'), 'click', reset);
 
-  // --- UI: "Показать ещё" ---
-  // Без автоподгрузки: пользователь сам решает, листать ли дальше, и
-  // может спокойно долистать до футера.
+  // --- UI: бесконечная подгрузка ---
+  // Кнопка «Показать ещё» остаётся запасным вариантом: для клавиатуры и
+  // браузеров без IntersectionObserver.
   on(showMoreBtn, 'click', loadMore);
+  if (showMoreBtn && 'IntersectionObserver' in window) {
+    new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) loadMore();
+    }, { rootMargin: `0px 0px ${PRELOAD_MARGIN}px 0px` }).observe(showMoreBtn);
+  }
+
+  // --- UI: смена числа колонок (поворот телефона, ресайз окна) ---
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      if (columnCount() === columns.length) return;
+      const count = shown;
+      resetColumns();
+      appendCards(list.slice(0, count));
+    }, 150);
+  }, { passive: true });
 
   renderPage(true);
 
