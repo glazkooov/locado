@@ -29,7 +29,7 @@ function renderSuggested(places) {
   if (!picks.length) { container.closest('.suggested-places')?.remove(); return; }
   container.innerHTML = picks.map((p) => `
     <a href="place.html?slug=${encodeURIComponent(p.slug)}" class="suggested-card">
-      <div class="suggested-img" style="background-image: ${cssUrl(p.photo)}"></div>
+      <div class="suggested-img" style='background-image: ${cssUrl(p.photo)}'></div>
       <div class="suggested-content">
         <h3>${escapeHtml(p.name)}</h3>
         <p>${escapeHtml(p.description)}</p>

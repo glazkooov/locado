@@ -26,37 +26,30 @@ h1, h2, h3, h4, h5, h6,
 }
 
 .section-title {
-  font-size: 1.6rem; /* мобильный */
+  font-size: 1.7rem; /* мобильный */
+  line-height: 1.2;
   text-align: left;
   color: var(--text);
-  font-weight: 600;
-  position: relative;
+  font-weight: 700;
+  letter-spacing: -0.03em;
 }
 
-.section-title::after {
-  content: '';
-  display: block;
-  width: 40px;
-  height: 4px;
-  background: linear-gradient(90deg, var(--primary), var(--primary-light));
-  margin-top: 8px;
-  border-radius: 2px;
-}
-
+/* Заголовок секции — как в hero: маленькая подпись сверху, крупная фраза */
 .section-head {
   display: flex;
-  justify-content: space-between;
-  align-items: end;
-  margin-bottom: 35px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 28px;
 }
 
 .section-mini {
-  text-transform: uppercase;
-  font-size: 0.8rem;
-  letter-spacing: 1px;
-  color: var(--text-light);
-  margin-bottom: 17px;
   display: block;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  color: var(--primary);
 }
 
 .hero__title {

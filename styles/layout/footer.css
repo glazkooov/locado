@@ -1,9 +1,22 @@
 .site-footer {
   position: relative;
   margin-top: 110px;
-  background: var(--ink);
+  /* тёплый отсвет снизу, как у вечерней и ночной палитры hero */
+  background:
+    radial-gradient(ellipse 50% 70% at 85% 100%, rgba(255, 122, 48, 0.16), transparent 70%),
+    var(--ink);
   color: rgba(255, 255, 255, 0.75);
   padding-top: 56px;
+}
+
+.site-footer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--grain);
+  opacity: 0.12;
+  mix-blend-mode: soft-light;
+  pointer-events: none;
 }
 
 .footer-wave {
