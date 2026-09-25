@@ -53,6 +53,7 @@ function updateFavButtonUI(isFav) {
 }
 
 function renderHero(place) {
+  $('.place-hero')?.classList.remove('is-loading');
   const heroBg = $('#hero-bg');
   if (heroBg) heroBg.style.backgroundImage = cssUrl(place.photo);
   $('#place-category').innerHTML = `<i class="fas fa-tag" aria-hidden="true"></i> ${escapeHtml(place.type || place.category)}`;
@@ -142,8 +143,9 @@ function renderDescription(place) {
 
 function renderTags(place) {
   const container = $('#place-tags');
-  if (!place.tags || !place.tags.length) { container.style.display = 'none'; return; }
-  container.style.display = '';
+  const aside = $('#place-tags-aside');
+  if (!place.tags || !place.tags.length) { if (aside) aside.hidden = true; return; }
+  if (aside) aside.hidden = false;
   // Тег ведёт в ленту на главной с этим тегом — повод пойти дальше
   container.innerHTML = place.tags.map((t) =>
     `<a class="tag-chip" href="index.html?tag=${encodeURIComponent(t)}">#${escapeHtml(t)}</a>`).join('');

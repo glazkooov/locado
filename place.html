@@ -60,7 +60,8 @@
 
   <main id="place-content">
     <!-- Hero -->
-    <section class="place-hero">
+    <!-- is-loading — заглушка до загрузки данных, снимает place.js -->
+    <section class="place-hero is-loading">
       <div class="hero-bg" id="hero-bg"></div>
       <div class="hero-overlay" aria-hidden="true"></div>
       <div class="container hero-content">
@@ -132,8 +133,6 @@
           </div>
         </div>
       </div>
-
-      <div class="tags-section" id="place-tags"></div>
     </section>
 
     <!-- Описание -->
@@ -142,13 +141,22 @@
         <span class="section-mini" aria-hidden="true">Почему стоит заглянуть</span>
         <h2 class="section-title">О месте</h2>
       </div>
-      <div class="description-text" id="place-description"></div>
+      <!-- На компьютере — текст слева, теги справа; на телефоне — друг под другом -->
+      <div class="place-description__layout">
+        <div class="place-description__main">
+          <div class="description-text" id="place-description"></div>
+          <div class="amenities-section" id="place-amenities"></div>
+          <button type="button" class="suggestion-edit" id="suggest-edit">
+            <i class="far fa-pen-to-square" aria-hidden="true"></i> Нашли неточность? Напишите нам
+          </button>
+        </div>
 
-      <div class="amenities-section" id="place-amenities"></div>
-
-      <button type="button" class="suggestion-edit" id="suggest-edit">
-        <i class="far fa-pen-to-square" aria-hidden="true"></i> Нашли неточность? Напишите нам
-      </button>
+        <aside class="place-description__aside" id="place-tags-aside" aria-labelledby="place-tags-title">
+          <h3 class="place-aside__title" id="place-tags-title">Настроение места</h3>
+          <div class="tags-section" id="place-tags"></div>
+          <p class="place-aside__hint">Нажмите на тег — покажем похожие места</p>
+        </aside>
+      </div>
     </section>
 
     <!-- Галерея -->
