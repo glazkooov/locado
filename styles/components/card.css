@@ -25,23 +25,25 @@
 .place-card {
   position: relative;
   overflow: hidden;
-  border-radius: 16px;
-  box-shadow: var(--shadow);
-  background: white;
-  transition: transform 0.3s ease;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-soft);
+  background: var(--cream-deep);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   max-width: 100%;
   min-height: 280px;
   cursor: pointer;
 }
 
-.place-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); }
+.place-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-soft-hover); }
 
+.place-card:hover img { transform: scale(1.04); }
+
+/* То же затемнение снизу, что у карточек настроений в hero */
 .place-card::before {
   content: '';
   position: absolute;
-  bottom: 0; left: 0; right: 0;
-  height: 30%;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.4), rgba(0,0,0,0));
+  inset: 0;
+  background: var(--photo-fade);
   z-index: 1;
   pointer-events: none;
 }
@@ -52,21 +54,21 @@
   left: 12px;
   right: 12px;
   display: flex;
-  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px;
   align-items: center;
   z-index: 2;
 }
 
+/* Одна спокойная плашка вместо разноцветных по категориям — как
+   «Сейчас в тему» у карточек настроений */
 .place-card__category {
-  padding: 6px 16px;
+  padding: 4px 10px;
   font-size: 0.7rem;
   font-weight: 700;
-  color: white;
-  border-radius: 40px;
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-  backdrop-filter: blur(8px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 20px;
 }
 
 .fav-btn {
@@ -115,6 +117,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.5s ease;
 }
 
 .place-card__info {
@@ -122,54 +125,25 @@
   bottom: 0;
   z-index: 2;
   width: 100%;
-  padding: 12px 15px;
-  background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+  padding: 14px 16px;
   color: white;
   line-height: 1.2;
 }
 
 .place-card__info h3 {
-  font-size: 1.4rem;
-  font-weight: 600;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   margin: 0;
 }
 
-.place-card[data-category="all"] .place-card__category,
-.category-btn.active[data-category="all"] { background-color: var(--color-all); color: var(--category-text-active); }
-
-.place-card[data-category="nature"] .place-card__category,
-.category-btn.active[data-category="nature"] { background-color: var(--color-nature); }
-
-.place-card[data-category="art"] .place-card__category,
-.category-btn.active[data-category="art"] { background-color: var(--color-art); }
-
-.place-card[data-category="food"] .place-card__category,
-.category-btn.active[data-category="food"] { background-color: var(--color-food); }
-
-.place-card[data-category="photo"] .place-card__category,
-.category-btn.active[data-category="photo"] { background-color: var(--color-photo); }
-
-.place-card[data-category="theater"] .place-card__category,
-.category-btn.active[data-category="theater"] { background-color: var(--color-theater); }
-
-.place-card[data-category="entertainment"] .place-card__category,
-.category-btn.active[data-category="entertainment"] { background-color: var(--color-entertainment); }
-
 .badge-temporary {
-  position: absolute;
-  top: 40px;
-  left: 0px;
-  background: linear-gradient(135deg, #ff5100, #ff7730);
-  color: white;
+  padding: 4px 10px;
   font-size: 0.7rem;
   font-weight: 700;
-  padding: 5px 12px;
-  border-radius: 30px;
-  z-index: 15;
-  box-shadow: 0 4px 14px rgba(255,87,10,0.4);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  animation: pulseBadge 2s ease-in-out infinite;
+  color: #fff;
+  background: var(--primary);
+  border-radius: 20px;
 }
 
 .similar-card {
@@ -203,11 +177,6 @@
 .fav-btn-hero[aria-pressed="true"],
 .mobile-actions-bar .active { color: var(--primary); }
 
-@keyframes pulseBadge {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.06); }
-}
-
 /* Скелетоны на время загрузки данных */
 .place-card.skeleton,
 .suggested-card.skeleton {
@@ -234,6 +203,9 @@
 .suggested-card.skeleton { min-height: 220px; }
 
 @media (prefers-reduced-motion: reduce) {
+  .place-card img { transition: none; }
+  .place-card:hover,
+  .place-card:hover img { transform: none; }
   .place-card.skeleton::before,
   .suggested-card.skeleton::before { animation: none; display: none; }
 }

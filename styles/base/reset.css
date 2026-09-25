@@ -35,11 +35,19 @@ body {
   line-height: 1.6;
   color: var(--text);
   background-color: var(--bg);
-  background-image:
-    radial-gradient(circle at 1px 1px, rgba(46, 46, 46, 0.05) 1px, transparent 0);
-  background-size: 24px 24px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Лёгкое зерно на всей странице — тот же «плёночный» фон, что в hero */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: var(--grain);
+  opacity: 0.05;
+  pointer-events: none;
+  z-index: -1;
 }
 
 a {

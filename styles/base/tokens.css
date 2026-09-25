@@ -44,6 +44,16 @@
 
 :root {
   --header-h: 68px;
+
+  /* Общий язык страницы (как у карточек настроений в hero) */
+  --radius-card: 18px;
+  --line: rgba(42, 37, 33, 0.10);
+  --line-strong: rgba(42, 37, 33, 0.22);
+  --shadow-soft: 0 10px 30px rgba(40, 20, 10, 0.10);
+  --shadow-soft-hover: 0 16px 40px rgba(40, 20, 10, 0.16);
+  --photo-fade: linear-gradient(180deg, rgba(0, 0, 0, 0) 35%, rgba(0, 0, 0, 0.78) 100%);
+  /* Плёночное зерно: hero, фон страницы, футер */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 /* Первый экран главной: фон и цвета по времени суток. data-daypart на <html>

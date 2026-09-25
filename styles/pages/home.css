@@ -17,7 +17,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background: var(--grain);
   opacity: 0.16;
   mix-blend-mode: soft-light;
   pointer-events: none;
@@ -323,17 +323,17 @@
 }
 
 .popular {
-  margin-top: 60px;
+  margin-top: 88px;
 }
 
 .popular__cards {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 30px;
+  gap: 20px;
 }
 
 .suggested-places {
-  margin-top: 72px;
+  margin-top: 96px;
 }
 
 .suggested-grid {
@@ -342,53 +342,57 @@
   gap: 24px;
 }
 
+/* Тот же язык, что у карточек мест, но с описанием под фото */
 .suggested-card {
-  border-radius: 20px;
+  border-radius: var(--radius-card);
   overflow: hidden;
   display: flex;
   flex-direction: column;
   text-decoration: none;
-  color: #222;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease;
+  color: var(--text);
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .suggested-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-soft-hover);
 }
 
 .suggested-img {
   padding-top: 56%;
+  background-color: var(--cream-deep);
   background-size: cover;
   background-position: center;
-  border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 
 .suggested-content {
-  padding: 16px;
+  padding: 16px 18px 18px;
 }
 
 .suggested-content h3 {
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
   margin-bottom: 6px;
 }
 
 .suggested-content p {
   font-size: 0.95rem;
-  opacity: 0.8;
-  line-height: 1.4;
+  color: var(--text-light);
+  line-height: 1.45;
 }
 
 .categories-collections {
-    margin-top: 72px;
+  margin-top: 96px;
 }
 
 .cat-col-grid {
   display: grid;
   grid-template-columns: 0.85fr 1.15fr;
-  gap: 24px;
+  gap: 20px;
   align-items: start;
 }
 
@@ -410,140 +414,47 @@
   gap: 16px;
 }
 
+/* Плитки категорий: тёплый «утренний» градиент hero вместо холодного
+   серо-голубого и разноцветных пятен; иконка — в акцентном цвете */
 .category-masonry {
   position: relative;
-  border-radius: 28px;
-  padding: 26px 18px 22px;
-  background: #ffffff;
-  border: none;
+  border-radius: var(--radius-card);
+  padding: 22px 18px 18px;
+  border: 1px solid var(--line);
+  background:
+    radial-gradient(ellipse 70% 60% at 90% 0%, rgba(255, 206, 150, 0.55), transparent 70%),
+    linear-gradient(160deg, #FFF6EE 0%, #FBE6D6 100%);
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-end;
   overflow: hidden;
-  min-height: 160px;
+  min-height: 140px;
   text-align: left;
-  color: #1a1a1a;
-
-  background: linear-gradient(145deg, #f8f9ff 0%, #eef0f8 100%);
+  color: var(--text);
+  font-family: inherit;
 }
 
-.masonry-bg-shape {
-  position: absolute;
-  top: -20px;
-  right: -20px;
-  width: 140px;
-  height: 140px;
-  border-radius: 50%;
-  opacity: 0.22;
-  filter: blur(10px);
-  transition: all 0.5s ease;
-  z-index: 0;
-  box-shadow: 0 0 25px rgba(0,0,0,0.08);
-}
-
-.category-masonry.nature .masonry-bg-shape {
-  background: radial-gradient(circle, #34A853 0%, transparent 70%);
-}
-
-.category-masonry.food .masonry-bg-shape {
-  background: radial-gradient(circle, #f83ac9 0%, transparent 70%);
-}
-
-.category-masonry.art .masonry-bg-shape {
-  background: radial-gradient(circle, #d316f5 0%, transparent 70%);
-}
-
-.category-masonry.theater .masonry-bg-shape {
-  background: radial-gradient(circle, #FF7043 0%, transparent 70%);
-}
-
-.category-masonry.entertainment .masonry-bg-shape {
-  background: radial-gradient(circle, #FF4E50 0%, transparent 70%);
-}
-
-.category-masonry.photo .masonry-bg-shape {
-  background: radial-gradient(circle, #0699fa 0%, transparent 70%);
-}
-
-.category-masonry:hover .masonry-bg-shape {
-  opacity: 0.32;
-  transform: scale(1.3) translate(-8px, 8px);
-  box-shadow: 0 0 35px rgba(0,0,0,0.12);
-}
+.masonry-bg-shape { display: none; }
 
 .masonry-icon {
   display: inline-block;
-  font-size: 2.2rem;
+  font-size: 1.8rem;
   line-height: 1;
-  margin-bottom: 14px;
-  position: relative;
-  z-index: 1;
-  transition: transform 0.2s ease, color 0.2s ease;
-  color: #444;
+  margin-bottom: 12px;
+  color: var(--primary);
+  transition: transform 0.3s ease;
 }
 
-.category-masonry.nature .masonry-icon {
-  color: #2E7D32;
-}
-
-.category-masonry.food .masonry-icon {
-  color: #C2185B;
-}
-
-.category-masonry.art .masonry-icon {
-  color: #8E24AA;
-}
-
-.category-masonry.theater .masonry-icon {
-  color: #E64A19;
-}
-
-.category-masonry.entertainment .masonry-icon {
-  color: #D32F2F;
-}
-
-.category-masonry.photo .masonry-icon {
-  color: #0277BD;
-}
-
-.category-masonry.nature:hover .masonry-icon {
-  color: #34A853;
-}
-
-.category-masonry.food:hover .masonry-icon {
-  color: #F83AC9;
-}
-
-.category-masonry.art:hover .masonry-icon {
-  color: #D316F5;
-}
-
-.category-masonry.theater:hover .masonry-icon {
-  color: #FF7043;
-}
-
-.category-masonry.entertainment:hover .masonry-icon {
-  color: #FF4E50;
-}
-
-.category-masonry.photo:hover .masonry-icon {
-  color: #0699FA;
-}
-
-.category-masonry:hover .masonry-icon {
-  transform: scale(1.05);
-}
+.category-masonry:hover .masonry-icon { transform: translateY(-2px) rotate(-6deg); }
 
 .masonry-label {
-  font-family: 'Unbounded', sans-serif;
+  font-family: var(--font-heading);
   font-weight: 600;
   font-size: 1rem;
   letter-spacing: -0.02em;
-  position: relative;
-  z-index: 1;
 }
 
 /* На телефоне — две компактные колонки: в одну колонку шесть плиток
@@ -568,11 +479,7 @@
 
 .category-masonry:hover {
   transform: translateY(-4px);
-  background: linear-gradient(165deg, #ffffff 0%, #eef0fc 100%);
-  box-shadow:
-    0 4px 12px rgba(0,0,0,0.05),
-    0 12px 28px rgba(0,0,0,0.08),
-    0 20px 40px rgba(0,0,0,0.06);
+  box-shadow: var(--shadow-soft);
 }
 
 .collection-card {
@@ -580,15 +487,15 @@
   background-position: center;
   position: relative;
   color: white;
-  border-radius: 24px;
-  padding: 24px;
+  border-radius: var(--radius-card);
+  padding: 22px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   min-height: 180px;
   overflow: hidden;
   cursor: pointer;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+  box-shadow: var(--shadow-soft);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   border: none;
 }
@@ -597,7 +504,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0.15) 100%);
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.72) 0%, rgba(0, 0, 0, 0.25) 70%, rgba(0, 0, 0, 0.1) 100%);
   z-index: 1;
   border-radius: inherit;
 }
@@ -609,13 +516,14 @@
 
 .collection-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 16px 32px rgba(0,0,0,0.1);
+  box-shadow: var(--shadow-soft-hover);
 }
 
 .collection-title {
-  font-family: 'Unbounded', sans-serif;
+  font-family: var(--font-heading);
   font-size: 1.2rem;
   font-weight: 700;
+  letter-spacing: -0.02em;
   margin-bottom: 8px;
 }
 
@@ -628,8 +536,9 @@
 
 .collection-btn {
   display: inline-block;
-  background: rgba(255,255,255,0.2);
-  backdrop-filter: blur(4px);
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(6px);
   padding: 6px 16px;
   border-radius: 40px;
   font-size: 0.8rem;
@@ -640,13 +549,13 @@
   align-self: flex-start;
 }
 
-.collection-btn:hover {
-  background: white;
-  color: #222;
+.collection-card:hover .collection-btn {
+  background: #fff;
+  color: var(--ink);
 }
 
 .map {
-    margin-top: 72px;
+  margin-top: 96px;
 }
 
 .map-section {
@@ -667,6 +576,10 @@
 .map-container {
   height: 300px;
   width: 100%;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  background: var(--cream-deep);
+  border: 1px solid var(--line);
 }
 
 @media (min-width: 769px) {
@@ -676,15 +589,28 @@
   }
 }
 
+/* «Карта временно недоступна» — аккуратно по центру, а не текстом в углу */
+.map-container .error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 200px;
+  padding: 24px;
+  text-align: center;
+  color: var(--text-light);
+}
+
 .map-panel {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 20px;
-  background: white;
-  border-radius: 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
   padding: 20px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-soft);
 }
 
 .add-place-section {
@@ -873,7 +799,7 @@
 }
 
 .place-section {
-    margin-top: 72px;
+  margin-top: 96px;
 }
 
 @media (min-width: 576px) {
@@ -1009,7 +935,7 @@
   .suggested-places,
   .categories-collections,
   .map,
-  .place-section { margin-top: 48px; }
+  .place-section { margin-top: 64px; }
 
   .site-footer { margin-top: 64px; }
 
@@ -1027,7 +953,7 @@
 
   /* Панель фильтров карты занимала весь экран до карты */
   .map-panel { padding: 16px; }
-  .map-container { height: 320px; border-radius: 16px; overflow: hidden; }
+  .map-container { height: 320px; }
   .map__categories-buttons { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
   .map__categories-buttons::-webkit-scrollbar { display: none; }
 
@@ -1038,8 +964,7 @@
 
   /* Подпись #… всегда под заголовком: раньше у коротких заголовков
      («Карта») она уезжала вправо, у длинных — переносилась вниз */
-  .section-head { flex-direction: column; align-items: flex-start; gap: 6px; margin-bottom: 24px; }
-  .section-head .section-mini { margin-bottom: 0; }
+  .section-head { margin-bottom: 22px; }
 
   /* Длинные слова и адреса больше не распирают карточки */
   .info-card p,

@@ -54,18 +54,21 @@ body.modal-open { overflow: hidden; }
 .category-chips { display: flex; flex-wrap: wrap; gap: 10px; margin: 1rem 0 1.5rem; }
 
 .chip {
-  background: #f0f0f0;
-  border: none;
-  padding: 12px 20px;
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 9px 16px;
   border-radius: 40px;
-  font-size: 1rem;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
 }
 
-.chip.active { background: var(--primary, #FF570A); color: white; }
+.chip:hover { border-color: var(--line-strong); }
 
-.chip:hover { transform: translateY(-1px); }
+.chip.active { background: var(--ink); border-color: var(--ink); color: #fff; }
 
 .randomizer-preview {
   display: flex;
