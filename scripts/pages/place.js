@@ -3,7 +3,7 @@
 import { $, $$, on } from '../core/dom.js';
 import { escapeHtml, safeUrl, cssUrl, getOpenStatus, describeStatusTimer, scheduleHtml } from '../core/format.js';
 import {
-  loadPlaces, bySlug, similar, recordView, toggleFavoritePlace, markVisited, placeUrl
+  loadPlaces, bySlug, similar, recordView, toggleFavoritePlace, markVisited, placeUrl, metroList
 } from '../core/places.js';
 import * as Storage from '../core/storage.js';
 import { similarCardHtml, bindImageFallback } from '../components/card.js';
@@ -17,6 +17,11 @@ function showNotFound(message) {
   const errorScreen = $('#place-error');
   const content = $('#place-content');
   if (content) content.hidden = true;
+  // Без фото-hero прозрачная шапка с белым логотипом потерялась бы на светлом фоне
+  $('.main-header')?.classList.remove('main-header--overlay');
+  // Панель «Позвонить / Маршрут / Поделиться» без места бессмысленна
+  const actionsBar = $('#mobile-actions-bar');
+  if (actionsBar) actionsBar.hidden = true;
   if (errorScreen) {
     if (message) {
       const textEl = $('#place-error-text');
@@ -50,15 +55,35 @@ function renderHero(place) {
   if (heroBg) heroBg.style.backgroundImage = cssUrl(place.photo);
   $('#place-category').innerHTML = `<i class="fas fa-tag" aria-hidden="true"></i> ${escapeHtml(place.type || place.category)}`;
   $('#place-name').textContent = place.name;
-  $('#place-subtitle').textContent = place.subtitle || `${place.type || ''} в центре Москвы`.trim();
-  $('#place-views').textContent = place.views || 0;
-  $('#favorites-count').textContent = place.favorites || 0;
-  $('#visited-count').textContent = place.visits || 0;
+  // Краткое описание вместо шаблонного «… в центре Москвы» (не у всех мест правда)
+  $('#place-subtitle').textContent = place.subtitle || place.description || '';
+  renderFacts(place);
 
   updateFavButtonUI(Storage.isFavorite(place.slug));
 
   const visitedBtn = $('#visited-btn');
   if (visitedBtn) visitedBtn.classList.toggle('active', Storage.isVisited(place.slug));
+}
+
+const hhmm = (date) => `${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
+
+/** Быстрые факты в hero вместо счётчиков просмотров/избранного. */
+function renderFacts(place) {
+  const list = $('#place-facts');
+  if (!list) return;
+  const facts = [];
+  const [metro] = metroList(place);
+  if (metro) facts.push({ icon: 'fa-subway', text: `м. ${metro}` });
+  if (place.schedule) {
+    const now = new Date();
+    const status = getOpenStatus(place, now);
+    const opensToday = status.nextChangeAt && status.nextChangeAt.toDateString() === now.toDateString();
+    if (status.isOpen && status.hoursToday) facts.push({ icon: 'fa-clock', text: `Открыто до ${status.hoursToday[1]}`, mod: 'open' });
+    else facts.push({ icon: 'fa-clock', text: opensToday ? `Откроется в ${hhmm(status.nextChangeAt)}` : 'Сейчас закрыто', mod: 'closed' });
+  }
+  if (place.price) facts.push({ icon: 'fa-tag', text: place.price });
+  list.innerHTML = facts.map((f) => `
+    <li class="hero-fact${f.mod ? ` hero-fact--${f.mod}` : ''}"><i class="fas ${f.icon}" aria-hidden="true"></i> ${escapeHtml(f.text)}</li>`).join('');
 }
 
 function renderInfo(place) {
@@ -195,7 +220,6 @@ function attachEventListeners(place, allPlaces) {
   on(favBtn, 'click', () => {
     const isFav = toggleFavoritePlace(place);
     updateFavButtonUI(isFav);
-    $('#favorites-count').textContent = place.favorites || 0;
     showToast(isFav ? 'Добавлено в избранное' : 'Удалено из избранного');
   });
 
@@ -204,7 +228,6 @@ function attachEventListeners(place, allPlaces) {
   on(visitedBtn, 'click', () => {
     const isNew = markVisited(place);
     visitedBtn.classList.add('active');
-    $('#visited-count').textContent = place.visits || 0;
     if (isNew) showToast('Спасибо! Место добавлено в ваш список посещённых.');
   });
 

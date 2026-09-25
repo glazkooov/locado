@@ -150,21 +150,29 @@
   flex: 0 0 240px;
   text-decoration: none;
   color: var(--text);
-  background: #fff;
-  border-radius: 16px;
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
   overflow: hidden;
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.similar-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-soft-hover);
 }
 
 .similar-card img {
   width: 100%;
-  height: 150px;
+  height: 160px;
   object-fit: cover;
+  background: var(--cream-deep);
 }
 
-.similar-card .info { padding: 14px; }
+.similar-card .info { padding: 14px 16px 16px; }
 
-.similar-card .info h4 { font-size: 1rem; margin-bottom: 4px; }
+.similar-card .info h4 { font-size: 1.02rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 4px; }
 
 .similar-card .info p { font-size: 0.85rem; color: var(--text-light); }
 
