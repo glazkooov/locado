@@ -1,9 +1,11 @@
 // pages/place.js — точка входа place.html.
 
 import { $, $$, on } from '../core/dom.js';
-import { escapeHtml, safeUrl, cssUrl, getOpenStatus, describeStatusTimer, scheduleHtml } from '../core/format.js';
 import {
-  loadPlaces, bySlug, similar, recordView, toggleFavoritePlace, markVisited, placeUrl, metroList
+  escapeHtml, safeUrl, cssUrl, getOpenStatus, describeStatusTimer, scheduleHtml, telHref, displayHost
+} from '../core/format.js';
+import {
+  loadPlaces, bySlug, similar, toggleFavoritePlace, markVisited, placeUrl, metroList
 } from '../core/places.js';
 import * as Storage from '../core/storage.js';
 import { similarCardHtml, bindImageFallback } from '../components/card.js';
@@ -107,9 +109,9 @@ function renderInfo(place) {
   refreshOpenStatus(place);
 
   const phone = place.phone || '';
-  $('#place-phone').innerHTML = phone ? `<a href="tel:${phone.replace(/\D/g, '')}">${escapeHtml(phone)}</a>` : '—';
+  $('#place-phone').innerHTML = phone ? `<a href="${escapeHtml(telHref(phone))}">${escapeHtml(phone)}</a>` : '—';
   const website = safeUrl(place.website, '');
-  $('#place-website').innerHTML = website ? `<a href="${escapeHtml(website)}" target="_blank" rel="noopener">${escapeHtml(place.website)}</a>` : '—';
+  $('#place-website').innerHTML = website ? `<a href="${escapeHtml(website)}" target="_blank" rel="noopener">${escapeHtml(displayHost(website))}</a>` : '—';
 
   if (!phone) {
     $('#call-btn')?.style.setProperty('display', 'none');
@@ -174,7 +176,10 @@ function renderDirections(place) {
 
 async function renderMap(place) {
   const container = $('#place-map-container');
-  await initPlaceMap(container, place);
+  const map = await initPlaceMap(container, place);
+  // Карта не загрузилась — «Показать на карте» вела бы к надписи
+  // «Карта временно недоступна». Маршрут в Яндекс.Картах работает и так.
+  if (!map) $('#show-on-map')?.setAttribute('hidden', '');
   const routeLink = $('#route-link');
   if (routeLink) routeLink.href = routeUrl(place);
 }
@@ -233,7 +238,7 @@ function attachEventListeners(place, allPlaces) {
 
   // Позвонить
   const callBtn = $('#call-btn');
-  if (place.phone) on(callBtn, 'click', () => { window.location.href = `tel:${place.phone.replace(/\D/g, '')}`; });
+  if (place.phone) on(callBtn, 'click', () => { window.location.href = telHref(place.phone); });
 
   // Шеринг
   const shareModal = createModal($('#share-modal'));
@@ -308,7 +313,6 @@ async function main() {
   const place = bySlug(places, slug);
   if (!place) { showNotFound(); return; }
 
-  recordView(place);
   setMetaTags(place);
 
   renderHero(place);

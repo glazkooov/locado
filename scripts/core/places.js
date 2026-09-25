@@ -1,5 +1,5 @@
 // core/places.js — загрузка data/places.json, выборки и мутации (избранное,
-// просмотры, посещения). Единственное место, которое знает формат данных.
+// посещения). Единственное место, которое знает формат данных.
 
 import * as Storage from './storage.js';
 
@@ -44,7 +44,9 @@ function normalize(raw) {
     return {
       ...place,
       photo: resolvePhoto(place.photo),
-      views: (place.views || 0) + (delta.views || 0),
+      // Локальные просмотры больше не считаем: из-за них «Избранное от
+      // города» у каждого посетителя было своим. Старые дельты игнорируем.
+      views: place.views || 0,
       favorites: (place.favorites || 0) + (delta.favorites || 0),
       visits: (place.visits || 0) + (delta.visits || 0)
     };
@@ -170,12 +172,6 @@ export function pickRandom(places, exceptSlug) {
 function adjustCounter(place, field, delta) {
   if (!place) return;
   place[field] = Math.max(0, (place[field] || 0) + delta);
-}
-
-export function recordView(place) {
-  if (!place) return;
-  Storage.incrementCounter(place.slug, 'views', 1);
-  adjustCounter(place, 'views', 1);
 }
 
 export function toggleFavoritePlace(place) {

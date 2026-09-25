@@ -150,12 +150,15 @@
   .hero-title { font-size: 3.2rem; }
 }
 
+/* На телефоне те же действия есть в нижней панели — круглые значки поверх
+   фото только дублировали их (и «Позвонить» оставалась без подписи) */
+@media (max-width: 768px) {
+  .hero-actions { display: none; }
+}
+
 @media (max-width: 480px) {
   .hero-title { font-size: 2rem; }
   .hero-subtitle { font-size: 0.98rem; }
-  /* на телефоне кнопки — только иконки; дублируются панелью снизу */
-  .hero-actions button span { display: none; }
-  .hero-actions button { width: 40px; height: 40px; padding: 0; justify-content: center; }
 }
 
 .place-info {
@@ -287,7 +290,8 @@
   background: none;
   border: none;
   color: var(--primary);
-  font-weight: 500;
+  font-family: inherit; /* у <button> шрифт по умолчанию системный */
+  font-weight: 600;
   cursor: pointer;
   display: inline-flex;
   align-items: center;

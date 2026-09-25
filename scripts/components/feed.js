@@ -23,6 +23,18 @@ function ratioIndex(slug = '') {
   return hash % CARD_RATIOS.length;
 }
 
+// Состояние ленты на время ухода со страницы — чтобы «Назад» из места
+// вернул ту же ленту и ту же позицию, а не собрал её заново с начала
+const SNAPSHOT_KEY = 'locado:feed';
+
+const readSnapshot = () => {
+  try { return JSON.parse(sessionStorage.getItem(SNAPSHOT_KEY)); } catch (e) { return null; }
+};
+const writeSnapshot = (snapshot) => {
+  try { sessionStorage.setItem(SNAPSHOT_KEY, JSON.stringify(snapshot)); } catch (e) { /* приватный режим */ }
+};
+const isBackForward = () => performance.getEntriesByType?.('navigation')[0]?.type === 'back_forward';
+
 // Подгружаем следующую страницу заранее, пока до конца ленты ещё ~2 экрана
 const PRELOAD_MARGIN = 800;
 
@@ -202,7 +214,31 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
     }, 150);
   }, { passive: true });
 
-  renderPage(true);
+  // --- Возврат «Назад» из места ---
+  // Снимок пишем при уходе со страницы. Если браузер вернул страницу из
+  // bfcache, код не перезапускается и всё и так на месте; иначе (страница
+  // собирается заново) восстанавливаем фильтр, число карточек и прокрутку.
+  window.addEventListener('pagehide', () => {
+    writeSnapshot({ state, shown, scrollY: window.scrollY });
+  });
+
+  const restore = (snapshot) => {
+    state = { category: 'all', query: '', tags: null, label: null, ...snapshot.state };
+    syncTabs();
+    const input = $('#categories-search-input');
+    if (input) { input.value = state.query || ''; toggleClear(input, $('#categories-clear-btn')); }
+    renderPage(true);
+    while (shown < snapshot.shown && shown < list.length) renderPage(false);
+    // Пропорции карточек заданы в CSS, поэтому высота ленты известна сразу,
+    // без ожидания фото — прокрутка попадает точно.
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    // behavior: 'instant' — у html стоит плавная прокрутка, а здесь нужен прыжок
+    requestAnimationFrame(() => window.scrollTo({ top: snapshot.scrollY || 0, behavior: 'instant' }));
+  };
+
+  const snapshot = isBackForward() ? readSnapshot() : null;
+  if (snapshot?.state) restore(snapshot);
+  else renderPage(true);
 
   return { setFilters, setCategory, setQuery, reset };
 }

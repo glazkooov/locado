@@ -4,7 +4,7 @@
 import { $, $$, on, toggleClear } from '../core/dom.js';
 import { setPressed } from './category-buttons.js';
 import { escapeHtml } from '../core/format.js';
-import { categoryLabel, filterPlaces, metroList, placeUrl, recordView, uniqueMetro } from '../core/places.js';
+import { categoryLabel, filterPlaces, metroList, placeUrl, uniqueMetro } from '../core/places.js';
 
 export function whenYmapsReady() {
   return new Promise((resolve, reject) => {
@@ -236,8 +236,6 @@ export async function initPlacesMap(places) {
   on(document.body, 'click', '.balloon-details-btn, .custom-balloon', (e, el) => {
     const slug = el.dataset.slug;
     if (!slug) return;
-    const place = places.find((p) => p.slug === slug);
-    if (place) recordView(place);
     window.location.href = placeUrl(slug);
   });
 
