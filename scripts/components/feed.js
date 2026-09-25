@@ -13,6 +13,7 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
 
   const showMoreBtn = $('#show-more-btn');
   const emptyBlock = $('#feed-empty');
+  const endBlock = $('.feed-end');
   const tabs = $$('.scroll__category-btn');
 
   let state = { category: 'all', query: '', tags: null };
@@ -36,6 +37,9 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
   const renderPage = (reset) => {
     const list = filtered();
     if (emptyBlock) emptyBlock.hidden = list.length > 0;
+    // «Это все места» уместно только после непустой ленты — иначе рядом
+    // с «Пока ничего не нашли» получалось два противоречащих сообщения.
+    if (endBlock) endBlock.hidden = list.length === 0;
 
     if (reset) {
       shown = Math.min(pageSize, list.length);

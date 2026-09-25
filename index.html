@@ -10,7 +10,7 @@
   <meta property="og:type" content="website">
   <meta property="og:title" content="Локадо — куда сходить в Москве">
   <meta property="og:description" content="Город, рассказанный простыми словами. Места и маршруты по настроению.">
-  <meta property="og:image" content="assets/images/ui/hero.jpg">
+  <meta property="og:image" content="https://locado.ru/assets/images/ui/hero_bg2.jpg">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -101,7 +101,7 @@
     </section>
 
     <!-- 5. Категории и подборки -->
-    <section class="categories-collections">
+    <section class="categories-collections" id="collections">
       <div class="container">
         <div class="section-head">
           <h2 class="section-title">Категории и подборки</h2>
@@ -145,27 +145,27 @@
             </div>
           </div>
 
-  <!-- Правая колонка: Подборки -->
-  <div class="cat-col-right">
-    <div class="collections-grid">
-      <article class="collection-card" style="background-image: url('assets/images/ui/kuzminki.jpg')" data-tag="прогулки" tabindex="0" role="link">
-        <h3 class="collection-title">Долгие прогулки</h3>
-        <p class="collection-desc">Парки и усадьбы, где можно ходить часами и никуда не спешить.</p>
-        <span class="collection-btn">Смотреть</span>
-      </article>
-      <article class="collection-card" style="background-image: url('assets/images/ui/sirovarnya.jpg')" data-tag="завтраки" tabindex="0" role="link">
-        <h3 class="collection-title">Завтрак не дома</h3>
-        <p class="collection-desc">Места, ради которых стоит встать пораньше в выходной.</p>
-        <span class="collection-btn">Смотреть</span>
-      </article>
-      <article class="collection-card" style="background-image: url('assets/images/ui/tretyakov.jpg')" data-tag="современное искусство" tabindex="0" role="link">
-        <h3 class="collection-title">Современное искусство</h3>
-        <p class="collection-desc">Арт-кластеры и галереи, где показывают то, что делают сейчас.</p>
-        <span class="collection-btn">Смотреть</span>
-      </article>
-    </div>
-  </div>
-</div>
+          <!-- Правая колонка: Подборки -->
+          <div class="cat-col-right">
+            <div class="collections-grid">
+              <article class="collection-card" style="background-image: url('assets/images/places/kuzminki.jpg')" data-tag="прогулки" tabindex="0" role="link">
+                <h3 class="collection-title">Долгие прогулки</h3>
+                <p class="collection-desc">Парки и усадьбы, где можно ходить часами и никуда не спешить.</p>
+                <span class="collection-btn">Смотреть</span>
+              </article>
+              <article class="collection-card" style="background-image: url('assets/images/places/sirovarnya.jpg')" data-tag="завтраки" tabindex="0" role="link">
+                <h3 class="collection-title">Завтрак не дома</h3>
+                <p class="collection-desc">Места, ради которых стоит встать пораньше в выходной.</p>
+                <span class="collection-btn">Смотреть</span>
+              </article>
+              <article class="collection-card" style="background-image: url('assets/images/places/tretyakov.jpg')" data-tag="современное искусство" tabindex="0" role="link">
+                <h3 class="collection-title">Современное искусство</h3>
+                <p class="collection-desc">Арт-кластеры и галереи, где показывают то, что делают сейчас.</p>
+                <span class="collection-btn">Смотреть</span>
+              </article>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -250,8 +250,10 @@
       </div>
     </section>
 
-    <!-- 7. Добавить место -->
-    <section class="add-place-section">
+    <!-- 7. Добавить место.
+         Скрыто, пока нет страниц suggest-user.html и add_place-business.html:
+         карточки вели на 404. Когда страницы появятся — убрать атрибут hidden. -->
+    <section class="add-place-section" hidden>
       <div class="container">
         <div class="add-place-wrapper">
           <!-- Левая часть – текст + иллюстрация -->
@@ -263,7 +265,7 @@
               Помоги другим открыть его. Мы ценим любой вклад – от уютных лавочек до атмосферных галерей.
             </p>
             <img
-              src="assets/images/ui/city-girl.svg"
+              src="assets/images/ui/undraw_city-girl_b84p.svg"
               alt=""
               class="add-place-illustration"
               loading="lazy"
@@ -308,7 +310,7 @@
     </section>
 
     <!-- 8. Лента всех мест -->
-    <section class="place-section">
+    <section class="place-section" id="all-places">
       <div class="container">
         <div class="section-head">
           <h2 class="section-title">Посмотрим на все?</h2>
@@ -381,32 +383,17 @@
       <div class="site-footer__brand">
         <span class="logo footer-logo">Локадо</span>
         <p class="site-footer__tagline">Pinterest для городских впечатлений. Находи места и маршруты через настроение, а не через фильтры.</p>
-        <div class="site-footer__social" aria-label="Мы в соцсетях">
-          <a href="#" aria-label="Локадо в Telegram"><i class="fab fa-telegram" aria-hidden="true"></i></a>
-          <a href="#" aria-label="Локадо ВКонтакте"><i class="fab fa-vk" aria-hidden="true"></i></a>
-          <a href="#" aria-label="Локадо в Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
-        </div>
       </div>
 
       <nav class="site-footer__col" aria-label="Навигация">
         <h4>Навигация</h4>
         <a href="index.html#map-section">Карта</a>
-        <a href="collections.html">Подборки</a>
-        <a href="favorites.html">Избранное</a>
-        <a href="events.html">События</a>
-      </nav>
-
-      <nav class="site-footer__col" aria-label="Проект">
-        <h4>О проекте</h4>
-        <a href="/about">О Локадо</a>
-        <a href="suggest-user.html">Предложить место</a>
-        <a href="add_place-business.html">Для бизнеса</a>
-        <a href="/ads">Реклама</a>
+        <a href="index.html#collections">Подборки</a>
+        <a href="index.html#all-places">Все места</a>
       </nav>
 
       <div class="site-footer__col">
-        <h4>Связь</h4>
-        <a href="/contact"><i class="far fa-envelope" aria-hidden="true"></i> Контакты</a>
+        <h4>Где работаем</h4>
         <p class="site-footer__note">Москва и область.<br>Скоро — другие города.</p>
       </div>
     </div>
