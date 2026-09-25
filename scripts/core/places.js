@@ -5,13 +5,16 @@ import * as Storage from './storage.js';
 
 const DATA_URL = new URL('../../data/places.json', import.meta.url);
 
+// Единственный словарь категорий: названия, порядок и иконки для плиток,
+// вкладок ленты, кнопок карты и окна случайного места берутся отсюда
+// (см. components/category-buttons.js). Названия — из CLAUDE.md.
 export const CATEGORIES = {
-  nature: { label: 'Природа', emoji: '🌳' },
-  food: { label: 'Еда', emoji: '🍕' },
-  art: { label: 'Искусство', emoji: '🎨' },
-  theater: { label: 'Театр', emoji: '🎭' },
-  photo: { label: 'Фото', emoji: '📸' },
-  entertainment: { label: 'Развлечения', emoji: '🎉' }
+  food: { label: 'Еда и напитки', emoji: '🍕', icon: 'fa-utensils' },
+  nature: { label: 'Природа', emoji: '🌳', icon: 'fa-tree' },
+  art: { label: 'Музеи', emoji: '🎨', icon: 'fa-landmark' },
+  theater: { label: 'Театры', emoji: '🎭', icon: 'fa-theater-masks' },
+  photo: { label: 'Фото', emoji: '📸', icon: 'fa-camera' },
+  entertainment: { label: 'Развлечения', emoji: '🎉', icon: 'fa-ticket' }
 };
 
 export function categoryLabel(category, { emoji = false } = {}) {

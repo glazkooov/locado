@@ -1,7 +1,8 @@
 // components/map.js — обёртка над Яндекс.Картами: карта мест на главной
 // (кластеризация, фильтры) и одиночная карта места.
 
-import { $, $$, on } from '../core/dom.js';
+import { $, $$, on, toggleClear } from '../core/dom.js';
+import { setPressed } from './category-buttons.js';
 import { escapeHtml } from '../core/format.js';
 import { categoryLabel, filterPlaces, metroList, placeUrl, recordView, uniqueMetro } from '../core/places.js';
 
@@ -186,7 +187,7 @@ export async function initPlacesMap(places) {
   const catButtons = $$('.map__categories-button');
   const setCategory = (category) => {
     state.category = category;
-    catButtons.forEach((b) => b.classList.toggle('active', b.dataset.category === category));
+    setPressed(catButtons, (b) => b.dataset.category === category);
     refresh();
   };
   catButtons.forEach((btn) => on(btn, 'click', (e) => { e.preventDefault(); setCategory(btn.dataset.category); }));
@@ -197,11 +198,20 @@ export async function initPlacesMap(places) {
   if (searchInput) {
     let timer;
     on(searchInput, 'input', (e) => {
+      toggleClear(searchInput, clearBtn);
       clearTimeout(timer);
       timer = setTimeout(() => { state.query = e.target.value; refresh(); }, 300);
     });
   }
-  if (clearBtn) on(clearBtn, 'click', () => { searchInput.value = ''; state.query = ''; refresh(); });
+  if (clearBtn) {
+    on(clearBtn, 'click', () => {
+      searchInput.value = '';
+      toggleClear(searchInput, clearBtn);
+      state.query = '';
+      refresh();
+      searchInput.focus();
+    });
+  }
 
   // Метро
   const metro = initMetroFilter($('#filter-metro'), uniqueMetro(places), {
@@ -253,6 +263,7 @@ export async function initPlacesMap(places) {
     on(resetBtn, 'click', () => {
       setCategory('all');
       if (searchInput) searchInput.value = '';
+      toggleClear(searchInput, clearBtn);
       state.query = '';
       state.metros = [];
       metro.clear();

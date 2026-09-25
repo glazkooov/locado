@@ -107,44 +107,14 @@
       <div class="container">
         <div class="section-head">
           <h2 class="section-title">Категории и подборки</h2>
-          <span class="section-mini">#выбирай по настроению</span>
+          <span class="section-mini" aria-hidden="true">#выбирай по настроению</span>
         </div>
 
         <div class="cat-col-grid">
           <!-- Левая колонка: Категории -->
           <div class="cat-col-left">
-            <div class="category-masonry-grid" id="categoryGrid">
-              <button type="button" class="category-masonry nature" data-category="nature">
-                <div class="masonry-bg-shape"></div>
-                <i class="fas fa-tree masonry-icon" aria-hidden="true"></i>
-                <span class="masonry-label">Природа</span>
-              </button>
-              <button type="button" class="category-masonry food" data-category="food">
-                <div class="masonry-bg-shape"></div>
-                <i class="fas fa-utensils masonry-icon" aria-hidden="true"></i>
-                <span class="masonry-label">Еда</span>
-              </button>
-              <button type="button" class="category-masonry art" data-category="art">
-                <div class="masonry-bg-shape"></div>
-                <i class="fas fa-landmark masonry-icon" aria-hidden="true"></i>
-                <span class="masonry-label">Музеи</span>
-              </button>
-              <button type="button" class="category-masonry theater" data-category="theater">
-                <div class="masonry-bg-shape"></div>
-                <i class="fas fa-theater-masks masonry-icon" aria-hidden="true"></i>
-                <span class="masonry-label">Театры</span>
-              </button>
-              <button type="button" class="category-masonry entertainment" data-category="entertainment">
-                <div class="masonry-bg-shape"></div>
-                <i class="fas fa-ticket masonry-icon" aria-hidden="true"></i>
-                <span class="masonry-label">Развлечения</span>
-              </button>
-              <button type="button" class="category-masonry photo" data-category="photo">
-                <div class="masonry-bg-shape"></div>
-                <i class="fas fa-camera masonry-icon" aria-hidden="true"></i>
-                <span class="masonry-label">Фото</span>
-              </button>
-            </div>
+            <!-- Плитки рендерит components/category-buttons.js из словаря CATEGORIES -->
+            <div class="category-masonry-grid" id="categoryGrid"></div>
           </div>
 
           <!-- Правая колонка: Подборки -->
@@ -181,36 +151,15 @@
         <div class="map-section">
           <div class="map-container" id="map" aria-label="Интерактивная карта мест"></div>
           <div class="map-panel">
-            <div class="map__categories-buttons" role="tablist">
-              <button type="button" data-category="all" class="category-btn map__categories-button active" role="tab" aria-selected="true">
-                <i class="fas fa-map-marker-alt" aria-hidden="true"></i> Все места
-              </button>
-              <button type="button" data-category="nature" class="category-btn map__categories-button" role="tab">
-                <i class="fas fa-tree" aria-hidden="true"></i> Природа
-              </button>
-              <button type="button" data-category="food" class="category-btn map__categories-button" role="tab">
-                <i class="fas fa-utensils" aria-hidden="true"></i> Еда
-              </button>
-              <button type="button" data-category="art" class="category-btn map__categories-button" role="tab">
-                <i class="fas fa-landmark" aria-hidden="true"></i> Искусство
-              </button>
-              <button type="button" data-category="theater" class="category-btn map__categories-button" role="tab">
-                <i class="fas fa-theater-masks" aria-hidden="true"></i> Театры
-              </button>
-              <button type="button" data-category="photo" class="category-btn map__categories-button" role="tab">
-                <i class="fas fa-camera" aria-hidden="true"></i> Фото
-              </button>
-              <button type="button" data-category="entertainment" class="category-btn map__categories-button" role="tab">
-                <i class="fas fa-star" aria-hidden="true"></i> Развлечения
-              </button>
-            </div>
+            <div class="map__categories-buttons" id="map-categories" role="group" aria-label="Категории на карте"></div>
 
             <aside class="sidebar-filters">
               <h3 class="filters-title"><i class="fas fa-sliders-h" aria-hidden="true"></i> Фильтры</h3>
 
               <div class="map-search-group">
-                <input type="text" class="map-filter-search" id="map-search-input" placeholder="Найти..." autocomplete="off">
-                <button class="category-search-clear search-clear" id="map-clear-btn" aria-label="Очистить поиск">
+                <label class="visually-hidden" for="map-search-input">Поиск мест на карте</label>
+                <input type="text" class="map-filter-search" id="map-search-input" placeholder="Найти на карте…" autocomplete="off">
+                <button type="button" class="category-search-clear search-clear" id="map-clear-btn" aria-label="Очистить поиск" hidden>
                   <i class="fas fa-times" aria-hidden="true"></i>
                 </button>
               </div>
@@ -320,30 +269,7 @@
         </div>
 
         <div class="categories_menu">
-          <div class="categories_scroll" id="categories-scroll" role="tablist">
-            <button type="button" data-category="all" class="category-btn scroll__category-btn active" role="tab" aria-selected="true">
-              <i class="fas fa-map-marker-alt" aria-hidden="true"></i> Все
-            </button>
-            <button type="button" data-category="nature" class="category-btn scroll__category-btn" role="tab">
-              <i class="fas fa-tree" aria-hidden="true"></i> Природа
-            </button>
-            <button type="button" data-category="art" class="category-btn scroll__category-btn" role="tab">
-              <i class="fas fa-landmark" aria-hidden="true"></i> Искусство
-            </button>
-            <button type="button" data-category="theater" class="category-btn scroll__category-btn" role="tab">
-              <i class="fas fa-theater-masks" aria-hidden="true"></i> Театры
-            </button>
-            <button type="button" data-category="food" class="category-btn scroll__category-btn" role="tab">
-              <i class="fas fa-utensils" aria-hidden="true"></i> Еда
-            </button>
-            <button type="button" data-category="photo" class="category-btn scroll__category-btn" role="tab">
-              <i class="fas fa-camera" aria-hidden="true"></i> Фото
-            </button>
-            <button type="button" data-category="entertainment" class="category-btn scroll__category-btn" role="tab">
-              <i class="fas fa-star" aria-hidden="true"></i> Развлечения
-            </button>
-
-          </div>
+          <div class="categories_scroll" id="categories-scroll" role="group" aria-label="Категории ленты"></div>
 
           <!-- Поиск в ленте: отдельная строка, не участвует в горизонтальном скролле -->
           <div class="category-search-group">
@@ -370,10 +296,7 @@
           <p>Пока ничего не нашли — попробуйте другое слово или сбросьте фильтр</p>
           <button type="button" class="btn feed-empty__btn" id="feed-reset-btn">Показать все места</button>
         </div>
-        <button class="btn" id="show-more-btn">
-          <span class="visually-hidden">Загружаем ещё места</span>
-          <span class="dot" aria-hidden="true"></span>
-        </button>
+        <button type="button" class="btn" id="show-more-btn">Показать ещё</button>
         <div class="feed-end" aria-live="polite">
           <p>Это все места на сегодня ✨</p>
           <span>Новые локации добавляются каждую неделю — загляните ещё раз</span>
@@ -392,7 +315,7 @@
     <div class="container site-footer__top">
       <div class="site-footer__brand">
         <span class="logo footer-logo">Локадо</span>
-        <p class="site-footer__tagline">Pinterest для городских впечатлений. Находи места и маршруты через настроение, а не через фильтры.</p>
+        <p class="site-footer__tagline">Места в Москве под настроение — для дней, когда хочется выбраться, но непонятно куда.</p>
       </div>
 
       <nav class="site-footer__col" aria-label="Навигация">
@@ -427,15 +350,7 @@
       </div>
       <div class="modal-body">
         <p>Можно уточнить категорию:</p>
-        <div class="category-chips" id="randomizer-categories">
-          <button data-category="all" class="chip active"><i class="fas fa-map-marker-alt" aria-hidden="true"></i> Любая</button>
-          <button data-category="nature" class="chip"><i class="fas fa-tree" aria-hidden="true"></i> Природа</button>
-          <button data-category="art" class="chip"><i class="fas fa-landmark" aria-hidden="true"></i> Искусство</button>
-          <button data-category="food" class="chip"><i class="fas fa-utensils" aria-hidden="true"></i> Еда</button>
-          <button data-category="theater" class="chip"><i class="fas fa-theater-masks" aria-hidden="true"></i> Театр</button>
-          <button data-category="photo" class="chip"><i class="fas fa-camera" aria-hidden="true"></i> Фото</button>
-          <button data-category="entertainment" class="chip"><i class="fas fa-star" aria-hidden="true"></i> Развлечения</button>
-        </div>
+        <div class="category-chips" id="randomizer-categories" role="group" aria-label="Категория случайного места"></div>
 
         <!-- Превью места -->
         <div id="randomizer-preview" class="randomizer-preview" style="display: none;" tabindex="0" role="button" aria-label="Перейти к месту">
