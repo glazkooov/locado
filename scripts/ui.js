@@ -66,6 +66,18 @@ const initBackToTop = () => {
   sync();
 };
 
+/** Прозрачная шапка поверх hero на главной: белеет после начала прокрутки. */
+const initHeaderOverlay = () => {
+  const header = $('.main-header--overlay');
+  if (!header) return;
+  let ticking = false;
+  const sync = () => { header.classList.toggle('is-scrolled', window.scrollY > 24); ticking = false; };
+  window.addEventListener('scroll', () => {
+    if (!ticking) { ticking = true; requestAnimationFrame(sync); }
+  }, { passive: true });
+  sync();
+};
+
 /** Плавное появление крупных секций при скролле (косметика). */
 const initScrollReveal = () => {
   const targets = $$('.main-content > section, .popular__cards, .suggested-grid, .places-grid');
@@ -95,4 +107,5 @@ window.addEventListener('load', syncHeaderHeight);
 initMobileMenu();
 initUserMenu();
 initBackToTop();
+initHeaderOverlay();
 initScrollReveal();
