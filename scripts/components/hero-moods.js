@@ -26,13 +26,13 @@ export function renderHeroMoods(daypart) {
 export function initHeroMoods(feed, places, { onSelect } = {}) {
   const container = $('#hero-moods');
   if (!feed || !container) return;
-  const cards = () => $$('.mood-card', container);
+  const cards = () => $$('.mood-card[data-mood]', container);
   const setActive = (active) => cards().forEach((c) => {
     c.classList.toggle('active', c === active);
     c.setAttribute('aria-pressed', String(c === active));
   });
 
-  on(container, 'click', '.mood-card', (e, card) => {
+  on(container, 'click', '.mood-card[data-mood]', (e, card) => {
     const mood = MOODS.find((m) => m.id === card.dataset.mood);
     if (!mood) return;
     feed.setFilters(resolveMoodFilters(places, mood.id), { syncInput: true, label: { kind: 'Настроение', text: mood.label } });

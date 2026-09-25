@@ -53,12 +53,22 @@
           <p class="hero__tagline"><span>Локадо</span> — город, рассказанный простыми словами</p>
         </div>
 
-        <!-- Фотокарточки настроений рендерит components/hero-moods.js из core/moods.js -->
-        <div class="hero__moods" id="hero-moods" role="group" aria-label="Подобрать место по настроению"></div>
+        <div class="hero__choices">
+          <!-- Фотокарточки настроений рендерит components/hero-moods.js из core/moods.js -->
+          <div class="hero__moods" id="hero-moods" role="group" aria-label="Подобрать место по настроению"></div>
 
-        <div class="hero__random">
-          <button type="button" class="hero__random-icon" id="hero-random-icon">
-            <i class="fas fa-dice" aria-hidden="true"></i> Не могу выбрать — удивите меня
+          <!-- Рандомайзер: с 768px — последняя карточка ряда, на телефоне — полоса
+               под лентой карточек. Кубик inline, чтобы не зависеть от иконочного шрифта. -->
+          <button type="button" class="mood-card mood-card--random" id="hero-random-icon">
+            <svg class="mood-card__dice" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6">
+              <rect x="3.5" y="3.5" width="17" height="17" rx="4"/>
+              <circle cx="8.5" cy="8.5" r="1.3" fill="currentColor" stroke="none"/>
+              <circle cx="15.5" cy="8.5" r="1.3" fill="currentColor" stroke="none"/>
+              <circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none"/>
+              <circle cx="8.5" cy="15.5" r="1.3" fill="currentColor" stroke="none"/>
+              <circle cx="15.5" cy="15.5" r="1.3" fill="currentColor" stroke="none"/>
+            </svg>
+            <span class="mood-card__label">Не могу выбрать — удивите меня</span>
           </button>
         </div>
 
