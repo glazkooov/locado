@@ -30,6 +30,27 @@
   width: 100%;
 }
 
+/* Воздух между вопросом и карточками: заголовок и выбор читаются
+   как два отдельных шага, а не одна плотная стопка */
+.hero__choices {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  margin-top: 12px;
+}
+
+@media (min-width: 768px) {
+  .hero__choices {
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 12px;
+    margin-top: 28px;
+  }
+}
+
 .hero__head {
   display: flex;
   flex-direction: column;
@@ -150,19 +171,69 @@
 
 .mood-card.active { border-color: var(--primary); }
 
+/* Рандомайзер: тот же язык, что у карточек, но без фото — «стекло»,
+   пунктир и кубик. На телефоне — полоса во всю ширину под лентой
+   карточек (в конце прокрутки её бы не нашли), с 768px — карточка ряда. */
+.mood-card--random {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex: none;
+  width: 100%;
+  max-width: 420px;
+  aspect-ratio: auto;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.08);
+  border-style: dashed;
+  border-color: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.mood-card--random::after { display: none; }
+
+.mood-card--random .mood-card__label { position: static; }
+
+.mood-card__dice {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  color: var(--primary-light);
+  transition: transform 0.4s ease;
+}
+
+@media (min-width: 768px) {
+  .mood-card--random {
+    flex: 0 0 148px;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+    width: auto;
+    aspect-ratio: 3 / 4;
+    margin-top: 4px; /* как верхний отступ ленты .hero__moods */
+    padding: 14px 12px 12px;
+  }
+  .mood-card__dice { width: 36px; height: 36px; }
+}
+
+.mood-card--random:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-style: solid;
+}
+
+.mood-card--random:hover .mood-card__dice { transform: rotate(-20deg); }
+
 @media (prefers-reduced-motion: reduce) {
+  .mood-card__dice { transition: none; }
+  .mood-card--random:hover .mood-card__dice { transform: none; }
   .mood-card,
   .mood-card__img { transition: none; }
   .mood-card:hover,
   .mood-card:hover .mood-card__img { transform: none; }
 }
 
-.hero__random {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  padding-bottom: 10px;
-}
 
 @media (min-width: 576px) {
   .hero__title {

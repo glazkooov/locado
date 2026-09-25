@@ -1,38 +1,9 @@
 /*
-  Hero-поиск (поле, кнопка «Найти», подсказка у кубика) отключён для MVP и
-  перенесён в архив: styles/_archive/hero-search.css (не импортирован в
-  main.css). Здесь осталась только кнопка-рандомайзер — она переехала в
-  отдельный блок .hero__random на главной (index.html) и по-прежнему активна.
+  Hero-поиск отключён для MVP и перенесён в архив:
+  styles/_archive/hero-search.css (не импортирован в main.css).
+  Кнопка рандомайзера теперь — карточка .mood-card--random в ряду
+  настроений (styles/pages/home.css).
 */
-
-.hero__random-icon {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  border-radius: 40px;
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(8px);
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #fff;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s, transform 0.1s;
-}
-
-.hero__random-icon i {
-  font-size: 1rem;
-}
-
-.hero__random-icon:hover {
-  background: #fff;
-  color: var(--ink);
-}
-
-.hero__random-icon:active {
-  transform: scale(0.97);
-}
 
 .map-search-group {
   display: flex;
