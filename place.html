@@ -71,7 +71,9 @@
             <button type="button" id="fav-btn-hero" class="fav-btn-hero" hidden>
               <i class="far fa-heart" aria-hidden="true"></i><span>В избранное</span>
             </button>
-            <button type="button" id="visited-btn" class="visited-btn">
+            <!-- «Я здесь был» — социальная функция вне MVP, отметка видна только
+                 самому пользователю. Скрыта; вернуть — убрать hidden. -->
+            <button type="button" id="visited-btn" class="visited-btn" hidden>
               <i class="fas fa-check" aria-hidden="true"></i><span>Я здесь был</span>
             </button>
             <button type="button" id="call-btn" class="call-btn">
@@ -180,8 +182,9 @@
       </div>
     </section>
 
-    <!-- Отзывы -->
-    <section class="place-reviews container">
+    <!-- Отзывы — вне MVP (комментарии/социальные функции, см. CLAUDE.md), и
+         хранились только в браузере автора. Скрыты; вернуть — убрать hidden. -->
+    <section class="place-reviews container" hidden>
       <div class="reviews-header">
         <div class="section-head">
           <span class="section-mini" aria-hidden="true">Что говорят</span>
