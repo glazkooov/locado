@@ -46,25 +46,15 @@
     <!-- 2. Герой-секция -->
     <section class="hero">
       <div class="container hero__content">
-        <h1 class="hero__title"><span>Локадо</span> — город, рассказанный простыми словами</h1>
-
-        <div class="hero__pills" role="group" aria-label="Подобрать место по настроению">
-          <button type="button" class="hero__pill" data-mood="quiet-nature">
-            <i class="fas fa-leaf" aria-hidden="true"></i> тихая прогулка на природе
-          </button>
-          <button type="button" class="hero__pill" data-mood="romantic-evening">
-            <i class="fas fa-city" aria-hidden="true"></i> романтично вечером
-          </button>
-          <button type="button" class="hero__pill" data-mood="culture-art">
-            <i class="fas fa-palette" aria-hidden="true"></i> культура и искусство
-          </button>
-          <button type="button" class="hero__pill" data-mood="food">
-            <i class="fas fa-utensils" aria-hidden="true"></i> вкусно поесть
-          </button>
-          <button type="button" class="hero__pill" data-mood="active-fun">
-            <i class="fas fa-ticket" aria-hidden="true"></i> активности и развлечения
-          </button>
+        <div class="hero__head">
+          <!-- День недели и время суток подставляет core/daypart.js -->
+          <p class="hero__when" id="hero-when" hidden></p>
+          <h1 class="hero__title" id="hero-question">Куда пойдём сегодня?</h1>
+          <p class="hero__tagline"><span>Локадо</span> — город, рассказанный простыми словами</p>
         </div>
+
+        <!-- Фотокарточки настроений рендерит components/hero-moods.js из core/moods.js -->
+        <div class="hero__moods" id="hero-moods" role="group" aria-label="Подобрать место по настроению"></div>
 
         <div class="hero__random">
           <button type="button" class="hero__random-icon" id="hero-random-icon">

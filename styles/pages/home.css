@@ -30,53 +30,131 @@
   width: 100%;
 }
 
-.hero__mood-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 18px;
-  background: rgba(255, 255, 255, 0.14);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  backdrop-filter: blur(10px);
-  border-radius: 40px;
-  font-size: 0.85rem;
-  color: #fff;
-  letter-spacing: 0.2px;
-}
-
-.hero__pills {
+.hero__head {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
-  max-width: 760px;
-  padding: 0 15px;
-}
-
-.hero__pill {
-  display: inline-flex;
+  flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: 7px 16px;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  backdrop-filter: blur(8px);
-  border-radius: 40px;
+  gap: 10px;
+}
+
+.hero__when {
   font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.92);
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.hero__tagline {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.hero__tagline span {
+  color: var(--primary-light);
+  font-weight: 700;
+}
+
+/* Фотокарточки настроений: на телефоне листаются вбок (край следующей
+   карточки подсказывает, что их больше), с 768px стоят в один ряд. */
+.hero__moods {
+  display: flex;
+  gap: 12px;
+  width: calc(100% + 32px);
+  margin-inline: -16px;
+  padding: 4px 16px 8px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 16px;
+  scrollbar-width: none;
+}
+
+.hero__moods::-webkit-scrollbar { display: none; }
+
+@media (min-width: 768px) {
+  .hero__moods {
+    width: auto;
+    margin-inline: 0;
+    padding: 4px 0 8px;
+    justify-content: center;
+    overflow: visible;
+  }
+}
+
+.mood-card {
+  position: relative;
+  flex: 0 0 128px;
+  aspect-ratio: 3 / 4;
+  padding: 0;
+  border: 2px solid rgba(255, 255, 255, 0.18);
+  border-radius: 18px;
+  overflow: hidden;
+  background: var(--ink);
+  text-align: left;
   cursor: pointer;
-  transition: var(--transition);
+  scroll-snap-align: start;
+  transition: transform 0.25s ease, border-color 0.25s ease;
 }
 
-.hero__pill:hover {
-  background: rgba(255, 255, 255, 0.22);
-  transform: translateY(-2px);
+@media (min-width: 768px) {
+  .mood-card { flex-basis: 148px; }
 }
 
-.hero__pill.active {
-  background: var(--primary);
-  border-color: var(--primary);
+.mood-card__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.mood-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 35%, rgba(0, 0, 0, 0.78) 100%);
+}
+
+.mood-card__label {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  z-index: 1;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.25;
   color: #fff;
+}
+
+.mood-card__badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1;
+  padding: 3px 8px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.92);
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.mood-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.mood-card:hover .mood-card__img { transform: scale(1.05); }
+
+.mood-card.active { border-color: var(--primary); }
+
+@media (prefers-reduced-motion: reduce) {
+  .mood-card,
+  .mood-card__img { transition: none; }
+  .mood-card:hover,
+  .mood-card:hover .mood-card__img { transform: none; }
 }
 
 .hero__random {
@@ -98,10 +176,6 @@
   }
 }
 
-.hero__title span {
-  color: var(--primary-light);
-  font-weight: 800;
-}
 
 
 .manifesto {

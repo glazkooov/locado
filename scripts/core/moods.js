@@ -1,7 +1,9 @@
 // core/moods.js — словарь настроений для hero-pills на главной странице.
 //
 // Каждый pill — это не поиск по слову, а заранее описанное настроение:
-// { id, label, icon, tags, categories }. По клику сначала ищем места по
+// { id, label, icon, photo, bestAt, tags, categories }. photo — превью
+// карточки в hero (assets/images/moods/, 360×480), bestAt — время суток
+// (core/daypart.js), когда настроение показывается первым. По клику сначала ищем места по
 // tags (places.tags из data/places.json) — точное совпадение хотя бы
 // одного тега. Если найдено меньше MIN_RESULTS мест, расширяем выборку до
 // categories этого же настроения (places.category). Так pill никогда не
@@ -20,6 +22,8 @@ export const MOODS = [
     id: 'quiet-nature',
     label: 'Тихая прогулка на природе',
     icon: 'fa-leaf',
+    photo: 'assets/images/moods/quiet-nature.jpg',
+    bestAt: ['morning', 'day'],
     tags: ['тишина', 'природа', 'прогулки', 'ландшафты', 'пруды', 'пикник', 'велопрогулки'],
     categories: ['nature']
   },
@@ -27,6 +31,8 @@ export const MOODS = [
     id: 'romantic-evening',
     label: 'Романтично вечером',
     icon: 'fa-city',
+    photo: 'assets/images/moods/romantic-evening.jpg',
+    bestAt: ['evening'],
     tags: ['закат', 'панорама', 'панорамный вид', 'винная карта', 'коктейли', 'неон'],
     categories: ['food', 'photo']
   },
@@ -34,6 +40,8 @@ export const MOODS = [
     id: 'culture-art',
     label: 'Культура и искусство',
     icon: 'fa-palette',
+    photo: 'assets/images/moods/culture-art.jpg',
+    bestAt: ['day'],
     tags: ['искусство', 'живопись', 'выставки', 'современное искусство', 'галереи', 'дизайн', 'архитектура', 'театр', 'драма', 'постановки', 'экскурсии'],
     categories: ['art', 'theater']
   },
@@ -41,6 +49,8 @@ export const MOODS = [
     id: 'food',
     label: 'Вкусно поесть',
     icon: 'fa-utensils',
+    photo: 'assets/images/moods/food.jpg',
+    bestAt: ['morning', 'evening'],
     tags: ['завтраки', 'кофе', 'выпечка', 'фудкорт', 'детская комната'],
     categories: ['food']
   },
@@ -48,6 +58,8 @@ export const MOODS = [
     id: 'active-fun',
     label: 'Активности и развлечения',
     icon: 'fa-ticket',
+    photo: 'assets/images/moods/active-fun.jpg',
+    bestAt: ['night'],
     tags: ['квест', 'стендап', 'юмор', 'VR', 'игры', 'активный отдых', 'спорт', 'команда'],
     categories: ['entertainment']
   }
@@ -67,4 +79,10 @@ export function resolveMoodFilters(places, moodId) {
     return { category: 'all', query: '', tags: mood.tags };
   }
   return { category: mood.categories, query: '', tags: null };
+}
+
+/** Настроения в порядке показа: подходящие текущему времени суток — первыми. */
+export function moodsFor(daypart) {
+  const fits = (m) => m.bestAt.includes(daypart);
+  return [...MOODS.filter(fits), ...MOODS.filter((m) => !fits(m))];
 }
