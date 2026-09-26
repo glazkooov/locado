@@ -165,13 +165,18 @@ function renderDescription(place) {
   el.hidden = !text;
 }
 
+// Пользователю — только первые теги места (в данных они самые характерные:
+// категория, атмосфера, сценарий). Остальные теги работают на поиск,
+// настроения, подборки и «похожие места», но на странице не показываются.
+const VISIBLE_TAGS = 5;
+
 function renderTags(place) {
   const container = $('#place-tags');
   const aside = $('#place-tags-aside');
   if (!place.tags || !place.tags.length) { if (aside) aside.hidden = true; return; }
   if (aside) aside.hidden = false;
   // Тег ведёт в ленту на главной с этим тегом — повод пойти дальше
-  container.innerHTML = place.tags.map((t) =>
+  container.innerHTML = place.tags.slice(0, VISIBLE_TAGS).map((t) =>
     `<a class="tag-chip" href="index.html?tag=${encodeURIComponent(t)}">#${escapeHtml(t)}</a>`).join('');
 }
 
