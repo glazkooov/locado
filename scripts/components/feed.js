@@ -51,7 +51,7 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
 
   // label — что выбрал пользователь вне ленты (настроение из hero, подборка):
   // { kind: 'Настроение', text: 'Тихая прогулка на природе' } или null.
-  let state = { category: 'all', query: '', tags: null, label: null };
+  let state = { category: 'all', query: '', tags: null, tagsAll: null, label: null };
   let shown = 0;
   let list = [];
 
@@ -86,7 +86,7 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
     // Пока действует настроение из hero-pill (tags или список категорий),
     // ни одна вкладка не подсвечивается — иначе «Все» выглядела бы активной
     // при уже отфильтрованной ленте.
-    const moodActive = Boolean(state.tags) || Array.isArray(state.category);
+    const moodActive = Boolean(state.tags || state.tagsAll) || Array.isArray(state.category);
     setPressed(tabs, (btn) => !moodActive && btn.dataset.category === state.category);
   };
 
@@ -150,16 +150,17 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
   // Явный клик по категории/ручной ввод в поиске отменяет ранее выбранное
   // настроение (tags), иначе старый фильтр pill'а продолжал бы действовать
   // «невидимо» поверх нового выбора.
-  const setCategory = (category) => setFilters({ category, tags: null });
+  const setCategory = (category) => setFilters({ category, tags: null, tagsAll: null });
   // Если настроение сработало через запасной план (список категорий), ручной
   // поиск тоже его сбрасывает — иначе текст искался бы только внутри
   // невидимого набора категорий этого настроения.
   const setQuery = (query) => setFilters({
     query,
     tags: null,
+    tagsAll: null,
     ...(Array.isArray(state.category) ? { category: 'all' } : {})
   });
-  const reset = () => setFilters({ category: 'all', query: '', tags: null }, { syncInput: true });
+  const reset = () => setFilters({ category: 'all', query: '', tags: null, tagsAll: null }, { syncInput: true });
 
   // --- UI: вкладки категорий ---
   on($('#categories-scroll'), 'click', '.scroll__category-btn', (e, btn) => {
@@ -223,7 +224,7 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
   });
 
   const restore = (snapshot) => {
-    state = { category: 'all', query: '', tags: null, label: null, ...snapshot.state };
+    state = { category: 'all', query: '', tags: null, tagsAll: null, label: null, ...snapshot.state };
     syncTabs();
     const input = $('#categories-search-input');
     if (input) { input.value = state.query || ''; toggleClear(input, $('#categories-clear-btn')); }
