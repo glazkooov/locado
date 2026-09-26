@@ -6,11 +6,12 @@
 import { $ } from '../core/dom.js';
 import { CATEGORIES } from '../core/places.js';
 import { pluralize } from '../core/format.js';
+import { icon } from '../core/icons.js';
 
-const ALL_ICON = 'fa-map-marker-alt';
+const ALL_ICON = 'map-pin';
 
-function iconHtml(icon, extraClass = '') {
-  return `<i class="fas ${icon}${extraClass ? ` ${extraClass}` : ''}" aria-hidden="true"></i>`;
+function iconHtml(name, extraClass = '') {
+  return icon(name, extraClass);
 }
 
 /** Кнопки-фильтры: «Все» + категории. Выбранная помечается .active и aria-pressed. */

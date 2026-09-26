@@ -2,6 +2,7 @@
    base -> layout -> components -> pages. Ничего, кроме этого файла,
    в <head> подключать не нужно. */
 
+@import url('base/fonts.css');
 @import url('base/tokens.css');
 @import url('base/reset.css');
 @import url('base/typography.css');

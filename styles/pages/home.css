@@ -64,7 +64,7 @@
 }
 
 .hero__when {
-  font-size: 0.8rem;
+  font-size: var(--fs-xs);
   font-weight: 600;
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -72,7 +72,7 @@
 }
 
 .hero__tagline {
-  font-size: 0.95rem;
+  font-size: var(--fs-md);
   color: var(--hero-muted);
 }
 
@@ -113,8 +113,8 @@
   aspect-ratio: 3 / 4;
   padding: 0;
   border: 2px solid var(--hero-card-line);
-  box-shadow: 0 10px 30px rgba(40, 20, 10, 0.14);
-  border-radius: 18px;
+  box-shadow: var(--shadow-soft);
+  border-radius: var(--radius-card);
   overflow: hidden;
   background: var(--ink);
   text-align: left;
@@ -130,7 +130,7 @@
 /* На широком экране ряд из шести карточек по 148px выглядел полоской */
 @media (min-width: 1200px) {
   .mood-card { flex-basis: 180px; }
-  .mood-card__label { font-size: 1rem; left: 14px; right: 14px; bottom: 14px; }
+  .mood-card__label { font-size: var(--fs-md); left: 14px; right: 14px; bottom: 14px; }
 }
 
 .mood-card__img {
@@ -155,7 +155,7 @@
   right: 12px;
   bottom: 12px;
   z-index: 1;
-  font-size: 0.9rem;
+  font-size: var(--fs-sm);
   font-weight: 600;
   line-height: 1.25;
   color: #fff;
@@ -167,9 +167,9 @@
   left: 10px;
   z-index: 1;
   padding: 3px 8px;
-  border-radius: 20px;
+  border-radius: var(--radius-card);
   background: rgba(255, 255, 255, 0.92);
-  font-size: 0.68rem;
+  font-size: var(--fs-caption);
   font-weight: 700;
   color: var(--ink);
 }
@@ -256,13 +256,13 @@
 
 @media (min-width: 576px) {
   .hero__title {
-    font-size: 2.8rem;
+    font-size: 2.5rem;
   }
 }
 
 @media (min-width: 992px) {
   .hero__title {
-    font-size: 3.5rem;
+    font-size: 3.1rem;
   }
 }
 
@@ -282,27 +282,27 @@
 
 .manifesto__eyebrow {
   text-transform: uppercase;
-  font-size: 0.78rem;
+  font-size: var(--fs-caption);
   letter-spacing: 1.5px;
-  color: var(--primary);
+  color: var(--primary-text);
   font-weight: 700;
   margin-bottom: 14px;
 }
 
 .manifesto__quote {
   font-family: var(--font-heading);
-  font-size: 1.4rem;
+  font-size: var(--fs-xl);
   line-height: 1.5;
   color: var(--ink);
   font-weight: 500;
 }
 
 @media (min-width: 768px) {
-  .manifesto__quote { font-size: 1.75rem; }
+  .manifesto__quote { font-size: var(--fs-2xl); }
 }
 
 .manifesto__quote span {
-  color: var(--primary);
+  color: var(--primary-text);
   font-weight: 700;
 }
 
@@ -323,10 +323,10 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 0.95rem;
+  font-size: var(--fs-md);
 }
 
-.manifesto__item i { color: var(--primary); font-size: 1.1rem; }
+.manifesto__item i { color: var(--primary); font-size: var(--fs-lg); }
 
 .manifesto__divider {
   color: var(--primary);
@@ -385,14 +385,14 @@
 }
 
 .suggested-content h3 {
-  font-size: 1.15rem;
+  font-size: var(--fs-lg);
   font-weight: 700;
   letter-spacing: -0.02em;
   margin-bottom: 6px;
 }
 
 .suggested-content p {
-  font-size: 0.95rem;
+  font-size: var(--fs-md);
   color: var(--text-light);
   line-height: 1.45;
 }
@@ -464,7 +464,7 @@
 
 .masonry-icon {
   display: inline-block;
-  font-size: 1.8rem;
+  font-size: var(--fs-2xl);
   line-height: 1;
   margin-bottom: 12px;
   color: var(--primary);
@@ -474,16 +474,15 @@
 .category-masonry:hover .masonry-icon { transform: translateY(-2px) rotate(-6deg); }
 
 .masonry-label {
-  font-family: var(--font-heading);
   font-weight: 600;
-  font-size: 1rem;
+  font-size: var(--fs-md);
   letter-spacing: -0.02em;
 }
 
 /* «13 мест» — сколько выбора в категории; заполняется после загрузки базы */
 .masonry-count {
   margin-top: 2px;
-  font-size: 0.8rem;
+  font-size: var(--fs-xs);
   font-weight: 600;
   color: var(--text-light);
 }
@@ -497,14 +496,14 @@
   .category-masonry {
     min-height: 96px;
     padding: 16px 14px 14px;
-    border-radius: 20px;
+    border-radius: var(--radius-card);
   }
   .masonry-icon {
-    font-size: 1.5rem;
+    font-size: var(--fs-xl);
     margin-bottom: 8px;
   }
   .masonry-label {
-    font-size: 0.85rem;
+    font-size: var(--fs-sm);
   }
 }
 
@@ -552,14 +551,14 @@
 
 .collection-title {
   font-family: var(--font-heading);
-  font-size: 1.2rem;
+  font-size: var(--fs-lg);
   font-weight: 700;
   letter-spacing: -0.02em;
   margin-bottom: 8px;
 }
 
 .collection-desc {
-  font-size: 0.9rem;
+  font-size: var(--fs-sm);
   opacity: 0.9;
   margin-bottom: 16px;
   line-height: 1.5;
@@ -571,8 +570,8 @@
   border: 1px solid rgba(255, 255, 255, 0.45);
   backdrop-filter: blur(6px);
   padding: 6px 16px;
-  border-radius: 40px;
-  font-size: 0.8rem;
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-xs);
   font-weight: 600;
   color: white;
   text-decoration: none;
@@ -660,7 +659,7 @@
   align-items: center;
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(20px);
-  border-radius: 48px;
+  border-radius: var(--radius-lg);
   padding: 56px 48px;
   box-shadow:
     0 8px 20px rgba(0,0,0,0.04),
@@ -689,13 +688,13 @@
   font-weight: 700;
   letter-spacing: -0.03em;
   line-height: 1.2;
-  color: #1a1a1a;
+  color: var(--text);
   margin-bottom: 16px;
 }
 
 .add-place-desc {
-  font-size: 1rem;
-  color: #555;
+  font-size: var(--fs-md);
+  color: var(--text-light);
   line-height: 1.7;
   margin-bottom: 32px;
   max-width: 360px;
@@ -726,7 +725,7 @@
   align-items: center;
   gap: 20px;
   padding: 32px 28px;
-  border-radius: 32px;
+  border-radius: var(--radius-lg);
   text-decoration: none;
   transition: all 0.35s cubic-bezier(0.2, 0, 0, 1);
   position: relative;
@@ -785,28 +784,28 @@
 
 .action-title {
   font-family: var(--font-heading);
-  font-size: 1.2rem;
+  font-size: var(--fs-lg);
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--text);
   margin-bottom: 4px;
 }
 
 .action-sub {
-  font-size: 0.9rem;
-  color: #666;
+  font-size: var(--fs-sm);
+  color: var(--text-light);
   line-height: 1.4;
 }
 
 .action-arrow {
-  font-size: 1.6rem;
-  color: #ccc;
+  font-size: var(--fs-2xl);
+  color: var(--line-strong);
   flex-shrink: 0;
   transition: transform 0.3s, color 0.3s;
 }
 
 .add-action-card:hover .action-arrow {
   transform: translateX(8px);
-  color: #333;
+  color: var(--text);
 }
 
 @media (max-width: 768px) {
@@ -844,19 +843,11 @@
 }
 
 #show-more-btn {
-  display: block;
+  display: flex;
   margin: 36px auto 8px;
-  background: transparent;
-  border: 2px solid var(--primary);
-  color: var(--primary);
 }
 
-#show-more-btn:hover {
-  background: var(--primary);
-  color: #fff;
-}
-
-#show-more-btn.invisible { opacity: 0; pointer-events: none; height: 0; margin: 0; overflow: hidden; transition: opacity 0.3s ease, height 0.3s ease, margin 0.3s ease; }
+#show-more-btn.invisible { opacity: 0; pointer-events: none; height: 0; min-height: 0; padding: 0; border: 0; margin: 0; overflow: hidden; transition: opacity 0.3s ease, height 0.3s ease, margin 0.3s ease; }
 
 .feed-end {
   max-width: 420px;
@@ -875,14 +866,13 @@
 }
 
 .feed-end p {
-  font-family: var(--font-heading);
-  font-size: 1.05rem;
+  font-size: var(--fs-md);
   color: var(--text);
   margin-bottom: 6px;
 }
 
 .feed-end span {
-  font-size: 0.85rem;
+  font-size: var(--fs-sm);
   color: var(--text-light);
 }
 
@@ -965,13 +955,13 @@
 @media (max-width: 575px) {
   .places-grid .place-card__top { top: 10px; left: 10px; right: 10px; gap: 4px; }
   .places-grid .place-card__category,
-  .places-grid .badge-temporary { font-size: 0.64rem; padding: 3px 8px; }
+  .places-grid .badge-temporary { font-size: var(--fs-caption); padding: 3px 8px; }
   .places-grid .place-card__info { padding: 10px 12px; }
-  .places-grid .place-card__info h3 { font-size: 0.98rem; line-height: 1.2; }
+  .places-grid .place-card__info h3 { font-size: var(--fs-md); line-height: 1.2; }
 }
 
 @media (max-width: 480px) {
-  .category-btn { padding: 10px 16px; font-size: 0.85rem; }
+  .category-btn { padding: 10px 16px; font-size: var(--fs-sm); }
 
   .state-screen { padding: 48px 0; }
   .site-footer__top { gap: 28px; }

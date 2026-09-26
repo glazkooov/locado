@@ -11,12 +11,12 @@
 
 @media (min-width: 576px) {
   .section-title {
-    font-size: 2rem;
+    font-size: var(--fs-2xl);
   }
 }
 
 @media (min-width: 992px) {
   .section-title {
-    font-size: 2.4rem;
+    font-size: 2rem;
   }
 }

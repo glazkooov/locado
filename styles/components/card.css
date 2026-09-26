@@ -83,11 +83,11 @@
    «Сейчас в тему» у карточек настроений */
 .place-card__category {
   padding: 4px 10px;
-  font-size: 0.7rem;
+  font-size: var(--fs-caption);
   font-weight: 700;
   color: var(--ink);
   background: rgba(255, 255, 255, 0.92);
-  border-radius: 20px;
+  border-radius: var(--radius-card);
 }
 
 .fav-btn {
@@ -103,11 +103,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.3rem;
+  font-size: var(--fs-xl);
   cursor: pointer;
   transition: all 0.2s ease;
   color: white;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: var(--shadow-sm);
   z-index: 10;
 }
 
@@ -150,7 +150,7 @@
 }
 
 .place-card__info h3 {
-  font-size: 1.25rem;
+  font-size: var(--fs-lg);
   font-weight: 700;
   letter-spacing: -0.02em;
   margin: 0;
@@ -158,11 +158,11 @@
 
 .badge-temporary {
   padding: 4px 10px;
-  font-size: 0.7rem;
+  font-size: var(--fs-caption);
   font-weight: 700;
   color: #fff;
-  background: var(--primary);
-  border-radius: 20px;
+  background: var(--primary-strong);
+  border-radius: var(--radius-card);
 }
 
 .similar-card {
@@ -191,9 +191,9 @@
 
 .similar-card .info { padding: 14px 16px 16px; }
 
-.similar-card .info h4 { font-size: 1.02rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 4px; }
+.similar-card .info h4 { font-size: var(--fs-md); font-weight: 700; letter-spacing: -0.02em; margin-bottom: 4px; }
 
-.similar-card .info p { font-size: 0.85rem; color: var(--text-light); }
+.similar-card .info p { font-size: var(--fs-sm); color: var(--text-light); }
 
 /* Фото не загрузилось (или его ещё нет) — картинку прячем целиком: иначе
    браузер рисует значок битого файла и alt-текст поверх плашек карточки.
@@ -204,13 +204,16 @@
 }
 
 .place-card:has(.is-broken) {
-  background: linear-gradient(160deg, var(--cream-deep) 0%, #E2D2BE 100%);
+  background: var(--photo-placeholder);
 }
 
-.similar-card:has(img.is-broken) img {
+/* Небольшие превью: вместо битого файла — прозрачная картинка на подложке */
+.similar-card img.is-broken,
+.randomizer-preview img.is-broken,
+.state-card img.is-broken {
   visibility: visible;
   content: url("data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==");
-  background: linear-gradient(160deg, var(--cream-deep) 0%, #E2D2BE 100%);
+  background: var(--photo-placeholder);
 }
 
 .fav-btn-hero[aria-pressed="true"],

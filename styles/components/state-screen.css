@@ -31,7 +31,7 @@
 }
 
 .state-screen__text {
-  font-size: 1.02rem;
+  font-size: var(--fs-md);
   line-height: 1.65;
   color: var(--text-light);
   max-width: 48ch;
@@ -54,16 +54,15 @@
   color: var(--text-light);
   text-decoration: underline;
   text-underline-offset: 4px;
-  font-size: 0.95rem;
+  font-size: var(--fs-md);
 }
 
-.state-screen__link:hover { color: var(--primary); }
+.state-screen__link:hover { color: var(--primary-text); }
 
 .state-screen__suggested { margin-top: 56px; }
 
 .state-screen__subtitle {
-  font-family: var(--font-heading);
-  font-size: 1.05rem;
+  font-size: var(--fs-md);
   font-weight: 500;
   color: var(--text);
   margin-bottom: 18px;
@@ -88,15 +87,19 @@
   width: 100%;
   aspect-ratio: 4 / 3;
   object-fit: cover;
-  border-radius: 14px;
-  background: var(--cream-deep);
+  border-radius: var(--radius-sm);
+  background: var(--photo-placeholder);
   margin-bottom: 6px;
 }
 
-.state-card__name { font-weight: 600; font-size: 0.95rem; }
+/* На узком экране три карточки встают 2 + 1 — оставляем две */
+@media (max-width: 480px) {
+  .state-screen__cards { grid-template-columns: 1fr 1fr; }
+  .state-card:nth-child(n+3) { display: none; }
+}
 
-.state-card__type { font-size: 0.82rem; color: var(--text-light); }
+.state-card__name { font-weight: 600; font-size: var(--fs-md); }
 
-.state-card img.is-broken { background: var(--cream-deep); }
+.state-card__type { font-size: var(--fs-xs); color: var(--text-light); }
 
-.state-card:hover .state-card__name { color: var(--primary); }
+.state-card:hover .state-card__name { color: var(--primary-text); }

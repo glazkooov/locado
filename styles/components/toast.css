@@ -7,11 +7,11 @@
   background: var(--ink);
   color: #fff;
   padding: 12px 22px;
-  border-radius: 30px;
-  font-size: 0.92rem;
+  border-radius: var(--radius-pill);
+  font-size: var(--fs-sm);
   line-height: 1.4;
   text-align: center;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-soft-hover);
   opacity: 0;
   pointer-events: none;
   z-index: 9999;
@@ -23,7 +23,7 @@
   transform: translate(-50%, 0);
 }
 
-.toast--error { background: #C62828; }
+.toast--error { background: var(--danger); }
 
 @media (max-width: 768px) {
   .place-page .toast { bottom: calc(96px + env(safe-area-inset-bottom)); }

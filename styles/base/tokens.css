@@ -1,45 +1,58 @@
 :root {
+  /* Фирменный оранжевый — для заливок без текста, значков, логотипа и
+     крупных заголовков. На нём и рядом с ним мелкий текст не проходит
+     WCAG AA (контраст ~3:1), поэтому: */
   --primary: #FF570A;
   --primary-light: #FF661F;
+  /* фон кнопок с белым текстом (контраст с белым 4.6:1) */
+  --primary-strong: #D24406;
+  --primary-strong-hover: #B93C05;
+  /* оранжевый мелкий текст и ссылки на светлом фоне (5.3:1 на креме) */
+  --primary-text: #B93C05;
   --text: #2E2E2E;
-  --text-light: #666666;
-  --text-lighter: #999999;
+  /* тёплые серые вместо холодных #666/#999 (контраст на креме 5.6 и 4.5) */
+  --text-light: #6B6259;
+  --text-lighter: #7A7068;
   --bg: #FBF7F2;
   --card-bg: #ffffff;
-  --border: #E0E0E0;
-  --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  --shadow-hover: 0 8px 20px rgba(0, 0, 0, 0.15);
-  --radius: 12px;
-  --transition: all 0.3s ease;
 
-  /* Тёплая акцентная палитра для "уюта" */
+  /* Тёплая палитра */
   --cream: #FBF7F2;
   --cream-deep: #F3EBDF;
   --ink: #2A2521;
   --accent-soft: #FFE8D6;
   --accent-line: #FFD9BE;
+  /* статусы «открыто / закрыто» */
+  --success: #2E7D32;
+  --danger: #C62828;
 
   /* Шрифты */
-  --font-heading: 'Unbounded', sans-serif;
-  --font-body: 'Raleway', sans-serif;
+  --font-heading: 'Unbounded', 'Arial Black', sans-serif;
+  --font-body: 'Raleway', system-ui, sans-serif;
 
-  /* Category colors */
-  --category-text-active: white;
-  --color-all: #8312da;
-  --color-nature: #34A853;
-  --color-art: #d316f5;
-  --color-food: #f83ac9;
-  --color-photo: #0699fa;
-  --color-theater: #FF7043;
-  --color-entertainment: #FF4E50;
+  /* Шкала размеров текста — вместо 38 разных значений. Заголовки первого
+     экрана и секций задаются отдельно (typography.css, container.css). */
+  --fs-caption: 0.75rem;  /* 12 — плашки, подписи заглавными */
+  --fs-xs: 0.8125rem;     /* 13 — вторичные подписи */
+  --fs-sm: 0.875rem;      /* 14 — кнопки, фильтры, мелкий текст */
+  --fs-md: 1rem;          /* 16 — основной текст */
+  --fs-lg: 1.125rem;      /* 18 — заголовки карточек и окон */
+  --fs-xl: 1.375rem;      /* 22 */
+  --fs-2xl: 1.75rem;      /* 28 */
 
-  /* Gradients for category tiles */
-  --gradient-nature: linear-gradient(135deg, #34A853, #5BE584);
-  --gradient-art: linear-gradient(135deg, #d316f5, #f86ef8);
-  --gradient-food: linear-gradient(135deg, #f83ac9, #ff7ad4);
-  --gradient-photo: linear-gradient(135deg, #0699fa, #00C9FF);
-  --gradient-theater: linear-gradient(135deg, #FF7043, #FF9472);
-  --gradient-entertainment: linear-gradient(135deg, #FF4E50, #FF6B6B);
+  /* Скругления — 4 значения + «таблетка» */
+  --radius-xs: 8px;
+  --radius-sm: 14px;
+  --radius-lg: 24px;
+  --radius-pill: 999px;
+
+  /* Тени — 4 уровня (+ --shadow-soft/--shadow-soft-hover ниже) */
+  --shadow-bar: 0 2px 12px rgba(40, 20, 10, 0.06);
+  --shadow-sm: 0 4px 14px rgba(40, 20, 10, 0.12);
+  --shadow-modal: 0 24px 60px rgba(40, 20, 10, 0.28);
+  --focus-ring: 0 0 0 3px rgba(255, 87, 10, 0.2);
+
+  --transition: all 0.3s ease;
 }
 
 :root {
@@ -51,6 +64,8 @@
   --line-strong: rgba(42, 37, 33, 0.22);
   --shadow-soft: 0 10px 30px rgba(40, 20, 10, 0.10);
   --shadow-soft-hover: 0 16px 40px rgba(40, 20, 10, 0.16);
+  /* Подложка вместо фото, пока его нет или оно не загрузилось */
+  --photo-placeholder: linear-gradient(160deg, #F3EBDF 0%, #E2D2BE 100%);
   --photo-fade: linear-gradient(180deg, rgba(0, 0, 0, 0) 35%, rgba(0, 0, 0, 0.78) 100%);
   /* Плёночное зерно: hero, фон страницы, футер */
   --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
