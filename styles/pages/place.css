@@ -144,6 +144,15 @@
 
 .hero-fact i { color: #FF8A4C; }
 
+.hero-fact__link {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 255, 255, 0.45);
+  text-underline-offset: 3px;
+}
+
+.hero-fact__link:hover { text-decoration-color: #fff; }
+
 .hero-fact--open i { color: #7EE2A0; }
 
 @media (min-width: 992px) {
@@ -173,7 +182,9 @@
 }
 
 @media (min-width: 600px) {
-  .info-grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+  /* auto-fill, а не auto-fit: когда часть карточек скрыта (нет данных),
+     оставшиеся сохраняют размер, а не растягиваются на всю ширину */
+  .info-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
 }
 
 .info-card {
@@ -276,6 +287,9 @@
   max-width: 720px;
   margin-bottom: 20px;
 }
+
+/* Карточек информации нет (адрес ушёл в hero) — отступ, который давала секция */
+.place-info[hidden] + .place-description { margin-top: 56px; }
 
 /* Описание + теги: на компьютере в две колонки, чтобы справа не пустовало */
 .place-description__layout {
