@@ -5,6 +5,7 @@ import { $, $$, on } from '../core/dom.js';
 import { escapeHtml, cssUrl } from '../core/format.js';
 import { placeUrl, categoryLabel } from '../core/places.js';
 import * as Storage from '../core/storage.js';
+import { icon } from '../core/icons.js';
 
 // Избранное не входит в MVP (см. CLAUDE.md) и страницы favorites.html пока
 // нет — сердечко на карточках скрыто. Вернуть: SHOW_FAVORITES = true.
@@ -15,7 +16,7 @@ function favButtonHtml(place, isFavorite) {
   return `
         <button type="button" class="fav-btn${isFavorite ? ' active' : ''}" data-slug="${escapeHtml(place.slug)}"
                 aria-pressed="${isFavorite}" aria-label="${isFavorite ? 'Удалить из избранного' : 'Добавить в избранное'}">
-          <i class="fas fa-heart" aria-hidden="true"></i>
+          ${icon('heart', 'icon--filled')}
         </button>`;
 }
 

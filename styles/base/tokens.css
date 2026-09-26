@@ -20,8 +20,8 @@
   --accent-line: #FFD9BE;
 
   /* Шрифты */
-  --font-heading: 'Unbounded', sans-serif;
-  --font-body: 'Raleway', sans-serif;
+  --font-heading: 'Unbounded', 'Arial Black', sans-serif;
+  --font-body: 'Raleway', system-ui, sans-serif;
 
   /* Category colors */
   --category-text-active: white;

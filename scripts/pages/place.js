@@ -13,6 +13,7 @@ import { similarCardHtml, bindImageFallback } from '../components/card.js';
 import { createModal } from '../components/modal.js';
 import { initPlaceMap, routeUrl } from '../components/map.js';
 import { showToast } from '../components/toast.js';
+import { icon } from '../core/icons.js';
 
 let timerInterval = null;
 
@@ -46,9 +47,9 @@ function updateFavButtonUI(isFav) {
     if (!btn) return;
     btn.classList.toggle('active', isFav);
     btn.setAttribute('aria-pressed', String(isFav));
-    const icon = btn.querySelector('i');
+    const heart = btn.querySelector('.icon');
     const label = btn.querySelector('span');
-    if (icon) icon.className = isFav ? 'fas fa-heart' : 'far fa-heart';
+    heart?.classList.toggle('icon--filled', isFav);
     if (label) label.textContent = isFav ? 'В избранном' : 'В избранное';
   });
 }
@@ -57,7 +58,7 @@ function renderHero(place) {
   $('.place-hero')?.classList.remove('is-loading');
   const heroBg = $('#hero-bg');
   if (heroBg) heroBg.style.backgroundImage = cssUrl(place.photo);
-  $('#place-category').innerHTML = `<i class="fas fa-tag" aria-hidden="true"></i> ${escapeHtml(place.type || place.category)}`;
+  $('#place-category').innerHTML = `${icon('tag')} ${escapeHtml(place.type || place.category)}`;
   $('#place-name').textContent = place.name;
   // Краткое описание вместо шаблонного «… в центре Москвы» (не у всех мест правда)
   $('#place-subtitle').textContent = place.subtitle || place.description || '';
@@ -75,20 +76,20 @@ function renderFacts(place) {
   if (!list) return;
   const facts = [];
   const [metro] = metroList(place);
-  if (metro) facts.push({ icon: 'fa-subway', text: `м. ${metro}` });
+  if (metro) facts.push({ icon: 'train-front', text: `м. ${metro}` });
   const status = openStatusLabel(place);
-  if (status) facts.push({ icon: 'fa-clock', text: status.text, mod: status.isOpen ? 'open' : 'closed' });
+  if (status) facts.push({ icon: 'clock', text: status.text, mod: status.isOpen ? 'open' : 'closed' });
   if (place.price) {
     // «Билеты — на сайте музея» без ссылки заставляет искать сайт самому
     const website = safeUrl(place.website, '');
     const href = website && /на сайте/i.test(place.price) ? website : '';
-    facts.push({ icon: 'fa-tag', text: place.price, href, external: true });
+    facts.push({ icon: 'tag', text: place.price, href, external: true });
   }
   list.innerHTML = facts.map(heroFactHtml).join('');
 }
 
 function heroFactHtml(f) {
-  const body = `<i class="fas ${f.icon}" aria-hidden="true"></i> ${escapeHtml(f.text)}`;
+  const body = `${icon(f.icon)} ${escapeHtml(f.text)}`;
   const content = f.href
     ? `<a class="hero-fact__link" href="${escapeHtml(f.href)}"${f.external ? ' target="_blank" rel="noopener"' : ''}>${body}</a>`
     : body;
@@ -193,14 +194,14 @@ function renderTags(place) {
     `<a class="tag-chip" href="index.html?tag=${encodeURIComponent(t)}">#${escapeHtml(t)}</a>`).join('');
 }
 
-const AMENITY_ICONS = { wifi: 'fa-wifi', parking: 'fa-parking', card: 'fa-credit-card', kids: 'fa-child', outdoor: 'fa-tree', delivery: 'fa-truck', takeaway: 'fa-shopping-bag' };
+const AMENITY_ICONS = { wifi: 'wifi', parking: 'square-parking', card: 'credit-card', kids: 'baby', outdoor: 'trees', delivery: 'truck', takeaway: 'shopping-bag' };
 
 function renderAmenities(place) {
   const container = $('#place-amenities');
   if (!place.amenities || !place.amenities.length) { container.style.display = 'none'; return; }
   container.style.display = 'block';
   container.innerHTML = `<div class="amenities-grid">${place.amenities.map((item) =>
-    `<div class="amenity-item"><i class="fas ${AMENITY_ICONS[item.icon] || 'fa-check'}" aria-hidden="true"></i> ${escapeHtml(item.name)}</div>`
+    `<div class="amenity-item">${icon(AMENITY_ICONS[item.icon] || 'check')} ${escapeHtml(item.name)}</div>`
   ).join('')}</div>`;
 }
 
@@ -259,18 +260,13 @@ function renderReviews(slug) {
   $('#reviews-count').textContent = `${reviews.length} отзывов`;
 
   const starsSpan = $('#average-stars');
-  starsSpan.innerHTML = '';
-  for (let i = 1; i <= 5; i++) {
-    const star = document.createElement('i');
-    star.className = i <= Math.round(avg) ? 'fas fa-star' : 'far fa-star';
-    starsSpan.appendChild(star);
-  }
+  starsSpan.innerHTML = [1, 2, 3, 4, 5].map((i) => icon('star', i <= Math.round(avg) ? 'icon--filled' : '')).join('');
 
   if (!reviews.length) { container.innerHTML = '<p>Пока нет отзывов. Будьте первым!</p>'; return; }
   container.innerHTML = reviews.map((rev) => `
     <div class="review-card">
       <div class="review-header">
-        <div class="review-author"><i class="fas fa-user-circle" aria-hidden="true"></i> ${escapeHtml(rev.name)}</div>
+        <div class="review-author">${icon('circle-user')} ${escapeHtml(rev.name)}</div>
         <div class="review-rating">${'★'.repeat(rev.rating)}${'☆'.repeat(5 - rev.rating)}</div>
         <div class="review-date">${new Date(rev.date).toLocaleDateString('ru-RU')}</div>
       </div>
@@ -341,13 +337,13 @@ function attachEventListeners(place, allPlaces) {
 
   // Форма отзыва
   const form = $('#review-form');
-  const starIcons = $$('#star-rating i');
+  const starIcons = $$('#star-rating .icon');
   const ratingHidden = $('#review-rating');
   starIcons.forEach((star) => {
     on(star, 'click', () => {
       const val = parseInt(star.dataset.value, 10);
       ratingHidden.value = val;
-      starIcons.forEach((s, idx) => { s.className = idx < val ? 'fas fa-star active' : 'far fa-star'; });
+      starIcons.forEach((s, idx) => { s.classList.toggle('icon--filled', idx < val); s.classList.toggle('active', idx < val); });
     });
   });
   on(form, 'submit', (e) => {
@@ -360,7 +356,7 @@ function attachEventListeners(place, allPlaces) {
     renderReviews(place.slug);
     form.reset();
     ratingHidden.value = 0;
-    starIcons.forEach((s) => { s.className = 'far fa-star'; });
+    starIcons.forEach((s) => s.classList.remove('icon--filled', 'active'));
     showToast('Отзыв добавлен!');
   });
 }

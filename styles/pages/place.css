@@ -151,7 +151,7 @@
   font-weight: 600;
 }
 
-.hero-fact i { color: #FF8A4C; }
+.hero-fact .icon { color: #FF8A4C; }
 
 .hero-fact__link {
   color: inherit;
@@ -162,10 +162,10 @@
 
 .hero-fact__link:hover { text-decoration-color: #fff; }
 
-.hero-fact--open i { color: #7EE2A0; }
+.hero-fact--open .icon { color: #7EE2A0; }
 
 @media (min-width: 992px) {
-  .hero-title { font-size: 3.2rem; }
+  .hero-title { font-size: 2.75rem; }
 }
 
 /* На телефоне те же действия есть в нижней панели — круглые значки поверх
@@ -175,7 +175,7 @@
 }
 
 @media (max-width: 480px) {
-  .hero-title { font-size: 2rem; }
+  .hero-title { font-size: 1.75rem; }
   .hero-subtitle { font-size: 0.98rem; }
 }
 
@@ -209,17 +209,14 @@
   gap: 14px;
 }
 
-.info-card > i {
-  flex: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.info-card > .icon {
+  box-sizing: border-box;
   width: 40px;
   height: 40px;
+  padding: 10px;
   border-radius: 12px;
   background: var(--accent-soft);
   color: var(--primary);
-  font-size: 1.05rem;
 }
 
 /* Подпись карточки — как подписи секций */
@@ -267,7 +264,7 @@
     linear-gradient(160deg, #FFF6EE 0%, #FBE6D6 100%);
 }
 
-.info-card--mood > i { background: #fff; }
+.info-card--mood > .icon { background: #fff; }
 
 .info-card--mood h3 { color: var(--primary); }
 
@@ -493,15 +490,15 @@
   gap: 8px;
 }
 
-.star-rating i {
+.star-rating .icon {
   font-size: 1.8rem;
   color: #ddd;
   cursor: pointer;
   transition: color 0.1s;
 }
 
-.star-rating i.active,
-.star-rating i:hover { color: #FFB800; }
+.star-rating .icon.active,
+.star-rating .icon:hover { color: #FFB800; }
 
 .similar-scroll {
   display: flex;
@@ -567,7 +564,7 @@
   gap: 12px;
 }
 
-.amenity-item i {
+.amenity-item .icon {
   width: 24px;
   color: var(--primary);
 }
@@ -614,7 +611,7 @@
   cursor: pointer;
 }
 
-.mobile-actions-bar button i {
+.mobile-actions-bar button .icon {
   font-size: 1.3rem;
   color: var(--primary);
 }
@@ -697,7 +694,6 @@
 }
 
 .similar-card__more-title {
-  font-family: var(--font-heading);
   font-size: 1.15rem;
   font-weight: 700;
   letter-spacing: -0.02em;

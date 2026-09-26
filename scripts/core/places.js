@@ -9,12 +9,12 @@ const DATA_URL = new URL('../../data/places.json', import.meta.url);
 // вкладок ленты, кнопок карты и окна случайного места берутся отсюда
 // (см. components/category-buttons.js). Названия — из CLAUDE.md.
 export const CATEGORIES = {
-  food: { label: 'Еда и напитки', emoji: '🍕', icon: 'fa-utensils' },
-  nature: { label: 'Природа', emoji: '🌳', icon: 'fa-tree' },
-  art: { label: 'Музеи', emoji: '🎨', icon: 'fa-landmark' },
-  theater: { label: 'Театры', emoji: '🎭', icon: 'fa-theater-masks' },
-  photo: { label: 'Фото', emoji: '📸', icon: 'fa-camera' },
-  entertainment: { label: 'Развлечения', emoji: '🎉', icon: 'fa-ticket' }
+  food: { label: 'Еда и напитки', emoji: '🍕', icon: 'utensils' },
+  nature: { label: 'Природа', emoji: '🌳', icon: 'trees' },
+  art: { label: 'Музеи', emoji: '🎨', icon: 'landmark' },
+  theater: { label: 'Театры', emoji: '🎭', icon: 'drama' },
+  photo: { label: 'Фото', emoji: '📸', icon: 'camera' },
+  entertainment: { label: 'Развлечения', emoji: '🎉', icon: 'ticket' }
 };
 
 export function categoryLabel(category, { emoji = false } = {}) {

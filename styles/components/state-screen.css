@@ -62,7 +62,6 @@
 .state-screen__suggested { margin-top: 56px; }
 
 .state-screen__subtitle {
-  font-family: var(--font-heading);
   font-size: 1.05rem;
   font-weight: 500;
   color: var(--text);

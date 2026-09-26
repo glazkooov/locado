@@ -12,7 +12,8 @@
   <meta property="og:description" content="Город, рассказанный простыми словами. Места и маршруты по настроению.">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preload" href="assets/fonts/unbounded-cyrillic-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/raleway-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles/main.css">
   <script>
     // Время суток для палитры hero — до первой отрисовки, чтобы фон не мигал.
@@ -24,11 +25,6 @@
     })();
   </script>
   <script src="https://api-maps.yandex.ru/2.1/?apikey=890530b4-68be-4d58-823b-82baae7d9530&lang=ru_RU" type="text/javascript" defer></script>
-
-  <!-- Подключение шрифтов Unbounded + Raleway -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Unbounded:wght@500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <main class="main-content">
@@ -38,7 +34,7 @@
         <a href="index.html" class="logo" aria-label="Локадо — главная">Локадо</a>
 
         <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Открыть меню" aria-expanded="false" aria-controls="main-nav">
-          <i class="fas fa-bars" aria-hidden="true"></i>
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#menu"></use></svg>
         </button>
 
         <nav class="nav" id="main-nav">
@@ -162,20 +158,20 @@
             <div class="map__categories-buttons" id="map-categories" role="group" aria-label="Категории на карте"></div>
 
             <aside class="sidebar-filters">
-              <h3 class="filters-title"><i class="fas fa-sliders-h" aria-hidden="true"></i> Фильтры</h3>
+              <h3 class="filters-title"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#sliders-horizontal"></use></svg> Фильтры</h3>
 
               <div class="map-search-group">
                 <label class="visually-hidden" for="map-search-input">Поиск мест на карте</label>
                 <input type="text" class="map-filter-search" id="map-search-input" placeholder="Найти на карте…" autocomplete="off">
                 <button type="button" class="category-search-clear search-clear" id="map-clear-btn" aria-label="Очистить поиск" hidden>
-                  <i class="fas fa-times" aria-hidden="true"></i>
+                  <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#x"></use></svg>
                 </button>
               </div>
 
               <!-- Метро -->
               <div class="dropdown-filter">
                 <button class="filter-btn" data-toggle="metro" aria-expanded="false">
-                  Метро <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                  Метро <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#chevron-down"></use></svg>
                 </button>
                 <div id="filter-metro" class="dropdown-content"></div>
               </div>
@@ -183,7 +179,7 @@
               <!-- Стоимость -->
               <div class="dropdown-filter">
                 <button class="filter-btn" data-toggle="price" aria-expanded="false">
-                  Стоимость <i class="fas fa-chevron-down" aria-hidden="true"></i>
+                  Стоимость <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#chevron-down"></use></svg>
                 </button>
                 <div class="dropdown-content" id="filter-price">
                   <label><input type="radio" name="price" value="" checked> Любая</label>
@@ -281,11 +277,11 @@
 
           <!-- Поиск в ленте: отдельная строка, не участвует в горизонтальном скролле -->
           <div class="category-search-group">
-            <i class="fas fa-search category-search-icon" aria-hidden="true"></i>
+            <svg class="icon category-search-icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#search"></use></svg>
             <label class="visually-hidden" for="categories-search-input">Поиск по местам</label>
             <input type="text" class="category-search-input" id="categories-search-input" placeholder="Поиск по названию или тегу" autocomplete="off">
             <button class="category-search-clear search-clear" id="categories-clear-btn" aria-label="Очистить поиск" hidden>
-              <i class="fas fa-times" aria-hidden="true"></i>
+              <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#x"></use></svg>
             </button>
           </div>
         </div>
@@ -294,7 +290,7 @@
         <div class="feed-active" id="feed-active" hidden>
           <span class="feed-active__label" id="feed-active-label" aria-live="polite"></span>
           <button type="button" class="feed-active__reset" id="feed-active-reset">
-            Сбросить <i class="fas fa-times" aria-hidden="true"></i>
+            Сбросить <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#x"></use></svg>
           </button>
         </div>
 
@@ -346,14 +342,14 @@
 
   <!-- Кнопка "наверх" -->
   <button id="back-to-top" class="back-to-top" aria-label="Наверх">
-    <i class="fas fa-arrow-up" aria-hidden="true"></i>
+    <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#arrow-up"></use></svg>
   </button>
 
   <!-- Модальное окно рандомайзера -->
   <div id="randomizer-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="randomizer-title">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 id="randomizer-title"><i class="fas fa-dice" aria-hidden="true"></i> Случайное место</h3>
+        <h3 id="randomizer-title"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#dices"></use></svg> Случайное место</h3>
         <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">&times;</button>
       </div>
       <div class="modal-body">

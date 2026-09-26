@@ -28,7 +28,7 @@
 
 .logo {
   font-size: 1.6rem; /* mobile */
-  font-weight: 800;
+  font-weight: 700;
   color: var(--primary);
   letter-spacing: -0.5px;
 }

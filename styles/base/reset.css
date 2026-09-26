@@ -37,6 +37,9 @@ body {
   background-color: var(--bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* У Raleway по умолчанию «старые» цифры разной высоты — «11:00–21:00»
+     и цены прыгали. Ровные цифры одной ширины — для времени и чисел. */
+  font-variant-numeric: lining-nums tabular-nums;
 }
 
 /* Лёгкое зерно на всей странице — тот же «плёночный» фон, что в hero */
@@ -99,3 +102,20 @@ img {
   select,
   textarea { font-size: 16px; }
 }
+
+/* SVG-иконки из спрайта (scripts/core/icons.js): размер — от font-size,
+   цвет — от color, как у текста */
+.icon {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  flex: none;
+  vertical-align: -0.125em;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.icon--filled { fill: currentColor; }

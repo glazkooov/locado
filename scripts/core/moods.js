@@ -15,7 +15,7 @@ export const MOODS = [
   {
     id: 'quiet-nature',
     label: 'Тихая прогулка на природе',
-    icon: 'fa-leaf',
+    icon: 'leaf',
     photo: 'assets/images/moods/quiet-nature.jpg',
     bestAt: ['morning', 'day'],
     any: ['природа', 'парк', 'лес', 'сад'],
@@ -25,7 +25,7 @@ export const MOODS = [
   {
     id: 'romantic-evening',
     label: 'Романтично вечером',
-    icon: 'fa-city',
+    icon: 'building-2',
     photo: 'assets/images/moods/romantic-evening.jpg',
     bestAt: ['evening'],
     any: ['вечер', 'ночь'],
@@ -35,7 +35,7 @@ export const MOODS = [
   {
     id: 'culture-art',
     label: 'Культура и искусство',
-    icon: 'fa-palette',
+    icon: 'palette',
     photo: 'assets/images/moods/culture-art.jpg',
     bestAt: ['day'],
     any: ['смотреть искусство', 'смотреть спектакль'],
@@ -44,7 +44,7 @@ export const MOODS = [
   {
     id: 'food',
     label: 'Вкусно поесть',
-    icon: 'fa-utensils',
+    icon: 'utensils',
     photo: 'assets/images/moods/food.jpg',
     bestAt: ['morning', 'evening'],
     any: ['есть', 'еда'],
@@ -53,7 +53,7 @@ export const MOODS = [
   {
     id: 'friends',
     label: 'С друзьями',
-    icon: 'fa-user-group',
+    icon: 'users',
     photo: 'assets/images/moods/friends.jpg',
     bestAt: ['evening', 'night'],
     all: ['с друзьями'],

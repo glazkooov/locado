@@ -247,7 +247,6 @@
 .feed-empty[hidden] { display: none; }
 
 .feed-empty p {
-  font-family: var(--font-heading);
   font-size: 1.05rem;
   color: var(--text);
   margin-bottom: 16px;

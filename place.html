@@ -14,12 +14,9 @@
   <meta name="twitter:card" content="summary_large_image">
 
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preload" href="assets/fonts/unbounded-cyrillic-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/raleway-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles/main.css">
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Unbounded:wght@500;600;700&display=swap" rel="stylesheet">
 
   <script src="https://api-maps.yandex.ru/2.1/?apikey=890530b4-68be-4d58-823b-82baae7d9530&lang=ru_RU" type="text/javascript" defer></script>
 </head>
@@ -30,7 +27,7 @@
       <a href="index.html" class="logo" aria-label="Локадо — главная">Локадо</a>
 
       <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Открыть меню" aria-expanded="false" aria-controls="main-nav">
-        <i class="fas fa-bars" aria-hidden="true"></i>
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#menu"></use></svg>
       </button>
 
       <nav class="nav" id="main-nav">
@@ -79,18 +76,18 @@
           <div class="hero-actions">
             <!-- Избранное вне MVP (см. CLAUDE.md) — скрыто, как и на карточках главной -->
             <button type="button" id="fav-btn-hero" class="fav-btn-hero" hidden>
-              <i class="far fa-heart" aria-hidden="true"></i><span>В избранное</span>
+              <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#heart"></use></svg><span>В избранное</span>
             </button>
             <!-- «Я здесь был» — социальная функция вне MVP, отметка видна только
                  самому пользователю. Скрыта; вернуть — убрать hidden. -->
             <button type="button" id="visited-btn" class="visited-btn" hidden>
-              <i class="fas fa-check" aria-hidden="true"></i><span>Я здесь был</span>
+              <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#check"></use></svg><span>Я здесь был</span>
             </button>
             <button type="button" id="call-btn" class="call-btn" aria-label="Позвонить">
-              <i class="fas fa-phone" aria-hidden="true"></i><span>Позвонить</span>
+              <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#phone"></use></svg><span>Позвонить</span>
             </button>
             <button type="button" id="share-btn" class="share-btn" aria-label="Поделиться">
-              <i class="fas fa-share-alt" aria-hidden="true"></i><span>Поделиться</span>
+              <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#share-2"></use></svg><span>Поделиться</span>
             </button>
           </div>
         </div>
@@ -103,7 +100,7 @@
         <!-- Карточки без данных place.js скрывает целиком: прочерки и
              «не указано» вместо информации только шумят -->
         <div class="info-card" id="address-card">
-          <i class="fas fa-location-dot" aria-hidden="true"></i>
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#map-pin"></use></svg>
           <div>
             <h3>Адрес</h3>
             <p id="place-address" hidden></p>
@@ -113,7 +110,7 @@
         </div>
 
         <div class="info-card" id="hours-card">
-          <i class="far fa-clock" aria-hidden="true"></i>
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#clock"></use></svg>
           <div>
             <h3>Часы работы</h3>
             <div id="place-schedule"></div>
@@ -122,7 +119,7 @@
         </div>
 
         <div class="info-card" id="contacts-card">
-          <i class="fas fa-phone" aria-hidden="true"></i>
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#phone"></use></svg>
           <div>
             <h3>Контакты</h3>
             <p id="place-phone" hidden></p>
@@ -131,7 +128,7 @@
         </div>
 
         <div class="info-card" id="directions-card">
-          <i class="fas fa-route" aria-hidden="true"></i>
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#route"></use></svg>
           <div>
             <h3>Как добраться</h3>
             <p id="place-directions"></p>
@@ -141,7 +138,7 @@
         <!-- Настроение места — в одном ряду с практической информацией и
              растягивается на оставшееся место, чтобы справа не было пустоты -->
         <div class="info-card info-card--mood" id="place-tags-card">
-          <i class="fas fa-wand-magic-sparkles" aria-hidden="true"></i>
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#wand-sparkles"></use></svg>
           <div>
             <h3>Настроение места</h3>
             <div class="tags-section" id="place-tags"></div>
@@ -160,7 +157,7 @@
       <div class="description-text" id="place-description"></div>
       <div class="amenities-section" id="place-amenities"></div>
       <button type="button" class="suggestion-edit" id="suggest-edit">
-        <i class="far fa-pen-to-square" aria-hidden="true"></i> Нашли неточность? Напишите нам
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#square-pen"></use></svg> Нашли неточность? Напишите нам
       </button>
     </section>
 
@@ -182,7 +179,7 @@
       <div class="map-container" id="place-map-container" aria-label="Карта места"></div>
       <div class="map-actions">
         <a class="route-btn" id="route-link" href="https://yandex.ru/maps/" target="_blank" rel="noopener">
-          <i class="fas fa-diamond-turn-right" aria-hidden="true"></i> Построить маршрут
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#navigation"></use></svg> Построить маршрут
         </a>
       </div>
     </section>
@@ -213,11 +210,11 @@
           <div class="rating-input">
             <span>Оценка:</span>
             <div class="star-rating" id="star-rating">
-              <i class="far fa-star" data-value="1" role="button" tabindex="0" aria-label="1 из 5"></i>
-              <i class="far fa-star" data-value="2" role="button" tabindex="0" aria-label="2 из 5"></i>
-              <i class="far fa-star" data-value="3" role="button" tabindex="0" aria-label="3 из 5"></i>
-              <i class="far fa-star" data-value="4" role="button" tabindex="0" aria-label="4 из 5"></i>
-              <i class="far fa-star" data-value="5" role="button" tabindex="0" aria-label="5 из 5"></i>
+              <svg class="icon" data-value="1" role="button" tabindex="0" aria-label="1 из 5"><use href="assets/icons.svg#star"></use></svg>
+              <svg class="icon" data-value="2" role="button" tabindex="0" aria-label="2 из 5"><use href="assets/icons.svg#star"></use></svg>
+              <svg class="icon" data-value="3" role="button" tabindex="0" aria-label="3 из 5"><use href="assets/icons.svg#star"></use></svg>
+              <svg class="icon" data-value="4" role="button" tabindex="0" aria-label="4 из 5"><use href="assets/icons.svg#star"></use></svg>
+              <svg class="icon" data-value="5" role="button" tabindex="0" aria-label="5 из 5"><use href="assets/icons.svg#star"></use></svg>
             </div>
             <input type="hidden" id="review-rating" name="rating" value="0">
           </div>
@@ -247,10 +244,10 @@
 
   <!-- Мобильная панель быстрых действий -->
   <div class="mobile-actions-bar" id="mobile-actions-bar">
-    <button type="button" id="action-fav" hidden><i class="far fa-heart" aria-hidden="true"></i><span>В избранное</span></button>
-    <button type="button" id="action-call"><i class="fas fa-phone" aria-hidden="true"></i><span>Позвонить</span></button>
-    <button type="button" id="action-route"><i class="fas fa-route" aria-hidden="true"></i><span>Маршрут</span></button>
-    <button type="button" id="action-share"><i class="fas fa-share-alt" aria-hidden="true"></i><span>Поделиться</span></button>
+    <button type="button" id="action-fav" hidden><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#heart"></use></svg><span>В избранное</span></button>
+    <button type="button" id="action-call"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#phone"></use></svg><span>Позвонить</span></button>
+    <button type="button" id="action-route"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#route"></use></svg><span>Маршрут</span></button>
+    <button type="button" id="action-share"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#share-2"></use></svg><span>Поделиться</span></button>
   </div>
 
   <!-- Модалка шеринга -->
