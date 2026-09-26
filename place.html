@@ -134,6 +134,17 @@
             <p id="place-directions"></p>
           </div>
         </div>
+
+        <!-- Настроение места — в одном ряду с практической информацией и
+             растягивается на оставшееся место, чтобы справа не было пустоты -->
+        <div class="info-card info-card--mood" id="place-tags-card">
+          <i class="fas fa-wand-magic-sparkles" aria-hidden="true"></i>
+          <div>
+            <h3>Настроение места</h3>
+            <div class="tags-section" id="place-tags"></div>
+            <p class="info-card__hint">Нажмите на тег — покажем похожие места</p>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -143,22 +154,11 @@
         <span class="section-mini" aria-hidden="true">Почему стоит заглянуть</span>
         <h2 class="section-title">О месте</h2>
       </div>
-      <!-- На компьютере — текст слева, теги справа; на телефоне — друг под другом -->
-      <div class="place-description__layout">
-        <div class="place-description__main">
-          <div class="description-text" id="place-description"></div>
-          <div class="amenities-section" id="place-amenities"></div>
-          <button type="button" class="suggestion-edit" id="suggest-edit">
-            <i class="far fa-pen-to-square" aria-hidden="true"></i> Нашли неточность? Напишите нам
-          </button>
-        </div>
-
-        <aside class="place-description__aside" id="place-tags-aside" aria-labelledby="place-tags-title">
-          <h3 class="place-aside__title" id="place-tags-title">Настроение места</h3>
-          <div class="tags-section" id="place-tags"></div>
-          <p class="place-aside__hint">Нажмите на тег — покажем похожие места</p>
-        </aside>
-      </div>
+      <div class="description-text" id="place-description"></div>
+      <div class="amenities-section" id="place-amenities"></div>
+      <button type="button" class="suggestion-edit" id="suggest-edit">
+        <i class="far fa-pen-to-square" aria-hidden="true"></i> Нашли неточность? Напишите нам
+      </button>
     </section>
 
     <!-- Галерея -->
