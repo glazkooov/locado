@@ -3,8 +3,8 @@
 
 import { $, $$, on, toggleClear } from '../core/dom.js';
 import { setPressed } from './category-buttons.js';
-import { escapeHtml } from '../core/format.js';
-import { categoryLabel, filterPlaces, metroList, placeUrl, uniqueMetro } from '../core/places.js';
+import { escapeHtml, cssUrl, openStatusLabel } from '../core/format.js';
+import { categoryLabel, filterPlaces, placeUrl, uniqueMetro } from '../core/places.js';
 
 export function whenYmapsReady() {
   return new Promise((resolve, reject) => {
@@ -25,6 +25,55 @@ export function routeUrl(place) {
   return `https://yandex.ru/maps/?rtext=~${place.coords[0]},${place.coords[1]}&rtt=auto`;
 }
 
+// ---------- Оформление меток ----------
+// Метка — круглое фото места в белой обводке, как маленькая карточка;
+// кластер — тёмный кружок с числом. Всё рисуется нашими классами
+// (.map-pin, .map-cluster в home.css), а не пресетами Яндекса. Наведение
+// и выбор передаются через properties: DOM метки лежит под прозрачным
+// слоем событий Яндекса, поэтому CSS :hover на нём не срабатывает.
+const PIN_SHAPE = { type: 'Circle', coordinates: [0, -30], radius: 24 };
+const CLUSTER_SHAPE = { type: 'Circle', coordinates: [0, 0], radius: 24 };
+
+let layouts = null;
+function getLayouts() {
+  if (layouts) return layouts;
+  const f = ymaps.templateLayoutFactory;
+  const pin = (labelAlways) => f.createClass(
+    '<div class="map-pin{% if properties.active %} map-pin--active{% endif %}">'
+    + '<span class="map-pin__photo" style="background-image: url(\'{{ properties.photo }}\')"></span>'
+    + (labelAlways
+      ? '<span class="map-pin__label">{{ properties.name }}</span>'
+      : '{% if properties.hover %}<span class="map-pin__label">{{ properties.name }}</span>{% endif %}')
+    + '</div>'
+  );
+  layouts = {
+    pin: pin(false),
+    pinLabeled: pin(true),
+    cluster: f.createClass('<div class="map-cluster">{{ properties.geoObjects.length }}</div>')
+  };
+  return layouts;
+}
+
+function createPlacemark(place, { labeled = false } = {}) {
+  const placemark = new ymaps.Placemark(
+    place.coords,
+    { name: place.name, photo: place.photo || '', slug: place.slug },
+    {
+      iconLayout: labeled ? getLayouts().pinLabeled : getLayouts().pin,
+      iconShape: PIN_SHAPE,
+      hasBalloon: false,
+      hasHint: false
+    }
+  );
+  placemark.events
+    .add('mouseenter', () => placemark.properties.set('hover', true))
+    .add('mouseleave', () => placemark.properties.set('hover', false));
+  return placemark;
+}
+
+// Колесо мыши не зумит карту, пока листаешь страницу — зум кнопками/жестами
+const PAGE_MAP_OPTIONS = { suppressMapOpenBlock: true, yandexMapDisablePoiInteractivity: true };
+
 // ---------- Карта одного места (place.html) ----------
 export async function initPlaceMap(container, place) {
   if (!container || !place?.coords) return null;
@@ -34,11 +83,9 @@ export async function initPlaceMap(container, place) {
       center: place.coords,
       zoom: 16,
       controls: ['zoomControl', 'fullscreenControl']
-    });
-    const placemark = new ymaps.Placemark(place.coords, {
-      balloonContent: `<strong>${escapeHtml(place.name)}</strong><br/>${escapeHtml(place.address || '')}`
-    }, { preset: 'islands#redDotIcon' });
-    map.geoObjects.add(placemark);
+    }, PAGE_MAP_OPTIONS);
+    map.behaviors.disable('scrollZoom');
+    map.geoObjects.add(createPlacemark(place, { labeled: true }));
     return map;
   } catch (err) {
     console.error('[map] место:', err);
@@ -47,42 +94,44 @@ export async function initPlaceMap(container, place) {
   }
 }
 
-// ---------- Карта всех мест (index.html) ----------
-const PIN_STYLES = {
-  nature: { preset: 'islands#greenDotIcon', color: '#34A853' },
-  food: { preset: 'islands#pinkDotIcon', color: '#fc3adb' },
-  art: { preset: 'islands#blueDotIcon', color: '#3F51B5' },
-  theater: { preset: 'islands#orangeDotIcon', color: '#FF7043' },
-  photo: { preset: 'islands#redDotIcon', color: '#f50e0e' },
-  entertainment: { preset: 'islands#orangeDotIcon', color: '#FF6B6B' }
-};
-const DEFAULT_PIN = { preset: 'islands#violetDotIcon', color: '#8312da' };
+// ---------- Мини-карточка места поверх карты (index.html) ----------
+// Вместо балуна Яндекса — наша карточка снизу карты, в том же стиле, что
+// карточки мест на странице.
+function createMapCard(container, { onClose } = {}) {
+  const card = document.createElement('div');
+  card.className = 'map-card';
+  card.hidden = true;
+  container.appendChild(card);
 
-function balloonHtml(place) {
-  const metro = metroList(place);
-  return `
-    <div class="custom-balloon" data-slug="${escapeHtml(place.slug)}">
-      <div class="balloon-inner">
-        <img src="${escapeHtml(place.photo)}" alt="${escapeHtml(place.name)}" class="balloon-img">
-        <div class="balloon-content">
-          <div class="balloon-category">${categoryLabel(place.category, { emoji: true })}</div>
-          <h3 class="balloon-title">${escapeHtml(place.name)}</h3>
-          <p class="balloon-desc">${escapeHtml((place.description || '').slice(0, 80))}${(place.description || '').length > 80 ? '…' : ''}</p>
-          ${metro.length ? `<div class="balloon-metro"><i class="fas fa-subway"></i> ${escapeHtml(metro.join(', '))}</div>` : ''}
-          ${place.price ? `<div class="balloon-price"><i class="fas fa-tag"></i> ${escapeHtml(place.price)}</div>` : ''}
-          <button type="button" class="balloon-details-btn" data-slug="${escapeHtml(place.slug)}">Подробнее →</button>
-        </div>
-      </div>
-    </div>`;
-}
+  const close = () => {
+    if (card.hidden) return;
+    card.hidden = true;
+    onClose?.();
+  };
+  const open = (place) => {
+    const status = openStatusLabel(place);
+    const type = place.type || categoryLabel(place.category);
+    card.setAttribute('aria-label', place.name);
+    card.innerHTML = `
+      <a class="map-card__link" href="${placeUrl(place.slug)}">
+        <span class="map-card__photo" style='background-image: ${cssUrl(place.photo)}'></span>
+        <span class="map-card__body">
+          <span class="map-card__meta">
+            <span class="map-card__type">${escapeHtml(type)}</span>
+            ${status ? `<span class="map-card__status${status.isOpen ? ' map-card__status--open' : ''}">${escapeHtml(status.text)}</span>` : ''}
+          </span>
+          <span class="map-card__title">${escapeHtml(place.name)}</span>
+          ${place.description ? `<span class="map-card__desc">${escapeHtml(place.description)}</span>` : ''}
+          <span class="map-card__more">Подробнее →</span>
+        </span>
+      </a>
+      <button type="button" class="map-card__close" aria-label="Закрыть карточку">×</button>`;
+    card.hidden = false;
+  };
 
-function createPlacemark(place) {
-  const style = PIN_STYLES[place.category] || DEFAULT_PIN;
-  return new ymaps.Placemark(
-    place.coords,
-    { balloonContent: balloonHtml(place), hintContent: place.name },
-    { preset: style.preset, iconColor: style.color }
-  );
+  on(card, 'click', '.map-card__close', close);
+  on(document, 'keydown', (e) => { if (e.key === 'Escape' && !card.hidden) close(); });
+  return { open, close, get isOpen() { return !card.hidden; } };
 }
 
 function initMetroFilter(container, stations, { onChange }) {
@@ -157,26 +206,54 @@ export async function initPlacesMap(places) {
   const mapContainer = $('#map');
   if (!mapContainer) return null;
 
-  let map, clusterer;
+  let map, clusterer, card;
+  let activePlacemark = null;
   const state = { category: 'all', query: '', metros: [], price: '', openNow: false };
+
+  const setActive = (placemark) => {
+    activePlacemark?.properties.set('active', false);
+    activePlacemark = placemark;
+    placemark?.properties.set('active', true);
+  };
+
+  const closeCard = () => card?.close();
 
   const refresh = () => {
     if (!clusterer) return;
+    closeCard();
     const list = filterPlaces(places, state);
     clusterer.removeAll();
-    list.forEach((p) => p.coords && clusterer.add(createPlacemark(p)));
+    list.forEach((p) => {
+      if (!p.coords) return;
+      const placemark = createPlacemark(p);
+      placemark.events.add('click', () => { setActive(placemark); card.open(p); });
+      clusterer.add(placemark);
+    });
     if (list.length) map.setBounds(clusterer.getBounds(), { checkZoomRange: true, zoomMargin: 50 });
   };
 
   try {
     await whenYmapsReady();
-    map = new ymaps.Map(mapContainer, { center: [55.751244, 37.618423], zoom: 12, controls: ['zoomControl', 'fullscreenControl'] });
+    map = new ymaps.Map(mapContainer, {
+      center: [55.751244, 37.618423],
+      zoom: 12,
+      controls: ['zoomControl', 'fullscreenControl']
+    }, PAGE_MAP_OPTIONS);
+    map.behaviors.disable('scrollZoom');
+    // Клик по кластеру приближает карту, а не открывает карусель Яндекса
     clusterer = new ymaps.Clusterer({
-      clusterDisableClickZoom: true,
-      clusterOpenBalloonOnClick: true,
-      clusterBalloonContentLayout: 'cluster#balloonCarousel'
+      clusterIconLayout: getLayouts().cluster,
+      clusterIconShape: CLUSTER_SHAPE,
+      clusterDisableClickZoom: false,
+      clusterOpenBalloonOnClick: false,
+      clusterHasBalloon: false,
+      gridSize: 72
     });
     map.geoObjects.add(clusterer);
+    // Любое закрытие карточки (крестик, Escape, клик по карте) снимает выделение метки
+    card = createMapCard(mapContainer, { onClose: () => setActive(null) });
+    // Клик по пустому месту карты закрывает карточку
+    map.events.add('click', closeCard);
   } catch (err) {
     console.error('[map] карта мест:', err);
     showMapError(mapContainer);
@@ -231,13 +308,6 @@ export async function initPlacesMap(places) {
   // Открыто сейчас
   const openNowCheckbox = $('#open-now-checkbox');
   if (openNowCheckbox) on(openNowCheckbox, 'change', (e) => { state.openNow = e.target.checked; refresh(); });
-
-  // Переход по балуну/кластеру
-  on(document.body, 'click', '.balloon-details-btn, .custom-balloon', (e, el) => {
-    const slug = el.dataset.slug;
-    if (!slug) return;
-    window.location.href = placeUrl(slug);
-  });
 
   // Выпадающие фильтры (метро/цена) — класс is-open вместо инлайн-стилей
   const dropdownButtons = $$('.filter-btn[data-toggle]');

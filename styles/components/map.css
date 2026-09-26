@@ -1,0 +1,217 @@
+/* Карты (главная и страница места): метки, кластеры и мини-карточка в
+   стиле сайта вместо стандартных пресетов и балунов Яндекса.
+   Разметку создаёт scripts/components/map.js. */
+
+/* Подложка чуть приглушённее и теплее — не спорит с фото-метками.
+   [class*=…] вместо ymaps-2-1-NN-…: номер версии API меняется. */
+.map-container [class*="ground-pane"] {
+  filter: saturate(0.75) sepia(0.06);
+}
+
+/* ---------- Метка: круглое фото места ---------- */
+/* Точка (0,0) слоя — координата места; хвостик метки указывает на неё */
+.map-pin {
+  position: absolute;
+  left: -24px;
+  top: -56px;
+  width: 48px;
+  height: 48px;
+  z-index: 0; /* свой контекст наложения: хвостик (z-index: -1) — под фото, но не под картой */
+}
+
+.map-pin__photo {
+  display: block;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  background-color: var(--cream-deep);
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 6px 16px rgba(40, 20, 10, 0.28);
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+/* Хвостик */
+.map-pin::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 44px;
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  transform: translateX(-50%) rotate(45deg);
+  border-radius: 0 0 3px 0;
+  box-shadow: 3px 3px 6px rgba(40, 20, 10, 0.12);
+  z-index: -1;
+}
+
+.map-pin--active .map-pin__photo {
+  border-color: var(--primary);
+  transform: scale(1.12);
+}
+
+.map-pin--active::after { background: var(--primary); }
+
+/* Подпись: на главной — при наведении, на странице места — всегда */
+.map-pin__label {
+  position: absolute;
+  left: 56px;
+  top: 12px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: #fff;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(40, 20, 10, 0.18);
+  pointer-events: none;
+}
+
+/* ---------- Кластер: тёмный кружок с числом ---------- */
+.map-cluster {
+  position: absolute;
+  left: -24px;
+  top: -24px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  background: var(--ink);
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 700;
+  box-shadow: 0 6px 16px rgba(40, 20, 10, 0.3);
+}
+
+/* ---------- Мини-карточка места поверх карты ---------- */
+.map-container { position: relative; }
+
+.map-card {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  z-index: 5000; /* выше слоёв Яндекса */
+  width: min(380px, calc(100% - 24px));
+  border-radius: var(--radius-card);
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-soft-hover);
+  animation: mapCardIn 0.2s ease-out;
+}
+
+.map-card__link {
+  display: flex;
+  gap: 14px;
+  padding: 10px;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.map-card__photo {
+  flex: none;
+  width: 104px;
+  height: 104px;
+  border-radius: 14px;
+  background-color: var(--cream-deep);
+  background-size: cover;
+  background-position: center;
+}
+
+.map-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  padding: 2px 26px 2px 0; /* справа — место под крестик */
+}
+
+.map-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.map-card__type {
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--primary);
+}
+
+.map-card__status { color: #c62828; }
+
+.map-card__status--open { color: #2e7d32; }
+
+.map-card__title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.map-card__desc {
+  font-size: 0.85rem;
+  line-height: 1.35;
+  color: var(--text-light);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.map-card__more {
+  margin-top: auto;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.map-card__link:hover .map-card__title { color: var(--primary); }
+
+.map-card__close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  background: var(--cream);
+  color: var(--text);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.map-card__close:hover { background: var(--ink); color: #fff; }
+
+/* На телефоне карта всего 320px — карточка компактнее */
+@media (max-width: 575px) {
+  .map-card { left: 8px; bottom: 8px; width: calc(100% - 16px); }
+  .map-card__link { gap: 12px; padding: 8px; }
+  .map-card__photo { width: 84px; height: 84px; border-radius: 12px; }
+  .map-card__desc { -webkit-line-clamp: 1; }
+  .map-card__title { font-size: 1rem; }
+}
+
+@keyframes mapCardIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .map-card { animation: none; }
+  .map-pin__photo { transition: none; }
+}

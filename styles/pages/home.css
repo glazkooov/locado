@@ -862,57 +862,6 @@
   }
 }
 
-.ymaps-2-1-79-map { border-radius: 16px !important; }
-
-.ymaps-2-1-79-placemark-overlay { filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15)); }
-
-.ymaps-2-1-79-balloon { border-radius: 12px !important; overflow: hidden !important; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1) !important; }
-
-.ymaps-2-1-79-balloon__close-button { filter: brightness(0.8); }
-
-.custom-balloon {
-  max-width: 280px;
-  font-family: 'Segoe UI', Roboto, sans-serif;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-  background: #fff;
-  transition: transform 0.2s;
-  cursor: pointer;
-}
-
-.custom-balloon:hover { transform: translateY(-2px); }
-
-.balloon-inner { display: flex; flex-direction: column; }
-
-.balloon-img { width: 100%; height: 140px; object-fit: cover; }
-
-.balloon-content { padding: 12px 14px 14px; }
-
-.balloon-category { font-size: 0.7rem; text-transform: uppercase; color: #888; margin-bottom: 6px; letter-spacing: 0.5px; }
-
-.balloon-title { font-size: 1.1rem; font-weight: 700; margin: 0 0 6px 0; color: #222; }
-
-.balloon-desc { font-size: 0.8rem; color: #555; line-height: 1.4; margin: 0 0 8px 0; }
-
-.balloon-metro, .balloon-price { font-size: 0.75rem; color: #777; display: inline-flex; align-items: center; gap: 4px; margin-right: 12px; margin-bottom: 8px; }
-
-.balloon-details-btn {
-  background: var(--primary);
-  color: white;
-  border: none;
-  border-radius: 24px;
-  padding: 8px 14px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-  margin-top: 6px;
-  width: 100%;
-  text-align: center;
-}
-
-.balloon-details-btn:hover { background: var(--primary-light); }
 
 @media (min-width: 600px) {
   .info-grid {
