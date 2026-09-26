@@ -40,14 +40,14 @@
 }
 
 .footer-logo {
-  font-size: 1.5rem;
+  font-size: var(--fs-xl);
   color: #fff;
   display: inline-block;
   margin-bottom: 14px;
 }
 
 .site-footer__tagline {
-  font-size: 0.92rem;
+  font-size: var(--fs-sm);
   line-height: 1.6;
   max-width: 320px;
   color: rgba(255, 255, 255, 0.6);
@@ -78,7 +78,7 @@
 
 .site-footer__col h4 {
   color: #fff;
-  font-size: 0.95rem;
+  font-size: var(--fs-md);
   margin-bottom: 16px;
   letter-spacing: 0.2px;
 }
@@ -90,7 +90,7 @@
 
 .site-footer__col a {
   color: rgba(255, 255, 255, 0.6);
-  font-size: 0.9rem;
+  font-size: var(--fs-sm);
   margin-bottom: 12px;
   transition: color 0.2s ease;
   width: fit-content;
@@ -99,7 +99,7 @@
 .site-footer__col a:hover { color: #fff; }
 
 .site-footer__note {
-  font-size: 0.85rem;
+  font-size: var(--fs-sm);
   color: rgba(255, 255, 255, 0.45);
   line-height: 1.5;
   margin-top: 4px;
@@ -108,7 +108,7 @@
 .site-footer__bottom {
   padding: 22px 0;
   text-align: center;
-  font-size: 0.82rem;
+  font-size: var(--fs-xs);
   color: rgba(255, 255, 255, 0.4);
 }
 

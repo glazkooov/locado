@@ -20,6 +20,9 @@ export function initRandomizer(places) {
   const previewCategory = $('#preview-category', modalEl);
   const previewDesc = $('#preview-desc', modalEl);
 
+  // Нет фото или не загрузилось — остаётся тёплая подложка (card.css)
+  previewImg?.addEventListener('error', () => previewImg.classList.add('is-broken'));
+
   let category = 'all';
   let current = null;
 
@@ -27,21 +30,22 @@ export function initRandomizer(places) {
 
   const showPreview = (place) => {
     current = place;
+    previewImg.classList.remove('is-broken');
     previewImg.src = place.photo || '';
-    previewImg.alt = place.name;
+    previewImg.alt = '';
     previewName.textContent = place.name;
     previewCategory.textContent = place.type || categoryLabel(place.category);
     previewDesc.textContent = place.description || '';
     preview.style.display = 'flex';
     submitBtn.style.display = 'none';
-    acceptBtn.style.display = 'block';
-    rerollBtn.style.display = 'block';
+    acceptBtn.style.display = 'flex';
+    rerollBtn.style.display = 'flex';
   };
 
   const resetState = () => {
     current = null;
     preview.style.display = 'none';
-    submitBtn.style.display = 'block';
+    submitBtn.style.display = 'flex';
     acceptBtn.style.display = 'none';
     rerollBtn.style.display = 'none';
   };

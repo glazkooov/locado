@@ -238,7 +238,7 @@
 
     <!-- Выход дальше, если пришли по ссылке прямо на место -->
     <section class="place-more container">
-      <a href="index.html#all-places" class="btn place-more__btn">Посмотреть другие места →</a>
+      <a href="index.html#all-places" class="btn btn-secondary place-more__btn">Посмотреть другие места →</a>
     </section>
   </main>
 
@@ -251,16 +251,22 @@
   </div>
 
   <!-- Модалка шеринга -->
-  <div class="share-modal" id="share-modal" role="dialog" aria-modal="true" aria-labelledby="share-modal-title">
-    <div class="share-modal-content">
-      <h3 id="share-modal-title">Поделиться местом</h3>
-      <div class="share-buttons">
-        <button type="button" class="share-vk">ВКонтакте</button>
-        <button type="button" class="share-telegram">Telegram</button>
-        <button type="button" class="share-whatsapp">WhatsApp</button>
-        <button type="button" class="share-copy">Скопировать ссылку</button>
+  <!-- Нейтральные кнопки вместо фирменных цветов соцсетей: ярко-синие и
+       зелёные плашки спорили с тёплой палитрой сайта -->
+  <div class="modal share-modal" id="share-modal" role="dialog" aria-modal="true" aria-labelledby="share-modal-title">
+    <div class="modal-content modal-content--sm">
+      <div class="modal-header">
+        <h3 id="share-modal-title">Поделиться местом</h3>
+        <button type="button" class="modal-close" id="share-close" data-modal-close aria-label="Закрыть"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#x"></use></svg></button>
       </div>
-      <button type="button" class="share-close" id="share-close" data-modal-close>Закрыть</button>
+      <div class="modal-body">
+        <div class="share-buttons">
+          <button type="button" class="share-option share-telegram"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#send"></use></svg> Telegram</button>
+          <button type="button" class="share-option share-vk"><span class="share-option__mark" aria-hidden="true">VK</span> ВКонтакте</button>
+          <button type="button" class="share-option share-whatsapp"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#message-circle"></use></svg> WhatsApp</button>
+          <button type="button" class="share-option share-copy"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#copy"></use></svg> Скопировать ссылку</button>
+        </div>
+      </div>
     </div>
   </div>
 

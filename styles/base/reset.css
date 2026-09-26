@@ -16,7 +16,7 @@ html, body {
 :where(a, button, input, textarea, [tabindex]):focus-visible {
   outline: 3px solid var(--primary);
   outline-offset: 2px;
-  border-radius: 6px;
+  border-radius: var(--radius-xs);
 }
 
 html {

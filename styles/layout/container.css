@@ -11,7 +11,7 @@
 
 @media (min-width: 576px) {
   .section-title {
-    font-size: 1.75rem;
+    font-size: var(--fs-2xl);
   }
 }
 

@@ -300,7 +300,7 @@
           <p>Пока ничего не нашли — попробуйте другое слово или сбросьте фильтр</p>
           <button type="button" class="btn feed-empty__btn" id="feed-reset-btn">Показать все места</button>
         </div>
-        <button type="button" class="btn" id="show-more-btn">Показать ещё</button>
+        <button type="button" class="btn btn-secondary" id="show-more-btn">Показать ещё</button>
         <div class="feed-end" aria-live="polite">
           <p>Это все места на сегодня ✨</p>
           <span>Новые локации добавляются каждую неделю — загляните ещё раз</span>
@@ -349,11 +349,11 @@
   <div id="randomizer-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="randomizer-title">
     <div class="modal-content">
       <div class="modal-header">
-        <h3 id="randomizer-title"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#dices"></use></svg> Случайное место</h3>
-        <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">&times;</button>
+        <h3 id="randomizer-title"><svg class="icon modal-header__icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#dices"></use></svg> Случайное место</h3>
+        <button type="button" class="modal-close" data-modal-close aria-label="Закрыть"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#x"></use></svg></button>
       </div>
       <div class="modal-body">
-        <p>Можно уточнить категорию:</p>
+        <p class="modal-hint">Можно уточнить категорию</p>
         <div class="category-chips" id="randomizer-categories" role="group" aria-label="Категория случайного места"></div>
 
         <!-- Превью места -->
@@ -369,7 +369,7 @@
         <div class="randomizer-actions">
           <button id="randomizer-submit" class="btn randomizer-btn">Подбросить кубик</button>
           <button id="randomizer-accept" class="btn randomizer-accept" style="display: none;">Мне подходит →</button>
-          <button id="randomizer-reroll" class="btn randomizer-reroll" style="display: none;">Перебросить ↺</button>
+          <button id="randomizer-reroll" class="btn btn-secondary randomizer-reroll" style="display: none;">Перебросить ↺</button>
         </div>
       </div>
     </div>

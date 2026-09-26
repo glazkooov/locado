@@ -10,7 +10,7 @@
   align-items: center;
   background: var(--card-bg);
   border: 1px solid var(--line);
-  border-radius: 40px;
+  border-radius: var(--radius-pill);
   padding: 0 10px;
   margin: 10px 0 20px 0;
 }
@@ -19,7 +19,7 @@
   width: 100%;
   padding: 12px 14px;
   border: none;
-  font-size: 1rem;
+  font-size: var(--fs-md);
   background: transparent;
   outline: none;
 }
@@ -27,8 +27,8 @@
 .search-clear {
   background: none;
   border: none;
-  font-size: 1.2rem;
+  font-size: var(--fs-lg);
   cursor: pointer;
-  color: #888;
+  color: var(--text-lighter);
   padding: 0 6px;
 }

@@ -65,7 +65,7 @@ export function syncFavoriteButtons(slug, isActive) {
 export function bindImageFallback(root = document) {
   root.addEventListener('error', (e) => {
     const img = e.target;
-    if (img.tagName === 'IMG' && (img.matches('.place-card__img') || img.closest('.similar-card'))) {
+    if (img.tagName === 'IMG' && img.matches('.place-card__img, .similar-card img, .randomizer-preview img, .state-card img')) {
       img.classList.add('is-broken');
     }
   }, true);

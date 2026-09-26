@@ -4,7 +4,7 @@
   z-index: 1000;
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(12px);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-bar);
   transition: all 0.3s;
 }
 
@@ -27,14 +27,14 @@
 }
 
 .logo {
-  font-size: 1.6rem; /* mobile */
+  font-size: var(--fs-2xl); /* mobile */
   font-weight: 700;
   color: var(--primary);
   letter-spacing: -0.5px;
 }
 @media (min-width: 576px) {
   .logo {
-    font-size: 1.8rem;
+    font-size: var(--fs-2xl);
   }
 }
 
@@ -57,13 +57,13 @@
 .nav-item {
   text-decoration: none;
   font-weight: 500;
-  color: #2c2c2c;
+  color: var(--text);
   transition: color 0.2s;
-  font-size: 1.1rem; /* чуть крупнее */
+  font-size: var(--fs-lg); /* чуть крупнее */
 }
 
 .nav-item:hover {
-  color: var(--primary);
+  color: var(--primary-text);
 }
 
 .nav-right {
@@ -78,8 +78,8 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  color: #2c2c2c;
-  font-size: 1.3rem;
+  color: var(--text);
+  font-size: var(--fs-xl);
   transition: background 0.2s, color 0.2s;
   margin-right: 0.5rem;
   text-decoration: none;
@@ -87,7 +87,7 @@
 
 .header-calendar:hover {
   background: rgba(0, 0, 0, 0.05);
-  color: var(--primary);
+  color: var(--primary-text);
 }
 
 .user-menu {
@@ -102,10 +102,10 @@
   gap: 0.5rem;
   cursor: pointer;
   padding: 0.5rem 0.8rem;
-  border-radius: 40px;
+  border-radius: var(--radius-pill);
   transition: background 0.2s;
-  font-size: 1rem;
-  color: #2c2c2c;
+  font-size: var(--fs-md);
+  color: var(--text);
 }
 
 .user-btn:hover {
@@ -113,8 +113,8 @@
 }
 
 .user-btn i:first-child {
-  font-size: 1.4rem;
-  color: #666;
+  font-size: var(--fs-xl);
+  color: var(--text-light);
 }
 
 .user-dropdown {
@@ -122,8 +122,8 @@
   top: 110%;
   right: 0;
   background: white;
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-sm);
   min-width: 180px;
   padding: 0.5rem 0;
   display: none;
@@ -136,13 +136,13 @@
   display: block;
   padding: 0.6rem 1.2rem;
   text-decoration: none;
-  color: #333;
+  color: var(--text);
   transition: background 0.1s;
-  font-size: 0.95rem;
+  font-size: var(--fs-md);
 }
 
 .user-dropdown a:hover {
-  background: #f5f5f5;
+  background: var(--cream);
 }
 
 .user-menu.active .user-dropdown {
@@ -155,7 +155,7 @@
   border: none;
   font-size: 2rem;
   cursor: pointer;
-  color: #333;
+  color: var(--text);
   padding: 10px;
 }
 
@@ -236,7 +236,7 @@ body.nav-open .main-header--overlay {
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-bar);
 }
 
 body:not(.nav-open) .main-header--overlay:not(.is-scrolled) .logo,
