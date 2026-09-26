@@ -3,7 +3,7 @@
 import { $, $$, on } from '../core/dom.js';
 import {
   escapeHtml, safeUrl, cssUrl, getOpenStatus, describeStatusTimer, scheduleHtml, telHref, displayHost,
-  openStatusLabel
+  openStatusLabel, isAlwaysOpen
 } from '../core/format.js';
 import {
   loadPlaces, bySlug, similar, toggleFavoritePlace, markVisited, placeUrl, metroList, categoryLabel
@@ -83,15 +83,26 @@ function renderFacts(place) {
     <li class="hero-fact${f.mod ? ` hero-fact--${f.mod}` : ''}"><i class="fas ${f.icon}" aria-hidden="true"></i> ${escapeHtml(f.text)}</li>`).join('');
 }
 
+/** Показывает строку, только если есть что показать; прочерков не ставим. */
+function setLine(el, html) {
+  if (!el) return false;
+  el.innerHTML = html || '';
+  el.hidden = !html;
+  return Boolean(html);
+}
+
 function renderInfo(place) {
-  $('#place-address').textContent = place.address || 'Не указан';
-  // Метро — строкой в карточке адреса, а не отдельной карточкой из одной строки
+  // Адрес и метро (метро — строкой в карточке адреса, а не отдельной карточкой)
   const metro = metroList(place);
-  const metroEl = $('#place-metro');
-  if (metroEl) {
-    metroEl.textContent = metro.length ? `м. ${metro.join(', м. ')}` : '';
-    metroEl.hidden = !metro.length;
-  }
+  const hasAddress = setLine($('#place-address'), place.address ? escapeHtml(place.address) : '');
+  const hasMetro = setLine($('#place-metro'), metro.length ? escapeHtml(`м. ${metro.join(', м. ')}`) : '');
+  const addressCard = $('#address-card');
+  if (addressCard) addressCard.hidden = !hasAddress && !hasMetro;
+
+  // Часы работы: без расписания или круглосуточно во все дни карточка ничего
+  // не сообщает — «Открыто круглосуточно» уже есть в hero
+  const hoursCard = $('#hours-card');
+  if (hoursCard) hoursCard.hidden = !place.schedule || isAlwaysOpen(place.schedule);
 
   const scheduleContainer = $('#place-schedule');
   scheduleContainer.innerHTML = scheduleHtml(place.schedule);
@@ -108,10 +119,14 @@ function renderInfo(place) {
 
   refreshOpenStatus(place);
 
+  // Контакты: показываем то, что есть; нет ни телефона, ни сайта — нет карточки
   const phone = place.phone || '';
-  $('#place-phone').innerHTML = phone ? `<a href="${escapeHtml(telHref(phone))}">${escapeHtml(phone)}</a>` : '—';
   const website = safeUrl(place.website, '');
-  $('#place-website').innerHTML = website ? `<a href="${escapeHtml(website)}" target="_blank" rel="noopener">${escapeHtml(displayHost(website))}</a>` : '—';
+  const hasPhone = setLine($('#place-phone'), phone ? `<a href="${escapeHtml(telHref(phone))}">${escapeHtml(phone)}</a>` : '');
+  const hasWebsite = setLine($('#place-website'), website
+    ? `<a href="${escapeHtml(website)}" target="_blank" rel="noopener">${escapeHtml(displayHost(website))}</a>` : '');
+  const contactsCard = $('#contacts-card');
+  if (contactsCard) contactsCard.hidden = !hasPhone && !hasWebsite;
 
   if (!phone) {
     $('#call-btn')?.style.setProperty('display', 'none');
@@ -131,8 +146,10 @@ function refreshOpenStatus(place) {
 }
 
 function renderDescription(place) {
-  const text = place.description_long || place.description || 'Описание отсутствует.';
-  $('#place-description').innerHTML = `<p>${escapeHtml(text)}</p>`;
+  const text = place.description_long || place.description || '';
+  const el = $('#place-description');
+  el.innerHTML = text ? `<p>${escapeHtml(text)}</p>` : '';
+  el.hidden = !text;
 }
 
 function renderTags(place) {
@@ -169,12 +186,11 @@ function renderGallery(place) {
 
 function renderDirections(place) {
   const card = $('#directions-card');
-  if (place.directions) {
-    $('#place-directions').textContent = place.directions;
-    card.style.display = 'flex';
-  } else {
-    card.style.display = 'none';
-  }
+  $('#place-directions').textContent = place.directions || '';
+  card.hidden = !place.directions;
+  // Все карточки скрыты (нет ни адреса, ни часов, ни контактов) — секция не нужна
+  const infoSection = $('.place-info');
+  if (infoSection) infoSection.hidden = !$$('.info-card', infoSection).some((c) => !c.hidden);
 }
 
 async function renderMap(place) {

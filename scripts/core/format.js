@@ -71,6 +71,9 @@ const parseTime = (t) => {
  *  работы: парки, набережные, улицы. */
 export const isRoundTheClock = (hours) => Boolean(hours) && hours[0] === '00:00' && (hours[1] === '23:59' || hours[1] === '24:00');
 
+/** Круглосуточно во все дни недели — часы работы показывать незачем. */
+export const isAlwaysOpen = (schedule) => Boolean(schedule) && DAY_KEYS.every((key) => isRoundTheClock(schedule[key]));
+
 export function getOpenStatus(place, now = new Date()) {
   if (!place || !place.schedule) {
     return { isOpen: false, hoursToday: null, nextChangeAt: null };

@@ -97,17 +97,19 @@
     <!-- Инфо-карточки -->
     <section class="place-info container">
       <div class="info-grid">
-        <div class="info-card">
+        <!-- Карточки без данных place.js скрывает целиком: прочерки и
+             «не указано» вместо информации только шумят -->
+        <div class="info-card" id="address-card">
           <i class="fas fa-location-dot" aria-hidden="true"></i>
           <div>
             <h3>Адрес</h3>
-            <p id="place-address">—</p>
+            <p id="place-address" hidden></p>
             <p class="info-card__sub" id="place-metro" hidden></p>
             <button type="button" class="map-link-btn" id="show-on-map">Показать на карте</button>
           </div>
         </div>
 
-        <div class="info-card">
+        <div class="info-card" id="hours-card">
           <i class="far fa-clock" aria-hidden="true"></i>
           <div>
             <h3>Часы работы</h3>
@@ -116,12 +118,12 @@
           </div>
         </div>
 
-        <div class="info-card">
+        <div class="info-card" id="contacts-card">
           <i class="fas fa-phone" aria-hidden="true"></i>
           <div>
             <h3>Контакты</h3>
-            <p id="place-phone">—</p>
-            <p id="place-website">—</p>
+            <p id="place-phone" hidden></p>
+            <p id="place-website" hidden></p>
           </div>
         </div>
 
