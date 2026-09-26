@@ -71,7 +71,9 @@ function createPlacemark(place, { labeled = false } = {}) {
   return placemark;
 }
 
-// Колесо мыши не зумит карту, пока листаешь страницу — зум кнопками/жестами
+// Без кликабельных POI Яндекса и плашки «Открыть в Яндекс.Картах».
+// Зум колесом мыши оставлен включённым (поведение Яндекса по умолчанию):
+// без него пользоваться картой неудобно.
 const PAGE_MAP_OPTIONS = { suppressMapOpenBlock: true, yandexMapDisablePoiInteractivity: true };
 
 // ---------- Карта одного места (place.html) ----------
@@ -84,7 +86,6 @@ export async function initPlaceMap(container, place) {
       zoom: 16,
       controls: ['zoomControl', 'fullscreenControl']
     }, PAGE_MAP_OPTIONS);
-    map.behaviors.disable('scrollZoom');
     map.geoObjects.add(createPlacemark(place, { labeled: true }));
     return map;
   } catch (err) {
@@ -239,7 +240,6 @@ export async function initPlacesMap(places) {
       zoom: 12,
       controls: ['zoomControl', 'fullscreenControl']
     }, PAGE_MAP_OPTIONS);
-    map.behaviors.disable('scrollZoom');
     // Клик по кластеру приближает карту, а не открывает карусель Яндекса
     clusterer = new ymaps.Clusterer({
       clusterIconLayout: getLayouts().cluster,
