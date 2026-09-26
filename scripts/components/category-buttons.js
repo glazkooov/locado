@@ -5,6 +5,7 @@
 
 import { $ } from '../core/dom.js';
 import { CATEGORIES } from '../core/places.js';
+import { pluralize } from '../core/format.js';
 
 const ALL_ICON = 'fa-map-marker-alt';
 
@@ -38,6 +39,16 @@ export function renderCategoryButtons() {
   fill('#map-categories', chipsHtml({ className: 'category-btn map__categories-button', allLabel: 'Все места' }));
   fill('#categories-scroll', chipsHtml({ className: 'category-btn scroll__category-btn', allLabel: 'Все' }));
   fill('#randomizer-categories', chipsHtml({ className: 'chip', allLabel: 'Любая' }));
+}
+
+/** «13 мест» на плитках категорий — после загрузки базы. */
+export function renderCategoryCounts(places) {
+  document.querySelectorAll('.category-masonry[data-category]').forEach((tile) => {
+    const n = places.filter((p) => p.category === tile.dataset.category).length;
+    tile.querySelector('.masonry-count')?.remove();
+    if (!n) return;
+    tile.insertAdjacentHTML('beforeend', `<span class="masonry-count">${n} ${pluralize(n, ['место', 'места', 'мест'])}</span>`);
+  });
 }
 
 /** Переключает .active / aria-pressed в наборе кнопок. */

@@ -80,7 +80,9 @@ const initHeaderOverlay = () => {
 
 /** Плавное появление крупных секций при скролле (косметика). */
 const initScrollReveal = () => {
-  const targets = $$('.main-content > section, .popular__cards, .suggested-grid, .places-grid');
+  // .popular не прячем: её начало должно выглядывать из-под hero с первого
+  // экрана — это подсказка, что страница продолжается
+  const targets = $$('.main-content > section:not(.popular), .suggested-grid, .places-grid');
   if (!targets.length) return;
 
   if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {

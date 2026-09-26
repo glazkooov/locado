@@ -3,7 +3,9 @@
   align-items: center;
   justify-content: center;
   text-align: center;
-  min-height: 100svh;
+  /* Не на весь экран: снизу выглядывает начало следующего блока — подсказка,
+     что страница продолжается */
+  min-height: 86svh;
   background: var(--hero-bg);
   background-color: var(--ink);
   color: var(--hero-fg);
@@ -125,6 +127,12 @@
   .mood-card { flex-basis: 148px; }
 }
 
+/* На широком экране ряд из шести карточек по 148px выглядел полоской */
+@media (min-width: 1200px) {
+  .mood-card { flex-basis: 180px; }
+  .mood-card__label { font-size: 1rem; left: 14px; right: 14px; bottom: 14px; }
+}
+
 .mood-card__img {
   position: absolute;
   inset: 0;
@@ -225,6 +233,10 @@
   .mood-card__dice { width: 36px; height: 36px; }
 }
 
+@media (min-width: 1200px) {
+  .mood-card--random { flex-basis: 180px; padding: 16px 14px 14px; }
+}
+
 .mood-card--random:hover {
   background: var(--hero-glass-hover);
   border-style: solid;
@@ -323,7 +335,7 @@
 }
 
 .popular {
-  margin-top: 88px;
+  margin-top: 56px;
 }
 
 .popular__cards {
@@ -385,9 +397,20 @@
   line-height: 1.45;
 }
 
+/* Тёплая полоса во всю ширину: разбивает однообразный ритм страницы
+   (все секции шли на одном фоне и сливались) */
 .categories-collections {
   margin-top: 96px;
+  padding: 72px 0 80px;
+  background:
+    radial-gradient(ellipse 50% 60% at 100% 0%, rgba(255, 206, 150, 0.35), transparent 70%),
+    var(--cream-deep);
 }
+
+.categories-collections .category-masonry { background: rgba(255, 255, 255, 0.72); }
+
+/* Карта после полосы — отступ уже дала полоса */
+.categories-collections + .map { margin-top: 80px; }
 
 .cat-col-grid {
   display: grid;
@@ -455,6 +478,14 @@
   font-weight: 600;
   font-size: 1rem;
   letter-spacing: -0.02em;
+}
+
+/* «13 мест» — сколько выбора в категории; заполняется после загрузки базы */
+.masonry-count {
+  margin-top: 2px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-light);
 }
 
 /* На телефоне — две компактные колонки: в одну колонку шесть плиток
@@ -871,11 +902,15 @@
 
 @media (max-width: 768px) {
   /* Секции шли с одинаковым большим отступом и на телефоне давали пустые экраны */
-  .popular,
+  .popular { margin-top: 40px; }
+
   .suggested-places,
   .categories-collections,
   .map,
   .place-section { margin-top: 64px; }
+
+  .categories-collections { padding: 48px 0 56px; }
+  .categories-collections + .map { margin-top: 56px; }
 
   .site-footer { margin-top: 64px; }
 

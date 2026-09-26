@@ -8,7 +8,7 @@ import { initFeed } from '../components/feed.js';
 import { initRandomizer } from '../components/randomizer.js';
 import { initHeroMoods, renderHeroMoods } from '../components/hero-moods.js';
 import { heroGreeting } from '../core/daypart.js';
-import { renderCategoryButtons } from '../components/category-buttons.js';
+import { renderCategoryButtons, renderCategoryCounts } from '../components/category-buttons.js';
 import { initPlacesMap } from '../components/map.js';
 import { showToast } from '../components/toast.js';
 
@@ -136,6 +136,7 @@ async function main() {
 
   renderSuggested(places);
 
+  renderCategoryCounts(places);
   const feed = initFeed(places);
   applyUrlFilter(feed);
   initHeroMoods(feed, places, { onSelect: () => scrollToFeed() });
