@@ -67,6 +67,15 @@
       <div class="container hero-content">
         <div class="hero-meta">
           <span class="hero-category" id="place-category"></span>
+        </div>
+
+        <h1 class="hero-title" id="place-name">Загружаем…</h1>
+        <p class="hero-subtitle" id="place-subtitle"></p>
+
+        <!-- Быстрые факты (метро, открыто ли сейчас, цена — заполняет place.js)
+             и действия — одной строкой: плашки слева, кнопки справа -->
+        <div class="hero-bottom">
+          <ul class="hero-facts" id="place-facts"></ul>
           <div class="hero-actions">
             <!-- Избранное вне MVP (см. CLAUDE.md) — скрыто, как и на карточках главной -->
             <button type="button" id="fav-btn-hero" class="fav-btn-hero" hidden>
@@ -85,12 +94,6 @@
             </button>
           </div>
         </div>
-
-        <h1 class="hero-title" id="place-name">Загружаем…</h1>
-        <p class="hero-subtitle" id="place-subtitle"></p>
-
-        <!-- Быстрые факты для решения: метро, открыто ли сейчас, цена — заполняет place.js -->
-        <ul class="hero-facts" id="place-facts"></ul>
       </div>
     </section>
 
