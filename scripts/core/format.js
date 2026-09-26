@@ -194,3 +194,15 @@ export function displayHost(url = '') {
     return url;
   }
 }
+
+const hhmm = (date) => `${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
+
+/** Короткий статус для плашек: «Открыто до 23:00» / «Откроется в 10:00» /
+ *  «Сейчас закрыто». null — если расписания нет. */
+export function openStatusLabel(place, now = new Date()) {
+  if (!place?.schedule) return null;
+  const status = getOpenStatus(place, now);
+  if (status.isOpen && status.hoursToday) return { isOpen: true, text: `Открыто до ${status.hoursToday[1]}` };
+  const opensToday = status.nextChangeAt && status.nextChangeAt.toDateString() === now.toDateString();
+  return { isOpen: false, text: opensToday ? `Откроется в ${hhmm(status.nextChangeAt)}` : 'Сейчас закрыто' };
+}

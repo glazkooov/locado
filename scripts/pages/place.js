@@ -2,7 +2,8 @@
 
 import { $, $$, on } from '../core/dom.js';
 import {
-  escapeHtml, safeUrl, cssUrl, getOpenStatus, describeStatusTimer, scheduleHtml, telHref, displayHost
+  escapeHtml, safeUrl, cssUrl, getOpenStatus, describeStatusTimer, scheduleHtml, telHref, displayHost,
+  openStatusLabel
 } from '../core/format.js';
 import {
   loadPlaces, bySlug, similar, toggleFavoritePlace, markVisited, placeUrl, metroList, categoryLabel
@@ -68,8 +69,6 @@ function renderHero(place) {
   if (visitedBtn) visitedBtn.classList.toggle('active', Storage.isVisited(place.slug));
 }
 
-const hhmm = (date) => `${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
-
 /** Быстрые факты в hero вместо счётчиков просмотров/избранного. */
 function renderFacts(place) {
   const list = $('#place-facts');
@@ -77,13 +76,8 @@ function renderFacts(place) {
   const facts = [];
   const [metro] = metroList(place);
   if (metro) facts.push({ icon: 'fa-subway', text: `м. ${metro}` });
-  if (place.schedule) {
-    const now = new Date();
-    const status = getOpenStatus(place, now);
-    const opensToday = status.nextChangeAt && status.nextChangeAt.toDateString() === now.toDateString();
-    if (status.isOpen && status.hoursToday) facts.push({ icon: 'fa-clock', text: `Открыто до ${status.hoursToday[1]}`, mod: 'open' });
-    else facts.push({ icon: 'fa-clock', text: opensToday ? `Откроется в ${hhmm(status.nextChangeAt)}` : 'Сейчас закрыто', mod: 'closed' });
-  }
+  const status = openStatusLabel(place);
+  if (status) facts.push({ icon: 'fa-clock', text: status.text, mod: status.isOpen ? 'open' : 'closed' });
   if (place.price) facts.push({ icon: 'fa-tag', text: place.price });
   list.innerHTML = facts.map((f) => `
     <li class="hero-fact${f.mod ? ` hero-fact--${f.mod}` : ''}"><i class="fas ${f.icon}" aria-hidden="true"></i> ${escapeHtml(f.text)}</li>`).join('');
