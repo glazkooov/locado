@@ -84,10 +84,12 @@
   --hero-glass-hover: rgba(255, 255, 255, 0.62);
   --hero-line: rgba(42, 37, 33, 0.28);
   --hero-card-line: rgba(255, 255, 255, 0.8);
+  /* Насыщеннее прежнего: утро выглядело выцветшим рядом с вечером */
   --hero-bg:
-    radial-gradient(ellipse 55% 45% at 82% 12%, rgba(255, 206, 150, 0.95), transparent 70%),
-    radial-gradient(ellipse 50% 40% at 8% 95%, rgba(250, 190, 175, 0.55), transparent 70%),
-    linear-gradient(180deg, #FDE9DA 0%, #F9DCC8 55%, #F4E7DA 100%);
+    radial-gradient(ellipse 55% 50% at 82% 10%, rgba(255, 176, 102, 0.95), transparent 70%),
+    radial-gradient(ellipse 55% 45% at 6% 96%, rgba(244, 150, 132, 0.6), transparent 70%),
+    radial-gradient(ellipse 40% 35% at 35% 20%, rgba(255, 228, 190, 0.8), transparent 70%),
+    linear-gradient(180deg, #FCDDC6 0%, #F7C9AA 55%, #F1D3BC 100%);
 }
 
 :root[data-daypart="day"] {
