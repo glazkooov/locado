@@ -175,7 +175,9 @@ const displayTime = (t) => (t === '23:59' ? '24:00' : t);
 
 export function formatHours(hours) {
   if (isRoundTheClock(hours)) return 'круглосуточно';
-  return hours ? `${hours[0]}–${displayTime(hours[1])}` : 'выходной';
+  // \u2060 (word joiner) вокруг тире: «11:00–21:00» не разрывается между
+  // строками в узкой карточке, а остальной текст строки переносится как обычно
+  return hours ? `${hours[0]}\u2060–\u2060${displayTime(hours[1])}` : 'выходной';
 }
 
 /** «в 10:00» / «завтра в 10:00» / «во вторник в 10:00» — когда откроется. */

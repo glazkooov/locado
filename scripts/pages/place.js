@@ -174,17 +174,19 @@ const VISIBLE_TAGS = 5;
 // плашке в hero; вместо них в пятёрку попадают теги настроения
 const CATEGORY_TAGS = { nature: 'природа', art: 'искусство', food: 'еда', theater: 'театр', entertainment: 'развлечения' };
 
-/** Теги для показа: без повторов категории и типа места («музей» у музея). */
+/** Теги для показа: без повторов категории и типа места — и целиком, и по
+ *  словам («музей» у «Дом-музея», «парк» у «Парка скульптур»). */
 function visibleTags(place) {
-  const repeats = new Set([CATEGORY_TAGS[place.category], (place.type || '').toLowerCase()]);
+  const type = (place.type || '').toLowerCase();
+  const repeats = new Set([CATEGORY_TAGS[place.category], type, ...type.split(/[\s-]+/)]);
   return (place.tags || []).filter((t) => !repeats.has(t.toLowerCase())).slice(0, VISIBLE_TAGS);
 }
 
 function renderTags(place) {
   const container = $('#place-tags');
-  const aside = $('#place-tags-aside');
+  const card = $('#place-tags-card');
   const tags = visibleTags(place);
-  if (aside) aside.hidden = !tags.length;
+  if (card) card.hidden = !tags.length;
   if (!tags.length) return;
   // Тег ведёт в ленту на главной с этим тегом — повод пойти дальше
   container.innerHTML = tags.map((t) =>
@@ -220,18 +222,10 @@ function renderDirections(place) {
 
   const infoSection = $('.place-info');
   if (!infoSection) return;
-  const visible = $$('.info-card', infoSection).filter((c) => !c.hidden);
-  // Осталась одна карточка «Адрес» (парки, улицы: круглосуточно, без
-  // контактов) — адрес уходит строкой в hero, секция не нужна: сразу
-  // после hero начинается описание
-  if (visible.length === 1 && visible[0].id === 'address-card' && place.address) {
-    $('#place-facts')?.insertAdjacentHTML('afterbegin',
-      heroFactHtml({ icon: 'fa-location-dot', text: place.address, href: '#on-map' }));
-    infoSection.hidden = true;
-    return;
-  }
-  // Все карточки скрыты — секция тоже
-  infoSection.hidden = !visible.length;
+  // Все карточки скрыты (нет ни адреса, ни часов, ни контактов, ни тегов) —
+  // секция тоже. Одиночный адрес больше не уносим в hero: рядом с ним теперь
+  // всегда стоит карточка «Настроение места».
+  infoSection.hidden = !$$('.info-card', infoSection).some((c) => !c.hidden);
 }
 
 async function renderMap(place) {

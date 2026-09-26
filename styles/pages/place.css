@@ -182,9 +182,12 @@
 }
 
 @media (min-width: 600px) {
-  /* auto-fill, а не auto-fit: когда часть карточек скрыта (нет данных),
-     оставшиеся сохраняют размер, а не растягиваются на всю ширину */
-  .info-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+  /* Практические карточки — фиксированной ширины, «Настроение места»
+     забирает всё оставшееся место в ряду: без пустоты справа, сколько бы
+     карточек ни было скрыто из-за отсутствия данных */
+  .info-grid { display: flex; flex-wrap: wrap; gap: 16px; }
+  .info-grid > .info-card { flex: 0 0 250px; }
+  .info-grid > .info-card--mood { flex: 1 1 280px; }
 }
 
 .info-card {
@@ -248,6 +251,27 @@
 
 .closing-timer--open { color: #2e7d32; }
 
+/* «Настроение места» — та же карточка, но тёплая, как плитки категорий */
+.info-card--mood {
+  background:
+    radial-gradient(ellipse 70% 60% at 95% 0%, rgba(255, 206, 150, 0.45), transparent 70%),
+    linear-gradient(160deg, #FFF6EE 0%, #FBE6D6 100%);
+}
+
+.info-card--mood > i { background: #fff; }
+
+.info-card--mood h3 { color: var(--primary); }
+
+.info-card--mood .tags-section { margin-top: 4px; gap: 6px; }
+
+.info-card--mood .tag-chip { padding: 5px 12px; font-size: 0.82rem; }
+
+.info-card__hint {
+  margin-top: 10px;
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+
 .info-card .info-card__sub {
   font-weight: 500;
   color: var(--text-light);
@@ -288,46 +312,8 @@
   margin-bottom: 20px;
 }
 
-/* Карточек информации нет (адрес ушёл в hero) — отступ, который давала секция */
+/* Карточек информации нет совсем — отступ, который давала секция */
 .place-info[hidden] + .place-description { margin-top: 56px; }
-
-/* Описание + теги: на компьютере в две колонки, чтобы справа не пустовало */
-.place-description__layout {
-  display: grid;
-  gap: 28px;
-}
-
-@media (min-width: 992px) {
-  .place-description__layout {
-    grid-template-columns: minmax(0, 1fr) 340px;
-    gap: 56px;
-    align-items: start;
-  }
-}
-
-.place-description__aside {
-  padding: 22px;
-  border-radius: var(--radius-card);
-  border: 1px solid var(--line);
-  background:
-    radial-gradient(ellipse 70% 60% at 95% 0%, rgba(255, 206, 150, 0.45), transparent 70%),
-    linear-gradient(160deg, #FFF6EE 0%, #FBE6D6 100%);
-}
-
-.place-aside__title {
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
-  color: var(--primary);
-  margin-bottom: 14px;
-}
-
-.place-aside__hint {
-  margin-top: 14px;
-  font-size: 0.85rem;
-  color: var(--text-light);
-}
 
 .suggestion-edit {
   background: none;
