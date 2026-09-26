@@ -165,13 +165,29 @@ function renderDescription(place) {
   el.hidden = !text;
 }
 
+// Пользователю — только первые теги места (в данных они самые характерные:
+// атмосфера, сценарий, впечатление). Остальные теги работают на поиск,
+// настроения, подборки и «похожие места», но на странице не показываются.
+const VISIBLE_TAGS = 5;
+
+// Теги, которые дословно повторяют категорию места, — это уже написано на
+// плашке в hero; вместо них в пятёрку попадают теги настроения
+const CATEGORY_TAGS = { nature: 'природа', art: 'искусство', food: 'еда', theater: 'театр', entertainment: 'развлечения' };
+
+/** Теги для показа: без повторов категории и типа места («музей» у музея). */
+function visibleTags(place) {
+  const repeats = new Set([CATEGORY_TAGS[place.category], (place.type || '').toLowerCase()]);
+  return (place.tags || []).filter((t) => !repeats.has(t.toLowerCase())).slice(0, VISIBLE_TAGS);
+}
+
 function renderTags(place) {
   const container = $('#place-tags');
   const aside = $('#place-tags-aside');
-  if (!place.tags || !place.tags.length) { if (aside) aside.hidden = true; return; }
-  if (aside) aside.hidden = false;
+  const tags = visibleTags(place);
+  if (aside) aside.hidden = !tags.length;
+  if (!tags.length) return;
   // Тег ведёт в ленту на главной с этим тегом — повод пойти дальше
-  container.innerHTML = place.tags.map((t) =>
+  container.innerHTML = tags.map((t) =>
     `<a class="tag-chip" href="index.html?tag=${encodeURIComponent(t)}">#${escapeHtml(t)}</a>`).join('');
 }
 
