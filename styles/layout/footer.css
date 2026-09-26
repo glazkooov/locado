@@ -119,12 +119,17 @@
   width: 46px;
   height: 46px;
   border-radius: 50%;
-  background: var(--primary);
-  color: #fff;
+  /* Белое «стекло»: не спорит с оранжевыми кнопками и карточками */
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-size: var(--fs-lg);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 6px 18px rgba(255, 87, 10, 0.35);
+  box-shadow: var(--shadow-sm);
   opacity: 0;
   transform: translateY(12px);
   pointer-events: none;
@@ -134,4 +139,4 @@
 
 .back-to-top.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
 
-.back-to-top:hover { background: var(--primary-light); }
+.back-to-top:hover { background: #fff; color: var(--primary-text); }
