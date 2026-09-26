@@ -50,14 +50,20 @@ export function pluralize(n, forms) {
 export const plural = pluralize;
 
 // ---------- Расписание ----------
+const hhmm = (date) => `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+
 const DAY_KEYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 const DAY_KEYS_ORDERED = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 const DAY_LABELS_RU = {
   mon: 'Понедельник', tue: 'Вторник', wed: 'Среда', thu: 'Четверг',
   fri: 'Пятница', sat: 'Суббота', sun: 'Воскресенье'
 };
+// «Откроется во вторник», «в среду» — день с предлогом (индексы как у getDay)
+const DAY_ON_RU = ['в воскресенье', 'в понедельник', 'во вторник', 'в среду', 'в четверг', 'в пятницу', 'в субботу'];
 
+// «23:59» — это «до полуночи»: считаем как 24:00, иначе таймер на минуту врёт
 const parseTime = (t) => {
+  if (t === '23:59') return 24 * 60;
   const [h, m] = t.split(':').map(Number);
   return h * 60 + m;
 };
@@ -146,24 +152,39 @@ export function isOpenNow(place, now = new Date()) {
   return getOpenStatus(place, now).isOpen;
 }
 
-/** Человекочитаемая подпись таймера: "Закроется через 2 ч 15 мин" и т.п. */
+/** Человекочитаемая подпись таймера: "Закроется через 2 часа 15 минут".
+ *  Для закрытого места — только если откроется в ближайшие 3 часа: иначе
+ *  «откроется завтра в 10:00» уже написано в hero и в строке расписания. */
 export function describeStatusTimer(status, now = new Date()) {
   if (!status.nextChangeAt) return '';
   const diffMs = status.nextChangeAt - now;
-  if (diffMs <= 0) return '';
+  const limitHours = status.isOpen ? 24 : 3;
+  if (diffMs <= 0 || diffMs > limitHours * 60 * 60000) return '';
   const totalMinutes = Math.floor(diffMs / 60000);
   const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
   const parts = [];
   if (hours > 0) parts.push(`${hours} ${pluralize(hours, ['час', 'часа', 'часов'])}`);
-  parts.push(`${minutes} ${pluralize(minutes, ['минута', 'минуты', 'минут'])}`);
+  if (minutes > 0 || hours === 0) parts.push(`${minutes} ${pluralize(minutes, ['минута', 'минуты', 'минут'])}`);
   const verb = status.isOpen ? 'Закроется через' : 'Откроется через';
   return `${verb} ${parts.join(' ')}`;
 }
 
+// «23:59» в данных — это «до полуночи»; в интерфейсе показываем 24:00
+const displayTime = (t) => (t === '23:59' ? '24:00' : t);
+
 export function formatHours(hours) {
   if (isRoundTheClock(hours)) return 'круглосуточно';
-  return hours ? `${hours[0]}–${hours[1]}` : 'выходной';
+  return hours ? `${hours[0]}–${displayTime(hours[1])}` : 'выходной';
+}
+
+/** «в 10:00» / «завтра в 10:00» / «во вторник в 10:00» — когда откроется. */
+function openingPhrase(date, now) {
+  const time = `в ${hhmm(date)}`;
+  const days = Math.round((new Date(date).setHours(0, 0, 0, 0) - new Date(now).setHours(0, 0, 0, 0)) / 86400000);
+  if (days <= 0) return time;
+  if (days === 1) return `завтра ${time}`;
+  return `${DAY_ON_RU[date.getDay()]} ${time}`;
 }
 
 /** Возвращает markup сегодняшнего расписания + сворачиваемый список на все дни.
@@ -173,7 +194,19 @@ export function scheduleHtml(schedule, now = new Date()) {
   if (!schedule) return '<span class="no-schedule">Расписание не указано</span>';
   const todayKey = DAY_KEYS[now.getDay()];
   const todayHours = schedule[todayKey];
-  const todayLine = todayHours ? `Сегодня: ${formatHours(todayHours)}` : 'Сегодня: выходной';
+
+  // Во все дни одинаково — одна строка, раскрывать список незачем
+  const first = schedule[DAY_KEYS_ORDERED[0]];
+  const sameEveryDay = first && DAY_KEYS_ORDERED.every((k) => schedule[k] && schedule[k][0] === first[0] && schedule[k][1] === first[1]);
+  if (sameEveryDay) {
+    return `<div class="today-schedule"><span>${escapeHtml(`Ежедневно ${formatHours(first)}`)}</span></div>`;
+  }
+
+  let todayLine = `Сегодня: ${formatHours(todayHours)}`;
+  if (!todayHours) {
+    const next = getOpenStatus({ schedule }, now).nextChangeAt;
+    todayLine = next ? `Сегодня выходной, откроется ${openingPhrase(next, now)}` : 'Сегодня выходной';
+  }
 
   const rows = DAY_KEYS_ORDERED.map((key) => {
     const isToday = key === todayKey;
@@ -208,15 +241,19 @@ export function displayHost(url = '') {
   }
 }
 
-const hhmm = (date) => `${date.getHours()}:${String(date.getMinutes()).padStart(2, '0')}`;
-
-/** Короткий статус для плашек: «Открыто до 23:00» / «Откроется в 10:00» /
- *  «Сейчас закрыто». null — если расписания нет. */
+/** Короткий статус для плашек: «Открыто до 23:00» / «Открыто до полуночи» /
+ *  «Откроется в 10:00» / «Откроется завтра в 10:00» / «Откроется во
+ *  вторник в 10:00». null — если расписания нет. */
 export function openStatusLabel(place, now = new Date()) {
   if (!place?.schedule) return null;
   const status = getOpenStatus(place, now);
   if (status.roundTheClock) return { isOpen: true, text: 'Открыто круглосуточно' };
-  if (status.isOpen && status.hoursToday) return { isOpen: true, text: `Открыто до ${status.hoursToday[1]}` };
-  const opensToday = status.nextChangeAt && status.nextChangeAt.toDateString() === now.toDateString();
-  return { isOpen: false, text: opensToday ? `Откроется в ${hhmm(status.nextChangeAt)}` : 'Сейчас закрыто' };
+  if (status.isOpen && status.hoursToday) {
+    const close = status.hoursToday[1];
+    return { isOpen: true, text: close === '23:59' ? 'Открыто до полуночи' : `Открыто до ${close}` };
+  }
+  return {
+    isOpen: false,
+    text: status.nextChangeAt ? `Откроется ${openingPhrase(status.nextChangeAt, now)}` : 'Сейчас закрыто'
+  };
 }

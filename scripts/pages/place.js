@@ -78,9 +78,22 @@ function renderFacts(place) {
   if (metro) facts.push({ icon: 'fa-subway', text: `м. ${metro}` });
   const status = openStatusLabel(place);
   if (status) facts.push({ icon: 'fa-clock', text: status.text, mod: status.isOpen ? 'open' : 'closed' });
-  if (place.price) facts.push({ icon: 'fa-tag', text: place.price });
-  list.innerHTML = facts.map((f) => `
-    <li class="hero-fact${f.mod ? ` hero-fact--${f.mod}` : ''}"><i class="fas ${f.icon}" aria-hidden="true"></i> ${escapeHtml(f.text)}</li>`).join('');
+  if (place.price) {
+    // «Билеты — на сайте музея» без ссылки заставляет искать сайт самому
+    const website = safeUrl(place.website, '');
+    const href = website && /на сайте/i.test(place.price) ? website : '';
+    facts.push({ icon: 'fa-tag', text: place.price, href, external: true });
+  }
+  list.innerHTML = facts.map(heroFactHtml).join('');
+}
+
+function heroFactHtml(f) {
+  const body = `<i class="fas ${f.icon}" aria-hidden="true"></i> ${escapeHtml(f.text)}`;
+  const content = f.href
+    ? `<a class="hero-fact__link" href="${escapeHtml(f.href)}"${f.external ? ' target="_blank" rel="noopener"' : ''}>${body}</a>`
+    : body;
+  return `
+    <li class="hero-fact${f.mod ? ` hero-fact--${f.mod}` : ''}">${content}</li>`;
 }
 
 /** Показывает строку, только если есть что показать; прочерков не ставим. */
@@ -188,9 +201,21 @@ function renderDirections(place) {
   const card = $('#directions-card');
   $('#place-directions').textContent = place.directions || '';
   card.hidden = !place.directions;
-  // Все карточки скрыты (нет ни адреса, ни часов, ни контактов) — секция не нужна
+
   const infoSection = $('.place-info');
-  if (infoSection) infoSection.hidden = !$$('.info-card', infoSection).some((c) => !c.hidden);
+  if (!infoSection) return;
+  const visible = $$('.info-card', infoSection).filter((c) => !c.hidden);
+  // Осталась одна карточка «Адрес» (парки, улицы: круглосуточно, без
+  // контактов) — адрес уходит строкой в hero, секция не нужна: сразу
+  // после hero начинается описание
+  if (visible.length === 1 && visible[0].id === 'address-card' && place.address) {
+    $('#place-facts')?.insertAdjacentHTML('afterbegin',
+      heroFactHtml({ icon: 'fa-location-dot', text: place.address, href: '#on-map' }));
+    infoSection.hidden = true;
+    return;
+  }
+  // Все карточки скрыты — секция тоже
+  infoSection.hidden = !visible.length;
 }
 
 async function renderMap(place) {
