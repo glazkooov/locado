@@ -67,12 +67,21 @@ const parseTime = (t) => {
  * (например, 18:00–02:00): если "сегодня" ещё не наступило открытие, но
  * вчерашняя смена перешла через полночь и ещё не закрылась — место открыто.
  */
+/** «00:00–23:59» (или до 24:00) — в базе так записаны места без часов
+ *  работы: парки, набережные, улицы. */
+export const isRoundTheClock = (hours) => Boolean(hours) && hours[0] === '00:00' && (hours[1] === '23:59' || hours[1] === '24:00');
+
 export function getOpenStatus(place, now = new Date()) {
   if (!place || !place.schedule) {
     return { isOpen: false, hoursToday: null, nextChangeAt: null };
   }
   const todayIdx = now.getDay();
   const todayKey = DAY_KEYS[todayIdx];
+  // Круглосуточно: открыто без «закроется через …» (иначе в 23:59 на минуту
+  // «закрывалось» и таймер считал время до полуночи)
+  if (isRoundTheClock(place.schedule[todayKey])) {
+    return { isOpen: true, hoursToday: place.schedule[todayKey], nextChangeAt: null, roundTheClock: true };
+  }
   const yesterdayKey = DAY_KEYS[(todayIdx + 6) % 7];
   const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
@@ -150,6 +159,7 @@ export function describeStatusTimer(status, now = new Date()) {
 }
 
 export function formatHours(hours) {
+  if (isRoundTheClock(hours)) return 'круглосуточно';
   return hours ? `${hours[0]}–${hours[1]}` : 'выходной';
 }
 
@@ -202,6 +212,7 @@ const hhmm = (date) => `${date.getHours()}:${String(date.getMinutes()).padStart(
 export function openStatusLabel(place, now = new Date()) {
   if (!place?.schedule) return null;
   const status = getOpenStatus(place, now);
+  if (status.roundTheClock) return { isOpen: true, text: 'Открыто круглосуточно' };
   if (status.isOpen && status.hoursToday) return { isOpen: true, text: `Открыто до ${status.hoursToday[1]}` };
   const opensToday = status.nextChangeAt && status.nextChangeAt.toDateString() === now.toDateString();
   return { isOpen: false, text: opensToday ? `Откроется в ${hhmm(status.nextChangeAt)}` : 'Сейчас закрыто' };

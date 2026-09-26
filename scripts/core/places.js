@@ -101,7 +101,9 @@ export function search(places, query) {
   });
 }
 
-export function filterPlaces(places, { category = 'all', query = '', metros = [], price = '', openNow = false, tags = null } = {}) {
+/** tags — место подходит, если у него есть хотя бы один из тегов;
+ *  tagsAll — нужны все перечисленные теги («тихо» и при этом «природа»). */
+export function filterPlaces(places, { category = 'all', query = '', metros = [], price = '', openNow = false, tags = null, tagsAll = null } = {}) {
   let list = byCategory(places, category);
   list = search(list, query);
   if (metros.length) {
@@ -116,6 +118,9 @@ export function filterPlaces(places, { category = 'all', query = '', metros = []
   }
   if (tags && tags.length) {
     list = list.filter((p) => (p.tags || []).some((t) => tags.includes(t)));
+  }
+  if (tagsAll && tagsAll.length) {
+    list = list.filter((p) => tagsAll.every((t) => (p.tags || []).includes(t)));
   }
   return list;
 }
@@ -148,12 +153,15 @@ export function popular(places, count = 4) {
     .map((x) => x.p);
 }
 
-/** Похожие места: та же категория весит чуть больше одного общего тега
- *  (иначе к парку первым шёл фудкорт с общим «атмосферно»), дальше — число
- *  общих тегов, при равенстве — ближе по координатам. Раньше это была просто та
- *  же категория в порядке из файла, у всех парков — один и тот же список. */
+/** Похожие места: общие теги с весом по редкости (IDF) — «день» или
+ *  «исторично» есть почти у всех мест и мало что говорят, а «скрыто» или
+ *  «набережная» — много; та же категория даёт бонус; при равенстве — ближе
+ *  по координатам. */
 export function similar(places, place, count = 6) {
   const tags = new Set(place.tags || []);
+  const tagCount = {};
+  places.forEach((p) => (p.tags || []).forEach((t) => { tagCount[t] = (tagCount[t] || 0) + 1; }));
+  const weight = (t) => Math.log(places.length / (tagCount[t] || 1));
   const distance = (p) => {
     if (!place.coords || !p.coords) return Infinity;
     const dLat = p.coords[0] - place.coords[0];
@@ -164,7 +172,8 @@ export function similar(places, place, count = 6) {
     .filter((p) => p.slug !== place.slug)
     .map((p) => ({
       p,
-      score: (p.tags || []).filter((t) => tags.has(t)).length * 2 + (p.category === place.category ? 3 : 0),
+      score: (p.tags || []).filter((t) => tags.has(t)).reduce((sum, t) => sum + weight(t), 0)
+        + (p.category === place.category ? 2 : 0),
       d: distance(p)
     }))
     .filter((x) => x.score > 0)

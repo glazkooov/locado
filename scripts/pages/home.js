@@ -33,9 +33,9 @@ function applyUrlFilter(feed) {
   const tag = params.get('tag');
   const category = params.get('category');
   if (tag) {
-    feed.setFilters({ category: 'all', query: '', tags: [tag] }, { syncInput: true, label: { kind: 'Тег', text: `#${tag}` } });
+    feed.setFilters({ category: 'all', query: '', tags: [tag], tagsAll: null }, { syncInput: true, label: { kind: 'Тег', text: `#${tag}` } });
   } else if (category && CATEGORIES[category]) {
-    feed.setFilters({ category, query: '', tags: null }, { syncInput: true });
+    feed.setFilters({ category, query: '', tags: null, tagsAll: null }, { syncInput: true });
   } else {
     return;
   }
@@ -84,19 +84,25 @@ function showLoadError() {
 function initCategoryTiles(feed) {
   $$('.category-masonry').forEach((tile) => {
     on(tile, 'click', () => {
-      feed?.setFilters({ category: tile.dataset.category, query: '', tags: null }, { syncInput: true });
+      feed?.setFilters({ category: tile.dataset.category, query: '', tags: null, tagsAll: null }, { syncInput: true });
       scrollToFeed();
     });
   });
 }
 
+/** Подборки описаны тегами прямо в разметке: data-tags-any — любой из
+ *  тегов, data-tags-all — все сразу (как настроения в hero). Раньше подборка
+ *  искала слово по тексту и с новой базой находила 0–1 место. */
+const tagList = (value) => (value ? value.split(',').map((t) => t.trim()).filter(Boolean) : null);
+
 function initCollections(feed) {
   $$('.collection-card').forEach((card) => {
     const open = () => {
-      const tag = card.dataset.tag;
-      if (!tag) return;
+      const tags = tagList(card.dataset.tagsAny);
+      const tagsAll = tagList(card.dataset.tagsAll);
+      if (!tags && !tagsAll) return;
       const title = card.querySelector('.collection-title')?.textContent.trim();
-      feed?.setFilters({ category: 'all', query: tag, tags: null }, { syncInput: true, label: title && { kind: 'Подборка', text: title } });
+      feed?.setFilters({ category: 'all', query: '', tags, tagsAll }, { syncInput: true, label: title && { kind: 'Подборка', text: title } });
       scrollToFeed();
     };
     on(card, 'click', open);
