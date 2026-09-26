@@ -195,10 +195,22 @@
 
 .similar-card .info p { font-size: 0.85rem; color: var(--text-light); }
 
+/* Фото не загрузилось (или его ещё нет) — картинку прячем целиком: иначе
+   браузер рисует значок битого файла и alt-текст поверх плашек карточки.
+   Остаётся тёплая подложка самой карточки. */
 .place-card__img.is-broken,
 .similar-card img.is-broken {
-  background: var(--cream-deep);
-  object-fit: cover;
+  visibility: hidden;
+}
+
+.place-card:has(.is-broken) {
+  background: linear-gradient(160deg, var(--cream-deep) 0%, #E2D2BE 100%);
+}
+
+.similar-card:has(img.is-broken) img {
+  visibility: visible;
+  content: url("data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==");
+  background: linear-gradient(160deg, var(--cream-deep) 0%, #E2D2BE 100%);
 }
 
 .fav-btn-hero[aria-pressed="true"],

@@ -38,6 +38,14 @@ const isBackForward = () => performance.getEntriesByType?.('navigation')[0]?.typ
 // Подгружаем следующую страницу заранее, пока до конца ленты ещё ~2 экрана
 const PRELOAD_MARGIN = 800;
 
+// Сама лента подгружает первые 36 карточек (3 страницы: ~5–6 экранов на
+// телефоне, ~4–5 на компьютере; делится на 2, 3 и 4 колонки). Дальше —
+// кнопка «Показать ещё» и под ней подвал. Кто нажал кнопку, тот хочет
+// листать: после этого лента подгружается сама до конца, без новых пауз.
+// При смене фильтра счётчик начинается заново. Порог не зависит от размера
+// базы — при 100 и при 500 местах он тот же.
+const AUTO_LOAD_LIMIT = 36;
+
 export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
   const container = $('#places-container');
   if (!container) return null; // не на этой странице
@@ -54,6 +62,7 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
   let state = { category: 'all', query: '', tags: null, tagsAll: null, label: null };
   let shown = 0;
   let list = [];
+  let autoUnlocked = false; // пользователь нажал «Показать ещё» — дальше без пауз
 
   // --- Раскладка по колонкам ---
   // Не CSS column-count: при подгрузке он перераскладывает всё заново, и уже
@@ -110,6 +119,7 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
     if (reset) {
       resetColumns();
       shown = 0;
+      autoUnlocked = false;
     }
     const next = list.slice(shown, shown + pageSize);
     appendCards(next);
@@ -125,11 +135,14 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
 
   const loadMore = () => { if (shown < list.length) renderPage(false); };
 
+  const canAutoLoad = () => autoUnlocked || shown < AUTO_LOAD_LIMIT;
+  const autoLoadMore = () => { if (canAutoLoad()) loadMore(); };
+
   // Бесконечная лента: когда конец ленты близко, подгружаем следующую
   // страницу. Проверяем и после каждой подгрузки — если карточки короткие и
   // конец всё ещё на экране, IntersectionObserver второй раз не сработает.
   function maybeLoadMore() {
-    if (!showMoreBtn || shown >= list.length) return;
+    if (!showMoreBtn || shown >= list.length || !canAutoLoad()) return;
     if (showMoreBtn.getBoundingClientRect().top < window.innerHeight + PRELOAD_MARGIN) loadMore();
   }
 
@@ -194,12 +207,12 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
   on($('#feed-active-reset'), 'click', reset);
 
   // --- UI: бесконечная подгрузка ---
-  // Кнопка «Показать ещё» остаётся запасным вариантом: для клавиатуры и
-  // браузеров без IntersectionObserver.
-  on(showMoreBtn, 'click', loadMore);
+  // Кнопка «Показать ещё» — пауза после AUTO_LOAD_LIMIT карточек, а также
+  // запасной вариант для клавиатуры и браузеров без IntersectionObserver.
+  on(showMoreBtn, 'click', () => { autoUnlocked = true; loadMore(); });
   if (showMoreBtn && 'IntersectionObserver' in window) {
     new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) loadMore();
+      if (entries[0].isIntersecting) autoLoadMore();
     }, { rootMargin: `0px 0px ${PRELOAD_MARGIN}px 0px` }).observe(showMoreBtn);
   }
 
@@ -220,7 +233,7 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
   // bfcache, код не перезапускается и всё и так на месте; иначе (страница
   // собирается заново) восстанавливаем фильтр, число карточек и прокрутку.
   window.addEventListener('pagehide', () => {
-    writeSnapshot({ state, shown, scrollY: window.scrollY });
+    writeSnapshot({ state, shown, autoUnlocked, scrollY: window.scrollY });
   });
 
   const restore = (snapshot) => {
@@ -230,6 +243,7 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
     if (input) { input.value = state.query || ''; toggleClear(input, $('#categories-clear-btn')); }
     renderPage(true);
     while (shown < snapshot.shown && shown < list.length) renderPage(false);
+    autoUnlocked = Boolean(snapshot.autoUnlocked);
     // Пропорции карточек заданы в CSS, поэтому высота ленты известна сразу,
     // без ожидания фото — прокрутка попадает точно.
     if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
