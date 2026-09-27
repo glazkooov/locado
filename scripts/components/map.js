@@ -130,10 +130,10 @@ export async function initPlaceMap(container, place) {
 }
 
 // ---------- Карта подборки (collection.html) ----------
-/** Пронумерованные метки мест в порядке статьи; у маршрута — пунктир между
- *  ними (по прямой: это схема порядка, а не пешеходный путь). Клик по метке
- *  вызывает onSelect(номер). */
-export async function initCollectionMap(container, places, { route = false, onSelect } = {}) {
+/** Пронумерованные метки мест в порядке статьи. Клик по метке вызывает
+ *  onSelect(номер). Линию между точками не рисуем: по прямой она выглядела
+ *  случайной, а настоящий пеший путь даёт кнопка «Маршрут в Яндекс.Картах». */
+export async function initCollectionMap(container, places, { onSelect } = {}) {
   const points = places.filter((p) => p?.coords);
   if (!container || !points.length) return null;
   try {
@@ -143,14 +143,6 @@ export async function initCollectionMap(container, places, { route = false, onSe
       zoom: 14,
       controls: ['zoomControl', 'fullscreenControl']
     }, PAGE_MAP_OPTIONS);
-    if (route && points.length > 1) {
-      map.geoObjects.add(new ymaps.Polyline(points.map((p) => p.coords), {}, {
-        strokeColor: '#D24406',
-        strokeWidth: 3,
-        strokeOpacity: 0.8,
-        strokeStyle: 'shortdash'
-      }));
-    }
     places.forEach((p, i) => {
       if (!p?.coords) return;
       const placemark = new ymaps.Placemark(

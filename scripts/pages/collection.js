@@ -126,7 +126,6 @@ async function renderMap(c, ordered) {
     $('#collection-route').hidden = false;
   }
   await initCollectionMap($('#collection-map-container'), ordered, {
-    route: isRoute,
     onSelect: (num) => $(`#place-${num}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   });
 }
