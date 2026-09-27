@@ -438,7 +438,7 @@
 /* Карточек информации нет совсем — отступ, который давала секция */
 .place-info[hidden] + .place-about { margin-top: 48px; }
 
-/* Второстепенная ссылка — тихая, не спорит с основными действиями */
+/* «Что-то изменилось? Сообщите нам» — тихая ссылка под карточками */
 .suggestion-edit {
   background: none;
   border: none;
@@ -450,7 +450,8 @@
   align-items: center;
   gap: 6px;
   font-size: var(--fs-sm);
-  padding: 0;
+  padding: 8px 0;
+  margin-top: 8px;
 }
 
 .suggestion-edit:hover {
@@ -458,6 +459,30 @@
   text-decoration: underline;
   text-underline-offset: 3px;
 }
+
+/* Окно с Яндекс Формой: шире обычного, форма прокручивается внутри */
+.report-modal__content { max-width: 640px; display: flex; flex-direction: column; }
+
+.report-modal__body { display: flex; flex-direction: column; min-height: 0; flex: 1; }
+
+.report-modal__frame {
+  display: block;
+  width: 100%;
+  height: min(560px, 62dvh);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: var(--cream);
+}
+
+.report-modal__fallback {
+  margin-top: 12px;
+  font-size: var(--fs-sm);
+  color: var(--text-light);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.report-modal__fallback:hover { color: var(--primary-text); }
 
 /* Одна метка — большой карте незачем занимать целый экран */
 .place-map .map-container {
