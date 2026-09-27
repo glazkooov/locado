@@ -102,17 +102,6 @@ const initScrollReveal = () => {
   targets.forEach((el) => observer.observe(el));
 };
 
-/** Кнопка «Скопировать» рядом с почтой в футере. */
-const initCopyButtons = () => {
-  on(document, 'click', '[data-copy]', (e, btn) => {
-    const text = btn.dataset.copy;
-    const done = (ok) => import('./components/toast.js')
-      .then(({ showToast }) => showToast(ok ? 'Адрес скопирован' : 'Не удалось скопировать', !ok));
-    if (!navigator.clipboard) { done(false); return; }
-    navigator.clipboard.writeText(text).then(() => done(true), () => done(false));
-  });
-};
-
 syncHeaderHeight();
 window.addEventListener('resize', syncHeaderHeight, { passive: true });
 window.addEventListener('load', syncHeaderHeight);
@@ -122,4 +111,3 @@ initUserMenu();
 initBackToTop();
 initHeaderOverlay();
 initScrollReveal();
-initCopyButtons();
