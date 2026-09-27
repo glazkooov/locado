@@ -56,9 +56,8 @@ function updateFavButtonUI(isFav) {
 
 function renderHero(place) {
   $('.place-hero')?.classList.remove('is-loading');
-  const heroBg = $('#hero-bg');
-  if (heroBg) heroBg.style.backgroundImage = cssUrl(place.photo);
-  $('#place-category').innerHTML = `${icon('tag')} ${escapeHtml(place.type || place.category)}`;
+  setHeroPhoto(place);
+  $('#place-category').textContent = place.type || categoryLabel(place.category);
   $('#place-name').textContent = place.name;
   // Краткое описание вместо шаблонного «… в центре Москвы» (не у всех мест правда)
   $('#place-subtitle').textContent = place.subtitle || place.description || '';
@@ -68,6 +67,22 @@ function renderHero(place) {
 
   const visitedBtn = $('#visited-btn');
   if (visitedBtn) visitedBtn.classList.toggle('active', Storage.isVisited(place.slug));
+}
+
+/** Фото в hero — только если оно действительно загрузилось. Нет фото или
+ *  файл битый — тёплая подложка по категории места (place.css,
+ *  .place-hero--no-photo) и hero ниже: пустой тёмный экран ничего не говорит. */
+function setHeroPhoto(place) {
+  const hero = $('.place-hero');
+  const heroBg = $('#hero-bg');
+  if (!hero || !heroBg) return;
+  hero.dataset.category = place.category || '';
+  const noPhoto = () => hero.classList.add('place-hero--no-photo');
+  if (!place.photo) { noPhoto(); return; }
+  const img = new Image();
+  img.onload = () => { heroBg.style.backgroundImage = cssUrl(place.photo); };
+  img.onerror = noPhoto;
+  img.src = place.photo;
 }
 
 /** Быстрые факты в hero вместо счётчиков просмотров/избранного. */
@@ -83,7 +98,7 @@ function renderFacts(place) {
     // «Билеты — на сайте музея» без ссылки заставляет искать сайт самому
     const website = safeUrl(place.website, '');
     const href = website && /на сайте/i.test(place.price) ? website : '';
-    facts.push({ icon: 'tag', text: place.price, href, external: true });
+    facts.push({ icon: 'ticket', text: place.price, href, external: true });
   }
   list.innerHTML = facts.map(heroFactHtml).join('');
 }
@@ -110,13 +125,13 @@ function renderInfo(place) {
   const metro = metroList(place);
   const hasAddress = setLine($('#place-address'), place.address ? escapeHtml(place.address) : '');
   const hasMetro = setLine($('#place-metro'), metro.length ? escapeHtml(`м. ${metro.join(', м. ')}`) : '');
-  const addressCard = $('#address-card');
-  if (addressCard) addressCard.hidden = !hasAddress && !hasMetro;
+  const addressRow = $('#address-row');
+  if (addressRow) addressRow.hidden = !hasAddress && !hasMetro;
 
-  // Часы работы: без расписания или круглосуточно во все дни карточка ничего
+  // Часы работы: без расписания или круглосуточно во все дни строка ничего
   // не сообщает — «Открыто круглосуточно» уже есть в hero
-  const hoursCard = $('#hours-card');
-  if (hoursCard) hoursCard.hidden = !place.schedule || isAlwaysOpen(place.schedule);
+  const hoursRow = $('#hours-row');
+  if (hoursRow) hoursRow.hidden = !place.schedule || isAlwaysOpen(place.schedule);
 
   const scheduleContainer = $('#place-schedule');
   scheduleContainer.innerHTML = scheduleHtml(place.schedule);
@@ -133,14 +148,13 @@ function renderInfo(place) {
 
   refreshOpenStatus(place);
 
-  // Контакты: показываем то, что есть; нет ни телефона, ни сайта — нет карточки
+  // Телефон и сайт — отдельными строками со своими значками
   const phone = place.phone || '';
   const website = safeUrl(place.website, '');
-  const hasPhone = setLine($('#place-phone'), phone ? `<a href="${escapeHtml(telHref(phone))}">${escapeHtml(phone)}</a>` : '');
-  const hasWebsite = setLine($('#place-website'), website
-    ? `<a href="${escapeHtml(website)}" target="_blank" rel="noopener">${escapeHtml(displayHost(website))}</a>` : '');
-  const contactsCard = $('#contacts-card');
-  if (contactsCard) contactsCard.hidden = !hasPhone && !hasWebsite;
+  $('#phone-row').hidden = !setLine($('#place-phone'), phone ? `<a href="${escapeHtml(telHref(phone))}">${escapeHtml(phone)}</a>` : '');
+  const host = website ? displayHost(website) : '';
+  $('#website-row').hidden = !setLine($('#place-website'), website
+    ? `<a href="${escapeHtml(website)}" target="_blank" rel="noopener" title="${escapeHtml(host)}">${escapeHtml(host)}</a>` : '');
 
   if (!phone) {
     $('#call-btn')?.style.setProperty('display', 'none');
@@ -148,15 +162,20 @@ function renderInfo(place) {
   }
 }
 
-/** «Закроется через …» / «Откроется через …» — статус «Открыто» уже есть в
- *  hero, отдельная плашка в карточке его только дублировала. */
+// «Закроется через …» показываем, только когда до закрытия меньше часа:
+// «Открыто до 22:00» уже есть в hero, а «через 7 часов 30 минут» его дублировало
+const CLOSING_SOON_MS = 60 * 60000;
+
+/** «Закроется через 40 минут» / «Откроется через …» под часами работы. */
 function refreshOpenStatus(place) {
   const status = getOpenStatus(place);
   const timerSpan = $('#closing-timer');
-  if (timerSpan) {
-    timerSpan.textContent = describeStatusTimer(status);
-    timerSpan.classList.toggle('closing-timer--open', status.isOpen);
-  }
+  if (!timerSpan) return;
+  const soon = !status.isOpen || (status.nextChangeAt && status.nextChangeAt - new Date() <= CLOSING_SOON_MS);
+  const text = soon ? describeStatusTimer(status) : '';
+  timerSpan.textContent = text;
+  timerSpan.hidden = !text;
+  timerSpan.classList.toggle('closing-timer--open', status.isOpen);
 }
 
 function renderDescription(place) {
@@ -217,16 +236,16 @@ function renderGallery(place) {
 }
 
 function renderDirections(place) {
-  const card = $('#directions-card');
   $('#place-directions').textContent = place.directions || '';
-  card.hidden = !place.directions;
+  $('#directions-row').hidden = !place.directions;
 
+  // Строк нет — нет и карточки; нет ни её, ни тегов — нет секции
+  const list = $('#info-list');
+  const rows = list ? $$('.info-row', list).filter((r) => !r.hidden).length : 0;
+  if (list) list.hidden = !rows;
+  $('.info-grid')?.setAttribute('data-rows', String(rows));
   const infoSection = $('.place-info');
-  if (!infoSection) return;
-  // Все карточки скрыты (нет ни адреса, ни часов, ни контактов, ни тегов) —
-  // секция тоже. Одиночный адрес больше не уносим в hero: рядом с ним теперь
-  // всегда стоит карточка «Настроение места».
-  infoSection.hidden = !$$('.info-card', infoSection).some((c) => !c.hidden);
+  if (infoSection) infoSection.hidden = !$$('.info-card', infoSection).some((c) => !c.hidden);
 }
 
 async function renderMap(place) {
@@ -250,6 +269,27 @@ function renderSimilar(place, allPlaces) {
     </a>`;
   container.innerHTML = list.map(similarCardHtml).join('') + moreCard;
   bindImageFallback(container);
+  initSimilarNav(container);
+}
+
+/** Стрелки «назад / дальше» у ряда похожих мест: листают на ширину видимой
+ *  части и гаснут на краях. */
+function initSimilarNav(scroller) {
+  const prev = $('#similar-prev');
+  const next = $('#similar-next');
+  if (!prev || !next) return;
+  const sync = () => {
+    const max = scroller.scrollWidth - scroller.clientWidth - 2;
+    prev.disabled = scroller.scrollLeft <= 2;
+    next.disabled = scroller.scrollLeft >= max;
+    prev.closest('.similar-nav').hidden = max <= 0;
+  };
+  const step = (dir) => scroller.scrollBy({ left: dir * scroller.clientWidth * 0.8, behavior: 'smooth' });
+  on(prev, 'click', () => step(-1));
+  on(next, 'click', () => step(1));
+  on(scroller, 'scroll', sync, { passive: true });
+  on(window, 'resize', sync);
+  sync();
 }
 
 function renderReviews(slug) {
@@ -328,7 +368,7 @@ function attachEventListeners(place, allPlaces) {
   on($('#action-share'), 'click', share);
 
   // Скролл к карте
-  on($('#show-on-map'), 'click', () => $('.place-map')?.scrollIntoView({ behavior: 'smooth' }));
+  on($('#show-on-map'), 'click', () => $('#on-map')?.scrollIntoView({ behavior: 'smooth', block: 'center' }));
 
   // Предложить правку
   on($('#suggest-edit'), 'click', () => {
