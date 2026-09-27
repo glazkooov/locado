@@ -63,10 +63,8 @@
       <div class="hero-bg" id="hero-bg"></div>
       <div class="hero-overlay" aria-hidden="true"></div>
       <div class="container hero-content">
-        <div class="hero-meta">
-          <span class="hero-category" id="place-category"></span>
-        </div>
-
+        <!-- Тип места — подписью над заголовком, а не третьим видом плашки -->
+        <p class="hero-category" id="place-category"></p>
         <h1 class="hero-title" id="place-name">Загружаем…</h1>
         <p class="hero-subtitle" id="place-subtitle"></p>
 
@@ -95,71 +93,84 @@
       </div>
     </section>
 
-    <!-- Инфо-карточки -->
+    <!-- Практическая информация одной карточкой-списком + настроение места.
+         Строки без данных place.js скрывает: прочерки только шумят -->
     <section class="place-info container">
       <div class="info-grid">
-        <!-- Карточки без данных place.js скрывает целиком: прочерки и
-             «не указано» вместо информации только шумят -->
-        <div class="info-card" id="address-card">
-          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#map-pin"></use></svg>
-          <div>
-            <h3>Адрес</h3>
-            <p id="place-address" hidden></p>
-            <p class="info-card__sub" id="place-metro" hidden></p>
-            <button type="button" class="map-link-btn" id="show-on-map">Показать на карте</button>
+        <div class="info-card info-list" id="info-list">
+          <div class="info-row" id="address-row">
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#map-pin"></use></svg>
+            <div class="info-row__body">
+              <h3>Адрес</h3>
+              <p class="info-row__value" id="place-address" hidden></p>
+              <p class="info-row__sub" id="place-metro" hidden></p>
+              <button type="button" class="map-link-btn" id="show-on-map">Показать на карте</button>
+            </div>
+          </div>
+
+          <div class="info-row" id="hours-row">
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#clock"></use></svg>
+            <div class="info-row__body">
+              <h3>Часы работы</h3>
+              <div class="info-row__value" id="place-schedule"></div>
+              <span class="closing-timer" id="closing-timer" hidden></span>
+            </div>
+          </div>
+
+          <div class="info-row" id="phone-row">
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#phone"></use></svg>
+            <div class="info-row__body">
+              <h3>Телефон</h3>
+              <p class="info-row__value" id="place-phone"></p>
+            </div>
+          </div>
+
+          <div class="info-row" id="website-row">
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#globe"></use></svg>
+            <div class="info-row__body">
+              <h3>Сайт</h3>
+              <p class="info-row__value info-row__value--link" id="place-website"></p>
+            </div>
+          </div>
+
+          <div class="info-row" id="directions-row">
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#route"></use></svg>
+            <div class="info-row__body">
+              <h3>Как добраться</h3>
+              <p class="info-row__value" id="place-directions"></p>
+            </div>
           </div>
         </div>
 
-        <div class="info-card" id="hours-card">
-          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#clock"></use></svg>
-          <div>
-            <h3>Часы работы</h3>
-            <div id="place-schedule"></div>
-            <span class="closing-timer" id="closing-timer"></span>
-          </div>
-        </div>
-
-        <div class="info-card" id="contacts-card">
-          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#phone"></use></svg>
-          <div>
-            <h3>Контакты</h3>
-            <p id="place-phone" hidden></p>
-            <p id="place-website" hidden></p>
-          </div>
-        </div>
-
-        <div class="info-card" id="directions-card">
-          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#route"></use></svg>
-          <div>
-            <h3>Как добраться</h3>
-            <p id="place-directions"></p>
-          </div>
-        </div>
-
-        <!-- Настроение места — в одном ряду с практической информацией и
-             растягивается на оставшееся место, чтобы справа не было пустоты -->
         <div class="info-card info-card--mood" id="place-tags-card">
-          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#wand-sparkles"></use></svg>
-          <div>
-            <h3>Настроение места</h3>
-            <div class="tags-section" id="place-tags"></div>
-            <p class="info-card__hint">Нажмите на тег — покажем похожие места</p>
-          </div>
+          <h3><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#wand-sparkles"></use></svg> Настроение места</h3>
+          <!-- Тег ведёт в ленту главной с этим тегом -->
+          <div class="tags-section" id="place-tags"></div>
         </div>
       </div>
     </section>
 
-    <!-- Описание -->
-    <section class="place-description container">
-      <div class="section-head">
-        <span class="section-mini" aria-hidden="true">Почему стоит заглянуть</span>
-        <h2 class="section-title">О месте</h2>
+    <!-- Описание и карта — одним блоком в две колонки: у описания 2–3 строки,
+         отдельная секция с крупным заголовком для него слишком тяжёлая -->
+    <section class="place-about container">
+      <div class="place-about__text">
+        <h2 class="place-about__title">О месте</h2>
+        <div class="description-text" id="place-description"></div>
+        <div class="amenities-section" id="place-amenities"></div>
+        <button type="button" class="suggestion-edit" id="suggest-edit">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#square-pen"></use></svg> Нашли неточность? Напишите нам
+        </button>
       </div>
-      <div class="description-text" id="place-description"></div>
-      <div class="amenities-section" id="place-amenities"></div>
-      <button type="button" class="suggestion-edit" id="suggest-edit">
-        <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#square-pen"></use></svg> Нашли неточность? Напишите нам
-      </button>
+
+      <div class="place-map" id="on-map">
+        <div class="map-container" id="place-map-container" aria-label="Карта места"></div>
+        <!-- На телефоне маршрут — в нижней панели, здесь кнопка скрыта -->
+        <div class="map-actions">
+          <a class="btn route-btn" id="route-link" href="https://yandex.ru/maps/" target="_blank" rel="noopener">
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#navigation"></use></svg> Построить маршрут
+          </a>
+        </div>
+      </div>
     </section>
 
     <!-- Галерея -->
@@ -169,20 +180,6 @@
         <h2 class="section-title">Фотографии</h2>
       </div>
       <div class="gallery-grid" id="place-gallery"></div>
-    </section>
-
-    <!-- Карта -->
-    <section class="place-map container" id="on-map">
-      <div class="section-head">
-        <span class="section-mini" aria-hidden="true">Как добраться</span>
-        <h2 class="section-title">На карте</h2>
-      </div>
-      <div class="map-container" id="place-map-container" aria-label="Карта места"></div>
-      <div class="map-actions">
-        <a class="route-btn" id="route-link" href="https://yandex.ru/maps/" target="_blank" rel="noopener">
-          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#navigation"></use></svg> Построить маршрут
-        </a>
-      </div>
     </section>
 
     <!-- Отзывы — вне MVP (комментарии/социальные функции, см. CLAUDE.md), и
@@ -229,11 +226,19 @@
     </section>
 
     <!-- Похожие -->
-    <section class="place-similar container">
-      <div class="section-head">
-        <span class="section-mini" aria-hidden="true">Если понравилось</span>
-        <h2 class="section-title">Похожие места</h2>
+    <section class="place-similar">
+      <div class="container similar-head">
+        <div class="section-head">
+          <span class="section-mini" aria-hidden="true">Если понравилось</span>
+          <h2 class="section-title">Похожие места</h2>
+        </div>
+        <!-- Стрелки — для мыши; на сенсорных экранах ряд листается пальцем -->
+        <div class="similar-nav">
+          <button type="button" class="similar-nav__btn" id="similar-prev" aria-label="Назад" disabled><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#chevron-left"></use></svg></button>
+          <button type="button" class="similar-nav__btn" id="similar-next" aria-label="Дальше"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#chevron-right"></use></svg></button>
+        </div>
       </div>
+      <!-- Ряд идёт до краёв экрана, а не обрезается по колонке контента -->
       <div class="similar-scroll" id="similar-places-container"></div>
     </section>
 

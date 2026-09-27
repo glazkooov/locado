@@ -183,17 +183,31 @@
 }
 
 .similar-card img {
+  flex: none;
   width: 100%;
   height: 160px;
   object-fit: cover;
   background: var(--cream-deep);
 }
 
-.similar-card .info { padding: 14px 16px 16px; }
+/* Карточки в ряду одной высоты; тип места прижат к низу — у коротких
+   названий пустота не висит под текстом, строки типа на одной линии */
+.similar-card { display: flex; flex-direction: column; }
 
-.similar-card .info h4 { font-size: var(--fs-md); font-weight: 700; letter-spacing: -0.02em; margin-bottom: 4px; }
+.similar-card .info { flex: 1; display: flex; flex-direction: column; padding: 14px 16px 16px; }
 
-.similar-card .info p { font-size: var(--fs-sm); color: var(--text-light); }
+.similar-card .info h4 {
+  font-size: var(--fs-md);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.similar-card .info p { margin-top: auto; font-size: var(--fs-sm); color: var(--text-light); }
 
 /* Фото не загрузилось (или его ещё нет) — картинку прячем целиком: иначе
    браузер рисует значок битого файла и alt-текст поверх плашек карточки.
