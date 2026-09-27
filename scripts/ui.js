@@ -54,8 +54,17 @@ const initUserMenu = () => {
 const initBackToTop = () => {
   const btn = document.getElementById('back-to-top');
   if (!btn) return;
+  // Кнопка появляется, только когда человек сам листает вверх: при
+  // прокрутке вниз она закрывала карточки ленты в правом нижнем углу
   let ticking = false;
-  const sync = () => { btn.classList.toggle('show', window.scrollY > 600); ticking = false; };
+  let lastY = window.scrollY;
+  const sync = () => {
+    const y = window.scrollY;
+    if (y < 600 || y > lastY + 4) btn.classList.remove('show');
+    else if (y < lastY - 4) btn.classList.add('show');
+    lastY = y;
+    ticking = false;
+  };
   window.addEventListener('scroll', () => {
     if (!ticking) { ticking = true; requestAnimationFrame(sync); }
   }, { passive: true });

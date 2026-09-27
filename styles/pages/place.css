@@ -238,6 +238,13 @@
   .hero-actions { display: none; }
 }
 
+/* Телефон: первый экран с фото ниже — под ним сразу видны адрес и часы */
+@media (max-width: 767px) {
+  .place-hero:not(.place-hero--no-photo) { height: 60svh; min-height: 420px; }
+  /* Тип места — сразу под названием, без пустоты между ними */
+  .similar-card .info p { margin-top: 0; }
+}
+
 @media (max-width: 480px) {
   .hero-title { font-size: var(--fs-2xl); }
   .hero-subtitle { font-size: var(--fs-md); }
@@ -338,7 +345,14 @@
   line-height: 1.45;
 }
 
-.info-row__value a { color: inherit; text-decoration: none; }
+.info-row__value a {
+  color: inherit;
+  text-decoration: none;
+  /* строка-ссылка выше, чем текст: удобно попасть пальцем */
+  display: inline-block;
+  padding: 9px 0;
+  margin: -9px 0;
+}
 .info-row__value a:hover { color: var(--primary-text); }
 
 /* Адрес сайта не переносится посреди слова — обрезается многоточием */
@@ -357,6 +371,9 @@
 }
 
 .map-link-btn {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px; /* удобно попасть пальцем */
   background: none;
   border: none;
   color: var(--primary-text);
@@ -364,7 +381,7 @@
   font-weight: 600;
   cursor: pointer;
   padding: 0;
-  margin-top: 6px;
+  margin: -2px 0 -8px;
   font-size: var(--fs-sm);
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -396,7 +413,13 @@
 
 .info-card--mood .tags-section { gap: 8px; }
 
-.info-card--mood .tag-chip { padding: 6px 13px; font-size: var(--fs-xs); }
+.info-card--mood .tag-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 14px;
+  font-size: var(--fs-xs);
+}
 
 .tags-section {
   display: flex;
@@ -471,8 +494,9 @@
   align-items: center;
   gap: 6px;
   font-size: var(--fs-sm);
-  padding: 8px 0;
-  margin-top: 8px;
+  min-height: 44px;
+  padding: 0;
+  margin-top: 4px;
 }
 
 .suggestion-edit:hover {

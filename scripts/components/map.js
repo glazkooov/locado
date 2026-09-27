@@ -70,7 +70,7 @@ function getLayouts() {
 function createPlacemark(place, { labeled = false } = {}) {
   const placemark = new ymaps.Placemark(
     place.coords,
-    { name: place.name, photo: place.photo || '', slug: place.slug },
+    { name: place.name, photo: place.photoSm || place.photo || '', slug: place.slug },
     {
       iconLayout: labeled ? getLayouts().pinLabeled : getLayouts().pin,
       iconShape: PIN_SHAPE,
@@ -141,7 +141,7 @@ function createMapCard(container, { onClose } = {}) {
     card.setAttribute('aria-label', place.name);
     card.innerHTML = `
       <a class="map-card__link" href="${placeUrl(place.slug)}">
-        <span class="map-card__photo" style='background-image: ${cssUrl(place.photo)}'></span>
+        <span class="map-card__photo" style='background-image: ${cssUrl(place.photoSm || place.photo)}'></span>
         <span class="map-card__body">
           <span class="map-card__meta">
             <span class="map-card__type">${escapeHtml(type)}</span>

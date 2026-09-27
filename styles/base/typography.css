@@ -25,7 +25,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .section-title {
-  font-size: var(--fs-xl); /* мобильный; Unbounded широкий — крупнее переносится */
+  /* мобильный; Unbounded широкий — крупнее переносится (на 375px
+     «Сейчас в центре внимания» при 22px уходил на две строки) */
+  font-size: 1.25rem;
   line-height: 1.2;
   text-align: left;
   color: var(--text);

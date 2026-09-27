@@ -31,7 +31,7 @@ export function initRandomizer(places) {
   const showPreview = (place) => {
     current = place;
     previewImg.classList.remove('is-broken');
-    previewImg.src = place.photo || '';
+    previewImg.src = place.photoSm || place.photo || '';
     previewImg.alt = '';
     previewName.textContent = place.name;
     previewCategory.textContent = place.type || categoryLabel(place.category);

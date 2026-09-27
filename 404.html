@@ -108,7 +108,7 @@
         const picks = sample(places, 3);
         box.innerHTML = picks.map((p) => `
           <a class="state-card" href="${placeUrl(p.slug)}">
-            <img src="${escapeHtml(p.photo)}" alt="" loading="lazy">
+            <img src="${escapeHtml(p.photoSm || p.photo)}" alt="" loading="lazy">
             <span class="state-card__name">${escapeHtml(p.name)}</span>
             <span class="state-card__type">${escapeHtml(p.type || categoryLabel(p.category))}</span>
           </a>`).join('');
