@@ -105,6 +105,40 @@
   margin-top: 4px;
 }
 
+.footer-email {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.site-footer__col .footer-email__link {
+  margin-bottom: 0;
+  color: #fff;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.site-footer__col .footer-email__link:hover { color: #FFB38A; }
+
+.footer-email__copy {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: var(--fs-sm);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.footer-email__copy:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
+
 .site-footer__bottom {
   padding: 22px 0;
   text-align: center;
