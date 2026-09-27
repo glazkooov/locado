@@ -6,27 +6,14 @@ import { setPressed } from './category-buttons.js';
 import { escapeHtml, cssUrl, openStatusLabel } from '../core/format.js';
 import { categoryLabel, filterPlaces, placeUrl, uniqueMetro } from '../core/places.js';
 
-// API Яндекс.Карт подключаем сами и асинхронно. Раньше это был <script defer>
-// в <head>: модули страницы ждали его загрузки, разделы рисовались с
-// опозданием, и браузер заново прокручивал к якорю из адреса (#collections и
-// др.) — уже после того, как человек успел пролистать ниже.
-const YMAPS_SRC = 'https://api-maps.yandex.ru/2.1/?apikey=890530b4-68be-4d58-823b-82baae7d9530&lang=ru_RU';
-let ymapsPromise = null;
-
 export function whenYmapsReady() {
-  if (!ymapsPromise) {
-    ymapsPromise = new Promise((resolve, reject) => {
-      const ready = () => (window.ymaps ? window.ymaps.ready(resolve) : reject(new Error('ymaps недоступен')));
-      if (window.ymaps) { ready(); return; }
-      const script = document.createElement('script');
-      script.src = YMAPS_SRC;
-      script.async = true;
-      script.onload = ready;
-      script.onerror = () => reject(new Error('ymaps недоступен'));
-      document.head.append(script);
-    });
-  }
-  return ymapsPromise;
+  return new Promise((resolve, reject) => {
+    if (typeof window.ymaps === 'undefined') {
+      reject(new Error('ymaps недоступен'));
+      return;
+    }
+    window.ymaps.ready(resolve);
+  });
 }
 
 export function showMapError(container, message = 'Карта временно недоступна') {
