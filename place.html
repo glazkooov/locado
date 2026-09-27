@@ -288,7 +288,10 @@
       </div>
       <div class="modal-body report-modal__body">
         <p class="modal-hint">Отметьте, что не так, — проверим и поправим.</p>
-        <iframe class="report-modal__frame" id="report-frame" name="ya-form-6ab9085f49af475392c00f2e" title="Форма: сообщить о неточности"></iframe>
+        <!-- В режиме iframe у Яндекс Формы нет своих отступов — даём их рамкой -->
+        <div class="report-modal__frame-wrap">
+          <iframe class="report-modal__frame" id="report-frame" name="ya-form-6ab9085f49af475392c00f2e" title="Форма: сообщить о неточности"></iframe>
+        </div>
         <a class="report-modal__fallback" id="report-fallback" href="https://forms.yandex.ru/u/6ab9085f49af475392c00f2e" target="_blank" rel="noopener">Форма не открылась? Откройте её в новой вкладке</a>
       </div>
     </div>

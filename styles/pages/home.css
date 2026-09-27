@@ -634,6 +634,47 @@
   color: var(--text-light);
 }
 
+.map-panel__bar { display: contents; }
+
+.map-filters-toggle {
+  display: none;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  background: var(--card-bg);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.map-filters-toggle[aria-expanded="true"] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+
+.map-filters-toggle__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: var(--radius-pill);
+  background: var(--primary-strong);
+  color: #fff;
+  font-size: var(--fs-caption);
+}
+
+.map-filters-toggle__count[hidden] { display: none; }
+
 .map-panel {
   flex: 1;
   display: flex;
@@ -884,12 +925,6 @@
 }
 
 
-@media (min-width: 600px) {
-  .info-grid {
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  }
-}
-
 @media (max-width: 768px) {
   /* Секции шли с одинаковым большим отступом и на телефоне давали пустые экраны */
   .popular { margin-top: 40px; }
@@ -904,11 +939,42 @@
 
   .site-footer { margin-top: 64px; }
 
-  /* Панель фильтров карты занимала весь экран до карты */
-  .map-panel { padding: 16px; }
-  .map-container { height: 320px; }
-  .map__categories-buttons { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  /* Фильтры карты: над картой одна строка — кнопка «Фильтры» и категории
+     с прокруткой вбок; поиск, метро, цена и «Сейчас открыто» раскрываются
+     по кнопке и не отнимают у карты экран */
+  .map-panel {
+    order: -1;
+    gap: 10px;
+    padding: 0;
+    background: none;
+    border: none;
+    box-shadow: none;
+  }
+  .map-container { height: 360px; }
+  .map-panel__bar { display: flex; align-items: center; gap: 8px; }
+  .map__categories-buttons {
+    flex: 1;
+    min-width: 0;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    /* край строки гаснет — видно, что категорий больше */
+    -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent);
+    mask-image: linear-gradient(90deg, #000 85%, transparent);
+    padding-right: 24px;
+  }
   .map__categories-buttons::-webkit-scrollbar { display: none; }
+  .map-filters-toggle { display: inline-flex; }
+  .map-panel .sidebar-filters {
+    display: none;
+    padding: 16px;
+    background: var(--card-bg);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-soft);
+  }
+  .map-panel.filters-open .sidebar-filters { display: flex; }
+  .map-panel .filters-title { display: none; }
 
   /* Блок "добавить место" — в одну колонку */
   .add-place-wrapper { display: flex; flex-direction: column; gap: 24px; }

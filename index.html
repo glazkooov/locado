@@ -156,9 +156,18 @@
         <div class="map-section">
           <div class="map-container" id="map" aria-label="Интерактивная карта мест"></div>
           <div class="map-panel">
-            <div class="map__categories-buttons" id="map-categories" role="group" aria-label="Категории на карте"></div>
+            <!-- На телефоне: кнопка «Фильтры» и категории одной строкой над
+                 картой, остальные фильтры раскрываются по кнопке -->
+            <div class="map-panel__bar">
+              <button type="button" class="map-filters-toggle" id="map-filters-toggle" aria-expanded="false" aria-controls="map-filters">
+                <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#sliders-horizontal"></use></svg>
+                <span>Фильтры</span>
+                <span class="map-filters-toggle__count" id="map-filters-count" hidden></span>
+              </button>
+              <div class="map__categories-buttons" id="map-categories" role="group" aria-label="Категории на карте"></div>
+            </div>
 
-            <aside class="sidebar-filters">
+            <aside class="sidebar-filters" id="map-filters">
               <h3 class="filters-title"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#sliders-horizontal"></use></svg> Фильтры</h3>
 
               <div class="map-search-group">
