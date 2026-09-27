@@ -370,10 +370,9 @@ function attachEventListeners(place, allPlaces) {
   // Скролл к карте
   on($('#show-on-map'), 'click', () => $('#on-map')?.scrollIntoView({ behavior: 'smooth', block: 'center' }));
 
-  // Предложить правку
-  on($('#suggest-edit'), 'click', () => {
-    window.location.href = `mailto:hello@locado.ru?subject=${encodeURIComponent('Правка для места ' + place.slug)}`;
-  });
+  // Сообщить о неточности — Яндекс Форма в окне
+  const reportModal = createModal($('#report-modal'), { onOpen: () => loadReportForm(place) });
+  on($('#suggest-edit'), 'click', () => reportModal?.open());
 
   // Форма отзыва
   const form = $('#review-form');
@@ -399,6 +398,35 @@ function attachEventListeners(place, allPlaces) {
     starIcons.forEach((s) => s.classList.remove('icon--filled', 'active'));
     showToast('Отзыв добавлен!');
   });
+}
+
+// Яндекс Форма «Сообщить о неточности». Название и ссылка места уходят в
+// форму параметрами URL: в настройках формы у скрытых вопросов должны быть
+// идентификаторы place и page — тогда они заполнятся сами
+const REPORT_FORM_ID = '6ab9085f49af475392c00f2e';
+const REPORT_FORM_URL = `https://forms.yandex.ru/u/${REPORT_FORM_ID}/`;
+const YA_FORMS_EMBED = 'https://forms.yandex.ru/_static/embed.js';
+
+function reportFormUrl(place, embed) {
+  const params = new URLSearchParams({ place: place.name, page: window.location.href });
+  if (embed) params.set('iframe', '1');
+  return `${REPORT_FORM_URL}?${params}`;
+}
+
+/** Форма грузится при первом открытии окна; embed.js Яндекса подгоняет
+ *  высоту iframe под форму (без него у окна остаётся своя прокрутка). */
+function loadReportForm(place) {
+  const frame = $('#report-frame');
+  const fallback = $('#report-fallback');
+  if (fallback) fallback.href = reportFormUrl(place, false);
+  if (!frame || frame.src) return;
+  frame.src = reportFormUrl(place, true);
+  if (!document.querySelector(`script[src="${YA_FORMS_EMBED}"]`)) {
+    const script = document.createElement('script');
+    script.src = YA_FORMS_EMBED;
+    script.async = true;
+    document.head.append(script);
+  }
 }
 
 async function main() {
