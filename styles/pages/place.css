@@ -5,10 +5,25 @@
   display: flex;
   align-items: flex-end;
   /* шапка лежит поверх фото (.main-header--overlay) */
-  padding: calc(var(--header-h) + 24px) 0 56px;
+  padding: calc(var(--header-h) + 24px) 0 calc(56px + var(--hero-wave-h));
   color: #fff;
   overflow: hidden;
 }
+
+/* Волнистый нижний край: прямоугольник без нижней полосы + волна */
+.place-hero {
+  -webkit-mask:
+    linear-gradient(#000 0 0) top / 100% calc(100% - var(--hero-wave-h) + 1px) no-repeat,
+    var(--hero-wave) bottom / 100% var(--hero-wave-h) no-repeat;
+  mask:
+    linear-gradient(#000 0 0) top / 100% calc(100% - var(--hero-wave-h) + 1px) no-repeat,
+    var(--hero-wave) bottom / 100% var(--hero-wave-h) no-repeat;
+}
+
+@media (max-width: 768px) {
+  .place-hero { --hero-wave-h: 24px; }
+}
+
 
 .hero-bg {
   position: absolute;
@@ -214,7 +229,7 @@
 }
 
 @media (max-width: 768px) {
-  .place-hero--no-photo { padding: calc(var(--header-h) + 48px) 0 40px; }
+  .place-hero--no-photo { padding: calc(var(--header-h) + 48px) 0 calc(40px + var(--hero-wave-h)); }
 }
 
 /* На телефоне те же действия есть в нижней панели — круглые значки поверх
