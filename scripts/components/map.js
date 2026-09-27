@@ -76,6 +76,18 @@ function createPlacemark(place, { labeled = false } = {}) {
 // без него пользоваться картой неудобно.
 const PAGE_MAP_OPTIONS = { suppressMapOpenBlock: true, yandexMapDisablePoiInteractivity: true };
 
+/** Яндекс.Карта запоминает размер контейнера при создании и сама его не
+ *  пересчитывает: после поворота телефона или сужения окна она оставалась
+ *  прежней ширины и вылезала за край экрана вместе с колонкой вокруг. */
+function keepFitted(map, container) {
+  if (!('ResizeObserver' in window)) return;
+  let frame = 0;
+  new ResizeObserver(() => {
+    cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(() => map.container.fitToViewport());
+  }).observe(container);
+}
+
 // ---------- Карта одного места (place.html) ----------
 export async function initPlaceMap(container, place) {
   if (!container || !place?.coords) return null;
@@ -87,6 +99,7 @@ export async function initPlaceMap(container, place) {
       controls: ['zoomControl', 'fullscreenControl']
     }, PAGE_MAP_OPTIONS);
     map.geoObjects.add(createPlacemark(place, { labeled: true }));
+    keepFitted(map, container);
     return map;
   } catch (err) {
     console.error('[map] место:', err);
@@ -203,6 +216,28 @@ function initMetroFilter(container, stations, { onChange }) {
   };
 }
 
+/** На телефоне дополнительные фильтры карты (поиск, метро, цена, «Сейчас
+ *  открыто») свёрнуты под кнопку «Фильтры»; число на кнопке — сколько из
+ *  них включено, чтобы свёрнутый фильтр не «прятал» условие отбора. */
+function initFiltersToggle() {
+  const toggle = $('#map-filters-toggle');
+  const panel = toggle?.closest('.map-panel');
+  const count = $('#map-filters-count');
+  if (toggle && panel) {
+    on(toggle, 'click', () => {
+      const open = !panel.classList.contains('filters-open');
+      panel.classList.toggle('filters-open', open);
+      toggle.setAttribute('aria-expanded', String(open));
+    });
+  }
+  return (state) => {
+    if (!count) return;
+    const n = [state.query.trim(), state.metros.length, state.price, state.openNow].filter(Boolean).length;
+    count.textContent = String(n);
+    count.hidden = !n;
+  };
+}
+
 export async function initPlacesMap(places) {
   const mapContainer = $('#map');
   if (!mapContainer) return null;
@@ -210,6 +245,8 @@ export async function initPlacesMap(places) {
   let map, clusterer, card;
   let activePlacemark = null;
   const state = { category: 'all', query: '', metros: [], price: '', openNow: false };
+  // Кнопка «Фильтры» (видна только на телефоне) работает и без карты
+  const updateFiltersCount = initFiltersToggle();
 
   const setActive = (placemark) => {
     activePlacemark?.properties.set('active', false);
@@ -220,6 +257,7 @@ export async function initPlacesMap(places) {
   const closeCard = () => card?.close();
 
   const refresh = () => {
+    updateFiltersCount(state);
     if (!clusterer) return;
     closeCard();
     const list = filterPlaces(places, state);
@@ -250,6 +288,7 @@ export async function initPlacesMap(places) {
       gridSize: 72
     });
     map.geoObjects.add(clusterer);
+    keepFitted(map, mapContainer);
     // Любое закрытие карточки (крестик, Escape, клик по карте) снимает выделение метки
     card = createMapCard(mapContainer, { onClose: () => setActive(null) });
     // Клик по пустому месту карты закрывает карточку

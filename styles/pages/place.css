@@ -110,6 +110,9 @@
   margin-bottom: 10px;
   line-height: 1.15;
   text-shadow: 0 2px 18px rgba(0, 0, 0, 0.3);
+  /* Unbounded широкий: «Котельнической» на узком экране не влезало в строку */
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 .hero-subtitle {
@@ -233,7 +236,9 @@
    если одной нет, другая занимает всю ширину */
 .info-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  /* minmax(0, …): колонку не распирает содержимое — ни ширина карты
+     Яндекса, ни длинный адрес сайта */
+  grid-template-columns: minmax(0, 1fr);
   gap: 16px;
 }
 
@@ -267,7 +272,7 @@
    колонки без линий (при нечётном числе строк линия висела бы в пустоте) */
 .info-list {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   padding: 0 16px;
 }
 
@@ -407,6 +412,7 @@
 /* «О месте» и карта — в две колонки на широком экране */
 .place-about {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 28px;
   align-items: start;
 }
@@ -465,13 +471,23 @@
 
 .report-modal__body { display: flex; flex-direction: column; min-height: 0; flex: 1; }
 
+.report-modal__frame-wrap {
+  padding: 20px 20px 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: #fff;
+}
+
 .report-modal__frame {
   display: block;
   width: 100%;
-  height: min(560px, 62dvh);
+  height: min(540px, 58dvh);
   border: 0;
-  border-radius: var(--radius-sm);
-  background: var(--cream);
+  background: #fff;
+}
+
+@media (max-width: 480px) {
+  .report-modal__frame-wrap { padding: 16px 14px 4px; }
 }
 
 .report-modal__fallback {
@@ -483,6 +499,10 @@
 }
 
 .report-modal__fallback:hover { color: var(--primary-text); }
+
+/* Контейнер карты не шире колонки, что бы ни нарисовала внутри карта */
+.place-map { min-width: 0; }
+.place-map .map-container { max-width: 100%; overflow: hidden; }
 
 /* Одна метка — большой карте незачем занимать целый экран */
 .place-map .map-container {
