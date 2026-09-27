@@ -11,6 +11,8 @@ import { heroGreeting } from '../core/daypart.js';
 import { renderCategoryButtons, renderCategoryCounts } from '../components/category-buttons.js';
 import { initPlacesMap } from '../components/map.js';
 import { showToast } from '../components/toast.js';
+import { loadCollections } from '../core/collections.js';
+import { collectionCardHtml } from '../components/collection-card.js';
 
 // Скроллим к заголовку ленты, а не к карточкам: так видны вкладки и
 // плашка выбранного настроения/подборки над ними.
@@ -90,27 +92,22 @@ function initCategoryTiles(feed) {
   });
 }
 
-/** Подборки описаны тегами прямо в разметке: data-tags-any — любой из
- *  тегов, data-tags-all — все сразу (как настроения в hero). Раньше подборка
- *  искала слово по тексту и с новой базой находила 0–1 место. */
-const tagList = (value) => (value ? value.split(',').map((t) => t.trim()).filter(Boolean) : null);
 
-function initCollections(feed) {
-  $$('.collection-card').forEach((card) => {
-    const open = () => {
-      const tags = tagList(card.dataset.tagsAny);
-      const tagsAll = tagList(card.dataset.tagsAll);
-      if (!tags && !tagsAll) return;
-      const title = card.querySelector('.collection-title')?.textContent.trim();
-      feed?.setFilters({ category: 'all', query: '', tags, tagsAll }, { syncInput: true, label: title && { kind: 'Подборка', text: title } });
-      scrollToFeed();
-    };
-    on(card, 'click', open);
-    on(card, 'keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
-  });
+/** Подборки — авторские статьи на отдельных страницах (collection.html). */
+async function renderCollections() {
+  const grid = $('#collections-grid');
+  if (!grid) return;
+  try {
+    const collections = await loadCollections();
+    grid.innerHTML = collections.slice(0, 3).map(collectionCardHtml).join('');
+  } catch (err) {
+    console.error('[home] подборки:', err);
+    grid.closest('.cat-col-right')?.remove();
+  }
 }
 
 async function main() {
+  renderCollections();
   renderHeroMoods(renderHeroGreeting());
   renderCategoryButtons();
   bindCards(document.body);
@@ -141,7 +138,6 @@ async function main() {
   applyUrlFilter(feed);
   initHeroMoods(feed, places, { onSelect: () => scrollToFeed() });
   initCategoryTiles(feed);
-  initCollections(feed);
   initRandomizer(places);
   initPlacesMap(places);
 }

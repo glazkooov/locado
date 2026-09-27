@@ -1,0 +1,212 @@
+/* Страница подборки (collection.html): обложка — .place-hero из place.css,
+   ниже — колонка статьи для чтения и карта всех мест. */
+
+.collection-article {
+  max-width: 760px;
+  margin: 40px auto 72px;
+}
+
+.collection-byline {
+  margin-bottom: 28px;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-light);
+}
+
+/* ---------- Текст ---------- */
+.c-text { margin-bottom: 36px; }
+
+.c-text p,
+.c-place__text p {
+  font-size: var(--fs-lg);
+  line-height: 1.7;
+  color: var(--text);
+}
+
+.c-text p + p,
+.c-place__text p + p { margin-top: 14px; }
+
+.c-text__title {
+  font-family: var(--font-heading);
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  margin-bottom: 12px;
+}
+
+/* ---------- Место ---------- */
+.c-place { margin: 44px 0; scroll-margin-top: calc(var(--header-h) + 16px); }
+
+.c-place__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.c-place__num {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--primary-strong);
+  color: #fff;
+  font-family: var(--font-heading);
+  font-size: var(--fs-lg);
+  font-weight: 700;
+}
+
+.c-place__kicker {
+  margin-bottom: 4px;
+  font-size: var(--fs-caption);
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--primary-text);
+}
+
+.c-place__name {
+  font-family: var(--font-heading);
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+}
+
+.c-place__name a { color: var(--ink); text-decoration: none; }
+.c-place__name a:hover { color: var(--primary-text); }
+
+.c-place__type {
+  margin-top: 4px;
+  font-size: var(--fs-sm);
+  color: var(--text-light);
+}
+
+.c-place__photo {
+  display: block;
+  margin-bottom: 18px;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  background: var(--photo-placeholder);
+}
+
+.c-place__photo img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.c-place__photo:hover img { transform: scale(1.03); }
+
+/* Фото нет или не загрузилось — блок убираем целиком: в статье большая
+   пустая плашка выглядит как ошибка вёрстки */
+.c-place__photo:has(img.is-broken) { display: none; }
+
+/* Совет — тёплая плашка, как «Настроение места» */
+.c-place__tip {
+  margin-top: 18px;
+  padding: 14px 18px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--accent-line);
+  background: linear-gradient(160deg, #FFF6EE 0%, #FBE6D6 100%);
+  font-size: var(--fs-md);
+  line-height: 1.55;
+  color: var(--text);
+}
+
+.c-place__tip strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: var(--fs-caption);
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--primary-text);
+}
+
+/* Практическое: из базы мест, не из текста — не устаревает */
+.c-place__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 20px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.c-place__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--text-light);
+}
+
+.c-place__facts li { display: inline-flex; align-items: center; gap: 6px; }
+.c-place__facts .icon { color: var(--primary); }
+.c-place__status.is-open { color: var(--success); }
+.c-place__status.is-open .icon { color: var(--success); }
+
+.c-place__more {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--primary-text);
+  text-decoration: none;
+}
+
+.c-place__more:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+/* ---------- Переход между местами маршрута ---------- */
+.c-walk {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: -12px 0 -12px 21px;
+  padding: 14px 0 14px 24px;
+  border-left: 2px dashed var(--line-strong);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-light);
+}
+
+.c-walk .icon { color: var(--primary); }
+
+/* ---------- Карта и ещё подборки ---------- */
+.collection-map { margin-bottom: 72px; }
+.collection-map .map-container { height: 300px; }
+
+.collection-more { margin-bottom: 24px; }
+
+.collection-more__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+}
+
+@media (min-width: 769px) {
+  .collection-map .map-container { height: 420px; }
+  .collection-more__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .collection-more .collection-card { min-height: 220px; }
+}
+
+@media (max-width: 767px) {
+  .collection-article { margin-top: 28px; }
+  .c-text p,
+  .c-place__text p { font-size: var(--fs-md); }
+  .c-place { margin: 36px 0; }
+  .c-place__num { width: 38px; height: 38px; font-size: var(--fs-md); }
+  .c-walk { margin-left: 18px; }
+}

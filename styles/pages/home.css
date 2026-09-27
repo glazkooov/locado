@@ -529,6 +529,8 @@
 }
 
 .collection-card {
+  text-decoration: none;
+  background-color: var(--ink);
   background-size: cover;
   background-position: center;
   position: relative;
@@ -563,6 +565,17 @@
 .collection-card:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-soft-hover);
+}
+
+.collection-card__type {
+  font-size: var(--fs-caption);
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #FFB38A;
+  /* тип — наверху карточки, заголовок и описание — внизу */
+  margin-bottom: auto;
+  padding-bottom: 16px;
 }
 
 .collection-title {

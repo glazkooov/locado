@@ -14,6 +14,8 @@ import { createModal } from '../components/modal.js';
 import { initPlaceMap, routeUrl } from '../components/map.js';
 import { showToast } from '../components/toast.js';
 import { icon } from '../core/icons.js';
+import { loadCollections, collectionsWithPlace } from '../core/collections.js';
+import { collectionCardHtml } from '../components/collection-card.js';
 
 let timerInterval = null;
 
@@ -292,6 +294,20 @@ function initSimilarNav(scroller) {
   sync();
 }
 
+/** «Есть в подборках»: статьи, где упоминается место. Без подборок — секции нет. */
+async function renderCollections(place) {
+  const section = $('#place-collections');
+  if (!section) return;
+  try {
+    const list = collectionsWithPlace(await loadCollections(), place.slug).slice(0, 3);
+    if (!list.length) return;
+    $('#place-collections-grid').innerHTML = list.map(collectionCardHtml).join('');
+    section.hidden = false;
+  } catch (err) {
+    console.error('[place] подборки:', err);
+  }
+}
+
 function renderReviews(slug) {
   const reviews = Storage.getReviews(slug);
   const container = $('#reviews-list');
@@ -456,6 +472,7 @@ async function main() {
   renderGallery(place);
   renderDirections(place);
   renderSimilar(place, places);
+  renderCollections(place);
   renderReviews(place.slug);
   attachEventListeners(place, places);
 
