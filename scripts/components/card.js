@@ -85,7 +85,7 @@ export function bindCards(root = document) {
     const isFavNow = Storage.toggleFavorite(slug);
     syncFavoriteButtons(slug, isFavNow);
     import('./toast.js').then(({ showToast }) => {
-      showToast(isFavNow ? 'Добавлено в избранное ❤️' : 'Удалено из избранного 💔');
+      showToast(isFavNow ? 'Добавлено в избранное' : 'Удалено из избранного');
     });
   });
 

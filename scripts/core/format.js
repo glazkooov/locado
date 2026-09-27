@@ -193,7 +193,7 @@ function openingPhrase(date, now) {
  *  Модалка использует атрибут hidden — переключать его должен вызывающий код
  *  (core/format.js ничего не знает про DOM-события). */
 export function scheduleHtml(schedule, now = new Date()) {
-  if (!schedule) return '<span class="no-schedule">Расписание не указано</span>';
+  if (!schedule) return '<span class="no-schedule">Часы работы пока не знаем</span>';
   const todayKey = DAY_KEYS[now.getDay()];
   const todayHours = schedule[todayKey];
 

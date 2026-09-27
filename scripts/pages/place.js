@@ -302,7 +302,7 @@ function renderReviews(slug) {
   const starsSpan = $('#average-stars');
   starsSpan.innerHTML = [1, 2, 3, 4, 5].map((i) => icon('star', i <= Math.round(avg) ? 'icon--filled' : '')).join('');
 
-  if (!reviews.length) { container.innerHTML = '<p>Пока нет отзывов. Будьте первым!</p>'; return; }
+  if (!reviews.length) { container.innerHTML = '<p>Отзывов пока нет — стань первым!</p>'; return; }
   container.innerHTML = reviews.map((rev) => `
     <div class="review-card">
       <div class="review-header">
@@ -328,7 +328,7 @@ function attachEventListeners(place, allPlaces) {
   on(visitedBtn, 'click', () => {
     const isNew = markVisited(place);
     visitedBtn.classList.add('active');
-    if (isNew) showToast('Спасибо! Место добавлено в ваш список посещённых.');
+    if (isNew) showToast('Спасибо! Место добавлено в твой список посещённых.');
   });
 
   // Позвонить
@@ -390,7 +390,7 @@ function attachEventListeners(place, allPlaces) {
     const name = $('#review-name').value.trim();
     const rating = parseInt(ratingHidden.value, 10);
     const text = $('#review-text').value.trim();
-    if (!name || !rating || !text) { showToast('Заполните все поля', true); return; }
+    if (!name || !rating || !text) { showToast('Заполни все поля', true); return; }
     Storage.addReview(place.slug, { name, rating, text, date: new Date().toISOString() });
     renderReviews(place.slug);
     form.reset();
@@ -438,8 +438,8 @@ async function main() {
     places = await loadPlaces();
   } catch (err) {
     console.error('[place] не удалось загрузить места:', err);
-    showToast('Не удалось загрузить данные. Попробуйте позже.', true);
-    showNotFound('Не удалось загрузить данные. Попробуйте обновить страницу.');
+    showToast('Не получилось загрузить места. Обнови страницу — обычно помогает.', true);
+    showNotFound('Не получилось загрузить данные. Обнови страницу — обычно помогает.');
     return;
   }
 
