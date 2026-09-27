@@ -169,7 +169,7 @@ function initMetroFilter(container, stations, { onChange }) {
 
   container.innerHTML = `
     <div class="metro-filter-input-wrapper">
-      <input type="text" id="metro-autocomplete" placeholder="Введите станцию метро..." autocomplete="off">
+      <input type="text" id="metro-autocomplete" placeholder="Станция метро…" autocomplete="off">
       <div id="metro-suggestions" class="metro-suggestions" style="display:none"></div>
     </div>
     ${popular.length ? `

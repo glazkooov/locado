@@ -9,11 +9,11 @@ const DATA_URL = new URL('../../data/places.json', import.meta.url);
 // вкладок ленты, кнопок карты и окна случайного места берутся отсюда
 // (см. components/category-buttons.js). Названия — из CLAUDE.md.
 export const CATEGORIES = {
-  food: { label: 'Еда и напитки', emoji: '🍕', icon: 'utensils' },
+  food: { label: 'Еда', emoji: '🍕', icon: 'utensils' },
   nature: { label: 'Природа', emoji: '🌳', icon: 'trees' },
-  art: { label: 'Музеи', emoji: '🎨', icon: 'landmark' },
+  art: { label: 'Музеи и выставки', emoji: '🎨', icon: 'landmark' },
   theater: { label: 'Театры', emoji: '🎭', icon: 'drama' },
-  photo: { label: 'Фото', emoji: '📸', icon: 'camera' },
+  photo: { label: 'Фотолокации', emoji: '📸', icon: 'camera' },
   entertainment: { label: 'Развлечения', emoji: '🎉', icon: 'ticket' }
 };
 

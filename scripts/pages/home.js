@@ -72,7 +72,7 @@ function skeletonCards(n, cardClass) {
 }
 
 function showLoadError() {
-  const message = '<p class="feed-load-error">Не удалось загрузить места. Обновите страницу.</p>';
+  const message = '<p class="feed-load-error">Не получилось загрузить места. Обнови страницу — обычно помогает.</p>';
   const popularContainer = $('#popular-places-container');
   const suggestedContainer = $('#suggested-grid');
   const feedContainer = $('#places-container');
@@ -127,7 +127,7 @@ async function main() {
     places = await loadPlaces();
   } catch (err) {
     console.error('[home] не удалось загрузить места:', err);
-    showToast('Не удалось загрузить данные. Попробуйте позже.', true);
+    showToast('Не получилось загрузить места. Обнови страницу — обычно помогает.', true);
     showLoadError();
     return;
   }
