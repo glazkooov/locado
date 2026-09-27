@@ -10,9 +10,25 @@
   background-color: var(--ink);
   color: var(--hero-fg);
   position: relative;
-  /* шапка на главной лежит поверх hero (.main-header--overlay) */
-  padding: calc(var(--header-h) + 40px) 0 60px;
+  /* шапка на главной лежит поверх hero (.main-header--overlay);
+     снизу + высота волны, чтобы она не подрезала карточки настроений */
+  padding: calc(var(--header-h) + 40px) 0 calc(60px + var(--hero-wave-h));
 }
+
+/* Волнистый нижний край: прямоугольник без нижней полосы + волна */
+.hero {
+  -webkit-mask:
+    linear-gradient(#000 0 0) top / 100% calc(100% - var(--hero-wave-h) + 1px) no-repeat,
+    var(--hero-wave) bottom / 100% var(--hero-wave-h) no-repeat;
+  mask:
+    linear-gradient(#000 0 0) top / 100% calc(100% - var(--hero-wave-h) + 1px) no-repeat,
+    var(--hero-wave) bottom / 100% var(--hero-wave-h) no-repeat;
+}
+
+@media (max-width: 768px) {
+  .hero { --hero-wave-h: 24px; }
+}
+
 
 /* Плёночное зерно поверх градиента — убирает «компьютерную» гладкость */
 .hero::before {

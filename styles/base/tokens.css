@@ -67,6 +67,11 @@
   /* Подложка вместо фото, пока его нет или оно не загрузилось */
   --photo-placeholder: linear-gradient(160deg, #F3EBDF 0%, #E2D2BE 100%);
   --photo-fade: linear-gradient(180deg, rgba(0, 0, 0, 0) 35%, rgba(0, 0, 0, 0.78) 100%);
+  /* Волнистый нижний край первого экрана (главная, страница места) —
+     маска: видимая часть закрашена. Изгиб зеркальный к волне футера,
+     чтобы страница была «обрамлена», а не повторяла одну и ту же форму */
+  --hero-wave: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 40' preserveAspectRatio='none'%3E%3Cpath d='M0,0 H1200 V14 C1000,38 820,4 600,20 C380,36 200,6 0,26 Z'/%3E%3C/svg%3E");
+  --hero-wave-h: 40px;
   /* Плёночное зерно: hero, фон страницы, футер */
   --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
