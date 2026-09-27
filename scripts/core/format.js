@@ -180,6 +180,24 @@ export function formatHours(hours) {
   return hours ? `${hours[0]}\u2060–\u2060${displayTime(hours[1])}` : 'выходной';
 }
 
+const DAY_SHORT_RU = { mon: 'пн', tue: 'вт', wed: 'ср', thu: 'чт', fri: 'пт', sat: 'сб', sun: 'вс' };
+
+/** Часы работы для статьи — без «открыто сейчас»: статью читают не в тот
+ *  день, когда пойдут. day — 'sat' и т. п. (день маршрута) или пусто.
+ *  «сб 10:00–21:00», «ежедневно 10:00–21:00», «круглосуточно»; '' — если
+ *  одной строкой не сказать (часы по дням разные, день не задан). */
+export function hoursForArticle(schedule, day) {
+  if (!schedule) return '';
+  if (isAlwaysOpen(schedule)) return 'круглосуточно';
+  if (day && day in DAY_SHORT_RU) {
+    const h = schedule[day];
+    return `${DAY_SHORT_RU[day]} ${h ? formatHours(h) : 'выходной'}`;
+  }
+  const first = schedule[DAY_KEYS_ORDERED[0]];
+  const same = first && DAY_KEYS_ORDERED.every((k) => schedule[k] && schedule[k][0] === first[0] && schedule[k][1] === first[1]);
+  return same ? `ежедневно ${formatHours(first)}` : '';
+}
+
 /** «в 10:00» / «завтра в 10:00» / «во вторник в 10:00» — когда откроется. */
 function openingPhrase(date, now) {
   const time = `в ${hhmm(date)}`;

@@ -29,7 +29,7 @@
 
       <nav class="nav" id="main-nav">
         <ul class="nav-list">
-          <li><a href="index.html#collections" class="nav-item">Подборки</a></li>
+          <li><a href="collections.html" class="nav-item">Подборки</a></li>
           <li><a href="index.html#map-section" class="nav-item">Карта</a></li>
           <li><a href="index.html#all-places" class="nav-item">Все места</a></li>
         </ul>
@@ -45,10 +45,10 @@
       <p class="state-screen__code" aria-hidden="true">404</p>
       <h1 class="state-screen__title">Такой подборки у нас нет</h1>
       <p class="state-screen__text" id="collection-error-text">
-        Возможно, ссылка устарела или в адресе опечатка. Загляни в другие подборки на главной.
+        Возможно, ссылка устарела или в адресе опечатка. Загляни в другие подборки.
       </p>
       <div class="state-screen__actions">
-        <a href="index.html#collections" class="btn state-screen__btn">К подборкам</a>
+        <a href="collections.html" class="btn state-screen__btn">Все подборки</a>
         <a href="index.html" class="state-screen__link">Вернуться на главную</a>
       </div>
     </div>
@@ -69,7 +69,21 @@
 
     <!-- Текст статьи: блоки «текст / место / переход» рендерит pages/collection.js -->
     <article class="collection-article container">
-      <p class="collection-byline" id="collection-byline"></p>
+      <div class="collection-byline-row">
+        <p class="collection-byline" id="collection-byline"></p>
+        <button type="button" class="collection-share" id="share-btn" aria-label="Поделиться">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#share-2"></use></svg><span>Поделиться</span>
+        </button>
+      </div>
+
+      <!-- План: все остановки сразу и ссылка на карту — заполняет collection.js -->
+      <nav class="collection-plan" id="collection-plan" aria-label="Места подборки" hidden>
+        <ol class="collection-plan__list" id="collection-plan-list"></ol>
+        <a class="collection-plan__map" href="#collection-map">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#map-pin"></use></svg> Все места на карте
+        </a>
+      </nav>
+
       <div class="collection-body" id="collection-body"></div>
     </article>
 
@@ -82,16 +96,19 @@
       <div class="map-container" id="collection-map-container" aria-label="Карта мест подборки"></div>
       <div class="map-actions" id="collection-route" hidden>
         <a class="btn route-btn" id="collection-route-link" href="https://yandex.ru/maps/" target="_blank" rel="noopener">
-          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#navigation"></use></svg> Маршрут пешком в Яндекс.Картах
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#navigation"></use></svg> Маршрут в Яндекс.Картах
         </a>
       </div>
     </section>
 
     <!-- Другие подборки -->
     <section class="collection-more container" id="collection-more" hidden>
-      <div class="section-head">
-        <span class="section-mini" aria-hidden="true">Куда ещё</span>
-        <h2 class="section-title">Ещё подборки</h2>
+      <div class="section-head section-head--row">
+        <div>
+          <span class="section-mini" aria-hidden="true">Куда ещё</span>
+          <h2 class="section-title">Ещё подборки</h2>
+        </div>
+        <a class="section-link" href="collections.html">Все подборки →</a>
       </div>
       <div class="collection-more__grid" id="collection-more-grid"></div>
     </section>
@@ -112,7 +129,7 @@
       <nav class="site-footer__col" aria-label="Навигация">
         <h4>Навигация</h4>
         <a href="index.html#map-section">Карта</a>
-        <a href="index.html#collections">Подборки</a>
+        <a href="collections.html">Подборки</a>
         <a href="index.html#all-places">Все места</a>
       </nav>
 
@@ -137,6 +154,26 @@
       <p>© 2026 Локадо. Сделано с любовью к прогулкам.</p>
     </div>
   </footer>
+
+  <!-- Модалка шеринга -->
+  <!-- Нейтральные кнопки вместо фирменных цветов соцсетей: ярко-синие и
+       зелёные плашки спорили с тёплой палитрой сайта -->
+  <div class="modal share-modal" id="share-modal" role="dialog" aria-modal="true" aria-labelledby="share-modal-title">
+    <div class="modal-content modal-content--sm">
+      <div class="modal-header">
+        <h3 id="share-modal-title">Поделиться подборкой</h3>
+        <button type="button" class="modal-close" id="share-close" data-modal-close aria-label="Закрыть"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#x"></use></svg></button>
+      </div>
+      <div class="modal-body">
+        <div class="share-buttons">
+          <button type="button" class="share-option share-telegram"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#send"></use></svg> Telegram</button>
+          <button type="button" class="share-option share-vk"><span class="share-option__mark" aria-hidden="true">VK</span> ВКонтакте</button>
+          <button type="button" class="share-option share-whatsapp"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#message-circle"></use></svg> WhatsApp</button>
+          <button type="button" class="share-option share-copy"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#copy"></use></svg> Скопировать ссылку</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <button id="back-to-top" class="back-to-top" aria-label="Наверх">
     <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#arrow-up"></use></svg>

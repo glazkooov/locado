@@ -3,15 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Страница не найдена — Локадо</title>
-  <meta name="robots" content="noindex">
+  <title>Подборки — Локадо</title>
+  <meta name="description" content="Маршруты и подборки мест в Москве под повод — от редакции Локадо.">
   <meta name="theme-color" content="#FF570A">
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Локадо">
+  <meta property="og:description" content="">
+  <meta property="og:image" content="">
+  <meta name="twitter:card" content="summary_large_image">
+
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="preload" href="assets/fonts/unbounded-cyrillic-700-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/raleway-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles/main.css">
 </head>
-<body class="error-page">
+<body class="collections-page">
   <header class="main-header">
     <div class="container header-content">
       <a href="index.html" class="logo" aria-label="Локадо — главная">Локадо</a>
@@ -31,25 +38,17 @@
     </div>
   </header>
 
-  <main class="state-screen">
-    <div class="container state-screen__inner">
-      <p class="state-screen__code" aria-hidden="true">404</p>
-      <h1 class="state-screen__title">Эта страница потерялась в городе</h1>
-      <p class="state-screen__text">
-        Такого адреса на Локадо нет. Бывает: ссылка устарела или в ней опечатка.
-        Ниже — куда можно пойти отсюда.
-      </p>
 
-      <div class="state-screen__actions">
-        <a href="index.html" class="btn state-screen__btn">На главную</a>
-        <a href="index.html#all-places" class="state-screen__link">Посмотреть все места</a>
-      </div>
-
-      <div class="state-screen__suggested">
-        <h2 class="state-screen__subtitle">Может быть, сюда</h2>
-        <div class="state-screen__cards" id="error-suggestions"></div>
-      </div>
+  <main class="collections-index container">
+    <div class="section-head">
+      <span class="section-mini" aria-hidden="true">от редакции Локадо</span>
+      <h1 class="section-title collections-index__title">Подборки</h1>
     </div>
+    <p class="collections-index__lead">Готовые маршруты на день и места под повод — когда хочется выбраться, но непонятно куда.</p>
+
+    <!-- Фильтр по формату — заполняет pages/collections.js -->
+    <div class="collections-index__filters" id="collections-filters" role="group" aria-label="Формат подборок"></div>
+    <div class="collection-more__grid collections-index__grid" id="collections-list"></div>
   </main>
 
   <footer class="site-footer">
@@ -94,29 +93,6 @@
   </footer>
 
   <script type="module" src="scripts/ui.js"></script>
-  <script type="module">
-    // Три случайных места, чтобы со страницы ошибки был выход, а не тупик.
-    import { loadPlaces, sample, placeUrl, categoryLabel } from './scripts/core/places.js';
-    import { escapeHtml } from './scripts/core/format.js';
-    import { bindImageFallback } from './scripts/components/card.js';
-
-    (async () => {
-      const box = document.getElementById('error-suggestions');
-      if (!box) return;
-      try {
-        const places = await loadPlaces();
-        const picks = sample(places, 3);
-        box.innerHTML = picks.map((p) => `
-          <a class="state-card" href="${placeUrl(p.slug)}">
-            <img src="${escapeHtml(p.photoSm || p.photo)}" alt="" loading="lazy">
-            <span class="state-card__name">${escapeHtml(p.name)}</span>
-            <span class="state-card__type">${escapeHtml(p.type || categoryLabel(p.category))}</span>
-          </a>`).join('');
-        bindImageFallback(box);
-      } catch {
-        box.closest('.state-screen__suggested')?.remove();
-      }
-    })();
-  </script>
+  <script type="module" src="scripts/pages/collections.js"></script>
 </body>
 </html>

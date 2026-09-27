@@ -3,13 +3,14 @@
 // данные мест (метро, часы, цена, фото) — из places.json.
 
 import { $ } from '../core/dom.js';
-import { escapeHtml, cssUrl, openStatusLabel } from '../core/format.js';
+import { escapeHtml, cssUrl, hoursForArticle } from '../core/format.js';
 import { loadPlaces, bySlug, placeUrl, metroList, categoryLabel } from '../core/places.js';
 import { loadCollections, COLLECTION_TYPES } from '../core/collections.js';
 import { collectionCardHtml } from '../components/collection-card.js';
 import { bindImageFallback } from '../components/card.js';
 import { initCollectionMap, walkingRouteUrl } from '../components/map.js';
 import { icon } from '../core/icons.js';
+import { initShare } from '../components/share.js';
 
 function showNotFound() {
   $('#collection-content').hidden = true;
@@ -25,7 +26,7 @@ function setMeta(c) {
   $('meta[property="og:image"]')?.setAttribute('content', c.cover || '');
 }
 
-const META_ICONS = { duration: 'clock', budget: 'ticket', when: 'wand-sparkles', area: 'map-pin' };
+const META_ICONS = { duration: 'clock', budget: 'ticket', when: 'calendar', area: 'map-pin', start: 'train-front' };
 
 function renderHero(c) {
   const hero = $('.collection-hero');
@@ -59,13 +60,14 @@ function walkBlock(b) {
   return `<p class="c-walk">${icon('route')} ${escapeHtml(b.text)}</p>`;
 }
 
-function placeBlock(b, place, num) {
+function placeBlock(b, place, num, day) {
   const url = placeUrl(place.slug);
   const [metro] = metroList(place);
-  const status = openStatusLabel(place);
+  // Часы — на день маршрута, а не «открыто сейчас»: статью читают заранее
+  const hours = hoursForArticle(place.schedule, day);
   const facts = [
     metro && `${icon('train-front')} м. ${escapeHtml(metro)}`,
-    status && `<span class="c-place__status${status.isOpen ? ' is-open' : ''}">${icon('clock')} ${escapeHtml(status.text)}</span>`,
+    hours && `${icon('clock')} ${escapeHtml(hours)}`,
     place.price && `${icon('ticket')} ${escapeHtml(place.price)}`
   ].filter(Boolean);
   return `
@@ -101,7 +103,7 @@ function renderBody(c, places) {
       const place = bySlug(places, b.slug);
       if (!place) return ''; // место убрали из базы — блок молча пропускаем
       ordered.push(place);
-      return placeBlock(b, place, ordered.length);
+      return placeBlock(b, place, ordered.length, c.day);
     }
     return '';
   }).join('');
@@ -111,9 +113,20 @@ function renderBody(c, places) {
   return ordered;
 }
 
+/** План под обложкой: все остановки сразу, у маршрута — стрелками. */
+function renderPlan(c, ordered) {
+  if (ordered.length < 2) return;
+  const list = $('#collection-plan-list');
+  list.classList.toggle('is-route', c.type === 'route');
+  list.innerHTML = ordered.map((p, i) =>
+    `<li><a href="#place-${i + 1}"><span class="collection-plan__num">${i + 1}</span>${escapeHtml(p.name)}</a></li>`).join('');
+  $('#collection-plan').hidden = false;
+}
+
 function renderByline(c) {
+  // «27 сентября 2026», без «г.»
   const date = c.published
-    ? new Date(c.published).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })
+    ? new Date(c.published).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' }).replace(/\s*г\.$/, '')
     : '';
   $('#collection-byline').textContent = [c.author || 'Редакция Локадо', date].filter(Boolean).join(' · ');
 }
@@ -159,7 +172,9 @@ async function main() {
   renderHero(c);
   renderByline(c);
   const ordered = renderBody(c, places);
+  renderPlan(c, ordered);
   renderMore(c, collections);
+  initShare([$('#share-btn')], () => ({ title: c.title, text: c.lead }));
   await renderMap(c, ordered);
 }
 

@@ -6,11 +6,106 @@
   margin: 40px auto 72px;
 }
 
+.collection-byline-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
 .collection-byline {
-  margin-bottom: 28px;
   font-size: var(--fs-sm);
   font-weight: 600;
   color: var(--text-light);
+}
+
+.collection-share {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  background: var(--card-bg);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.collection-share .icon { color: var(--primary-text); }
+.collection-share:hover { background: var(--ink); border-color: var(--ink); color: #fff; }
+.collection-share:hover .icon { color: #fff; }
+
+/* ---------- План остановок ---------- */
+.collection-plan {
+  margin-bottom: 36px;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--card-bg);
+  box-shadow: var(--shadow-soft);
+}
+
+.collection-plan__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 12px;
+}
+
+.collection-plan__list li { display: flex; align-items: center; gap: 10px; }
+
+/* У маршрута остановки связаны стрелками — видно порядок */
+.collection-plan__list.is-route li + li::before {
+  content: '→';
+  color: var(--text-lighter);
+}
+
+.collection-plan__list a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  color: var(--ink);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.collection-plan__list a:hover { color: var(--primary-text); }
+
+.collection-plan__num {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--primary-strong);
+  color: #fff;
+  font-size: var(--fs-caption);
+  font-weight: 700;
+}
+
+.collection-plan__map {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--primary-text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 /* ---------- Текст ---------- */
@@ -154,8 +249,6 @@
 
 .c-place__facts li { display: inline-flex; align-items: center; gap: 6px; }
 .c-place__facts .icon { color: var(--primary); }
-.c-place__status.is-open { color: var(--success); }
-.c-place__status.is-open .icon { color: var(--success); }
 
 .c-place__more {
   display: inline-flex;
@@ -185,8 +278,35 @@
 .c-walk .icon { color: var(--primary); }
 
 /* ---------- Карта и ещё подборки ---------- */
-.collection-map { margin-bottom: 72px; }
+/* Заголовки под статьёй — на ступень тише, чем названия мест в ней */
+.collection-map .section-title,
+.collection-more .section-title { font-size: var(--fs-xl); }
+
+.collection-map { margin-bottom: 72px; scroll-margin-top: calc(var(--header-h) + 16px); }
 .collection-map .map-container { height: 300px; }
+/* На странице места кнопку маршрута на телефоне скрывает нижняя панель
+   (place.css); здесь панели нет — кнопка нужна всегда */
+.collection-map .map-actions { display: block; }
+
+.section-head--row {
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.section-link {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--primary-text);
+  text-decoration: none;
+}
+
+.section-link:hover { text-decoration: underline; text-underline-offset: 3px; }
 
 .collection-more { margin-bottom: 24px; }
 
@@ -198,7 +318,8 @@
 
 @media (min-width: 769px) {
   .collection-map .map-container { height: 420px; }
-  .collection-more__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  /* 2 карточки — на всю ширину, без пустой третьей колонки */
+  .collection-more__grid { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
   .collection-more .collection-card { min-height: 220px; }
 }
 
@@ -209,4 +330,35 @@
   .c-place { margin: 36px 0; }
   .c-place__num { width: 38px; height: 38px; font-size: var(--fs-md); }
   .c-walk { margin-left: 18px; }
+  .collection-share span { display: none; }
+  .collection-share { width: 40px; padding: 0; justify-content: center; }
+  .collection-plan { padding: 14px 16px; }
+  .collection-map .section-title,
+  .collection-more .section-title { font-size: var(--fs-lg); }
+}
+
+/* ---------- Все подборки (collections.html) ---------- */
+.collections-index { padding-top: 40px; padding-bottom: 24px; }
+
+.collections-index__title { font-size: var(--fs-2xl); }
+
+.collections-index__lead {
+  max-width: 560px;
+  margin: -12px 0 20px;
+  font-size: var(--fs-md);
+  line-height: 1.6;
+  color: var(--text-light);
+}
+
+.collections-index__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.collections-index__grid .collection-card { min-height: 240px; }
+
+@media (min-width: 992px) {
+  .collections-index__title { font-size: 2rem; }
 }

@@ -1121,3 +1121,16 @@
 }
 
 .collection-card { cursor: pointer; }
+
+.collections-all-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  margin-top: 8px;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--primary-text);
+  text-decoration: none;
+}
+
+.collections-all-link:hover { text-decoration: underline; text-underline-offset: 3px; }
