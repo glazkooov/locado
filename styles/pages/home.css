@@ -1040,16 +1040,68 @@
   }
 }
 
+/* ===== Телефон: главная короче, лента удобнее (ревью мобильной версии) ===== */
+@media (max-width: 767px) {
+  /* Первый экран по содержимому: без пустой полосы под кнопкой рандомайзера,
+     следующий блок выглядывает сильнее — подсказка «листай дальше» */
+  .hero { min-height: 0; padding-bottom: calc(32px + var(--hero-wave-h)); }
+
+  /* «Советуем заглянуть» — горизонтальный ряд, как «Сейчас в центре
+     внимания»: две большие карточки одна под другой занимали почти два экрана */
+  .suggested-grid {
+    display: flex;
+    gap: 12px;
+    width: calc(100% + 32px);
+    margin-inline: -16px;
+    padding: 4px 16px 16px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 16px;
+    scrollbar-width: none;
+  }
+  .suggested-grid::-webkit-scrollbar { display: none; }
+  .suggested-card { flex: 0 0 min(78%, 300px); scroll-snap-align: start; }
+  .suggested-content h3 { font-size: var(--fs-md); }
+  .suggested-content p {
+    font-size: var(--fs-sm);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Категории ленты закреплены под шапкой, пока листаешь ленту: чтобы
+     сменить фильтр, не нужно возвращаться наверх. Поиск остаётся на месте */
+  .place-section .categories_menu { display: contents; }
+  .place-section .categories_scroll {
+    position: sticky;
+    top: var(--header-h);
+    z-index: 50;
+    margin-inline: -16px;
+    padding: 10px 16px;
+    background: var(--bg);
+    box-shadow: 0 8px 12px -12px rgba(40, 20, 10, 0.35);
+  }
+  .place-section .category-search-group { margin-top: 6px; }
+}
+
 @media (max-width: 575px) {
   .places-grid .place-card__top { top: 10px; left: 10px; right: 10px; gap: 4px; }
   .places-grid .place-card__category,
   .places-grid .badge-temporary { font-size: var(--fs-caption); padding: 3px 8px; }
+  /* Длинный тип («Музей современного искусства») — в одну строку */
+  .places-grid .place-card__category {
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
   .places-grid .place-card__info { padding: 10px 12px; }
   .places-grid .place-card__info h3 { font-size: var(--fs-md); line-height: 1.2; }
 }
 
 @media (max-width: 480px) {
-  .category-btn { padding: 10px 16px; font-size: var(--fs-sm); }
+  .category-btn { padding: 0 16px; font-size: var(--fs-sm); }
 
   .state-screen { padding: 48px 0; }
   .site-footer__top { gap: 28px; }

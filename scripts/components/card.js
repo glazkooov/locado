@@ -28,7 +28,7 @@ export function cardHtml(place, isFavorite, extraClass = '') {
         <div class="place-card__category">${escapeHtml(place.type || categoryLabel(place.category))}</div>${favButtonHtml(place, isFavorite)}
         ${badge}
       </div>
-      <img src="${escapeHtml(place.photo || '')}" alt="${escapeHtml(place.name)}" class="place-card__img" loading="lazy">
+      <img src="${escapeHtml(place.photoSm || place.photo || '')}" alt="${escapeHtml(place.name)}" class="place-card__img" loading="lazy">
       <div class="place-card__info"><h3>${escapeHtml(place.name)}</h3></div>
     </div>`;
 }
@@ -36,7 +36,7 @@ export function cardHtml(place, isFavorite, extraClass = '') {
 export function similarCardHtml(place) {
   return `
     <a href="${placeUrl(place.slug)}" class="similar-card">
-      <img src="${escapeHtml(place.photo || '')}" alt="${escapeHtml(place.name)}" loading="lazy">
+      <img src="${escapeHtml(place.photoSm || place.photo || '')}" alt="${escapeHtml(place.name)}" loading="lazy">
       <div class="info">
         <h4>${escapeHtml(place.name)}</h4>
         <p>${escapeHtml(place.type || categoryLabel(place.category))}</p>

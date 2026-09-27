@@ -34,6 +34,14 @@ export function resolvePhoto(path) {
   return path || '';
 }
 
+/** Уменьшенная копия (640px) для карточек и превью: у фото мест она лежит
+ *  в assets/images/places/sm/ с тем же именем. Полноразмерное фото — только
+ *  для первого экрана страницы места. */
+export function smallPhoto(path) {
+  const m = /^assets\/images\/places\/([^/]+)$/.exec(path || '');
+  return m ? `assets/images/places/sm/${m[1]}` : (path || '');
+}
+
 let cache = null;
 let inFlight = null;
 
@@ -44,6 +52,7 @@ function normalize(raw) {
     return {
       ...place,
       photo: resolvePhoto(place.photo),
+      photoSm: smallPhoto(resolvePhoto(place.photo)),
       // Локальные просмотры больше не считаем: из-за них «Избранное от
       // города» у каждого посетителя было своим. Старые дельты игнорируем.
       views: place.views || 0,

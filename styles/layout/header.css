@@ -27,7 +27,7 @@
 }
 
 .logo {
-  font-size: var(--fs-2xl); /* mobile */
+  font-size: 1.5rem; /* телефон: шапка ниже, больше места контенту */
   font-weight: 700;
   color: var(--primary);
   letter-spacing: -0.5px;
@@ -36,6 +36,10 @@
   .logo {
     font-size: var(--fs-2xl);
   }
+}
+
+@media (max-width: 575px) {
+  .header-content { padding-block: 0.35rem; }
 }
 
 .nav {

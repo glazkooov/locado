@@ -178,8 +178,18 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
   // --- UI: вкладки категорий ---
   on($('#categories-scroll'), 'click', '.scroll__category-btn', (e, btn) => {
     e.preventDefault();
+    const bar = btn.parentElement;
     setCategory(btn.dataset.category);
-    btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    // Выбранную вкладку — к центру ряда (только по горизонтали: scrollIntoView
+    // двигал бы и страницу)
+    bar.scrollTo({ left: btn.offsetLeft - (bar.clientWidth - btn.offsetWidth) / 2, behavior: 'smooth' });
+    // На телефоне ряд закреплён и нажимают его посреди ленты: новая лента
+    // короче, и человек оставался бы внизу, у футера. Возвращаем к её началу
+    const grid = $('#places-container');
+    const barBottom = bar.getBoundingClientRect().bottom;
+    if (grid && grid.getBoundingClientRect().top < barBottom) {
+      window.scrollTo({ top: grid.getBoundingClientRect().top + window.scrollY - barBottom - 8, behavior: 'smooth' });
+    }
   });
 
   // --- UI: поиск в ленте (debounce) ---
