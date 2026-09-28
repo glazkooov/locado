@@ -92,6 +92,39 @@
   color: var(--hero-muted);
 }
 
+/* Подпись над карточками настроений: тихая, в цвет палитры времени суток */
+.hero__pick {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--hero-fg);
+  opacity: 0.85;
+  /* ближе к карточкам, чем к заголовку: это подпись к ним (gap у hero 32px) */
+  margin-bottom: -16px;
+}
+
+.hero__pick::before,
+.hero__pick::after {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: var(--hero-line);
+}
+
+@media (min-width: 768px) {
+  .hero__pick + .hero__choices { margin-top: 0; }
+}
+.hero__pick + .hero__choices { margin-top: 0; }
+
+/* Узкий экран: без боковых линий — подпись помещается в одну строку */
+@media (max-width: 400px) {
+  .hero__pick::before,
+  .hero__pick::after { display: none; }
+  .hero__pick { white-space: nowrap; }
+}
+
 .hero__tagline span {
   color: var(--hero-accent);
   font-weight: 700;
