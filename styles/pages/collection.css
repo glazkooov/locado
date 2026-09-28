@@ -1,0 +1,443 @@
+/* Страница подборки (collection.html): обложка — .place-hero из place.css,
+   ниже — колонка статьи для чтения и карта всех мест. */
+
+.collection-article {
+  max-width: 760px;
+  margin: 40px auto 72px;
+}
+
+.collection-byline-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.collection-byline {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-light);
+}
+
+.collection-share {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  background: var(--card-bg);
+  color: var(--ink);
+  font-family: inherit;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.collection-share .icon { color: var(--primary-text); }
+.collection-share:hover { background: var(--ink); border-color: var(--ink); color: #fff; }
+.collection-share:hover .icon { color: #fff; }
+
+/* ---------- План остановок ---------- */
+/* Столбиком: номер, название и тип места; у маршрута номера соединены
+   линией, между ними — время перехода */
+.collection-plan {
+  margin-bottom: 36px;
+  padding: 18px 20px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--card-bg);
+  box-shadow: var(--shadow-soft);
+}
+
+.collection-plan__title {
+  margin-bottom: 10px;
+  font-size: var(--fs-caption);
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--primary-text);
+}
+
+.collection-plan__list {
+  --num: 28px;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 6px;
+}
+
+.collection-plan__stop a {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 48px;
+  padding: 4px 0;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.collection-plan__stop a:hover .collection-plan__name { color: var(--primary-text); }
+
+.collection-plan__num {
+  position: relative;
+  z-index: 1;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--num);
+  height: var(--num);
+  border-radius: 50%;
+  background: var(--primary-strong);
+  color: #fff;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+}
+
+.collection-plan__text { display: flex; flex-direction: column; min-width: 0; }
+
+.collection-plan__name {
+  font-size: var(--fs-md);
+  font-weight: 600;
+  line-height: 1.3;
+  transition: color 0.2s;
+}
+
+.collection-plan__sub {
+  font-size: var(--fs-xs);
+  color: var(--text-light);
+  line-height: 1.35;
+}
+
+/* Маршрут: одна непрерывная линия через все номера — от центра первого
+   до центра последнего (номер с заливкой лежит поверх неё) */
+.collection-plan__list.is-route li { position: relative; }
+
+.collection-plan__list.is-route li::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--num) / 2 - 1px);
+  top: 0;
+  bottom: 0;
+  border-left: 2px solid var(--accent-line);
+}
+
+.collection-plan__list.is-route li:first-child::before { top: 50%; }
+.collection-plan__list.is-route li:last-child::before { bottom: 50%; }
+
+/* Время перехода — подписью на линии между остановками */
+.collection-plan__walk {
+  display: flex;
+  align-items: center;
+  min-height: 24px;
+  padding-left: calc(var(--num) + 14px);
+  font-size: var(--fs-caption);
+  font-weight: 600;
+  color: var(--text-lighter);
+}
+
+.collection-plan__map {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--primary-text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ---------- Текст ---------- */
+.c-text { margin-bottom: 36px; }
+
+.c-text p,
+.c-place__text p {
+  font-size: var(--fs-lg);
+  line-height: 1.7;
+  color: var(--text);
+}
+
+.c-text p + p,
+.c-place__text p + p { margin-top: 14px; }
+
+.c-text__title {
+  font-family: var(--font-heading);
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  margin-bottom: 12px;
+}
+
+/* ---------- Место ---------- */
+.c-place { margin: 44px 0; scroll-margin-top: calc(var(--header-h) + 16px); }
+
+.c-place__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.c-place__num {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--primary-strong);
+  color: #fff;
+  font-family: var(--font-heading);
+  font-size: var(--fs-lg);
+  font-weight: 700;
+}
+
+.c-place__kicker {
+  margin-bottom: 4px;
+  font-size: var(--fs-caption);
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--primary-text);
+}
+
+.c-place__name {
+  font-family: var(--font-heading);
+  font-size: var(--fs-xl);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+}
+
+.c-place__name a { color: var(--ink); text-decoration: none; }
+.c-place__name a:hover { color: var(--primary-text); }
+
+.c-place__type {
+  margin-top: 4px;
+  font-size: var(--fs-sm);
+  color: var(--text-light);
+}
+
+.c-place__photo {
+  display: block;
+  margin-bottom: 18px;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  background: var(--photo-placeholder);
+}
+
+.c-place__photo img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.c-place__photo:hover img { transform: scale(1.03); }
+
+/* Фото нет или не загрузилось — блок убираем целиком: в статье большая
+   пустая плашка выглядит как ошибка вёрстки */
+.c-place__photo:has(img.is-broken) { display: none; }
+
+/* Совет — тёплая плашка, как «Настроение места» */
+.c-place__tip {
+  margin-top: 18px;
+  padding: 14px 18px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--accent-line);
+  background: linear-gradient(160deg, #FFF6EE 0%, #FBE6D6 100%);
+  font-size: var(--fs-md);
+  line-height: 1.55;
+  color: var(--text);
+}
+
+.c-place__tip strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: var(--fs-caption);
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--primary-text);
+}
+
+/* Практическое: из базы мест, не из текста — не устаревает */
+.c-place__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 20px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.c-place__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: var(--fs-sm);
+  color: var(--text-light);
+}
+
+.c-place__facts li { display: inline-flex; align-items: center; gap: 6px; }
+.c-place__facts .icon { color: var(--primary); }
+
+.c-place__more {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--primary-text);
+  text-decoration: none;
+}
+
+.c-place__more:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+/* ---------- Переход между местами маршрута ---------- */
+.c-walk {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: -12px 0 -12px 21px;
+  padding: 14px 0 14px 24px;
+  border-left: 2px dashed var(--line-strong);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-light);
+}
+
+.c-walk .icon { color: var(--primary); }
+
+/* ---------- Карта и ещё подборки ---------- */
+/* Заголовки под статьёй — на ступень тише, чем названия мест в ней */
+.collection-map .section-title,
+.collection-more .section-title { font-size: var(--fs-xl); }
+
+.collection-map { margin-bottom: 72px; scroll-margin-top: calc(var(--header-h) + 16px); }
+.collection-map .map-container { height: 300px; }
+/* На странице места кнопку маршрута на телефоне скрывает нижняя панель
+   (place.css); здесь панели нет — кнопка нужна всегда */
+.collection-map .map-actions { display: block; }
+
+.section-head--row {
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.section-link {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--primary-text);
+  text-decoration: none;
+}
+
+.section-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+.collection-more { margin-bottom: 24px; }
+
+.collection-more__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+}
+
+@media (min-width: 769px) {
+  .collection-map .map-container { height: 420px; }
+  /* 2 карточки — на всю ширину, без пустой третьей колонки */
+  .collection-more__grid { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+  .collection-more .collection-card { min-height: 220px; }
+}
+
+@media (max-width: 767px) {
+  .collection-article { margin-top: 28px; }
+  .c-text p,
+  .c-place__text p { font-size: var(--fs-md); }
+  .c-place { margin: 36px 0; }
+  .c-place__num { width: 38px; height: 38px; font-size: var(--fs-md); }
+  .c-walk { margin-left: 18px; }
+  .collection-share span { display: none; }
+  .collection-share { width: 40px; padding: 0; justify-content: center; }
+  .collection-plan { padding: 16px 16px 10px; }
+  .collection-map .section-title,
+  .collection-more .section-title { font-size: var(--fs-lg); }
+}
+
+/* ---------- Все подборки (collections.html) ---------- */
+.collections-index { padding-top: 40px; padding-bottom: 24px; }
+
+.collections-index__title { font-size: var(--fs-2xl); }
+
+.collections-index__lead {
+  max-width: 560px;
+  margin: -12px 0 20px;
+  font-size: var(--fs-md);
+  line-height: 1.6;
+  color: var(--text-light);
+}
+
+.collections-index__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.collections-index__grid .collection-card { min-height: 240px; }
+
+@media (min-width: 992px) {
+  .collections-index__title { font-size: 2rem; }
+}
+
+/* ---------- Обложка подборки: текст читается на любом фото ----------
+   Текста здесь больше, чем у места (заголовок, лид, плашки), и он выше.
+   Затемнение под ним рассчитано на худший случай — белое фото: не меньше
+   55% чёрного под мелким текстом даёт контраст белого ≥ 4.5:1 (WCAG AA). */
+.collection-hero .hero-overlay {
+  background: linear-gradient(180deg,
+    rgba(0, 0, 0, 0.42) 0%,
+    rgba(0, 0, 0, 0.12) 22%,
+    rgba(0, 0, 0, 0.58) 44%,
+    rgba(0, 0, 0, 0.78) 70%,
+    rgba(0, 0, 0, 0.9) 100%);
+}
+
+/* Подпись формата — белая: оранжевая на светлом фото терялась */
+.collection-hero .hero-category { color: #fff; opacity: 0.9; }
+
+.collection-hero .hero-subtitle { color: #fff; }
+
+/* Воздух между заголовком и лидом */
+.collection-hero .hero-title { margin-bottom: 18px; }
+.collection-hero .hero-subtitle { margin-bottom: 24px; }
+
+@media (max-width: 767px) {
+  /* На телефоне текст занимает почти всю обложку — затемняем её целиком,
+     фото остаётся видно сверху */
+  .collection-hero .hero-overlay {
+    background: linear-gradient(180deg,
+      rgba(0, 0, 0, 0.5) 0%,
+      rgba(0, 0, 0, 0.58) 25%,
+      rgba(0, 0, 0, 0.72) 60%,
+      rgba(0, 0, 0, 0.9) 100%);
+  }
+  .collection-hero .hero-title { margin-bottom: 14px; }
+}

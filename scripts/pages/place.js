@@ -14,6 +14,9 @@ import { createModal } from '../components/modal.js';
 import { initPlaceMap, routeUrl } from '../components/map.js';
 import { showToast } from '../components/toast.js';
 import { icon } from '../core/icons.js';
+import { loadCollections, collectionsWithPlace } from '../core/collections.js';
+import { collectionCardHtml } from '../components/collection-card.js';
+import { initShare } from '../components/share.js';
 
 let timerInterval = null;
 
@@ -292,6 +295,20 @@ function initSimilarNav(scroller) {
   sync();
 }
 
+/** «Есть в подборках»: статьи, где упоминается место. Без подборок — секции нет. */
+async function renderCollections(place) {
+  const section = $('#place-collections');
+  if (!section) return;
+  try {
+    const list = collectionsWithPlace(await loadCollections(), place.slug).slice(0, 3);
+    if (!list.length) return;
+    $('#place-collections-grid').innerHTML = list.map(collectionCardHtml).join('');
+    section.hidden = false;
+  } catch (err) {
+    console.error('[place] подборки:', err);
+  }
+}
+
 function renderReviews(slug) {
   const reviews = Storage.getReviews(slug);
   const container = $('#reviews-list');
@@ -336,26 +353,7 @@ function attachEventListeners(place, allPlaces) {
   if (place.phone) on(callBtn, 'click', () => { window.location.href = telHref(place.phone); });
 
   // Шеринг
-  const shareModal = createModal($('#share-modal'));
-  // На телефоне — системное меню «Поделиться» (сразу все мессенджеры
-  // человека), на компьютере и без поддержки — наше окно
-  const canShareNatively = 'share' in navigator && window.matchMedia('(pointer: coarse)').matches;
-  const share = () => {
-    if (!canShareNatively) { shareModal?.open(); return; }
-    navigator.share({ title: place.name, text: place.description || '', url: window.location.href })
-      .catch((err) => { if (err?.name !== 'AbortError') shareModal?.open(); });
-  };
-  on($('#share-btn'), 'click', share);
-  on($('#share-close'), 'click', () => shareModal?.close());
-  const shareUrl = () => window.location.href;
-  on($('.share-vk'), 'click', () => window.open(`https://vk.com/share.php?url=${encodeURIComponent(shareUrl())}&title=${encodeURIComponent(place.name)}`, '_blank'));
-  on($('.share-telegram'), 'click', () => window.open(`https://t.me/share/url?url=${encodeURIComponent(shareUrl())}&text=${encodeURIComponent(place.name)}`, '_blank'));
-  on($('.share-whatsapp'), 'click', () => window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(place.name + ' ' + shareUrl())}`, '_blank'));
-  on($('.share-copy'), 'click', () => {
-    navigator.clipboard.writeText(shareUrl())
-      .then(() => { showToast('Ссылка скопирована'); shareModal?.close(); })
-      .catch(() => showToast('Не удалось скопировать ссылку', true));
-  });
+  initShare([$('#share-btn'), $('#action-share')], () => ({ title: place.name, text: place.description }));
 
   // Мобильная панель быстрых действий
   on($('#action-fav'), 'click', () => favBtn.click());
@@ -365,7 +363,6 @@ function attachEventListeners(place, allPlaces) {
     else actionCall.style.display = 'none';
   }
   on($('#action-route'), 'click', () => { if (place.coords) window.open(routeUrl(place), '_blank'); });
-  on($('#action-share'), 'click', share);
 
   // Скролл к карте
   on($('#show-on-map'), 'click', () => $('#on-map')?.scrollIntoView({ behavior: 'smooth', block: 'center' }));
@@ -456,6 +453,7 @@ async function main() {
   renderGallery(place);
   renderDirections(place);
   renderSimilar(place, places);
+  renderCollections(place);
   renderReviews(place.slug);
   attachEventListeners(place, places);
 

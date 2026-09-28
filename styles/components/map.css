@@ -54,6 +54,24 @@
 
 .map-pin--active::after { background: var(--primary); }
 
+/* Номер места в подборке — в углу фото */
+.map-pin__num {
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 5px;
+  border-radius: var(--radius-pill);
+  background: var(--primary-strong);
+  border: 2px solid #fff;
+  color: #fff;
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+}
+
 /* Подпись: на главной — при наведении, на странице места — всегда */
 .map-pin__label {
   position: absolute;

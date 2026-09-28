@@ -62,6 +62,14 @@ function getLayouts() {
   layouts = {
     pin: pin(false),
     pinLabeled: pin(true),
+    // Подборка: фото места и номер из текста статьи
+    pinNumbered: f.createClass(
+      '<div class="map-pin{% if properties.hover %} map-pin--active{% endif %}">'
+      + '<span class="map-pin__photo" style="background-image: url(\'{{ properties.photo }}\')"></span>'
+      + '<span class="map-pin__num">{{ properties.num }}</span>'
+      + '{% if properties.hover %}<span class="map-pin__label">{{ properties.name }}</span>{% endif %}'
+      + '</div>'
+    ),
     cluster: f.createClass('<div class="map-cluster">{{ properties.geoObjects.length }}</div>')
   };
   return layouts;
@@ -119,6 +127,49 @@ export async function initPlaceMap(container, place) {
     showMapError(container);
     return null;
   }
+}
+
+// ---------- Карта подборки (collection.html) ----------
+/** Пронумерованные метки мест в порядке статьи. Клик по метке вызывает
+ *  onSelect(номер). Линию между точками не рисуем: по прямой она выглядела
+ *  случайной, а настоящий пеший путь даёт кнопка «Маршрут в Яндекс.Картах». */
+export async function initCollectionMap(container, places, { onSelect } = {}) {
+  const points = places.filter((p) => p?.coords);
+  if (!container || !points.length) return null;
+  try {
+    await whenYmapsReady();
+    const map = new ymaps.Map(container, {
+      center: points[0].coords,
+      zoom: 14,
+      controls: ['zoomControl', 'fullscreenControl']
+    }, PAGE_MAP_OPTIONS);
+    places.forEach((p, i) => {
+      if (!p?.coords) return;
+      const placemark = new ymaps.Placemark(
+        p.coords,
+        { name: p.name, photo: p.photoSm || p.photo || '', num: i + 1 },
+        { iconLayout: getLayouts().pinNumbered, iconShape: PIN_SHAPE, hasBalloon: false, hasHint: false }
+      );
+      placemark.events
+        .add('mouseenter', () => placemark.properties.set('hover', true))
+        .add('mouseleave', () => placemark.properties.set('hover', false))
+        .add('click', () => onSelect?.(i + 1));
+      map.geoObjects.add(placemark);
+    });
+    if (points.length > 1) map.setBounds(map.geoObjects.getBounds(), { checkZoomRange: true, zoomMargin: 60 });
+    keepFitted(map, container);
+    return map;
+  } catch (err) {
+    console.error('[map] подборка:', err);
+    showMapError(container);
+    return null;
+  }
+}
+
+/** Маршрут через все точки в Яндекс.Картах, пешком. */
+export function walkingRouteUrl(places) {
+  const pts = places.filter((p) => p?.coords).map((p) => `${p.coords[0]},${p.coords[1]}`);
+  return `https://yandex.ru/maps/?rtext=${pts.join('~')}&rtt=pd`;
 }
 
 // ---------- Мини-карточка места поверх карты (index.html) ----------

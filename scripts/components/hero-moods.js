@@ -43,6 +43,6 @@ export function initHeroMoods(feed, places, { onSelect } = {}) {
   // Любой другой способ отфильтровать ленту отменяет настроение — снимаем
   // подсветку с карточки, чтобы она не «врала» о текущем фильтре.
   const clearActive = () => setActive(null);
-  on(document, 'click', '.scroll__category-btn, .category-masonry, .collection-card, #feed-reset-btn, #feed-active-reset', clearActive);
+  on(document, 'click', '.scroll__category-btn, .category-masonry, #feed-reset-btn, #feed-active-reset', clearActive);
   on(document, 'input', '#categories-search-input', clearActive);
 }

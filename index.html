@@ -38,7 +38,7 @@
 
         <nav class="nav" id="main-nav">
           <ul class="nav-list">
-            <li><a href="index.html#collections" class="nav-item">Подборки</a></li>
+            <li><a href="collections.html" class="nav-item">Подборки</a></li>
             <li><a href="index.html#map-section" class="nav-item">Карта</a></li>
             <li><a href="index.html#all-places" class="nav-item">Все места</a></li>
           </ul>
@@ -123,23 +123,10 @@
 
           <!-- Правая колонка: Подборки -->
           <div class="cat-col-right">
-            <div class="collections-grid">
-              <article class="collection-card" style="background-image: url('assets/images/places/kuzminki.jpg')" data-tags-any="на полдня, просторно" data-tags-all="гулять" tabindex="0" role="link">
-                <h3 class="collection-title">Долгие прогулки</h3>
-                <p class="collection-desc">Парки и усадьбы, где можно ходить часами и никуда не спешить.</p>
-                <span class="collection-btn">Смотреть</span>
-              </article>
-              <article class="collection-card" style="background-image: url('assets/images/places/sirovarnya.jpg')" data-tags-all="недорого" tabindex="0" role="link">
-                <h3 class="collection-title">Вкусно и недорого</h3>
-                <p class="collection-desc">Столовые, чебуречные и трапезные, где кормят как дома.</p>
-                <span class="collection-btn">Смотреть</span>
-              </article>
-              <article class="collection-card" style="background-image: url('assets/images/places/tretyakov.jpg')" data-tags-all="смотреть искусство, эстетично" tabindex="0" role="link">
-                <h3 class="collection-title">Искусство XX–XXI века</h3>
-                <p class="collection-desc">Музеи и пространства, где показывают, как искусство выглядит сейчас.</p>
-                <span class="collection-btn">Смотреть</span>
-              </article>
-            </div>
+            <!-- Карточки рендерит pages/home.js из data/collections.json и ведут
+                 на страницу подборки collection.html -->
+            <div class="collections-grid" id="collections-grid"></div>
+            <a class="section-link collections-all-link" href="collections.html">Все подборки →</a>
           </div>
         </div>
       </div>
@@ -334,7 +321,7 @@
       <nav class="site-footer__col" aria-label="Навигация">
         <h4>Навигация</h4>
         <a href="index.html#map-section">Карта</a>
-        <a href="index.html#collections">Подборки</a>
+        <a href="collections.html">Подборки</a>
         <a href="index.html#all-places">Все места</a>
       </nav>
 
