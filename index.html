@@ -128,26 +128,20 @@
     <!-- 5. Категории и подборки -->
     <section class="categories-collections" id="collections">
       <div class="container">
-        <div class="section-head">
-          <span class="section-mini" aria-hidden="true">выбирай по настроению</span>
-          <h2 class="section-title">Категории и подборки</h2>
+        <div class="section-head section-head--row">
+          <div>
+            <span class="section-mini" aria-hidden="true">выбирай по настроению</span>
+            <h2 class="section-title">Категории и подборки</h2>
+          </div>
+          <a class="section-link" href="collections.html">Все подборки →</a>
         </div>
 
-        <div class="cat-col-grid">
-          <!-- Левая колонка: Категории -->
-          <div class="cat-col-left">
-            <!-- Плитки рендерит components/category-buttons.js из словаря CATEGORIES -->
-            <div class="category-masonry-grid" id="categoryGrid"></div>
-          </div>
+        <!-- Плитки рендерит components/category-buttons.js из словаря CATEGORIES -->
+        <div class="category-masonry-grid" id="categoryGrid"></div>
 
-          <!-- Правая колонка: Подборки -->
-          <div class="cat-col-right">
-            <!-- Карточки рендерит pages/home.js из data/collections.json и ведут
-                 на страницу подборки collection.html -->
-            <div class="collections-grid" id="collections-grid"></div>
-            <a class="section-link collections-all-link" href="collections.html">Все подборки →</a>
-          </div>
-        </div>
+        <!-- Карточки рендерит pages/home.js из data/collections.json и ведут
+             на страницу подборки collection.html -->
+        <div class="collections-grid" id="collections-grid"></div>
       </div>
     </section>
 

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Подборки — Локадо</title>
-  <meta name="description" content="Маршруты и подборки мест в Москве под повод — от редакции Локадо.">
+  <meta name="description" content="Готовые маршруты по Москве и места под повод — от редакции Локадо.">
   <meta name="theme-color" content="#FF570A">
 
   <meta property="og:type" content="article">
@@ -42,7 +42,7 @@
 
       <nav class="nav" id="main-nav">
         <ul class="nav-list">
-          <li><a href="collections.html" class="nav-item">Подборки</a></li>
+          <li><a href="collections.html" class="nav-item" aria-current="page">Подборки</a></li>
           <li><a href="index.html#map-section" class="nav-item">Карта</a></li>
           <li><a href="index.html#all-places" class="nav-item">Все места</a></li>
         </ul>
@@ -56,15 +56,21 @@
 
 
   <main class="collections-index container">
-    <div class="section-head">
-      <span class="section-mini" aria-hidden="true">от редакции Локадо</span>
-      <h1 class="section-title collections-index__title">Подборки</h1>
-    </div>
-    <p class="collections-index__lead">Готовые маршруты на день и места под повод — когда хочется выбраться, но непонятно куда.</p>
+    <h1 class="section-title collections-index__title">Подборки</h1>
+    <p class="collections-index__lead">Готовые маршруты на день и места под повод</p>
 
-    <!-- Фильтр по формату — заполняет pages/collections.js -->
+    <!-- Фильтр по формату — появляется, когда подборок больше шести (pages/collections.js) -->
     <div class="collections-index__filters" id="collections-filters" role="group" aria-label="Формат подборок"></div>
     <div class="collection-more__grid collections-index__grid" id="collections-list"></div>
+
+    <!-- Выход на остальной сайт, если среди подборок нет подходящей -->
+    <aside class="collections-index__more">
+      <p class="collections-index__more-title">Ничего не зацепило?</p>
+      <div class="collections-index__more-links">
+        <a class="btn btn-secondary" href="index.html#all-places">Все места</a>
+        <a class="btn btn-secondary" href="index.html#map-section">Места на карте</a>
+      </div>
+    </aside>
   </main>
 
   <footer class="site-footer">

@@ -27,9 +27,11 @@ async function main() {
     });
   };
 
-  // Фильтр нужен, только если форматов больше одного
+  // Фильтр нужен, когда подборок много (больше шести) и форматов больше
+  // одного: при трёх карточках он только прятал бы одну-две
+  const FILTER_FROM = 7;
   const types = [...new Set(collections.map((c) => c.type))].filter((t) => COLLECTION_TYPES[t]);
-  if (types.length > 1) {
+  if (collections.length >= FILTER_FROM && types.length > 1) {
     filters.innerHTML = [['all', 'Все'], ...types.map((t) => [t, COLLECTION_TYPES[t]])]
       .map(([t, label]) => `<button type="button" class="category-btn" data-type="${t}" aria-pressed="false">${escapeHtml(label)}</button>`).join('');
     on(filters, 'click', '.category-btn', (e, btn) => render(btn.dataset.type));

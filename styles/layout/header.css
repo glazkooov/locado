@@ -70,6 +70,14 @@
   color: var(--primary-text);
 }
 
+/* Текущий раздел — оранжевым с подчёркиванием */
+.nav-item[aria-current="page"] {
+  color: var(--primary-text);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 8px;
+}
+
 .nav-right {
   display: flex;
   align-items: center;
