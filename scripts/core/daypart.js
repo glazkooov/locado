@@ -26,12 +26,15 @@ function isWeekendMood(now, daypart) {
   return d === 0 || d === 6 || (d === 5 && (daypart === 'evening' || daypart === 'night'));
 }
 
+const CITY = 'Москва';
+
 export function heroGreeting(now = new Date()) {
   const daypart = getDaypart(now);
   const kind = isWeekendMood(now, daypart) ? 'weekend' : 'weekday';
   return {
     daypart,
-    when: `${DAY_NAMES[now.getDay()]}, ${DAYPART_NAMES[daypart]}`,
+    // Город — рядом с днём: когда городов станет больше, здесь будет переключатель
+    when: `${DAY_NAMES[now.getDay()]}, ${DAYPART_NAMES[daypart]} · ${CITY}`,
     question: QUESTIONS[daypart][kind]
   };
 }
