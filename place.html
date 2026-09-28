@@ -31,6 +31,11 @@
   <header class="main-header main-header--overlay">
     <div class="container header-content">
       <a href="index.html" class="logo" aria-label="Локадо — главная">Локадо</a>
+      <!-- Поиск: ведёт к ленте «Все места» и ставит курсор в строку поиска (ui.js) -->
+      <a href="index.html#search" class="header-search" data-search aria-label="Найти место">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#search"></use></svg><span>Поиск</span>
+      </a>
+
 
       <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Открыть меню" aria-expanded="false" aria-controls="main-nav">
         <svg class="icon mobile-menu-toggle__open" aria-hidden="true" focusable="false"><use href="assets/icons.svg#menu"></use></svg><svg class="icon mobile-menu-toggle__close" aria-hidden="true" focusable="false"><use href="assets/icons.svg#x"></use></svg>

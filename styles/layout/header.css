@@ -170,6 +170,46 @@
   }
 }
 
+/* Поиск в шапке: на телефоне — значок рядом с меню, на компьютере —
+   «Поиск» с лупой после пунктов меню. Подсказывает, что место можно
+   найти не только по настроению */
+.header-search {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 44px;
+  min-height: 44px;
+  margin-left: auto;
+  color: var(--text);
+  font-size: 1.4rem;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.header-search span { display: none; }
+@media (hover: hover) {
+  .header-search:hover { color: var(--primary-text); }
+}
+
+/* между поиском и меню — без лишнего зазора */
+.header-search + .mobile-menu-toggle { margin-left: -4px; }
+
+@media (min-width: 769px) {
+  .header-search {
+    order: 3;
+    margin-left: 4px;
+    padding: 0 16px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-pill);
+    font-size: var(--fs-md);
+    font-weight: 500;
+  }
+  .header-search .icon { font-size: 1.1em; }
+  .header-search span { display: inline; }
+  .header-search:hover { border-color: var(--primary); }
+}
+
 .mobile-menu-toggle__close,
 .nav__slogan { display: none; }
 
@@ -266,11 +306,14 @@ body.nav-open .main-header--overlay {
 }
 
 body:not(.nav-open) .main-header--overlay:not(.is-scrolled) .logo,
-body:not(.nav-open) .main-header--overlay:not(.is-scrolled) .mobile-menu-toggle {
+body:not(.nav-open) .main-header--overlay:not(.is-scrolled) .mobile-menu-toggle,
+body:not(.nav-open) .main-header--overlay:not(.is-scrolled) .header-search {
   color: var(--hero-logo);
 }
 
 @media (min-width: 769px) {
   .main-header--overlay:not(.is-scrolled) .nav-item { color: var(--hero-fg); }
   .main-header--overlay:not(.is-scrolled) .nav-item:hover { color: var(--hero-accent); }
+  .main-header--overlay:not(.is-scrolled) .header-search { color: var(--hero-fg); border-color: var(--hero-line); }
+  .main-header--overlay:not(.is-scrolled) .header-search:hover { color: var(--hero-accent); }
 }
