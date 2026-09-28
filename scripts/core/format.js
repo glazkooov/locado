@@ -261,6 +261,20 @@ export function displayHost(url = '') {
   }
 }
 
+/** Часы работы одной строкой, без привязки к «сейчас» — для выбора места
+ *  на будущее: «Круглосуточно», «Ежедневно 10:00–21:00», «Сегодня
+ *  10:00–18:00», «Сегодня выходной, откроется завтра в 10:00». */
+export function scheduleSummary(schedule, now = new Date()) {
+  if (!schedule) return '';
+  if (isAlwaysOpen(schedule)) return 'Круглосуточно';
+  const every = hoursForArticle(schedule);
+  if (every) return every[0].toUpperCase() + every.slice(1);
+  const today = schedule[DAY_KEYS[now.getDay()]];
+  if (today) return `Сегодня ${formatHours(today)}`;
+  const next = getOpenStatus({ schedule }, now).nextChangeAt;
+  return next ? `Сегодня выходной, откроется ${openingPhrase(next, now)}` : 'Сегодня выходной';
+}
+
 /** Короткий статус для плашек: «Открыто до 23:00» / «Открыто до полуночи» /
  *  «Откроется в 10:00» / «Откроется завтра в 10:00» / «Откроется во
  *  вторник в 10:00». null — если расписания нет. */

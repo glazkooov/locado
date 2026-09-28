@@ -354,29 +354,45 @@
 
   <!-- Модальное окно рандомайзера -->
   <div id="randomizer-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="randomizer-title">
-    <div class="modal-content">
+    <div class="modal-content randomizer">
       <div class="modal-header">
-        <h3 id="randomizer-title"><svg class="icon modal-header__icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#dices"></use></svg> Случайное место</h3>
+        <h3 id="randomizer-title"><svg class="icon modal-header__icon randomizer__dice" aria-hidden="true" focusable="false"><use href="assets/icons.svg#dices"></use></svg> Случайное место</h3>
         <button type="button" class="modal-close" data-modal-close aria-label="Закрыть"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#x"></use></svg></button>
       </div>
       <div class="modal-body">
-        <p class="modal-hint">Можно уточнить категорию</p>
-        <div class="category-chips" id="randomizer-categories" role="group" aria-label="Категория случайного места"></div>
+        <!-- Сейчас — только открытые ещё хотя бы час; когда угодно — все места.
+             Выбор запоминается (components/randomizer.js) -->
+        <div class="randomizer__mode" role="group" aria-label="Когда идём">
+          <button type="button" class="randomizer__mode-btn" data-mode="now" aria-pressed="true">Сейчас</button>
+          <button type="button" class="randomizer__mode-btn" data-mode="any" aria-pressed="false">Когда угодно</button>
+        </div>
 
-        <!-- Превью места -->
-        <div id="randomizer-preview" class="randomizer-preview" style="display: none;" tabindex="0" role="button" aria-label="Перейти к месту">
-          <img id="preview-img" src="" alt="">
-          <div class="preview-info">
-            <h4 id="preview-name"></h4>
-            <p id="preview-category"></p>
-            <p id="preview-desc" class="preview-desc"></p>
+        <!-- Категории одной строкой с прокруткой: главное в окне — само место -->
+        <div class="category-chips randomizer__chips" id="randomizer-categories" role="group" aria-label="Категория случайного места"></div>
+
+        <div class="randomizer__stage" aria-live="polite">
+          <div id="randomizer-preview" class="randomizer-preview" hidden tabindex="0" role="link" aria-label="Открыть место">
+            <img id="preview-img" src="" alt="">
+            <div class="preview-info">
+              <p id="preview-category"></p>
+              <h4 id="preview-name"></h4>
+              <p id="preview-desc" class="preview-desc"></p>
+              <ul class="preview-facts" id="preview-facts"></ul>
+            </div>
+          </div>
+
+          <!-- Ничего не открыто в категории — предлагаем выбрать на другой день -->
+          <div class="randomizer__empty" id="randomizer-empty" hidden>
+            <p id="randomizer-empty-text"></p>
+            <button type="button" class="btn btn-secondary" id="randomizer-any">Показать на другой день</button>
           </div>
         </div>
 
-        <div class="randomizer-actions">
-          <button id="randomizer-submit" class="btn randomizer-btn">Подбросить кубик</button>
-          <button id="randomizer-accept" class="btn randomizer-accept" style="display: none;">Мне подходит →</button>
-          <button id="randomizer-reroll" class="btn btn-secondary randomizer-reroll" style="display: none;">Перебросить ↺</button>
+        <div class="randomizer-actions" id="randomizer-actions">
+          <button type="button" id="randomizer-reroll" class="btn btn-secondary randomizer-reroll">
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#dices"></use></svg> Ещё вариант
+          </button>
+          <button type="button" id="randomizer-accept" class="btn randomizer-accept">Открыть место</button>
         </div>
       </div>
     </div>
