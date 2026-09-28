@@ -106,7 +106,7 @@ body.modal-open { overflow: hidden; }
 .chip.active { background: var(--ink); border-color: var(--ink); color: #fff; }
 
 /* ---------- Случайное место ---------- */
-/* Переключатель «Сейчас / Когда угодно» — сегменты одной плашки */
+/* Переключатель «Сейчас / На потом» — сегменты одной плашки */
 .randomizer__mode {
   display: flex;
   padding: 4px;
@@ -184,16 +184,14 @@ body.modal-open { overflow: hidden; }
 
 .preview-info { flex: 1; min-width: 0; }
 
-#preview-category {
-  font-size: var(--fs-caption);
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: var(--primary-text);
-  margin-bottom: 2px;
-}
+.preview-info h4 { margin: 0 0 2px; font-size: var(--fs-lg); line-height: 1.25; }
 
-.preview-info h4 { margin: 0 0 4px; font-size: var(--fs-md); line-height: 1.25; }
+/* Тип места — тихой подписью под названием, не перебивает его */
+#preview-category {
+  margin-bottom: 6px;
+  font-size: var(--fs-xs);
+  color: var(--text-lighter);
+}
 
 .preview-desc {
   font-size: var(--fs-sm);
@@ -222,7 +220,7 @@ body.modal-open { overflow: hidden; }
 .preview-facts .is-open,
 .preview-facts .is-open .icon { color: var(--success); }
 
-/* Ничего не открыто — честно говорим и предлагаем другой день */
+/* Ничего не открыто — честно говорим и предлагаем подобрать на потом */
 .randomizer__empty {
   padding: 20px;
   border: 1px dashed var(--line-strong);

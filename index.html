@@ -360,11 +360,11 @@
         <button type="button" class="modal-close" data-modal-close aria-label="Закрыть"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#x"></use></svg></button>
       </div>
       <div class="modal-body">
-        <!-- Сейчас — только открытые ещё хотя бы час; когда угодно — все места.
+        <!-- «Сейчас» — только открытые ещё хотя бы час; «На потом» — все места с часами работы.
              Выбор запоминается (components/randomizer.js) -->
         <div class="randomizer__mode" role="group" aria-label="Когда идём">
           <button type="button" class="randomizer__mode-btn" data-mode="now" aria-pressed="true">Сейчас</button>
-          <button type="button" class="randomizer__mode-btn" data-mode="any" aria-pressed="false">Когда угодно</button>
+          <button type="button" class="randomizer__mode-btn" data-mode="any" aria-pressed="false">На потом</button>
         </div>
 
         <!-- Категории одной строкой с прокруткой: главное в окне — само место -->
@@ -374,17 +374,17 @@
           <div id="randomizer-preview" class="randomizer-preview" hidden tabindex="0" role="link" aria-label="Открыть место">
             <img id="preview-img" src="" alt="">
             <div class="preview-info">
-              <p id="preview-category"></p>
               <h4 id="preview-name"></h4>
+              <p id="preview-category"></p>
               <p id="preview-desc" class="preview-desc"></p>
               <ul class="preview-facts" id="preview-facts"></ul>
             </div>
           </div>
 
-          <!-- Ничего не открыто в категории — предлагаем выбрать на другой день -->
+          <!-- Ничего не открыто в категории — предлагаем подобрать на потом -->
           <div class="randomizer__empty" id="randomizer-empty" hidden>
             <p id="randomizer-empty-text"></p>
-            <button type="button" class="btn btn-secondary" id="randomizer-any">Показать на другой день</button>
+            <button type="button" class="btn btn-secondary" id="randomizer-any">Подобрать на потом</button>
           </div>
         </div>
 
