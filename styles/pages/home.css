@@ -539,41 +539,17 @@
 }
 
 .collection-card {
+  /* ширина карточки решает раскладку: фото слева или сверху */
+  container-type: inline-size;
+  display: block;
+  color: var(--text);
   text-decoration: none;
-  background-color: var(--ink);
-  background-size: cover;
-  background-position: center;
-  position: relative;
-  color: white;
+  background: var(--card-bg);
+  border: 1px solid var(--line);
   border-radius: var(--radius-card);
-  padding: 22px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-height: 180px;
   overflow: hidden;
-  cursor: pointer;
   box-shadow: var(--shadow-soft);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  border: none;
-}
-
-.collection-card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  /* Текст карточки может тянуться на всю ширину — затемняем всю карточку,
-     сильнее слева и снизу: белый текст читается на любом фото (≥ 4.5:1) */
-  background:
-    linear-gradient(180deg, rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, 0.35) 100%),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.78) 0%, rgba(0, 0, 0, 0.6) 60%, rgba(0, 0, 0, 0.5) 100%);
-  z-index: 1;
-  border-radius: inherit;
-}
-
-.collection-card > * {
-  position: relative;
-  z-index: 2;
 }
 
 .collection-card:hover {
@@ -581,15 +557,36 @@
   box-shadow: var(--shadow-soft-hover);
 }
 
+.collection-card__inner {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.collection-card__photo {
+  display: block;
+  aspect-ratio: 21 / 9;
+  background-color: var(--cream-deep);
+  background-image: var(--photo-placeholder);
+  background-size: cover;
+  background-position: center;
+}
+
+/* Содержимое — сверху вниз от начала: названия в ряду стоят на одной линии */
+.collection-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  padding: 16px 18px 18px;
+}
+
 .collection-card__type {
   font-size: var(--fs-caption);
   font-weight: 600;
   letter-spacing: 1.2px;
   text-transform: uppercase;
-  color: #FFB38A;
-  /* тип — наверху карточки, заголовок и описание — внизу */
-  margin-bottom: auto;
-  padding-bottom: 16px;
+  color: var(--primary-text);
 }
 
 .collection-title {
@@ -597,34 +594,48 @@
   font-size: var(--fs-lg);
   font-weight: 700;
   letter-spacing: -0.02em;
-  margin-bottom: 8px;
+  line-height: 1.25;
+  color: var(--ink);
 }
+
+.collection-title__end { white-space: nowrap; }
+
+.collection-title__arrow {
+  display: inline-block;
+  color: var(--primary-text);
+  transition: transform 0.2s ease;
+}
+
+.collection-card:hover .collection-title__arrow { transform: translateX(4px); }
 
 .collection-desc {
   font-size: var(--fs-sm);
-  opacity: 0.95;
-  margin-bottom: 16px;
   line-height: 1.5;
+  color: var(--text-light);
 }
 
-.collection-btn {
-  display: inline-block;
-  background: rgba(255, 255, 255, 0.14);
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  backdrop-filter: blur(6px);
-  padding: 6px 16px;
-  border-radius: var(--radius-pill);
+/* Для выбора: сколько времени, сколько мест, бюджет */
+.collection-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin-top: auto;
+  padding-top: 8px;
   font-size: var(--fs-xs);
   font-weight: 600;
-  color: white;
-  text-decoration: none;
-  transition: background 0.2s;
-  align-self: flex-start;
+  color: var(--text);
 }
 
-.collection-card:hover .collection-btn {
-  background: #fff;
-  color: var(--ink);
+.collection-card__meta:empty { display: none; }
+
+.collection-card__meta > span { display: inline-flex; align-items: center; gap: 5px; }
+.collection-card__meta .icon { color: var(--primary); }
+
+/* Широкая карточка (колонка на главной) — фото слева */
+@container (min-width: 480px) {
+  .collection-card__inner { flex-direction: row; }
+  .collection-card__photo { flex: 0 0 38%; aspect-ratio: auto; min-height: 150px; }
+  .collection-card__body { padding: 18px 20px; }
 }
 
 .map {
