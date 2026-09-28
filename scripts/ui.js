@@ -123,6 +123,36 @@ const initCopyButtons = () => {
   });
 };
 
+/** «Поиск» в шапке: на главной — к ленте «Все места» и курсор в строку
+ *  поиска; с других страниц ссылка ведёт на index.html#search, и то же
+ *  происходит после загрузки. */
+const initHeaderSearch = () => {
+  const goToSearch = ({ smooth = true } = {}) => {
+    const input = $('#categories-search-input');
+    const feed = $('#all-places');
+    if (!input || !feed) return false;
+    const header = $('.main-header');
+    const top = feed.getBoundingClientRect().top + window.scrollY - (header ? header.offsetHeight : 0) - 20;
+    window.scrollTo({ top: Math.max(0, top), behavior: smooth ? 'smooth' : 'instant' });
+    input.focus({ preventScroll: true });
+    return true;
+  };
+  on(document, 'click', '[data-search]', (e) => {
+    document.body.classList.contains('nav-open') && $('#mobile-menu-toggle')?.click();
+    if (goToSearch()) e.preventDefault();
+  });
+  if (window.location.hash === '#search') {
+    history.replaceState(null, '', window.location.pathname + window.location.search);
+    // Разделы выше ленты дорисовываются после загрузки данных — поправляем
+    // прокрутку ещё раз, когда они встанут на место (если человек не ушёл сам)
+    window.addEventListener('load', () => {
+      goToSearch({ smooth: false });
+      const y = window.scrollY;
+      setTimeout(() => { if (Math.abs(window.scrollY - y) < 5) goToSearch({ smooth: false }); }, 800);
+    }, { once: true });
+  }
+};
+
 syncHeaderHeight();
 window.addEventListener('resize', syncHeaderHeight, { passive: true });
 window.addEventListener('load', syncHeaderHeight);
@@ -134,3 +164,4 @@ initHeaderOverlay();
 initScrollReveal();
 initCopyButtons();
 initInstall();
+initHeaderSearch();

@@ -92,6 +92,16 @@
   color: var(--hero-muted);
 }
 
+
+/* Подсказка над карточками: ближе к ним, чем к вопросу (у hero gap 32px) */
+.hero__pick {
+  margin-bottom: -18px;
+  font-size: var(--fs-md);
+  color: var(--hero-muted);
+}
+
+.hero__pick + .hero__choices { margin-top: 0; }
+
 .hero__tagline span {
   color: var(--hero-accent);
   font-weight: 700;
