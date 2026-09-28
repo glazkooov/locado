@@ -1,7 +1,8 @@
 .place-hero {
   position: relative;
-  height: 72vh;
-  min-height: 520px;
+  /* Минимальная, а не фиксированная высота: длинный текст раздвигает
+     первый экран вниз, а не уезжает под шапку */
+  min-height: max(520px, 72vh);
   display: flex;
   align-items: flex-end;
   /* шапка лежит поверх фото (.main-header--overlay) */
@@ -240,7 +241,9 @@
 
 /* Телефон: первый экран с фото ниже — под ним сразу видны адрес и часы */
 @media (max-width: 767px) {
-  .place-hero:not(.place-hero--no-photo) { height: 60svh; min-height: 420px; }
+  /* min-height, а не height: при фиксированной высоте длинный заголовок и
+     описание упирались в шапку и уходили под неё (контент прижат к низу) */
+  .place-hero:not(.place-hero--no-photo) { height: auto; min-height: max(420px, 60svh); }
   /* Тип места — сразу под названием, без пустоты между ними */
   .similar-card .info p { margin-top: 0; }
 }

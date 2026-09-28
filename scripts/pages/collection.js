@@ -113,13 +113,39 @@ function renderBody(c, places) {
   return ordered;
 }
 
-/** План под обложкой: все остановки сразу, у маршрута — стрелками. */
-function renderPlan(c, ordered) {
-  if (ordered.length < 2) return;
+/** «5 минут пешком по Лаврушинскому» → «5 минут пешком»: в плане — только время. */
+const walkShort = (text = '') => (text.match(/^[^,]*?\d+[\d–-]*\s*мин\S*(\s+пешком)?/i) || [''])[0];
+
+/** План под обложкой: остановки столбиком с номерами; у маршрута — линия
+ *  между ними и время перехода. */
+function renderPlan(c, blocks, places) {
+  const isRoute = c.type === 'route';
+  const stops = [];
+  let pendingWalk = '';
+  blocks.forEach((b) => {
+    if (b.type === 'walk') pendingWalk = walkShort(b.text);
+    if (b.type !== 'place') return;
+    const place = bySlug(places, b.slug);
+    if (!place) return;
+    stops.push({ place, walk: stops.length ? pendingWalk : '', kicker: b.kicker });
+    pendingWalk = '';
+  });
+  if (stops.length < 2) return;
+
   const list = $('#collection-plan-list');
-  list.classList.toggle('is-route', c.type === 'route');
-  list.innerHTML = ordered.map((p, i) =>
-    `<li><a href="#place-${i + 1}"><span class="collection-plan__num">${i + 1}</span>${escapeHtml(p.name)}</a></li>`).join('');
+  list.classList.toggle('is-route', isRoute);
+  list.innerHTML = stops.map(({ place, walk, kicker }, i) => `
+    ${isRoute && walk ? `<li class="collection-plan__walk" aria-hidden="true">${escapeHtml(walk)}</li>` : ''}
+    <li class="collection-plan__stop">
+      <a href="#place-${i + 1}">
+        <span class="collection-plan__num">${i + 1}</span>
+        <span class="collection-plan__text">
+          <span class="collection-plan__name">${escapeHtml(place.name)}</span>
+          <span class="collection-plan__sub">${escapeHtml(isRoute ? (place.type || categoryLabel(place.category)) : (kicker || place.type || ''))}</span>
+        </span>
+      </a>
+    </li>`).join('');
+  $('#collection-plan-title').textContent = isRoute ? `Маршрут: ${stops.length} ${stops.length < 5 ? 'остановки' : 'остановок'}` : `${stops.length} ${stops.length < 5 ? 'места' : 'мест'} на выбор`;
   $('#collection-plan').hidden = false;
 }
 
@@ -172,7 +198,7 @@ async function main() {
   renderHero(c);
   renderByline(c);
   const ordered = renderBody(c, places);
-  renderPlan(c, ordered);
+  renderPlan(c, c.blocks || [], places);
   renderMore(c, collections);
   initShare([$('#share-btn')], () => ({ title: c.title, text: c.lead }));
   await renderMap(c, ordered);

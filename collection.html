@@ -77,7 +77,8 @@
       </div>
 
       <!-- План: все остановки сразу и ссылка на карту — заполняет collection.js -->
-      <nav class="collection-plan" id="collection-plan" aria-label="Места подборки" hidden>
+      <nav class="collection-plan" id="collection-plan" aria-labelledby="collection-plan-title" hidden>
+        <p class="collection-plan__title" id="collection-plan-title"></p>
         <ol class="collection-plan__list" id="collection-plan-list"></ol>
         <a class="collection-plan__map" href="#collection-map">
           <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#map-pin"></use></svg> Все места на карте

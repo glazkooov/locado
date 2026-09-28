@@ -43,57 +43,101 @@
 .collection-share:hover .icon { color: #fff; }
 
 /* ---------- План остановок ---------- */
+/* Столбиком: номер, название и тип места; у маршрута номера соединены
+   линией, между ними — время перехода */
 .collection-plan {
   margin-bottom: 36px;
-  padding: 18px 20px;
+  padding: 18px 20px 12px;
   border: 1px solid var(--line);
   border-radius: var(--radius-card);
   background: var(--card-bg);
   box-shadow: var(--shadow-soft);
 }
 
+.collection-plan__title {
+  margin-bottom: 10px;
+  font-size: var(--fs-caption);
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--primary-text);
+}
+
 .collection-plan__list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 10px;
+  --num: 28px;
   list-style: none;
   padding: 0;
-  margin: 0 0 12px;
+  margin: 0 0 6px;
 }
 
-.collection-plan__list li { display: flex; align-items: center; gap: 10px; }
-
-/* У маршрута остановки связаны стрелками — видно порядок */
-.collection-plan__list.is-route li + li::before {
-  content: '→';
-  color: var(--text-lighter);
-}
-
-.collection-plan__list a {
-  display: inline-flex;
+.collection-plan__stop a {
+  display: flex;
   align-items: center;
-  gap: 8px;
-  min-height: 40px;
+  gap: 14px;
+  min-height: 48px;
+  padding: 4px 0;
   color: var(--ink);
-  font-size: var(--fs-sm);
-  font-weight: 600;
   text-decoration: none;
 }
 
-.collection-plan__list a:hover { color: var(--primary-text); }
+.collection-plan__stop a:hover .collection-plan__name { color: var(--primary-text); }
 
 .collection-plan__num {
+  position: relative;
+  z-index: 1;
   flex: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: var(--num);
+  height: var(--num);
   border-radius: 50%;
   background: var(--primary-strong);
   color: #fff;
-  font-size: var(--fs-caption);
+  font-size: var(--fs-xs);
   font-weight: 700;
+}
+
+.collection-plan__text { display: flex; flex-direction: column; min-width: 0; }
+
+.collection-plan__name {
+  font-size: var(--fs-md);
+  font-weight: 600;
+  line-height: 1.3;
+  transition: color 0.2s;
+}
+
+.collection-plan__sub {
+  font-size: var(--fs-xs);
+  color: var(--text-light);
+  line-height: 1.35;
+}
+
+/* Маршрут: одна непрерывная линия через все номера — от центра первого
+   до центра последнего (номер с заливкой лежит поверх неё) */
+.collection-plan__list.is-route li { position: relative; }
+
+.collection-plan__list.is-route li::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--num) / 2 - 1px);
+  top: 0;
+  bottom: 0;
+  border-left: 2px solid var(--accent-line);
+}
+
+.collection-plan__list.is-route li:first-child::before { top: 50%; }
+.collection-plan__list.is-route li:last-child::before { bottom: 50%; }
+
+/* Время перехода — подписью на линии между остановками */
+.collection-plan__walk {
+  display: flex;
+  align-items: center;
+  min-height: 24px;
+  padding-left: calc(var(--num) + 14px);
+  font-size: var(--fs-caption);
+  font-weight: 600;
+  color: var(--text-lighter);
 }
 
 .collection-plan__map {
@@ -332,7 +376,7 @@
   .c-walk { margin-left: 18px; }
   .collection-share span { display: none; }
   .collection-share { width: 40px; padding: 0; justify-content: center; }
-  .collection-plan { padding: 14px 16px; }
+  .collection-plan { padding: 16px 16px 10px; }
   .collection-map .section-title,
   .collection-more .section-title { font-size: var(--fs-lg); }
 }
