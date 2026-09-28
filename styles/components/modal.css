@@ -105,27 +105,78 @@ body.modal-open { overflow: hidden; }
 
 .chip.active { background: var(--ink); border-color: var(--ink); color: #fff; }
 
+/* ---------- Случайное место ---------- */
+/* Переключатель «Сейчас / На потом» — сегменты одной плашки */
+.randomizer__mode {
+  display: flex;
+  padding: 4px;
+  margin-bottom: 14px;
+  border-radius: var(--radius-pill);
+  background: var(--cream-deep);
+}
+
+.randomizer__mode-btn {
+  flex: 1;
+  min-height: 40px;
+  border: none;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text-light);
+  font-family: inherit;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+.randomizer__mode-btn[aria-pressed="true"] {
+  background: var(--card-bg);
+  color: var(--ink);
+  box-shadow: var(--shadow-bar);
+}
+
+/* Категории — одна строка с прокруткой, край гаснет */
+.randomizer__chips {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  margin: 0 -24px 16px;
+  padding: 0 24px 2px;
+  scroll-padding-inline: 24px;
+  scrollbar-width: none;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 20px, #000 calc(100% - 28px), transparent);
+  mask-image: linear-gradient(90deg, transparent 0, #000 20px, #000 calc(100% - 28px), transparent);
+}
+
+.randomizer__chips::-webkit-scrollbar { display: none; }
+.randomizer__chips .chip { flex: none; }
+
+.randomizer__stage { margin-bottom: 16px; }
+
 /* Превью места — как мини-карточка на карте */
 .randomizer-preview {
   display: flex;
   gap: 14px;
-  align-items: center;
-  padding: 10px;
-  margin-bottom: 18px;
+  align-items: flex-start;
+  padding: 12px;
   border: 1px solid var(--line);
   border-radius: var(--radius-card);
   background: var(--card-bg);
   box-shadow: var(--shadow-soft);
   cursor: pointer;
-  transition: box-shadow 0.2s;
+  transition: box-shadow 0.2s, opacity 0.18s ease, transform 0.18s ease;
 }
+
+.randomizer-preview[hidden] { display: none; }
 
 .randomizer-preview:hover { box-shadow: var(--shadow-soft-hover); }
 
+/* Смена места: карточка на мгновение гаснет и приподнимается */
+.randomizer-preview.is-changing { opacity: 0; transform: translateY(6px) scale(0.98); }
+
 .randomizer-preview img {
   flex: none;
-  width: 96px;
-  height: 96px;
+  width: 88px;
+  height: 88px;
   border-radius: var(--radius-sm);
   object-fit: cover;
   background: var(--photo-placeholder);
@@ -133,15 +184,13 @@ body.modal-open { overflow: hidden; }
 
 .preview-info { flex: 1; min-width: 0; }
 
-.preview-info h4 { margin: 0 0 4px; font-size: var(--fs-md); line-height: 1.25; }
+.preview-info h4 { margin: 0 0 2px; font-size: var(--fs-lg); line-height: 1.25; }
 
+/* Тип места — тихой подписью под названием, не перебивает его */
 #preview-category {
+  margin-bottom: 6px;
   font-size: var(--fs-xs);
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: var(--primary-text);
-  margin-bottom: 4px;
+  color: var(--text-lighter);
 }
 
 .preview-desc {
@@ -154,9 +203,77 @@ body.modal-open { overflow: hidden; }
   overflow: hidden;
 }
 
-.randomizer-actions { display: flex; gap: 10px; }
+.preview-facts {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 8px;
+  list-style: none;
+  padding: 0;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--text-light);
+}
 
-.randomizer-actions .btn { flex: 1; }
+.preview-facts li { display: flex; align-items: center; gap: 6px; }
+.preview-facts .icon { color: var(--primary); flex: none; }
+.preview-facts .is-open,
+.preview-facts .is-open .icon { color: var(--success); }
+
+/* Ничего не открыто — честно говорим и предлагаем подобрать на потом */
+.randomizer__empty {
+  padding: 20px;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius-card);
+  text-align: center;
+}
+
+.randomizer__empty p {
+  margin-bottom: 14px;
+  font-size: var(--fs-md);
+  line-height: 1.5;
+  color: var(--text);
+}
+
+/* Кнопки — одной строкой, короткие подписи; на узком экране — друг под другом */
+.randomizer-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.randomizer-actions[hidden] { display: none; }
+.randomizer-actions .btn { flex: 1 1 140px; min-width: 0; padding-inline: 16px; }
+
+/* Кубик в заголовке крутится при броске */
+.randomizer__dice.is-rolling { animation: randomizerRoll 0.5s ease; }
+
+@keyframes randomizerRoll {
+  0% { transform: rotate(0) scale(1); }
+  50% { transform: rotate(200deg) scale(1.2); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .randomizer__dice.is-rolling { animation: none; }
+  .randomizer-preview { transition: box-shadow 0.2s; }
+}
+
+@media (max-width: 480px) {
+  .modal-body { padding: 14px 18px 18px; }
+  .randomizer__chips { margin-inline: -18px; padding-inline: 18px; }
+  /* Компактнее: окно помещается на экран 320×568 без прокрутки */
+  .randomizer .modal-header { padding: 16px 16px 0 18px; }
+  .randomizer__mode { margin-bottom: 12px; }
+  .randomizer__chips { margin-bottom: 12px; }
+  .randomizer-preview { padding: 10px; gap: 12px; }
+  .randomizer-preview img { width: 64px; height: 64px; }
+  .preview-desc { -webkit-line-clamp: 2; }
+  /* Кнопки в одну строку, подписи не переносятся */
+  .randomizer-actions { flex-wrap: nowrap; gap: 8px; }
+  .randomizer-actions .btn {
+    flex: 1 1 0;
+    min-height: 48px;
+    padding-inline: 10px;
+    font-size: var(--fs-sm);
+    white-space: nowrap;
+  }
+}
 
 /* Поделиться */
 .share-buttons { display: flex; flex-direction: column; gap: 8px; }

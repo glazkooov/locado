@@ -1,104 +1,150 @@
-// components/randomizer.js — модалка "Случайное место".
+// components/randomizer.js — окно «Случайное место».
+//
+// Два режима: «Сейчас» — только места, открытые ещё хотя бы час (успеть
+// доехать), и «На потом» — все, с часами работы вместо статуса. Режим
+// запоминается. Места не повторяются, пока не покажутся все из выбора;
+// закрыл окно и открыл снова — то же место, а не новое.
 
 import { $, $$, on } from '../core/dom.js';
-import { escapeHtml } from '../core/format.js';
-import { categoryLabel, pickRandom, placeUrl } from '../core/places.js';
+import { escapeHtml, getOpenStatus, openStatusLabel, scheduleSummary } from '../core/format.js';
+import { categoryLabel, pickRandom, placeUrl, metroList, CATEGORIES } from '../core/places.js';
 import { createModal } from './modal.js';
 import { setPressed } from './category-buttons.js';
+import { icon } from '../core/icons.js';
+
+const MODE_KEY = 'locado:randomizer-mode';
+const MIN_OPEN_MS = 60 * 60000; // «открыто сейчас» — ещё хотя бы час
+
+const readMode = () => { try { return localStorage.getItem(MODE_KEY) === 'any' ? 'any' : 'now'; } catch { return 'now'; } };
+const saveMode = (mode) => { try { localStorage.setItem(MODE_KEY, mode); } catch { /* приватный режим */ } };
+
+/** Открыто сейчас и не закроется в ближайший час. */
+function openForAWhile(place, now = new Date()) {
+  if (!place.schedule) return false;
+  const status = getOpenStatus(place, now);
+  if (!status.isOpen) return false;
+  return status.roundTheClock || !status.nextChangeAt || status.nextChangeAt - now >= MIN_OPEN_MS;
+}
+
+const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 export function initRandomizer(places) {
   const modalEl = $('#randomizer-modal');
   if (!modalEl) return null;
 
   const chips = $$('#randomizer-categories .chip', modalEl);
-  const submitBtn = $('#randomizer-submit', modalEl);
+  const modeBtns = $$('.randomizer__mode-btn', modalEl);
   const acceptBtn = $('#randomizer-accept', modalEl);
   const rerollBtn = $('#randomizer-reroll', modalEl);
+  const actions = $('#randomizer-actions', modalEl);
   const preview = $('#randomizer-preview', modalEl);
+  const empty = $('#randomizer-empty', modalEl);
+  const dice = $('.randomizer__dice', modalEl);
   const previewImg = $('#preview-img', modalEl);
-  const previewName = $('#preview-name', modalEl);
-  const previewCategory = $('#preview-category', modalEl);
-  const previewDesc = $('#preview-desc', modalEl);
 
   // Нет фото или не загрузилось — остаётся тёплая подложка (card.css)
   previewImg?.addEventListener('error', () => previewImg.classList.add('is-broken'));
 
   let category = 'all';
+  let mode = readMode();
   let current = null;
+  const seen = new Set(); // уже показанные в текущем выборе — без повторов
 
-  const pool = () => (category === 'all' ? places : places.filter((p) => p.category === category));
+  const pool = () => {
+    const now = new Date();
+    return places.filter((p) => (category === 'all' || p.category === category)
+      && (mode === 'any' || openForAWhile(p, now)));
+  };
 
-  const showPreview = (place) => {
+  const facts = (place) => {
+    const [metro] = metroList(place);
+    const status = mode === 'now' ? openStatusLabel(place)?.text : scheduleSummary(place.schedule);
+    return [
+      metro && `<li>${icon('train-front')} м. ${escapeHtml(metro)}</li>`,
+      status && `<li class="${mode === 'now' ? 'is-open' : ''}">${icon('clock')} ${escapeHtml(status)}</li>`
+    ].filter(Boolean).join('');
+  };
+
+  const render = (place) => {
     current = place;
     previewImg.classList.remove('is-broken');
     previewImg.src = place.photoSm || place.photo || '';
-    previewImg.alt = '';
-    previewName.textContent = place.name;
-    previewCategory.textContent = place.type || categoryLabel(place.category);
-    previewDesc.textContent = place.description || '';
-    preview.style.display = 'flex';
-    submitBtn.style.display = 'none';
-    acceptBtn.style.display = 'flex';
-    rerollBtn.style.display = 'flex';
+    $('#preview-name', modalEl).textContent = place.name;
+    $('#preview-category', modalEl).textContent = place.type || categoryLabel(place.category);
+    $('#preview-desc', modalEl).textContent = place.description || '';
+    $('#preview-facts', modalEl).innerHTML = facts(place);
+    preview.hidden = false;
+    empty.hidden = true;
+    actions.hidden = false;
   };
 
-  const resetState = () => {
+  const showEmpty = () => {
     current = null;
-    preview.style.display = 'none';
-    submitBtn.style.display = 'flex';
-    acceptBtn.style.display = 'none';
-    rerollBtn.style.display = 'none';
+    $('#randomizer-empty-text', modalEl).textContent = category === 'all'
+      ? 'Сейчас почти всё закрыто или скоро закроется.'
+      : `Сейчас в категории «${CATEGORIES[category]?.label || ''}» всё закрыто или скоро закроется.`;
+    preview.hidden = true;
+    empty.hidden = false;
+    actions.hidden = true;
   };
 
-  const roll = () => {
+  /** Бросок с короткой анимацией: кубик крутится, карточка сменяется. */
+  const roll = ({ animate = true } = {}) => {
     const candidates = pool();
-    if (!candidates.length) {
-      import('./toast.js').then(({ showToast }) => showToast('В этой категории пока нет мест', true));
-      return;
+    if (!candidates.length) { showEmpty(); return; }
+    let fresh = candidates.filter((p) => !seen.has(p.slug) && p.slug !== current?.slug);
+    if (!fresh.length) { // показали всё — начинаем круг заново
+      seen.clear();
+      fresh = candidates.filter((p) => p.slug !== current?.slug);
+      if (!fresh.length) fresh = candidates;
     }
-    showPreview(pickRandom(candidates));
+    const next = pickRandom(fresh);
+    seen.add(next.slug);
+    if (!animate || reducedMotion()) { render(next); return; }
+    dice?.classList.remove('is-rolling');
+    void dice?.getBoundingClientRect(); // перезапуск анимации
+    dice?.classList.add('is-rolling');
+    preview.classList.add('is-changing');
+    setTimeout(() => { render(next); preview.classList.remove('is-changing'); }, 180);
   };
 
-  const reroll = () => {
-    const candidates = pool();
-    if (candidates.length <= 1) {
-      import('./toast.js').then(({ showToast }) => showToast('В категории только одно место', true));
-      return;
-    }
-    showPreview(pickRandom(candidates, current?.slug));
+  const restart = () => { seen.clear(); current = null; roll(); };
+
+  const setMode = (value) => {
+    mode = value;
+    saveMode(mode);
+    setPressed(modeBtns, (b) => b.dataset.mode === mode);
   };
 
-  const goToPlace = () => {
-    if (!current) return;
-    window.location.href = placeUrl(current.slug);
-  };
+  const goToPlace = () => { if (current) window.location.href = placeUrl(current.slug); };
 
-  // Окно сразу показывает случайное место: пользователь и так «затрудняется
-  // выбрать», поэтому категория — лишь необязательное уточнение.
   const modal = createModal(modalEl, {
     onOpen: () => {
-      category = 'all';
-      setPressed(chips, (c) => c.dataset.category === 'all');
-      resetState();
-      roll();
+      setPressed(modeBtns, (b) => b.dataset.mode === mode);
+      // Повторное открытие показывает прежнее место, если оно ещё подходит
+      if (current && pool().some((p) => p.slug === current.slug)) { render(current); return; }
+      roll({ animate: false });
     }
   });
 
   on($('#hero-random-icon'), 'click', (e) => { e.preventDefault(); modal.open(); });
 
-  chips.forEach((chip) => {
-    on(chip, 'click', () => {
-      category = chip.dataset.category;
-      setPressed(chips, (c) => c === chip);
-      resetState();
-      roll();
-    });
-  });
+  chips.forEach((chip) => on(chip, 'click', () => {
+    category = chip.dataset.category;
+    setPressed(chips, (c) => c === chip);
+    chip.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+    restart();
+  }));
+  modeBtns.forEach((btn) => on(btn, 'click', () => {
+    if (btn.dataset.mode === mode) return;
+    setMode(btn.dataset.mode);
+    restart();
+  }));
+  on($('#randomizer-any', modalEl), 'click', () => { setMode('any'); restart(); });
 
-  on(submitBtn, 'click', roll);
-  on(rerollBtn, 'click', reroll);
+  on(rerollBtn, 'click', () => roll());
   on(acceptBtn, 'click', goToPlace);
-  on(preview, 'click', (e) => { if (!e.target.closest('.randomizer-actions')) goToPlace(); });
+  on(preview, 'click', goToPlace);
   on(preview, 'keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goToPlace(); } });
 
   return modal;
