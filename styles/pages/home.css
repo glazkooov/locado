@@ -438,29 +438,24 @@
 /* Карта после полосы — отступ уже дала полоса */
 .categories-collections + .map { margin-top: 80px; }
 
-.cat-col-grid {
-  display: grid;
-  grid-template-columns: 0.85fr 1.15fr;
-  gap: 20px;
-  align-items: start;
-}
-
-@media (max-width: 768px) {
-  .cat-col-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-.cat-col-left .category-masonry-grid {
+/* Категории — ряд плиток, под ним подборки своей сеткой: раньше стояли
+   двумя колонками рядом и почти никогда не заканчивались на одной высоте */
+.category-masonry-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
 }
 
-.cat-col-right .collections-grid {
+.collections-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
+  margin-top: 32px;
+}
+
+@media (min-width: 769px) {
+  .category-masonry-grid { grid-template-columns: repeat(6, 1fr); }
+  .collections-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
 /* Плитки категорий: тёплый «утренний» градиент hero вместо холодного
@@ -516,7 +511,7 @@
 /* На телефоне — две компактные колонки: в одну колонку шесть плиток
    по 160px занимали почти два экрана */
 @media (max-width: 420px) {
-  .cat-col-left .category-masonry-grid {
+  .category-masonry-grid {
     gap: 10px;
   }
   .category-masonry {
@@ -1146,16 +1141,3 @@
 }
 
 .collection-card { cursor: pointer; }
-
-.collections-all-link {
-  display: inline-flex;
-  align-items: center;
-  min-height: 40px;
-  margin-top: 8px;
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  color: var(--primary-text);
-  text-decoration: none;
-}
-
-.collections-all-link:hover { text-decoration: underline; text-underline-offset: 3px; }
