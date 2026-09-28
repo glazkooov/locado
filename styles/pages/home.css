@@ -552,7 +552,11 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0.72) 0%, rgba(0, 0, 0, 0.25) 70%, rgba(0, 0, 0, 0.1) 100%);
+  /* Текст карточки может тянуться на всю ширину — затемняем всю карточку,
+     сильнее слева и снизу: белый текст читается на любом фото (≥ 4.5:1) */
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, 0.35) 100%),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.78) 0%, rgba(0, 0, 0, 0.6) 60%, rgba(0, 0, 0, 0.5) 100%);
   z-index: 1;
   border-radius: inherit;
 }
@@ -588,7 +592,7 @@
 
 .collection-desc {
   font-size: var(--fs-sm);
-  opacity: 0.9;
+  opacity: 0.95;
   margin-bottom: 16px;
   line-height: 1.5;
 }

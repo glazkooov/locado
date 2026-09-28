@@ -406,3 +406,38 @@
 @media (min-width: 992px) {
   .collections-index__title { font-size: 2rem; }
 }
+
+/* ---------- Обложка подборки: текст читается на любом фото ----------
+   Текста здесь больше, чем у места (заголовок, лид, плашки), и он выше.
+   Затемнение под ним рассчитано на худший случай — белое фото: не меньше
+   55% чёрного под мелким текстом даёт контраст белого ≥ 4.5:1 (WCAG AA). */
+.collection-hero .hero-overlay {
+  background: linear-gradient(180deg,
+    rgba(0, 0, 0, 0.42) 0%,
+    rgba(0, 0, 0, 0.12) 22%,
+    rgba(0, 0, 0, 0.58) 44%,
+    rgba(0, 0, 0, 0.78) 70%,
+    rgba(0, 0, 0, 0.9) 100%);
+}
+
+/* Подпись формата — белая: оранжевая на светлом фото терялась */
+.collection-hero .hero-category { color: #fff; opacity: 0.9; }
+
+.collection-hero .hero-subtitle { color: #fff; }
+
+/* Воздух между заголовком и лидом */
+.collection-hero .hero-title { margin-bottom: 18px; }
+.collection-hero .hero-subtitle { margin-bottom: 24px; }
+
+@media (max-width: 767px) {
+  /* На телефоне текст занимает почти всю обложку — затемняем её целиком,
+     фото остаётся видно сверху */
+  .collection-hero .hero-overlay {
+    background: linear-gradient(180deg,
+      rgba(0, 0, 0, 0.5) 0%,
+      rgba(0, 0, 0, 0.58) 25%,
+      rgba(0, 0, 0, 0.72) 60%,
+      rgba(0, 0, 0, 0.9) 100%);
+  }
+  .collection-hero .hero-title { margin-bottom: 14px; }
+}
