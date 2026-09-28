@@ -6,6 +6,7 @@
 // здесь всё собрано в одном общем модуле, подключаемом на каждой странице.
 
 import { $, $$, on } from './core/dom.js';
+import { initInstall } from './components/install.js';
 
 const syncHeaderHeight = () => {
   const header = $('.main-header');
@@ -132,3 +133,4 @@ initBackToTop();
 initHeaderOverlay();
 initScrollReveal();
 initCopyButtons();
+initInstall();

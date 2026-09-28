@@ -12,6 +12,14 @@
   <meta property="og:description" content="Город, рассказанный простыми словами. Места и маршруты по настроению.">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <!-- Установка на экран телефона как приложение (PWA). Пути относительные —
+       при переезде на свой домен ничего менять не нужно -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="assets/app/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Локадо">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link rel="preload" href="assets/fonts/unbounded-cyrillic-700-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/raleway-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles/main.css">
@@ -42,7 +50,10 @@
             <li><a href="index.html#map-section" class="nav-item">Карта</a></li>
             <li><a href="index.html#all-places" class="nav-item">Все места</a></li>
           </ul>
-          <p class="nav__slogan">Места в Москве под настроение</p>
+          <button type="button" class="install-link install-link--nav" data-install hidden>
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#smartphone"></use></svg> Добавить на экран телефона
+        </button>
+        <p class="nav__slogan">Места в Москве под настроение</p>
         </nav>
       </div>
     </header>
@@ -316,6 +327,10 @@
       <div class="site-footer__brand">
         <span class="logo footer-logo">Локадо</span>
         <p class="site-footer__tagline">Места в Москве под настроение — для дней, когда хочется выбраться, но непонятно куда.</p>
+        <!-- Установка на экран телефона — видна только на телефоне и если сайт ещё не установлен (install.js) -->
+        <button type="button" class="install-link" data-install hidden>
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#smartphone"></use></svg> Локадо на экране телефона
+        </button>
       </div>
 
       <nav class="site-footer__col" aria-label="Навигация">
