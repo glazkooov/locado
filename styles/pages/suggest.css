@@ -124,48 +124,71 @@
   font-weight: 700;
 }
 
-/* --- Пример истории --- */
+/* --- Пример истории: «записка» — цитата крупно, место, две строки --- */
 .suggest-example { margin-top: 56px; }
 
-.suggest-example__card {
-  position: relative;
-  margin-top: 20px;
-  padding: 24px;
-  border-radius: var(--radius-card);
-  background:
-    radial-gradient(ellipse 70% 80% at 100% 0%, rgba(255, 170, 110, 0.3), transparent 70%),
-    linear-gradient(160deg, #FFF6EE 0%, #FBE6D6 100%);
-}
-
-.suggest-example__tag {
-  display: inline-block;
-  margin-bottom: 16px;
-  padding: 4px 10px;
-  border-radius: var(--radius-pill);
-  background: rgba(255, 255, 255, 0.8);
-  font-size: var(--fs-caption);
-  font-weight: 600;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: var(--primary-text);
-}
-
-.suggest-example__list { display: grid; gap: 16px; margin: 0; }
-
-.suggest-example__list dt {
-  font-size: var(--fs-caption);
-  font-weight: 600;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: var(--primary-text);
-}
-
-.suggest-example__list dd {
-  margin: 4px 0 0;
-  max-width: 640px;
-  font-size: var(--fs-md);
+.suggest-example__hint {
+  margin-top: 10px;
+  max-width: 420px;
+  font-size: var(--fs-sm);
   line-height: 1.55;
+  color: var(--text-light);
+}
+
+.story {
+  position: relative;
+  max-width: 760px;
+  margin: 20px 0 0;
+  padding: 28px 24px 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: #fff;
+  box-shadow: var(--shadow-soft);
+}
+
+.story__mark {
+  display: block;
+  height: 36px;
+  font-family: var(--font-heading);
+  font-size: 4rem;
+  line-height: 1;
+  color: var(--primary);
+}
+
+.story__why {
+  margin: 0;
+  font-size: var(--fs-lg);
+  line-height: 1.6;
   color: var(--ink);
+}
+
+.story__place {
+  margin-top: 14px;
+  font-size: var(--fs-sm);
+  color: var(--text-light);
+}
+
+.story__place strong { color: var(--text); font-weight: 600; }
+
+.story__more {
+  display: grid;
+  gap: 14px;
+  margin: 20px 0 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.story__more dt {
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--text-light);
+}
+
+.story__more dd {
+  margin: 2px 0 0;
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  color: var(--text);
 }
 
 /* --- Финал --- */
@@ -196,9 +219,8 @@
 
 @media (min-width: 768px) {
   .suggest-steps__list { grid-template-columns: repeat(3, 1fr); }
-  .suggest-example__card { padding: 32px 36px; }
-  .suggest-example__list { grid-template-columns: 1fr 1fr; gap: 20px 40px; }
-  .suggest-example__list div:nth-child(-n + 2) { grid-column: 1 / -1; }
+  .story { padding: 32px 36px 28px; }
+  .story__more { grid-template-columns: 1fr 1fr; gap: 24px; }
 }
 
 @media (min-width: 768px) {
@@ -211,6 +233,13 @@
 }
 
 @media (min-width: 1024px) {
+  .suggest-example {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: 48px;
+    align-items: start;
+  }
+  .suggest-example .story { margin-top: 0; }
   .suggest-hero { gap: 48px; padding-top: 72px; }
   .suggest-hero__art { height: 360px; }
 }

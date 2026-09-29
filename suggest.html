@@ -102,16 +102,19 @@
 
     <!-- Пример: снимает страх пустого поля и показывает, чего ждём -->
     <section class="suggest-example container" aria-labelledby="suggest-example-title">
-      <h2 class="section-title" id="suggest-example-title">Как может выглядеть история</h2>
-      <div class="suggest-example__card">
-        <span class="suggest-example__tag">Пример</span>
-        <dl class="suggest-example__list">
-          <div><dt>Где это</dt><dd>Усадьба Кусково, м. Рязанский проспект</dd></div>
-          <div><dt>Почему ты его любишь</dt><dd>Дворец у большого пруда, регулярный парк и павильоны, будто перенесённые из Голландии и Италии. Здесь легко провести полдня и ни разу не посмотреть в телефон. Прихожу сюда, когда хочется тишины.</dd></div>
-          <div><dt>Когда лучше прийти</dt><dd>В будни утром: людей почти нет, а дворец отражается в пруду.</dd></div>
-          <div><dt>Что стоит заметить</dt><dd>Загляни в Голландский домик — внутри стены в старинных изразцах.</dd></div>
-        </dl>
+      <div class="suggest-example__head">
+        <h2 class="section-title" id="suggest-example-title">Как может выглядеть история</h2>
+        <p class="suggest-example__hint">Писать красиво не нужно — пиши как есть. Главное — почему это место тебе дорого.</p>
       </div>
+      <figure class="story">
+        <span class="story__mark" aria-hidden="true">“</span>
+        <blockquote class="story__why">Дворец у большого пруда, регулярный парк и павильоны, будто перенесённые из Голландии и Италии. Здесь легко провести полдня и ни разу не посмотреть в телефон. Прихожу сюда, когда хочется тишины.</blockquote>
+        <figcaption class="story__place"><strong>Усадьба Кусково</strong> · м. Рязанский проспект</figcaption>
+        <dl class="story__more">
+          <div><dt>Когда прийти</dt><dd>В будни утром: людей почти нет, а дворец отражается в пруду.</dd></div>
+          <div><dt>Что заметить</dt><dd>Голландский домик — внутри стены в старинных изразцах.</dd></div>
+        </dl>
+      </figure>
     </section>
 
     <section class="suggest-final container">
