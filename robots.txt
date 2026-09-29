@@ -1,0 +1,21 @@
+# Бета: сайт закрыт от поисковиков, пока наполняется контент.
+# Боты мессенджеров и соцсетей пропускаем — чтобы у ссылок было превью.
+# На релизе: удалить последний блок (Disallow: /) и добавить строку Sitemap.
+
+User-agent: TelegramBot
+Allow: /
+
+User-agent: vkShare
+Allow: /
+
+User-agent: WhatsApp
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: *
+Disallow: /

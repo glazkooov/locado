@@ -183,3 +183,17 @@
 .back-to-top.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
 
 .back-to-top:hover { background: #fff; color: var(--primary-text); }
+
+.site-footer__bottom p {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 16px;
+}
+
+.site-footer__bottom a {
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+}
+
+.site-footer__bottom a:hover { color: #fff; text-decoration: underline; text-underline-offset: 3px; }

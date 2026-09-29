@@ -1,0 +1,64 @@
+/* pages/legal.css — privacy.html: длинный текст, узкая колонка для чтения */
+
+.legal {
+  padding-top: 48px;
+  padding-bottom: 72px;
+}
+
+.legal__article {
+  max-width: 720px;
+  font-size: var(--fs-md);
+  line-height: 1.65;
+  color: var(--text);
+}
+
+.legal__title {
+  font-family: var(--font-heading);
+  font-size: var(--fs-2xl);
+  line-height: 1.2;
+}
+
+.legal__updated {
+  margin-top: 8px;
+  font-size: var(--fs-sm);
+  color: var(--text-light);
+}
+
+.legal__summary {
+  margin: 28px 0 8px;
+  padding: 18px 20px;
+  border-radius: var(--radius-card);
+  background: var(--cream-deep);
+}
+
+.legal__article h2 {
+  margin: 36px 0 10px;
+  font-family: var(--font-heading);
+  font-size: var(--fs-lg);
+  line-height: 1.3;
+}
+
+.legal__article h3 {
+  margin: 22px 0 6px;
+  font-size: var(--fs-md);
+}
+
+.legal__article p + p { margin-top: 10px; }
+
+.legal__article ul {
+  margin: 10px 0;
+  padding-left: 1.25em;
+  list-style: disc;
+}
+
+.legal__article li + li { margin-top: 6px; }
+
+.legal__article a {
+  color: var(--primary-text);
+  text-underline-offset: 3px;
+}
+
+@media (min-width: 992px) {
+  .legal { padding-top: 64px; }
+  .legal__title { font-size: 2rem; }
+}
