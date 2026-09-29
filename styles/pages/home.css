@@ -742,47 +742,6 @@
   box-shadow: var(--shadow-soft);
 }
 
-/* «Знаешь классное место?» — вход в форму suggest.html */
-.suggest-cta { padding: 16px 0 40px; }
-
-.suggest-cta__card {
-  display: flex;
-  align-items: center;
-  gap: 28px;
-  padding: 28px 32px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  background:
-    radial-gradient(ellipse 60% 90% at 100% 0%, rgba(255, 170, 110, 0.35), transparent 70%),
-    linear-gradient(160deg, #FFF6EE 0%, #FBE6D6 100%);
-  color: var(--text);
-  text-decoration: none;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.suggest-cta__card:hover { transform: translateY(-3px); box-shadow: var(--shadow-soft); }
-
-.suggest-cta__art { flex: none; width: 120px; height: auto; }
-
-.suggest-cta__text { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-
-.suggest-cta__title {
-  font-family: var(--font-heading);
-  font-size: var(--fs-xl);
-  font-weight: 700;
-  line-height: 1.2;
-}
-
-.suggest-cta__sub { font-size: var(--fs-sm); color: var(--text-light); line-height: 1.5; }
-
-.suggest-cta__btn { flex: none; }
-
-@media (max-width: 640px) {
-  .suggest-cta__card { flex-direction: column; align-items: flex-start; gap: 16px; padding: 22px 20px; }
-  .suggest-cta__art { display: none; }
-  .suggest-cta__btn { align-self: stretch; justify-content: center; }
-}
-
 .place-section {
   margin-top: 96px;
 }

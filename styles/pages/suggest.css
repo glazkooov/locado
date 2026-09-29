@@ -64,8 +64,7 @@
   font-weight: 700;
 }
 
-.suggest__frame-wrap,
-.suggest__mail {
+.suggest__frame-wrap {
   padding: 24px;
   border: 1px solid var(--line);
   border-radius: var(--radius-card);
@@ -87,22 +86,6 @@
   color: var(--text-light);
   text-underline-offset: 3px;
 }
-
-.suggest__mail-title {
-  font-family: var(--font-heading);
-  font-size: var(--fs-lg);
-  font-weight: 700;
-  color: var(--text);
-}
-
-.suggest__mail p + p {
-  margin-top: 8px;
-  font-size: var(--fs-sm);
-  line-height: 1.5;
-  color: var(--text-light);
-}
-
-.suggest__mail .btn { margin-top: 18px; max-width: 100%; overflow-wrap: anywhere; }
 
 .suggest__note {
   margin-top: 16px;

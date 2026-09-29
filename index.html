@@ -226,26 +226,16 @@
     <!-- 7. Добавить место.
          Скрыто, пока нет страниц suggest-user.html и add_place-business.html:
          карточки вели на 404. Когда страницы появятся — убрать атрибут hidden. -->
-    <section class="suggest-cta">
-      <div class="container">
-        <a class="suggest-cta__card" href="suggest.html">
-          <img class="suggest-cta__art" src="assets/images/ui/undraw_city-girl_b84p.svg" alt="" loading="lazy">
-          <span class="suggest-cta__text">
-            <span class="section-mini">Поделись находкой</span>
-            <span class="suggest-cta__title">Знаешь классное место?</span>
-            <span class="suggest-cta__sub">Расскажи о нём как другу — лучшие истории станут местами на Локадо</span>
-          </span>
-          <span class="btn suggest-cta__btn">Предложить место</span>
-        </a>
-      </div>
-    </section>
 
     <!-- 8. Лента всех мест -->
     <section class="place-section" id="all-places">
       <div class="container">
-        <div class="section-head">
-          <span class="section-mini" aria-hidden="true">для вдохновения</span>
-          <h2 class="section-title">Посмотрим все места?</h2>
+        <div class="section-head section-head--row">
+          <div>
+            <span class="section-mini" aria-hidden="true">для вдохновения</span>
+            <h2 class="section-title">Посмотрим все места?</h2>
+          </div>
+          <a class="section-link" href="suggest.html">Предложить место →</a>
         </div>
 
         <div class="categories_menu">
@@ -280,7 +270,7 @@
         <button type="button" class="btn btn-secondary" id="show-more-btn">Показать ещё</button>
         <div class="feed-end" aria-live="polite">
           <p>Это все места на сегодня ✨</p>
-          <span>Мы добавляем новые места — загляни ещё или <a href="suggest.html">предложи своё</a></span>
+          <span>Мы добавляем новые места — загляни ещё или <a href="suggest.html">расскажи о своём</a></span>
         </div>
       </div>
     </section>

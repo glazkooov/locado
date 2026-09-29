@@ -63,18 +63,12 @@
     </div>
 
     <div class="suggest__form">
-      <!-- Яндекс Форма: id задаётся в scripts/pages/suggest.js. Пока формы нет,
-           показываем почту — предложение всё равно можно отправить -->
-      <div class="suggest__frame-wrap" id="suggest-frame-wrap" hidden>
+      <!-- Яндекс Форма: id — в scripts/pages/suggest.js -->
+      <div class="suggest__frame-wrap">
         <iframe class="suggest__frame" id="suggest-frame" title="Форма: предложить место"></iframe>
       </div>
-      <a class="suggest__fallback" id="suggest-fallback" href="#" target="_blank" rel="noopener" hidden>Форма не открылась? Открой её в новой вкладке</a>
+      <a class="suggest__fallback" id="suggest-fallback" href="#" target="_blank" rel="noopener">Форма не открылась? Открой её в новой вкладке</a>
 
-      <div class="suggest__mail" id="suggest-mail" hidden>
-        <p class="suggest__mail-title">Пришли место на почту</p>
-        <p>Где это и почему ты любишь это место — этого достаточно.</p>
-        <a class="btn" id="suggest-mail-btn" href="mailto:hello.locado@yandex.ru?subject=%D0%9F%D1%80%D0%B5%D0%B4%D0%BB%D0%B0%D0%B3%D0%B0%D1%8E%20%D0%BC%D0%B5%D1%81%D1%82%D0%BE">Написать письмо</a>
-      </div>
 
       <p class="suggest__note">Отправляя историю, ты разрешаешь нам отредактировать её и использовать в описании места на Локадо. Как мы обращаемся с данными — в <a href="privacy.html">политике конфиденциальности</a>.</p>
     </div>
