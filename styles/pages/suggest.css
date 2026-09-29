@@ -27,6 +27,14 @@
   color: var(--text-light);
 }
 
+.suggest-hero__kinds {
+  margin-top: 10px;
+  max-width: 460px;
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  color: var(--text-light);
+}
+
 .suggest-hero__btn { margin-top: 24px; }
 
 .suggest-hero__hint {
@@ -116,96 +124,145 @@
   font-weight: 700;
 }
 
-/* --- Пример истории --- */
-.suggest-example { margin-top: 56px; }
-
-.suggest-example__card {
-  position: relative;
-  margin-top: 20px;
-  padding: 24px;
-  border-radius: var(--radius-card);
-  background:
-    radial-gradient(ellipse 70% 80% at 100% 0%, rgba(255, 170, 110, 0.3), transparent 70%),
-    linear-gradient(160deg, #FFF6EE 0%, #FBE6D6 100%);
+/* --- Пример истории: «записка» — цитата крупно, место, две строки.
+   Кнопка — в этом же блоке: на телефоне под запиской, на компьютере
+   слева под заголовком --- */
+.suggest-example {
+  display: grid;
+  grid-template-areas: "head" "story" "cta";
+  gap: 20px;
+  margin-top: 56px;
 }
 
-.suggest-example__tag {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  padding: 4px 10px;
-  border-radius: var(--radius-pill);
-  background: rgba(255, 255, 255, 0.8);
-  font-size: var(--fs-caption);
-  font-weight: 600;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: var(--primary-text);
-}
+.suggest-example__head { grid-area: head; }
+.suggest-example .story { grid-area: story; margin: 0; }
+.suggest-example__cta { grid-area: cta; }
 
-.suggest-example__list { display: grid; gap: 16px; margin: 0; }
-
-.suggest-example__list dt {
-  font-size: var(--fs-caption);
-  font-weight: 600;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: var(--primary-text);
-}
-
-.suggest-example__list dd {
-  margin: 4px 0 0;
-  max-width: 640px;
-  font-size: var(--fs-md);
-  line-height: 1.55;
-  color: var(--ink);
-}
-
-/* --- Финал --- */
-.suggest-final {
-  margin-top: 48px;
-  text-align: center;
-}
-
-.suggest-final__honest {
-  max-width: 520px;
-  margin: 0 auto;
-  font-size: var(--fs-sm);
-  line-height: 1.55;
-  color: var(--text-light);
-}
-
-.suggest-final__btn { margin-top: 20px; }
-
-.suggest-final__note {
-  max-width: 520px;
-  margin: 16px auto 0;
+.suggest-example__honest {
+  margin-top: 10px;
+  max-width: 360px;
   font-size: var(--fs-xs);
   line-height: 1.5;
   color: var(--text-light);
 }
 
-.suggest-final__note a { color: var(--primary-text); text-underline-offset: 3px; }
+.suggest-example__hint {
+  margin-top: 10px;
+  max-width: 420px;
+  font-size: var(--fs-sm);
+  line-height: 1.55;
+  color: var(--text-light);
+}
+
+.story {
+  position: relative;
+  max-width: 760px;
+  margin: 20px 0 0;
+  padding: 28px 24px 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: #fff;
+  box-shadow: var(--shadow-soft);
+}
+
+.story__mark {
+  display: block;
+  height: 36px;
+  font-family: var(--font-heading);
+  font-size: 4rem;
+  line-height: 1;
+  color: var(--primary);
+}
+
+.story__why {
+  margin: 0;
+  font-size: var(--fs-lg);
+  line-height: 1.6;
+  color: var(--ink);
+}
+
+.story__place {
+  margin-top: 14px;
+  font-size: var(--fs-sm);
+  color: var(--text-light);
+}
+
+.story__place strong { color: var(--text); font-weight: 600; }
+
+.story__more {
+  display: grid;
+  gap: 14px;
+  margin: 20px 0 0;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.story__more dt {
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--text-light);
+}
+
+.story__more dd {
+  margin: 2px 0 0;
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  color: var(--text);
+}
 
 @media (min-width: 768px) {
   .suggest-steps__list { grid-template-columns: repeat(3, 1fr); }
-  .suggest-example__card { padding: 32px 36px; }
-  .suggest-example__list { grid-template-columns: 1fr 1fr; gap: 20px 40px; }
-  .suggest-example__list div:nth-child(2) { grid-row: span 2; }
+  .story { padding: 32px 36px 28px; }
+  .story__more { grid-template-columns: 1fr 1fr; gap: 24px; }
 }
 
-@media (min-width: 900px) {
+@media (min-width: 768px) {
   .suggest-hero {
     grid-template-columns: 1.1fr 0.9fr;
-    gap: 48px;
-    padding-top: 72px;
+    gap: 32px;
+    padding-top: 56px;
   }
+  .suggest-hero__art { height: 300px; }
+}
+
+@media (min-width: 1024px) {
+  .suggest-example {
+    grid-template-columns: 0.8fr 1.2fr;
+    grid-template-areas: "head story" "cta story";
+    grid-template-rows: auto 1fr;
+    gap: 24px 48px;
+  }
+  /* Кнопка с подписью — вровень с низом записки */
+  .suggest-example__cta { align-self: end; }
+  .suggest-hero { gap: 48px; padding-top: 72px; }
   .suggest-hero__art { height: 360px; }
 }
 
 @media (max-width: 480px) {
   .suggest-hero__btn,
-  .suggest-final__btn { width: 100%; justify-content: center; }
-  .suggest-hero__art { height: 240px; }
+  .suggest-example__cta .btn { width: 100%; justify-content: center; }
+  .suggest-hero__art { height: 200px; }
   .suggest-hero__note { max-width: 170px; font-size: var(--fs-xs); }
+}
+
+/* --- Окно с формой --- */
+.suggest-modal__consent { margin-bottom: 12px; font-size: var(--fs-xs); line-height: 1.5; }
+.suggest-modal__consent a { color: var(--primary-text); text-underline-offset: 3px; }
+
+/* Запасная ссылка — тихая: нужна, только если форма не загрузилась */
+.suggest-modal__fallback { font-size: var(--fs-xs); text-decoration: none; }
+.suggest-modal__fallback:hover { text-decoration: underline; }
+
+/* На телефоне — на весь экран: длинная форма в окне поверх страницы
+   давала две прокрутки */
+@media (max-width: 600px) {
+  #suggest-modal { padding: 0; align-items: stretch; }
+  #suggest-modal .modal-content {
+    max-width: none;
+    height: 100dvh;
+    max-height: 100dvh;
+    border-radius: 0;
+  }
+  #suggest-modal .report-modal__frame-wrap { padding: 12px 8px 4px; border: 0; }
+  #suggest-modal .report-modal__frame { height: auto; min-height: 70dvh; }
 }
