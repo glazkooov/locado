@@ -162,7 +162,7 @@
 }
 
 .mobile-menu-toggle {
-  display: block; /* показываем на мобильных */
+  display: grid; /* показываем на мобильных; значки — в одной клетке */
   background: none;
   border: none;
   font-size: 1.75rem;
@@ -218,14 +218,24 @@
   .header-search:hover { border-color: var(--primary); }
 }
 
-.mobile-menu-toggle__close,
-.nav__slogan { display: none; }
+/* Бургер ↔ крестик: оба значка в одной клетке, меняются поворотом */
+.mobile-menu-toggle { place-items: center; }
+.mobile-menu-toggle .icon { grid-area: 1 / 1; transition: opacity 0.2s ease, transform 0.25s ease; }
+.mobile-menu-toggle__close { opacity: 0; transform: rotate(-90deg); }
+.mobile-menu-toggle[aria-expanded="true"] .mobile-menu-toggle__open { opacity: 0; transform: rotate(90deg); }
+.mobile-menu-toggle[aria-expanded="true"] .mobile-menu-toggle__close { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-menu-toggle .icon { transition: none; }
+}
+
+/* Нижняя часть мобильного меню (ui.js) — на компьютере не нужна */
+.nav-extra,
+.nav-contact { display: none; }
 
 @media (max-width: 768px) {
-  .mobile-menu-toggle[aria-expanded="true"] .mobile-menu-toggle__open { display: none; }
-  .mobile-menu-toggle[aria-expanded="true"] .mobile-menu-toggle__close { display: inline-block; }
-
-  /* Меню во весь экран: тёплый фон, крупные ссылки, слоган внизу */
+  /* Меню во весь экран: разделы крупно, ниже — поиск, категории,
+     «Предложить место», внизу — установка и почта */
   .nav {
     position: fixed;
     /* top/height, а не bottom: шапка с backdrop-filter — контейнер
@@ -239,8 +249,9 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    justify-content: space-between;
-    padding: 32px 16px calc(28px + env(safe-area-inset-bottom));
+    justify-content: flex-start;
+    gap: 24px;
+    padding: 20px 16px calc(24px + env(safe-area-inset-bottom));
     opacity: 0;
     visibility: hidden;
     transform: translateY(-8px);
@@ -253,7 +264,12 @@
     transform: none;
     transition: opacity 0.25s ease, transform 0.25s ease;
   }
+  /* Фиксируем body (top ставит ui.js): overflow: hidden Safari на iPhone
+     не всегда соблюдает, и страница под меню прокручивалась */
   body.nav-open {
+    position: fixed;
+    left: 0;
+    right: 0;
     overflow: hidden;
   }
   .nav-list {
@@ -263,19 +279,81 @@
   .nav-list li { border-bottom: 1px solid var(--line); }
   .nav-item {
     display: block;
-    padding: 18px 0;
+    padding: 14px 0;
     font-family: var(--font-heading);
-    font-size: var(--fs-2xl);
+    font-size: var(--fs-xl);
     font-weight: 700;
     letter-spacing: -0.03em;
     color: var(--ink);
   }
-  .nav__slogan {
+  .nav-list li:last-child { border-bottom: 0; }
+
+  .nav-extra {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .nav-search {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 0 16px;
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-pill);
+    background: #fff;
+    color: var(--text-light);
+    font-size: var(--fs-md);
+    text-decoration: none;
+  }
+
+  .nav-search .icon { color: var(--text); }
+
+  .nav-cats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .nav-cats a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 40px;
+    padding: 0 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.7);
+    color: var(--text);
+    font-size: var(--fs-sm);
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  .nav-cats .icon { color: var(--primary); }
+
+  .nav-suggest {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    color: var(--primary-text);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .nav-contact {
     display: block;
-    margin-top: 32px;
+    margin-top: auto;
     font-size: var(--fs-sm);
     color: var(--text-light);
   }
+
+  .nav-contact a { color: var(--text); font-weight: 600; text-decoration: none; }
   .nav-right {
     margin-top: 1rem;
   }
