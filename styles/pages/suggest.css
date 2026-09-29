@@ -42,6 +42,14 @@
 
 .suggest__steps strong { color: var(--text); font-weight: 600; }
 
+.suggest__honest {
+  margin-top: 20px;
+  max-width: 440px;
+  font-size: var(--fs-xs);
+  line-height: 1.55;
+  color: var(--text-light);
+}
+
 .suggest__num {
   flex: none;
   display: grid;

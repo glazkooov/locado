@@ -186,6 +186,7 @@ function renderDescription(place) {
   const el = $('#place-description');
   el.innerHTML = text ? `<p>${escapeHtml(text)}</p>` : '';
   el.hidden = !text;
+  $('#place-readers').hidden = !place.fromReaders;
 }
 
 // Пользователю — только первые теги места (в данных они самые характерные:
