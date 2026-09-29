@@ -1,7 +1,7 @@
 // components/consent.js — плашка про cookie и согласие на статистику.
 // Выбор хранится в localStorage; пока его нет, плашка видна на каждой
 // странице. Метрику подключать через onAnalyticsConsent — она запустится
-// только после «Принять» (сразу, если согласие уже дали раньше).
+// только после «Хорошо» (сразу, если согласие уже дали раньше).
 
 const KEY = 'locado:cookie-consent'; // 'accepted' | 'declined'
 const listeners = [];
@@ -20,10 +20,10 @@ export function onAnalyticsConsent(fn) {
 function bannerHtml() {
   return `
   <div class="consent-banner" id="consent-banner" role="region" aria-label="Cookie">
-    <p class="consent-banner__text">Мы используем cookie для статистики посещений. <a href="privacy.html">Подробнее</a></p>
+    <p class="consent-banner__text">Мы считаем посещения с помощью cookie&nbsp;— так понятно, какие места и подборки тебе интересны. <a href="privacy.html">Подробнее</a></p>
     <div class="consent-banner__actions">
-      <button type="button" class="consent-banner__btn consent-banner__btn--ghost" data-consent="declined">Отказаться</button>
-      <button type="button" class="consent-banner__btn" data-consent="accepted">Принять</button>
+      <button type="button" class="consent-banner__btn consent-banner__btn--ghost" data-consent="declined">Не надо</button>
+      <button type="button" class="consent-banner__btn" data-consent="accepted">Хорошо</button>
     </div>
   </div>`;
 }
