@@ -27,6 +27,14 @@
   color: var(--text-light);
 }
 
+.suggest-hero__kinds {
+  margin-top: 10px;
+  max-width: 460px;
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  color: var(--text-light);
+}
+
 .suggest-hero__btn { margin-top: 24px; }
 
 .suggest-hero__hint {
@@ -130,9 +138,8 @@
 }
 
 .suggest-example__tag {
-  position: absolute;
-  top: 16px;
-  right: 16px;
+  display: inline-block;
+  margin-bottom: 16px;
   padding: 4px 10px;
   border-radius: var(--radius-pill);
   background: rgba(255, 255, 255, 0.8);
@@ -191,21 +198,48 @@
   .suggest-steps__list { grid-template-columns: repeat(3, 1fr); }
   .suggest-example__card { padding: 32px 36px; }
   .suggest-example__list { grid-template-columns: 1fr 1fr; gap: 20px 40px; }
-  .suggest-example__list div:nth-child(2) { grid-row: span 2; }
+  .suggest-example__list div:nth-child(-n + 2) { grid-column: 1 / -1; }
 }
 
-@media (min-width: 900px) {
+@media (min-width: 768px) {
   .suggest-hero {
     grid-template-columns: 1.1fr 0.9fr;
-    gap: 48px;
-    padding-top: 72px;
+    gap: 32px;
+    padding-top: 56px;
   }
+  .suggest-hero__art { height: 300px; }
+}
+
+@media (min-width: 1024px) {
+  .suggest-hero { gap: 48px; padding-top: 72px; }
   .suggest-hero__art { height: 360px; }
 }
 
 @media (max-width: 480px) {
   .suggest-hero__btn,
   .suggest-final__btn { width: 100%; justify-content: center; }
-  .suggest-hero__art { height: 240px; }
+  .suggest-hero__art { height: 200px; }
   .suggest-hero__note { max-width: 170px; font-size: var(--fs-xs); }
+}
+
+/* --- Окно с формой --- */
+.suggest-modal__consent { margin-bottom: 12px; font-size: var(--fs-xs); line-height: 1.5; }
+.suggest-modal__consent a { color: var(--primary-text); text-underline-offset: 3px; }
+
+/* Запасная ссылка — тихая: нужна, только если форма не загрузилась */
+.suggest-modal__fallback { font-size: var(--fs-xs); text-decoration: none; }
+.suggest-modal__fallback:hover { text-decoration: underline; }
+
+/* На телефоне — на весь экран: длинная форма в окне поверх страницы
+   давала две прокрутки */
+@media (max-width: 600px) {
+  #suggest-modal { padding: 0; align-items: stretch; }
+  #suggest-modal .modal-content {
+    max-width: none;
+    height: 100dvh;
+    max-height: 100dvh;
+    border-radius: 0;
+  }
+  #suggest-modal .report-modal__frame-wrap { padding: 12px 8px 4px; border: 0; }
+  #suggest-modal .report-modal__frame { height: auto; min-height: 70dvh; }
 }
