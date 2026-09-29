@@ -232,6 +232,8 @@
     grid-template-rows: auto 1fr;
     gap: 24px 48px;
   }
+  /* Кнопка с подписью — вровень с низом записки */
+  .suggest-example__cta { align-self: end; }
   .suggest-hero { gap: 48px; padding-top: 72px; }
   .suggest-hero__art { height: 360px; }
 }
