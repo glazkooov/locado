@@ -46,19 +46,19 @@ const fromLatin = (s) => s.toLowerCase().split('').map((c) => {
 }).join('');
 
 // Поля места с весом: чем важнее поле, тем выше место в выдаче
-const FIELD_WEIGHTS = { name: 6, type: 5, category: 4, tags: 3, metro: 2, price: 2, description: 1.5, address: 1, more: 0.5 };
+// Метро не ищем: для него на карте свой фильтр, а в поиске оно смешивало
+// «где» и «что» («Таганская» находила всё вокруг станции)
+const FIELD_WEIGHTS = { name: 6, type: 5, category: 4, tags: 3, price: 2, description: 1.5, address: 1, more: 0.5 };
 
 const index = new WeakMap();
 function fieldsOf(place, categoryLabel) {
   let f = index.get(place);
   if (f) return f;
-  const metro = Array.isArray(place.metro) ? place.metro.join(' ') : place.metro;
   const raw = {
     name: place.name,
     type: place.type,
     category: categoryLabel(place.category),
     tags: (place.tags || []).join(' | '),
-    metro,
     // «бесплатно» — и по price_level, не только по тексту цены
     price: `${place.price || ''} ${place.price_level === 'free' ? 'бесплатно' : ''}`,
     description: place.description,
@@ -108,8 +108,18 @@ function parseQuery(query) {
     const syn = normSynonyms.get(token);
     if (syn) {
       noteKeys.add(token);
-      // само слово — только целиком (иначе «бар» нашёл бы «барокко»), плюс словарь
-      groups.push([`=${token}`, ...syn.map((t) => (t.startsWith('cat:') ? t : stem(normalizeText(t))))]);
+      // Слово из словаря ищется по словарю. Само слово — только целиком
+      // («бар» не находит «барокко») и только если словарь не ограничивает
+      // поиск разделом: «кафе» — строго «Еда», а не театр со словом «кафе»
+      // в описании
+      const onlyCategory = syn.length > 0 && syn.every((t) => t.startsWith('cat:'));
+      // '=бар' в словаре — только целое слово, как и само слово запроса
+      const alts = syn.map((t) => {
+        if (t.startsWith('cat:')) return t;
+        if (t.startsWith('=')) return `=${stem(normalizeText(t.slice(1)))}`;
+        return stem(normalizeText(t));
+      });
+      groups.push(onlyCategory ? alts : [`=${token}`, ...alts]);
     } else {
       groups.push([token]);
     }
@@ -140,12 +150,13 @@ function rank(places, groups, categoryLabel) {
 }
 
 /** Поиск с порядком по важности совпадения. Возвращает { list, note,
- *  corrected } — note: честная подсказка («кафе у нас пока нет…»),
+ *  suggest, corrected } — note: честная подсказка («кафе у нас пока нет…»),
+ *  suggest: текст ссылки на «Предложить место» для пустого результата,
  *  corrected: запрос, переведённый из английской раскладки. */
 export function searchPlaces(places, query, { categoryLabel = (c) => c } = {}) {
-  if (!normalizeText(query)) return { list: places, note: '', corrected: '' };
+  if (!normalizeText(query)) return { list: places, note: '', suggest: '', corrected: '' };
   let { groups, noteKeys } = parseQuery(query);
-  if (!groups.length) return { list: places, note: '', corrected: '' };
+  if (!groups.length) return { list: places, note: '', suggest: '', corrected: '' };
   let list = rank(places, groups, categoryLabel);
   let corrected = '';
   if (!list.length && /[a-z]/i.test(query) && !/[а-яё]/i.test(query)) {
@@ -155,6 +166,6 @@ export function searchPlaces(places, query, { categoryLabel = (c) => c } = {}) {
     if (!list.length) corrected = '';
   }
   const stems = (words) => words.map((w) => stem(normalizeText(w)));
-  const note = NOTES.find((n) => stems(n.words).some((w) => noteKeys.has(w)))?.text || '';
-  return { list, note, corrected };
+  const found = NOTES.find((n) => stems(n.words).some((w) => noteKeys.has(w)));
+  return { list, note: found?.text || '', suggest: found?.suggest || '', corrected };
 }

@@ -72,6 +72,8 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
   const everywhereBtn = $('#feed-everywhere-btn');
   const examplesEl = $('#feed-empty-examples');
   const resetBtn = $('#feed-reset-btn');
+  const suggestLink = $('.feed-empty__suggest');
+  const suggestDefault = suggestLink?.textContent || '';
   const tabs = $$('.scroll__category-btn');
 
   // label — что выбрал пользователь вне ленты (настроение из hero, подборка):
@@ -139,7 +141,7 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
   // раскладка; в пустом результате — искать везде или примеры запросов
   const syncSearchHints = () => {
     const query = state.query.trim();
-    const details = query ? searchDetails(allPlaces, query) : { note: '', corrected: '' };
+    const details = query ? searchDetails(allPlaces, query) : { note: '', suggest: '', corrected: '' };
     if (noteEl) {
       const text = details.corrected
         ? `Показываем по запросу «${details.corrected}» — похоже, была английская раскладка`
@@ -153,8 +155,9 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
     if (emptyText) {
       emptyText.textContent = foundEverywhere
         ? `В разделе «${categoryLabel(state.category)}» по запросу «${query}» ничего нет, но в других местах есть`
-        : query ? `По запросу «${query}» ничего не нашлось` : 'Ничего не нашлось — попробуй сбросить фильтр';
+        : details.note || (query ? `По запросу «${query}» ничего не нашлось` : 'Ничего не нашлось — попробуй сбросить фильтр');
     }
+    if (suggestLink) suggestLink.textContent = details.suggest || suggestDefault;
     if (everywhereBtn) everywhereBtn.hidden = !foundEverywhere;
     if (resetBtn) resetBtn.hidden = Boolean(foundEverywhere);
     if (examplesEl) {
