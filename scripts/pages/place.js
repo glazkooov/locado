@@ -214,7 +214,7 @@ function renderTags(place) {
   if (!tags.length) return;
   // Тег ведёт в ленту на главной с этим тегом — повод пойти дальше
   container.innerHTML = tags.map((t) =>
-    `<a class="tag-chip" href="index.html?tag=${encodeURIComponent(t)}">#${escapeHtml(t)}</a>`).join('');
+    `<a class="tag-chip" href="./?tag=${encodeURIComponent(t)}">#${escapeHtml(t)}</a>`).join('');
 }
 
 const AMENITY_ICONS = { wifi: 'wifi', parking: 'square-parking', card: 'credit-card', kids: 'baby', outdoor: 'trees', delivery: 'truck', takeaway: 'shopping-bag' };
@@ -267,7 +267,7 @@ function renderSimilar(place, allPlaces) {
   const list = similar(allPlaces, place, 6);
   // В конце ряда — вся категория места
   const moreCard = `
-    <a href="index.html?category=${encodeURIComponent(place.category)}" class="similar-card similar-card--more">
+    <a href="./?category=${encodeURIComponent(place.category)}" class="similar-card similar-card--more">
       <span class="similar-card__more-label">Все места</span>
       <span class="similar-card__more-title">${escapeHtml(categoryLabel(place.category))} →</span>
     </a>`;
