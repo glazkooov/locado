@@ -156,10 +156,12 @@ function isPlaceOpenNow(place) {
   return close < open ? (cur >= open || cur <= close) : (cur >= open && cur <= close);
 }
 
+/** «Сейчас в центре внимания»: сначала места, отмеченные редакцией
+ *  ("featured": true в places.json), затем — по просмотрам и избранному. */
 export function popular(places, count = 4) {
   return [...places]
-    .map((p) => ({ p, score: (p.views || 0) + (p.favorites || 0) * 2 }))
-    .sort((a, b) => b.score - a.score)
+    .map((p, i) => ({ p, i, score: (p.featured ? 1e6 : 0) + (p.views || 0) + (p.favorites || 0) * 2 }))
+    .sort((a, b) => b.score - a.score || a.i - b.i)
     .slice(0, count)
     .map((x) => x.p);
 }

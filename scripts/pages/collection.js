@@ -159,7 +159,7 @@ function renderByline(c) {
 
 async function renderMap(c, ordered) {
   const isRoute = c.type === 'route';
-  $('#collection-map-mini').textContent = isRoute ? 'Маршрут целиком' : 'Все места';
+  $('#collection-map-title').textContent = isRoute ? 'Маршрут на карте' : 'Все места на карте';
   if (isRoute && ordered.length > 1) {
     $('#collection-route-link').href = walkingRouteUrl(ordered);
     $('#collection-route').hidden = false;

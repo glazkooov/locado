@@ -47,9 +47,9 @@
     <!-- 1. Хедер -->
     <header class="main-header main-header--overlay">
       <div class="container header-content">
-        <a href="index.html" class="logo" aria-label="Локадо — главная">Локадо</a>
+        <a href="./" class="logo" aria-label="Локадо — главная">Локадо</a>
       <!-- Поиск: ведёт к ленте «Все места» и ставит курсор в строку поиска (ui.js) -->
-      <a href="index.html#search" class="header-search" data-search aria-label="Найти место">
+      <a href="./#search" class="header-search" data-search aria-label="Найти место">
         <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#search"></use></svg><span>Поиск</span>
       </a>
 
@@ -61,8 +61,8 @@
         <nav class="nav" id="main-nav">
           <ul class="nav-list">
             <li><a href="collections.html" class="nav-item">Подборки</a></li>
-            <li><a href="index.html#map-section" class="nav-item">Карта</a></li>
-            <li><a href="index.html#all-places" class="nav-item">Все места</a></li>
+            <li><a href="./#map-section" class="nav-item">Карта</a></li>
+            <li><a href="./#all-places" class="nav-item">Все места</a></li>
           </ul>
           <button type="button" class="install-link install-link--nav" data-install hidden>
           <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#smartphone"></use></svg> Добавить на экран телефона
@@ -116,30 +116,31 @@
     <section class="popular">
       <div class="container">
         <div class="section-head">
-          <span class="section-mini" aria-hidden="true">город советует</span>
           <h2 class="section-title">Сейчас в центре внимания</h2>
         </div>
         <div class="popular__cards" id="popular-places-container"></div>
       </div>
     </section>
 
-    <!-- 4. Советуем заглянуть -->
+    <!-- 4. «Советуем заглянуть» — убран, пока нет редакционных или партнёрских
+         мест: показывал случайные места из той же ленты. home.js пропускает
+         его, если разметки нет. Вернуть — раскомментировать; платное место
+         подписывать «Реклама» (38-ФЗ).
     <section class="suggested-places">
       <div class="container">
         <div class="section-head">
-          <span class="section-mini" aria-hidden="true">может подойти</span>
           <h2 class="section-title">Советуем заглянуть</h2>
         </div>
         <div class="suggested-grid" id="suggested-grid"></div>
       </div>
     </section>
+    -->
 
     <!-- 5. Категории и подборки -->
     <section class="categories-collections" id="collections">
       <div class="container">
         <div class="section-head section-head--row">
           <div>
-            <span class="section-mini" aria-hidden="true">выбирай по настроению</span>
             <h2 class="section-title">Категории и подборки</h2>
           </div>
           <a class="section-link" href="collections.html">Все подборки →</a>
@@ -158,7 +159,6 @@
     <section class="map" id="map-section">
       <div class="container">
         <div class="section-head">
-          <span class="section-mini" aria-hidden="true">весь город на ладони</span>
           <h2 class="section-title">Карта</h2>
         </div>
         <div class="map-section">
@@ -228,7 +228,6 @@
       <div class="container">
         <div class="section-head section-head--row">
           <div>
-            <span class="section-mini" aria-hidden="true">для вдохновения</span>
             <h2 class="section-title">Посмотрим все места?</h2>
           </div>
           <a class="section-link" href="suggest.html">Предложить место →</a>
@@ -273,7 +272,7 @@
         </div>
         <button type="button" class="btn btn-secondary" id="show-more-btn">Показать ещё</button>
         <div class="feed-end" aria-live="polite">
-          <p>Это все места на сегодня ✨</p>
+          <p>Это все места на сегодня</p>
           <span>Мы добавляем новые места — загляни ещё или <a href="suggest.html">расскажи о своём</a></span>
         </div>
       </div>
@@ -299,15 +298,15 @@
 
       <nav class="site-footer__col" aria-label="Навигация">
         <h4>Навигация</h4>
-        <a href="index.html#map-section">Карта</a>
+        <a href="./#map-section">Карта</a>
         <a href="collections.html">Подборки</a>
-        <a href="index.html#all-places">Все места</a>
+        <a href="./#all-places">Все места</a>
         <a href="suggest.html">Предложить место</a>
       </nav>
 
       <div class="site-footer__col">
         <h4>Где работаем</h4>
-        <p class="site-footer__note">Москва и область.<br>Скоро — другие города.</p>
+        <p class="site-footer__note">Москва и область</p>
       </div>
       <div class="site-footer__col">
         <h4>Связаться</h4>
@@ -323,7 +322,7 @@
     </div>
 
     <div class="container site-footer__bottom">
-      <p><span>© 2026 Локадо. Сделано с любовью к прогулкам.</span> <a href="privacy.html">Политика конфиденциальности</a></p>
+      <p><span>© Локадо. Сделано с любовью к прогулкам.</span> <a href="privacy.html">Политика конфиденциальности</a></p>
     </div>
   </footer>
 

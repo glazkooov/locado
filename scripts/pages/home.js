@@ -129,12 +129,16 @@ async function main() {
     return;
   }
 
-  if (popularContainer) renderCards(popularContainer, popular(places, 4));
+  const spotlight = popular(places, 4);
+  if (popularContainer) renderCards(popularContainer, spotlight);
 
   renderSuggested(places);
 
   renderCategoryCounts(places);
-  const feed = initFeed(places);
+  // Места из «Сейчас в центре внимания» — в конец ленты: иначе первый ряд
+  // ленты повторял блок, который человек только что пролистал
+  const inSpotlight = new Set(spotlight.map((p) => p.slug));
+  const feed = initFeed([...places.filter((p) => !inSpotlight.has(p.slug)), ...places.filter((p) => inSpotlight.has(p.slug))]);
   applyUrlFilter(feed);
   initHeroMoods(feed, places, { onSelect: () => scrollToFeed() });
   initCategoryTiles(feed);
