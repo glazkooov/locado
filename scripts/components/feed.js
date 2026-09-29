@@ -2,8 +2,9 @@
 // подгрузка и раскладка «как в Pinterest» (колонки разной высоты).
 
 import { $, $$, on, toggleClear } from '../core/dom.js';
-import { filterPlaces } from '../core/places.js';
-import { pluralize } from '../core/format.js';
+import { filterPlaces, searchDetails, categoryLabel } from '../core/places.js';
+import { EXAMPLES } from '../core/search-words.js';
+import { pluralize, escapeHtml } from '../core/format.js';
 import * as Storage from '../core/storage.js';
 import { cardHtml } from './card.js';
 import { setPressed } from './category-buttons.js';
@@ -66,6 +67,13 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
   const endBlock = $('.feed-end');
   const activeBar = $('#feed-active');
   const activeLabel = $('#feed-active-label');
+  const noteEl = $('#feed-note');
+  const emptyText = $('#feed-empty-text');
+  const everywhereBtn = $('#feed-everywhere-btn');
+  const examplesEl = $('#feed-empty-examples');
+  const resetBtn = $('#feed-reset-btn');
+  const suggestLink = $('.feed-empty__suggest');
+  const suggestDefault = suggestLink?.textContent || '';
   const tabs = $$('.scroll__category-btn');
 
   // label — что выбрал пользователь вне ленты (настроение из hero, подборка):
@@ -129,10 +137,41 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
     activeLabel.textContent = `${state.label.kind}: ${state.label.text} · ${count} ${pluralize(count, ['место', 'места', 'мест'])}`;
   };
 
+  // Подсказки поиска: над лентой — «кафе у нас пока нет…» или исправленная
+  // раскладка; в пустом результате — искать везде или примеры запросов
+  const syncSearchHints = () => {
+    const query = state.query.trim();
+    const details = query ? searchDetails(allPlaces, query) : { note: '', suggest: '', corrected: '' };
+    if (noteEl) {
+      const text = details.corrected
+        ? `Показываем по запросу «${details.corrected}» — похоже, была английская раскладка`
+        : (list.length ? details.note : '');
+      noteEl.textContent = text;
+      noteEl.hidden = !text;
+    }
+    if (!emptyBlock || list.length) return;
+    const inTab = typeof state.category === 'string' && state.category !== 'all';
+    const foundEverywhere = query && inTab && details.list?.length > 0;
+    if (emptyText) {
+      emptyText.textContent = foundEverywhere
+        ? `В разделе «${categoryLabel(state.category)}» по запросу «${query}» ничего нет, но в других местах есть`
+        : details.note || (query ? `По запросу «${query}» ничего не нашлось` : 'Ничего не нашлось — попробуй сбросить фильтр');
+    }
+    if (suggestLink) suggestLink.textContent = details.suggest || suggestDefault;
+    if (everywhereBtn) everywhereBtn.hidden = !foundEverywhere;
+    if (resetBtn) resetBtn.hidden = Boolean(foundEverywhere);
+    if (examplesEl) {
+      examplesEl.hidden = Boolean(foundEverywhere) || !query;
+      examplesEl.innerHTML = '<span>Попробуй:</span>' + EXAMPLES
+        .map((q) => `<button type="button" class="feed-empty__example" data-query="${escapeHtml(q)}">${escapeHtml(q)}</button>`).join('');
+    }
+  };
+
   const renderPage = (reset) => {
     if (reset) list = filtered();
     syncActiveBar(list.length);
     if (emptyBlock) emptyBlock.hidden = list.length > 0;
+    if (reset) syncSearchHints();
     // «Это все места» уместно только после непустой ленты — иначе рядом
     // с «Пока ничего не нашли» получалось два противоречащих сообщения.
     if (endBlock) endBlock.hidden = list.length === 0;
@@ -235,6 +274,10 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
 
   // --- UI: пустое состояние ---
   on($('#feed-reset-btn'), 'click', reset);
+  on(everywhereBtn, 'click', () => setFilters({ category: 'all', tags: null, tagsAll: null }));
+  on(examplesEl, 'click', '.feed-empty__example', (e, btn) => {
+    setFilters({ category: 'all', query: btn.dataset.query, tags: null, tagsAll: null }, { syncInput: true });
+  });
   on($('#feed-active-reset'), 'click', reset);
 
   // --- UI: бесконечная подгрузка ---

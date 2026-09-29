@@ -324,6 +324,50 @@
   margin-bottom: 16px;
 }
 
+/* Подсказка поиска над лентой: «кафе у нас пока нет…» */
+.feed-note {
+  margin: 14px 0 0;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  background: var(--cream-deep);
+  font-size: var(--fs-sm);
+  line-height: 1.45;
+  color: var(--text);
+}
+
+.feed-note[hidden] { display: none; }
+
+/* Примеры запросов в пустом результате */
+.feed-empty__examples {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin: 0 auto 18px;
+  max-width: 520px;
+  font-size: var(--fs-sm);
+  color: var(--text-light);
+}
+
+.feed-empty__examples[hidden] { display: none; }
+
+.feed-empty__example {
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: #fff;
+  font: inherit;
+  font-size: var(--fs-sm);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.feed-empty__example:hover { border-color: var(--primary); color: var(--primary-text); }
+
+.feed-empty .btn[hidden] { display: none; }
+
 /* Ничего не нашлось — предложить место, которого нет */
 .feed-empty__suggest {
   display: block;
