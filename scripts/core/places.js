@@ -2,6 +2,7 @@
 // посещения). Единственное место, которое знает формат данных.
 
 import * as Storage from './storage.js';
+import { searchPlaces } from './search.js';
 
 const DATA_URL = new URL('../../data/places.json', import.meta.url);
 
@@ -100,14 +101,15 @@ export function uniqueMetro(places) {
   return [...new Set(all)].sort((a, b) => a.localeCompare(b, 'ru'));
 }
 
+/** Поиск по словам с порядком по важности совпадения (core/search.js). */
 export function search(places, query) {
-  const q = (query || '').trim().toLowerCase();
-  if (!q) return places;
-  return places.filter((p) => {
-    const haystack = [p.name, p.type, p.description, metroList(p).join(' '), (p.tags || []).join(' ')]
-      .filter(Boolean).join(' ').toLowerCase();
-    return haystack.includes(q);
-  });
+  return searchPlaces(places, query, { categoryLabel }).list;
+}
+
+/** То же, но с подсказкой («кафе у нас пока нет…») и исправленной
+ *  раскладкой — для строки поиска в ленте. */
+export function searchDetails(places, query) {
+  return searchPlaces(places, query, { categoryLabel });
 }
 
 /** tags — место подходит, если у него есть хотя бы один из тегов;

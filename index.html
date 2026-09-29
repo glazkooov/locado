@@ -223,10 +223,6 @@
       </div>
     </section>
 
-    <!-- 7. Добавить место.
-         Скрыто, пока нет страниц suggest-user.html и add_place-business.html:
-         карточки вели на 404. Когда страницы появятся — убрать атрибут hidden. -->
-
     <!-- 8. Лента всех мест -->
     <section class="place-section" id="all-places">
       <div class="container">
@@ -245,7 +241,7 @@
           <div class="category-search-group">
             <svg class="icon category-search-icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#search"></use></svg>
             <label class="visually-hidden" for="categories-search-input">Поиск по местам</label>
-            <input type="text" class="category-search-input" id="categories-search-input" placeholder="Поиск по названию или тегу" autocomplete="off">
+            <input type="text" class="category-search-input" id="categories-search-input" placeholder="Парк, поесть, с детьми, бесплатно…" autocomplete="off">
             <button class="category-search-clear search-clear" id="categories-clear-btn" aria-label="Очистить поиск" hidden>
               <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#x"></use></svg>
             </button>
@@ -260,10 +256,18 @@
           </button>
         </div>
 
+        <!-- Подсказка к поиску: «кафе у нас пока нет…», исправленная раскладка -->
+        <p class="feed-note" id="feed-note" aria-live="polite" hidden></p>
+
         <!-- Контейнер для карточек мест -->
         <div class="places-grid" id="places-container" aria-live="polite"></div>
         <div class="feed-empty" id="feed-empty" hidden>
-          <p>Ничего не нашлось — попробуй другое слово или сбрось фильтр</p>
+          <p id="feed-empty-text">Ничего не нашлось — попробуй другое слово или сбрось фильтр</p>
+          <!-- Поиск был внутри вкладки — предлагаем искать везде -->
+          <button type="button" class="btn feed-empty__btn" id="feed-everywhere-btn" hidden>Искать во всех местах</button>
+          <div class="feed-empty__examples" id="feed-empty-examples" hidden>
+            <span>Попробуй:</span>
+          </div>
           <button type="button" class="btn feed-empty__btn" id="feed-reset-btn">Показать все места</button>
           <a class="feed-empty__suggest" href="suggest.html">Знаешь такое место? Предложи его</a>
         </div>
