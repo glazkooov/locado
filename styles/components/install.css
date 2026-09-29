@@ -21,13 +21,13 @@
 .install-link .icon { color: #FFB38A; }
 
 .install-link--nav {
-  /* в мобильном меню — внизу, рядом со слоганом */
+  /* в мобильном меню — внизу, над почтой */
   margin: auto 0 0;
   color: var(--text);
 }
 
-/* у .nav gap 2rem — подтягиваем слоган к ссылке */
-.install-link--nav:not([hidden]) + .nav__slogan { margin-top: -24px; }
+/* с установкой почта встаёт сразу под ней, а не прижимается вниз */
+.install-link--nav:not([hidden]) + .nav-contact { margin-top: -12px; }
 
 .install-link--nav:hover { color: var(--primary-text); }
 .install-link--nav .icon { color: var(--primary); }

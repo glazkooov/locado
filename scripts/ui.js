@@ -7,6 +7,8 @@
 
 import { $, $$, on } from './core/dom.js';
 import { initInstall } from './components/install.js';
+import { icon } from './core/icons.js';
+import { CATEGORIES } from './core/places.js';
 import { initConsent } from './components/consent.js';
 
 const syncHeaderHeight = () => {
@@ -15,25 +17,75 @@ const syncHeaderHeight = () => {
   document.documentElement.style.setProperty('--header-h', `${header.offsetHeight}px`);
 };
 
+// Нижняя часть мобильного меню: поиск, разделы, «Предложить место»,
+// почта. Одна разметка на все страницы — вставляется здесь, на компьютере
+// скрыта (header.css)
+const menuExtraHtml = () => `
+  <div class="nav-extra">
+    <a href="./#search" class="nav-search" data-search>${icon('search')} Найти место</a>
+    <ul class="nav-cats" aria-label="Разделы">
+      ${Object.entries(CATEGORIES).map(([key, c]) =>
+        `<li><a href="./?category=${key}">${icon(c.icon)} ${c.label}</a></li>`).join('')}
+    </ul>
+    <a href="suggest.html" class="nav-suggest">${icon('heart')} Предложить место</a>
+  </div>`;
+const menuContactHtml = '<p class="nav-contact">Пиши нам: <a href="mailto:hello.locado@yandex.ru">hello.locado@yandex.ru</a></p>';
+
+// Прокрутка под открытым меню: overflow: hidden у body Safari на iPhone
+// частично игнорирует, поэтому body фиксируем и возвращаем позицию
+let lockedY = 0;
+const lockScroll = (lock) => {
+  const body = document.body;
+  if (lock) {
+    lockedY = window.scrollY;
+    body.style.top = `-${lockedY}px`;
+    body.classList.add('nav-open');
+  } else {
+    body.classList.remove('nav-open');
+    body.style.top = '';
+    window.scrollTo({ top: lockedY, behavior: 'instant' });
+  }
+};
+
+// Пока меню открыто, всё, кроме шапки, недоступно: Tab и экранный диктор
+// не уходят под меню. inert — на соседях шапки и всех её предков
+const setOutsideInert = (header, value) => {
+  for (let el = header; el && el !== document.body; el = el.parentElement) {
+    [...el.parentElement.children].forEach((sib) => {
+      if (sib !== el && !['SCRIPT', 'STYLE'].includes(sib.tagName)) sib.inert = value;
+    });
+  }
+};
+
 const initMobileMenu = () => {
   const toggle = document.getElementById('mobile-menu-toggle');
   const nav = document.getElementById('main-nav');
   if (!toggle || !nav) return;
+  const header = toggle.closest('header');
+  const install = nav.querySelector('.install-link--nav');
+  if (install) install.insertAdjacentHTML('beforebegin', menuExtraHtml());
+  else nav.insertAdjacentHTML('beforeend', menuExtraHtml());
+  nav.insertAdjacentHTML('beforeend', menuContactHtml);
 
+  const isOpen = () => nav.classList.contains('open');
   const setMenu = (open) => {
+    if (open === isOpen()) return;
     nav.classList.toggle('open', open);
     toggle.setAttribute('aria-expanded', String(open));
     toggle.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню');
-    document.body.classList.toggle('nav-open', open);
+    lockScroll(open);
+    if (header) setOutsideInert(header, open);
   };
 
-  on(toggle, 'click', (e) => { e.stopPropagation(); setMenu(!nav.classList.contains('open')); });
+  on(toggle, 'click', (e) => { e.stopPropagation(); setMenu(!isOpen()); });
+  // Ссылки закрывают меню. Прокрутку вернуть до перехода: иначе якорь
+  // (#all-places) считался бы от зафиксированного body
   $$('a', nav).forEach((link) => on(link, 'click', () => setMenu(false)));
   on(document, 'click', (e) => {
-    if (nav.classList.contains('open') && !nav.contains(e.target) && !toggle.contains(e.target)) setMenu(false);
+    if (isOpen() && !nav.contains(e.target) && !toggle.contains(e.target)) setMenu(false);
   });
   on(document, 'keydown', (e) => {
-    if (e.key === 'Escape' && nav.classList.contains('open')) { setMenu(false); toggle.focus(); }
+    if (e.key === 'Escape' && isOpen()) { setMenu(false); toggle.focus(); }
   });
   window.matchMedia('(min-width: 769px)').addEventListener('change', (e) => { if (e.matches) setMenu(false); });
 };
@@ -139,7 +191,6 @@ const initHeaderSearch = () => {
     return true;
   };
   on(document, 'click', '[data-search]', (e) => {
-    document.body.classList.contains('nav-open') && $('#mobile-menu-toggle')?.click();
     if (goToSearch()) e.preventDefault();
   });
   if (window.location.hash === '#search') {
@@ -152,6 +203,27 @@ const initHeaderSearch = () => {
       setTimeout(() => { if (Math.abs(window.scrollY - y) < 5) goToSearch({ smooth: false }); }, 800);
     }, { once: true });
   }
+};
+
+/** Переход по ссылке с якорем с другой страницы (…/#all-places из меню):
+ *  браузер прокручивает сразу, а разделы выше ещё дорисовываются после
+ *  загрузки данных, и раздел уезжал вниз. Докручиваем, когда страница
+ *  встала, — если человек не начал листать сам. */
+const initAnchorLanding = () => {
+  const id = decodeURIComponent(window.location.hash.slice(1));
+  if (!id || id === 'search' || !document.getElementById(id)) return;
+  const land = () => {
+    const el = document.getElementById(id);
+    const header = $('.main-header');
+    const top = el.getBoundingClientRect().top + window.scrollY - (header ? header.offsetHeight : 0);
+    window.scrollTo({ top: Math.max(0, top), behavior: 'instant' });
+  };
+  let touched = false;
+  ['wheel', 'touchstart', 'keydown'].forEach((t) => window.addEventListener(t, () => { touched = true; }, { once: true, passive: true }));
+  window.addEventListener('load', () => {
+    if (!touched) land();
+    setTimeout(() => { if (!touched) land(); }, 800);
+  }, { once: true });
 };
 
 syncHeaderHeight();
@@ -167,3 +239,4 @@ initCopyButtons();
 initConsent();
 initInstall();
 initHeaderSearch();
+initAnchorLanding();
