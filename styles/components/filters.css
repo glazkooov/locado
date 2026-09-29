@@ -324,6 +324,16 @@
   margin-bottom: 16px;
 }
 
+/* Ничего не нашлось — предложить место, которого нет */
+.feed-empty__suggest {
+  display: block;
+  width: fit-content;
+  margin: 14px auto 0;
+  font-size: var(--fs-sm);
+  color: var(--primary-text);
+  text-underline-offset: 3px;
+}
+
 /* Плашка «Настроение: … · N мест ✕» над лентой */
 .feed-active {
   display: flex;

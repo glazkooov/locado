@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Политика конфиденциальности — Локадо</title>
-  <meta name="description" content="Какие данные собирает Локадо, зачем и как их удалить.">
-  <meta name="robots" content="noindex">
+  <title>Предложить место — Локадо</title>
+  <meta name="description" content="Знаешь классное место в Москве? Расскажи о нём — лучшие находки добавим на Локадо.">
   <meta name="theme-color" content="#FF570A">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <!-- Установка на экран телефона как приложение (PWA). Пути относительные —
@@ -48,42 +47,35 @@
     </div>
   </header>
 
-  <main class="legal container">
-    <article class="legal__article">
-      <h1 class="legal__title">Политика конфиденциальности</h1>
-      <p class="legal__updated">Редакция от 29 сентября 2026 года</p>
+  <main class="suggest container">
+    <div class="suggest__intro">
+      <span class="section-mini">Поделись находкой</span>
+      <h1 class="suggest__title">Знаешь классное место?</h1>
+      <p class="suggest__lead">Расскажи о нём — это пара минут. Проверим и добавим на Локадо, чтобы его нашли и другие.</p>
 
-      <h2>1. Оператор</h2>
-      <p>Оператор персональных данных — владелец сайта «Локадо». Контакт: <a href="mailto:hello.locado@yandex.ru">hello.locado@yandex.ru</a>. Политика составлена в соответствии с Федеральным законом № 152-ФЗ «О персональных данных».</p>
+      <ol class="suggest__steps">
+        <li><span class="suggest__num" aria-hidden="true">1</span><span><strong>Название и где оно</strong> — адрес или ссылка на карту</span></li>
+        <li><span class="suggest__num" aria-hidden="true">2</span><span><strong>Чем оно хорошо</strong> — пара слов, как другу</span></li>
+        <li><span class="suggest__num" aria-hidden="true">3</span><span><strong>Мы проверим и добавим</strong> — фото и часы работы подберём сами</span></li>
+      </ol>
+    </div>
 
-      <h2>2. Какие данные обрабатываются</h2>
-      <ul>
-        <li>cookie и технические данные (IP-адрес, сведения о браузере и устройстве, просмотренные страницы) — через сервис Яндекс Метрика;</li>
-        <li>адрес электронной почты и содержание сообщения — если пользователь пишет на почту или через формы «Сообщить о неточности» и «Предложить место».</li>
-      </ul>
+    <div class="suggest__form">
+      <!-- Яндекс Форма: id задаётся в scripts/pages/suggest.js. Пока формы нет,
+           показываем почту — предложение всё равно можно отправить -->
+      <div class="suggest__frame-wrap" id="suggest-frame-wrap" hidden>
+        <iframe class="suggest__frame" id="suggest-frame" title="Форма: предложить место"></iframe>
+      </div>
+      <a class="suggest__fallback" id="suggest-fallback" href="#" target="_blank" rel="noopener" hidden>Форма не открылась? Открой её в новой вкладке</a>
 
-      <h2>3. Цели</h2>
-      <ul>
-        <li>статистика посещений и улучшение сайта;</li>
-        <li>ответ на обращения, исправление информации о местах и рассмотрение предложенных мест.</li>
-      </ul>
+      <div class="suggest__mail" id="suggest-mail" hidden>
+        <p class="suggest__mail-title">Пришли место на почту</p>
+        <p>Название, адрес и пара слов, чем оно хорошо, — этого достаточно.</p>
+        <a class="btn" id="suggest-mail-btn" href="mailto:hello.locado@yandex.ru?subject=%D0%9F%D1%80%D0%B5%D0%B4%D0%BB%D0%B0%D0%B3%D0%B0%D1%8E%20%D0%BC%D0%B5%D1%81%D1%82%D0%BE">Написать письмо</a>
+      </div>
 
-      <h2>4. Основание</h2>
-      <p>Согласие пользователя. Согласие на cookie даётся кнопкой «Хорошо» на плашке о cookie, на обработку обращения — его отправкой.</p>
-
-      <h2>5. Передача третьим лицам</h2>
-      <p>Данные обрабатываются с помощью сервисов ООО «Яндекс» (Метрика, Карты, Формы, Почта) и хранятся на серверах в России. Другим лицам данные не передаются, кроме случаев, предусмотренных законом.</p>
-
-      <h2>6. Срок хранения</h2>
-      <p>Обращения — до достижения цели обработки. Статистика — в сроки, установленные Яндекс Метрикой.</p>
-
-      <h2>7. Права пользователя</h2>
-      <p>Пользователь вправе получить сведения о своих данных, потребовать их уточнения или удаления и отозвать согласие, написав на <a href="mailto:hello.locado@yandex.ru">hello.locado@yandex.ru</a>. Ответ — в течение 10 рабочих дней. Отказаться от cookie можно в настройках браузера или кнопкой ниже.</p>
-      <p><button type="button" class="legal__reset" data-consent-reset>Изменить выбор по cookie</button></p>
-
-      <h2>8. Защита данных</h2>
-      <p>Доступ к данным есть только у администрации сайта. Сайт работает по защищённому соединению (HTTPS).</p>
-    </article>
+      <p class="suggest__note">Отправляя место, ты разрешаешь нам отредактировать описание и опубликовать его на Локадо. Как мы обращаемся с данными — в <a href="privacy.html">политике конфиденциальности</a>.</p>
+    </div>
   </main>
 
   <footer class="site-footer">
@@ -133,5 +125,6 @@
   </footer>
 
   <script type="module" src="scripts/ui.js"></script>
+  <script type="module" src="scripts/pages/suggest.js"></script>
 </body>
 </html>

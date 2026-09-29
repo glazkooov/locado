@@ -1,0 +1,116 @@
+/* pages/suggest.css — suggest.html: слева зачем и как, справа форма */
+
+.suggest {
+  display: grid;
+  gap: 28px;
+  padding-top: 40px;
+  padding-bottom: 72px;
+}
+
+.suggest__title {
+  margin-top: 8px;
+  font-family: var(--font-heading);
+  font-size: clamp(1.5rem, 7vw, 2.25rem);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.suggest__lead {
+  margin-top: 12px;
+  max-width: 440px;
+  font-size: var(--fs-md);
+  line-height: 1.6;
+  color: var(--text-light);
+}
+
+.suggest__steps {
+  display: grid;
+  gap: 14px;
+  margin-top: 24px;
+  padding: 0;
+  list-style: none;
+}
+
+.suggest__steps li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  color: var(--text-light);
+}
+
+.suggest__steps strong { color: var(--text); font-weight: 600; }
+
+.suggest__num {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--primary-strong);
+  color: #fff;
+  font-family: var(--font-heading);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+}
+
+.suggest__frame-wrap,
+.suggest__mail {
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: #fff;
+  box-shadow: var(--shadow-soft);
+}
+
+.suggest__frame {
+  display: block;
+  width: 100%;
+  min-height: 560px;
+  border: 0;
+}
+
+.suggest__fallback {
+  display: inline-block;
+  margin-top: 12px;
+  font-size: var(--fs-sm);
+  color: var(--text-light);
+  text-underline-offset: 3px;
+}
+
+.suggest__mail-title {
+  font-family: var(--font-heading);
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: var(--text);
+}
+
+.suggest__mail p + p {
+  margin-top: 8px;
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  color: var(--text-light);
+}
+
+.suggest__mail .btn { margin-top: 18px; max-width: 100%; overflow-wrap: anywhere; }
+
+.suggest__note {
+  margin-top: 16px;
+  font-size: var(--fs-xs);
+  line-height: 1.5;
+  color: var(--text-light);
+}
+
+.suggest__note a { color: var(--primary-text); text-underline-offset: 3px; }
+
+@media (min-width: 900px) {
+  .suggest {
+    grid-template-columns: 0.9fr 1.1fr;
+    gap: 56px;
+    align-items: start;
+    padding-top: 64px;
+  }
+  .suggest__intro { position: sticky; top: calc(var(--header-h, 72px) + 24px); }
+}
