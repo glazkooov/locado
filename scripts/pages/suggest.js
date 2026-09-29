@@ -2,7 +2,7 @@
 // Форму создают в forms.yandex.ru и вписывают её id сюда. Пока id пустой,
 // на странице — кнопка письма на почту: предложение всё равно дойдёт.
 
-const SUGGEST_FORM_ID = '';
+const SUGGEST_FORM_ID = '6ab90833e010db752e550dfc';
 const YA_FORMS_EMBED = 'https://forms.yandex.ru/_static/embed.js';
 
 const $ = (id) => document.getElementById(id);
