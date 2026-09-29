@@ -483,6 +483,21 @@
   .description-text { font-size: var(--fs-md); }
 }
 
+/* «Это место нам подсказали» — место от читателей */
+.place-readers {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: -6px 0 18px;
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  color: var(--text-light);
+}
+
+.place-readers[hidden] { display: none; }
+.place-readers .icon { flex: none; margin-top: 3px; color: var(--primary); }
+.place-readers a { color: var(--primary-text); text-underline-offset: 3px; }
+
 /* Карточек информации нет совсем — отступ, который давала секция */
 .place-info[hidden] + .place-about { margin-top: 48px; }
 

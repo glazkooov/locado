@@ -8,10 +8,18 @@
   <meta name="theme-color" content="#FF570A">
 
   <meta property="og:type" content="article">
-  <meta property="og:title" content="Локадо">
-  <meta property="og:description" content="">
-  <meta property="og:image" content="">
+  <meta property="og:title" content="Место в Москве — Локадо">
+  <meta property="og:description" content="Как добраться, когда открыто и почему стоит заглянуть — рекомендация от Локадо.">
+  <meta property="og:site_name" content="Локадо">
+  <meta property="og:locale" content="ru_RU">
+  <!-- Картинка для превью ссылки в мессенджерах и соцсетях. Адрес — полный:
+       по относительному пути Telegram и VK картинку не находят -->
+  <meta property="og:image" content="https://locado.ru/assets/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Локадо — куда пойти в Москве под настроение">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://locado.ru/assets/og-image.jpg">
 
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <!-- Установка на экран телефона как приложение (PWA). Пути относительные —
@@ -175,6 +183,11 @@
       <div class="place-about__text">
         <h2 class="place-about__title">О месте</h2>
         <div class="description-text" id="place-description"></div>
+        <!-- Места от читателей: поле fromReaders в places.json -->
+        <p class="place-readers" id="place-readers" hidden>
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#heart"></use></svg>
+          <span>Это место нам подсказали. <a href="suggest.html">Знаешь своё? Расскажи</a></span>
+        </p>
         <div class="amenities-section" id="place-amenities"></div>
       </div>
 
@@ -342,6 +355,7 @@
         <a href="index.html#map-section">Карта</a>
         <a href="collections.html">Подборки</a>
         <a href="index.html#all-places">Все места</a>
+        <a href="suggest.html">Предложить место</a>
       </nav>
 
       <div class="site-footer__col">
@@ -362,7 +376,7 @@
     </div>
 
     <div class="container site-footer__bottom">
-      <p>© 2026 Локадо. Сделано с любовью к прогулкам.</p>
+      <p><span>© 2026 Локадо. Сделано с любовью к прогулкам.</span> <a href="privacy.html">Политика конфиденциальности</a></p>
     </div>
   </footer>
 

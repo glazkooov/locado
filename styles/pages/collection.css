@@ -339,6 +339,11 @@
   gap: 16px;
 }
 
+/* На телефоне ссылка под заголовком: рядом она ломала заголовок на две строки */
+@media (max-width: 480px) {
+  .section-head--row { flex-direction: column; align-items: flex-start; gap: 4px; }
+}
+
 .section-link {
   flex: none;
   display: inline-flex;

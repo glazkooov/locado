@@ -41,6 +41,45 @@
 .places-grid .place-card--r3 { aspect-ratio: 4 / 5.6; }
 .places-grid .place-card--r4 { aspect-ratio: 5 / 4; }
 
+/* «Знаешь место, которого здесь нет?» среди карточек ленты — пунктир,
+   как у «Не могу выбрать — удиви меня» в hero: не место, а приглашение */
+.feed-suggest {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 8px;
+  aspect-ratio: 1 / 1;
+  padding: 18px;
+  border: 1.5px dashed rgba(185, 60, 5, 0.35);
+  border-radius: var(--radius-card);
+  background:
+    radial-gradient(ellipse 80% 70% at 100% 0%, rgba(255, 170, 110, 0.35), transparent 70%),
+    linear-gradient(160deg, #FFF6EE 0%, #FBE6D6 100%);
+  color: var(--text);
+  text-decoration: none;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.feed-suggest:hover { transform: translateY(-4px); border-color: var(--primary); }
+
+.feed-suggest__icon { width: 30px; height: 30px; margin-bottom: auto; color: var(--primary); }
+
+.feed-suggest__title {
+  font-family: var(--font-heading);
+  font-size: var(--fs-md);
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.feed-suggest__link { font-size: var(--fs-sm); font-weight: 600; color: var(--primary-text); }
+
+@media (max-width: 480px) {
+  .feed-suggest { padding: 14px; }
+  .feed-suggest__icon { width: 24px; height: 24px; }
+  .feed-suggest__title { font-size: var(--fs-sm); }
+  .feed-suggest__link { font-size: var(--fs-xs); }
+}
+
 .place-card {
   position: relative;
   overflow: hidden;

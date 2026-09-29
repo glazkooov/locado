@@ -7,6 +7,7 @@
 
 import { $, $$, on } from './core/dom.js';
 import { initInstall } from './components/install.js';
+import { initConsent } from './components/consent.js';
 
 const syncHeaderHeight = () => {
   const header = $('.main-header');
@@ -163,5 +164,6 @@ initBackToTop();
 initHeaderOverlay();
 initScrollReveal();
 initCopyButtons();
+initConsent();
 initInstall();
 initHeaderSearch();

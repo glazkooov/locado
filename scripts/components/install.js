@@ -7,6 +7,7 @@
 // Android/Chrome: кнопка сразу открывает системное окно установки
 // (beforeinstallprompt). iPhone: такого окна нет — показываем инструкцию.
 
+import { consentDecided } from './consent.js';
 import { $$, on } from '../core/dom.js';
 import { createModal } from './modal.js';
 
@@ -119,7 +120,8 @@ export function initInstall() {
 
   // Плашка — со второго визита, один раз, только на телефоне; не сразу,
   // а когда человек уже огляделся
-  if (isPhone() && visits >= BANNER_FROM_VISIT && !store.get(DISMISSED_KEY)) {
+  // Пока не решён вопрос с cookie, внизу уже висит плашка — вторую не показываем
+  if (isPhone() && visits >= BANNER_FROM_VISIT && !store.get(DISMISSED_KEY) && consentDecided()) {
     setTimeout(() => {
       if (document.body.classList.contains('modal-open')) return;
       banner.hidden = false;

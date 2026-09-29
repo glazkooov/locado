@@ -20,7 +20,10 @@
 @import url('components/toast.css');
 @import url('components/map.css');
 @import url('components/install.css');
+@import url('components/consent.css');
 
 @import url('pages/home.css');
 @import url('pages/place.css');
 @import url('pages/collection.css');
+@import url('pages/legal.css');
+@import url('pages/suggest.css');

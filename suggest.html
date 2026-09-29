@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Предложить место — Локадо</title>
+  <meta name="description" content="Знаешь классное место в Москве? Расскажи о нём — лучшие истории станут местами на Локадо.">
+  <meta name="theme-color" content="#FF570A">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <!-- Установка на экран телефона как приложение (PWA). Пути относительные —
+       при переезде на свой домен ничего менять не нужно -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="assets/app/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Локадо">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="preload" href="assets/fonts/unbounded-cyrillic-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/raleway-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+  <header class="main-header">
+    <div class="container header-content">
+      <a href="index.html" class="logo" aria-label="Локадо — главная">Локадо</a>
+      <!-- Поиск: ведёт к ленте «Все места» и ставит курсор в строку поиска (ui.js) -->
+      <a href="index.html#search" class="header-search" data-search aria-label="Найти место">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#search"></use></svg><span>Поиск</span>
+      </a>
+
+
+      <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Открыть меню" aria-expanded="false" aria-controls="main-nav">
+        <svg class="icon mobile-menu-toggle__open" aria-hidden="true" focusable="false"><use href="assets/icons.svg#menu"></use></svg><svg class="icon mobile-menu-toggle__close" aria-hidden="true" focusable="false"><use href="assets/icons.svg#x"></use></svg>
+      </button>
+
+      <nav class="nav" id="main-nav">
+        <ul class="nav-list">
+          <li><a href="collections.html" class="nav-item">Подборки</a></li>
+          <li><a href="index.html#map-section" class="nav-item">Карта</a></li>
+          <li><a href="index.html#all-places" class="nav-item">Все места</a></li>
+        </ul>
+        <button type="button" class="install-link install-link--nav" data-install hidden>
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#smartphone"></use></svg> Добавить на экран телефона
+        </button>
+        <p class="nav__slogan">Места в Москве под настроение</p>
+      </nav>
+    </div>
+  </header>
+
+  <main class="suggest">
+    <!-- Первый экран: зачем и кнопка, форма открывается в окне -->
+    <section class="suggest-hero container">
+      <div class="suggest-hero__text">
+        <span class="section-mini">Поделись находкой</span>
+        <h1 class="suggest-hero__title">Знаешь классное место?</h1>
+        <p class="suggest-hero__lead">Расскажи о нём как другу: почему любишь, когда лучше прийти, что не пропустить. Лучшие истории станут местами на Локадо.</p>
+        <button type="button" class="btn suggest-hero__btn" data-suggest-open>Рассказать о месте</button>
+        <p class="suggest-hero__hint">Пара минут и без регистрации</p>
+      </div>
+
+      <div class="suggest-hero__art" aria-hidden="true">
+        <span class="suggest-hero__photo suggest-hero__photo--1" style="background-image: url('assets/images/moods/quiet-nature.jpg')"></span>
+        <span class="suggest-hero__photo suggest-hero__photo--2" style="background-image: url('assets/images/moods/romantic-evening.jpg')"></span>
+        <span class="suggest-hero__note">«Прихожу сюда, когда хочется тишины»</span>
+      </div>
+    </section>
+
+    <!-- Как это работает -->
+    <section class="suggest-steps container" aria-labelledby="suggest-steps-title">
+      <h2 class="section-title" id="suggest-steps-title">Как это работает</h2>
+      <ol class="suggest-steps__list">
+        <li class="suggest-step">
+          <span class="suggest-step__num" aria-hidden="true">1</span>
+          <strong>Расскажи, где это</strong>
+          <span>Название и адрес или ссылка на карту</span>
+        </li>
+        <li class="suggest-step">
+          <span class="suggest-step__num" aria-hidden="true">2</span>
+          <strong>И почему ты его любишь</strong>
+          <span>Это главное — хватит пары фраз</span>
+        </li>
+        <li class="suggest-step">
+          <span class="suggest-step__num" aria-hidden="true">3</span>
+          <strong>Мы прочитаем</strong>
+          <span>Если место появится на Локадо — пришлём ссылку</span>
+        </li>
+      </ol>
+    </section>
+
+    <!-- Пример: снимает страх пустого поля и показывает, чего ждём -->
+    <section class="suggest-example container" aria-labelledby="suggest-example-title">
+      <h2 class="section-title" id="suggest-example-title">Как может выглядеть история</h2>
+      <div class="suggest-example__card">
+        <span class="suggest-example__tag">Пример</span>
+        <dl class="suggest-example__list">
+          <div><dt>Где это</dt><dd>Коломенское, м. Коломенская</dd></div>
+          <div><dt>Почему ты его любишь</dt><dd>Здесь можно гулять полдня и ни разу не упереться в забор: берег реки, яблоневые сады, белая церковь над обрывом. Прихожу сюда, когда хочется тишины.</dd></div>
+          <div><dt>Когда лучше прийти</dt><dd>В будни утром или в мае, когда цветут яблони.</dd></div>
+          <div><dt>Что стоит заметить</dt><dd>Спустись в Голосов овраг — там совсем другой, почти лесной мир.</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <section class="suggest-final container">
+      <p class="suggest-final__honest">Читаем каждую подсказку. Добавляем не все, но каждая помогает понять, чего не хватает. Попасть на Локадо нельзя за деньги — решает только редакция.</p>
+      <button type="button" class="btn suggest-final__btn" data-suggest-open>Рассказать о месте</button>
+      <p class="suggest-final__note">Отправляя историю, ты разрешаешь нам отредактировать её и использовать в описании места на Локадо. Как мы обращаемся с данными — в <a href="privacy.html">политике конфиденциальности</a>.</p>
+    </section>
+  </main>
+
+  <!-- Форма — Яндекс Форма в окне; грузится при первом открытии (suggest.js) -->
+  <div class="modal report-modal" id="suggest-modal" role="dialog" aria-modal="true" aria-labelledby="suggest-modal-title">
+    <div class="modal-content report-modal__content">
+      <div class="modal-header">
+        <h3 id="suggest-modal-title">Расскажи о месте</h3>
+        <button type="button" class="modal-close" data-modal-close aria-label="Закрыть"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#x"></use></svg></button>
+      </div>
+      <div class="modal-body report-modal__body">
+        <div class="report-modal__frame-wrap">
+          <iframe class="report-modal__frame" id="suggest-frame" title="Форма: предложить место"></iframe>
+        </div>
+        <a class="report-modal__fallback" id="suggest-fallback" href="#" target="_blank" rel="noopener">Форма не открылась? Открой её в новой вкладке</a>
+      </div>
+    </div>
+  </div>
+
+
+  <footer class="site-footer">
+    <div class="footer-wave" aria-hidden="true">
+      <svg viewBox="0 0 1200 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0,60 C200,10 400,0 600,20 C800,40 1000,10 1200,30 L1200,60 L0,60 Z"></path>
+      </svg>
+    </div>
+    <div class="container site-footer__top">
+      <div class="site-footer__brand">
+        <span class="logo footer-logo">Локадо</span>
+        <p class="site-footer__tagline">Город, рассказанный простыми словами. Места в Москве для дней, когда хочется выбраться, но непонятно куда.</p>
+        <!-- Установка на экран телефона — видна только на телефоне и если сайт ещё не установлен (install.js) -->
+        <button type="button" class="install-link" data-install hidden>
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#smartphone"></use></svg> Локадо на экране телефона
+        </button>
+      </div>
+
+      <nav class="site-footer__col" aria-label="Навигация">
+        <h4>Навигация</h4>
+        <a href="index.html#map-section">Карта</a>
+        <a href="collections.html">Подборки</a>
+        <a href="index.html#all-places">Все места</a>
+        <a href="suggest.html">Предложить место</a>
+      </nav>
+
+      <div class="site-footer__col">
+        <h4>Где работаем</h4>
+        <p class="site-footer__note">Москва и область.<br>Скоро — другие города.</p>
+      </div>
+      <div class="site-footer__col">
+        <h4>Связаться</h4>
+        <p class="site-footer__note">Предложения, ошибки, вопросы — пиши:</p>
+        <div class="footer-email">
+          <a href="mailto:hello.locado@yandex.ru" class="footer-email__link">hello.locado@yandex.ru</a>
+          <!-- На телефоне без настроенной почты mailto часто ничего не открывает -->
+          <button type="button" class="footer-email__copy" data-copy="hello.locado@yandex.ru" aria-label="Скопировать адрес почты">
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#copy"></use></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="container site-footer__bottom">
+      <p><span>© 2026 Локадо. Сделано с любовью к прогулкам.</span> <a href="privacy.html">Политика конфиденциальности</a></p>
+    </div>
+  </footer>
+
+  <script type="module" src="scripts/ui.js"></script>
+  <script type="module" src="scripts/pages/suggest.js"></script>
+</body>
+</html>

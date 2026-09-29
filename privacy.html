@@ -3,24 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Подборки — Локадо</title>
-  <meta name="description" content="Готовые маршруты по Москве и места под повод — от редакции Локадо.">
+  <title>Политика конфиденциальности — Локадо</title>
+  <meta name="description" content="Какие данные собирает Локадо, зачем и как их удалить.">
+  <meta name="robots" content="noindex">
   <meta name="theme-color" content="#FF570A">
-
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="Подборки — Локадо">
-  <meta property="og:description" content="Готовые маршруты по Москве и места под повод — от редакции Локадо.">
-  <meta property="og:site_name" content="Локадо">
-  <meta property="og:locale" content="ru_RU">
-  <!-- Картинка для превью ссылки в мессенджерах и соцсетях. Адрес — полный:
-       по относительному пути Telegram и VK картинку не находят -->
-  <meta property="og:image" content="https://locado.ru/assets/og-image.jpg">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Локадо — куда пойти в Москве под настроение">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://locado.ru/assets/og-image.jpg">
-
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <!-- Установка на экран телефона как приложение (PWA). Пути относительные —
        при переезде на свой домен ничего менять не нужно -->
@@ -34,7 +20,7 @@
   <link rel="preload" href="assets/fonts/raleway-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles/main.css">
 </head>
-<body class="collections-page">
+<body>
   <header class="main-header">
     <div class="container header-content">
       <a href="index.html" class="logo" aria-label="Локадо — главная">Локадо</a>
@@ -50,7 +36,7 @@
 
       <nav class="nav" id="main-nav">
         <ul class="nav-list">
-          <li><a href="collections.html" class="nav-item" aria-current="page">Подборки</a></li>
+          <li><a href="collections.html" class="nav-item">Подборки</a></li>
           <li><a href="index.html#map-section" class="nav-item">Карта</a></li>
           <li><a href="index.html#all-places" class="nav-item">Все места</a></li>
         </ul>
@@ -62,23 +48,42 @@
     </div>
   </header>
 
+  <main class="legal container">
+    <article class="legal__article">
+      <h1 class="legal__title">Политика конфиденциальности</h1>
+      <p class="legal__updated">Редакция от 29 сентября 2026 года</p>
 
-  <main class="collections-index container">
-    <h1 class="section-title collections-index__title">Подборки</h1>
-    <p class="collections-index__lead">Готовые маршруты на день и места под повод</p>
+      <h2>1. Оператор</h2>
+      <p>Оператор персональных данных — владелец сайта «Локадо». Контакт: <a href="mailto:hello.locado@yandex.ru">hello.locado@yandex.ru</a>. Политика составлена в соответствии с Федеральным законом № 152-ФЗ «О персональных данных».</p>
 
-    <!-- Фильтр по формату — появляется, когда подборок больше шести (pages/collections.js) -->
-    <div class="collections-index__filters" id="collections-filters" role="group" aria-label="Формат подборок"></div>
-    <div class="collection-more__grid collections-index__grid" id="collections-list"></div>
+      <h2>2. Какие данные обрабатываются</h2>
+      <ul>
+        <li>cookie и технические данные (IP-адрес, сведения о браузере и устройстве, просмотренные страницы) — через сервис Яндекс Метрика;</li>
+        <li>адрес электронной почты и содержание сообщения — если пользователь пишет на почту или через формы «Сообщить о неточности» и «Предложить место».</li>
+      </ul>
 
-    <!-- Выход на остальной сайт, если среди подборок нет подходящей -->
-    <aside class="collections-index__more">
-      <p class="collections-index__more-title">Ничего не зацепило?</p>
-      <div class="collections-index__more-links">
-        <a class="btn btn-secondary" href="index.html#all-places">Все места</a>
-        <a class="btn btn-secondary" href="index.html#map-section">Места на карте</a>
-      </div>
-    </aside>
+      <h2>3. Цели</h2>
+      <ul>
+        <li>статистика посещений и улучшение сайта;</li>
+        <li>ответ на обращения, исправление информации о местах и рассмотрение предложенных мест и сообщение об их публикации.</li>
+      </ul>
+
+      <h2>4. Основание</h2>
+      <p>Согласие пользователя. Согласие на cookie даётся кнопкой «Хорошо» на плашке о cookie, на обработку обращения — его отправкой.</p>
+
+      <h2>5. Передача третьим лицам</h2>
+      <p>Данные обрабатываются с помощью сервисов ООО «Яндекс» (Метрика, Карты, Формы, Почта) и хранятся на серверах в России. Другим лицам данные не передаются, кроме случаев, предусмотренных законом.</p>
+
+      <h2>6. Срок хранения</h2>
+      <p>Обращения — до достижения цели обработки. Статистика — в сроки, установленные Яндекс Метрикой.</p>
+
+      <h2>7. Права пользователя</h2>
+      <p>Пользователь вправе получить сведения о своих данных, потребовать их уточнения или удаления и отозвать согласие, написав на <a href="mailto:hello.locado@yandex.ru">hello.locado@yandex.ru</a>. Ответ — в течение 10 рабочих дней. Отказаться от cookie можно в настройках браузера или кнопкой ниже.</p>
+      <p><button type="button" class="legal__reset" data-consent-reset>Изменить выбор по cookie</button></p>
+
+      <h2>8. Защита данных</h2>
+      <p>Доступ к данным есть только у администрации сайта. Сайт работает по защищённому соединению (HTTPS).</p>
+    </article>
   </main>
 
   <footer class="site-footer">
@@ -128,6 +133,5 @@
   </footer>
 
   <script type="module" src="scripts/ui.js"></script>
-  <script type="module" src="scripts/pages/collections.js"></script>
 </body>
 </html>

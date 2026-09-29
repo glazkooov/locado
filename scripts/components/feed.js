@@ -11,6 +11,17 @@ import { setPressed } from './category-buttons.js';
 // 12 делится на 2, 3 и 4 колонки — страница заполняет ряды ровно
 const PAGE_SIZE = 12;
 
+// Карточка «Знаешь место, которого здесь нет?» — встаёт в ленту после
+// этой карточки, только в полной ленте без фильтров
+const SUGGEST_AFTER = 7;
+const SUGGEST_RATIO = 1; // квадрат — высота для раскладки по колонкам
+const suggestCardHtml = () => `
+  <a class="feed-suggest" href="suggest.html">
+    <svg class="icon feed-suggest__icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#heart"></use></svg>
+    <span class="feed-suggest__title">Знаешь место, которого здесь нет?</span>
+    <span class="feed-suggest__link">Расскажи о нём →</span>
+  </a>`;
+
 // Пропорции карточек (высота / ширина) — классы .place-card--r0…r4 в
 // card.css. По ним без замеров DOM знаем высоту каждой колонки.
 const CARD_RATIOS = [5 / 4, 4 / 3, 1, 1.4, 4 / 5];
@@ -79,13 +90,23 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
     heights = columns.map(() => 0);
   };
 
-  const appendCards = (places) => {
+  const isUnfiltered = () => state.category === 'all' && !state.query && !state.tags && !state.tagsAll;
+
+  // start — сколько карточек уже в ленте: по нему видно, где встать
+  // карточке «Знаешь место?»
+  const appendCards = (places, start = 0) => {
     const favorites = Storage.getFavorites();
-    places.forEach((place) => {
+    const shortest = () => heights.indexOf(Math.min(...heights));
+    places.forEach((place, i) => {
       const ratio = ratioIndex(place.slug);
-      const col = heights.indexOf(Math.min(...heights));
+      const col = shortest();
       columns[col].insertAdjacentHTML('beforeend', cardHtml(place, favorites.includes(place.slug), `place-card--r${ratio}`));
       heights[col] += CARD_RATIOS[ratio];
+      if (start + i + 1 === SUGGEST_AFTER && isUnfiltered()) {
+        const c = shortest();
+        columns[c].insertAdjacentHTML('beforeend', suggestCardHtml());
+        heights[c] += SUGGEST_RATIO;
+      }
     });
   };
 
@@ -122,7 +143,7 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
       autoUnlocked = false;
     }
     const next = list.slice(shown, shown + pageSize);
-    appendCards(next);
+    appendCards(next, shown);
     shown += next.length;
 
     if (showMoreBtn) {
