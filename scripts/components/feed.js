@@ -1,6 +1,7 @@
 // components/feed.js — лента мест на главной: категории, поиск, бесконечная
 // подгрузка и раскладка «как в Pinterest» (колонки разной высоты).
 
+import { goal } from '../core/analytics.js';
 import { $, $$, on, toggleClear } from '../core/dom.js';
 import { filterPlaces, searchDetails, categoryLabel } from '../core/places.js';
 import { EXAMPLES } from '../core/search-words.js';
@@ -139,8 +140,21 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
 
   // Подсказки поиска: над лентой — «кафе у нас пока нет…» или исправленная
   // раскладка; в пустом результате — искать везде или примеры запросов
+  // Что ищут: запрос уходит в Метрику, когда человек перестал печатать
+  // (1,5 с), — иначе «к», «ка», «каф» считались бы отдельными поисками
+  let searchTimer;
+  const reportSearch = (query, found) => {
+    clearTimeout(searchTimer);
+    if (!query) return;
+    searchTimer = setTimeout(() => {
+      goal('search', { search: query });
+      if (!found) goal('search_empty', { search_empty: query });
+    }, 1500);
+  };
+
   const syncSearchHints = () => {
     const query = state.query.trim();
+    reportSearch(query, list.length > 0);
     const details = query ? searchDetails(allPlaces, query) : { note: '', suggest: '', corrected: '' };
     if (noteEl) {
       const text = details.corrected

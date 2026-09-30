@@ -1,5 +1,6 @@
 // pages/place.js — точка входа place.html.
 
+import { goal } from '../core/analytics.js';
 import { $, $$, on } from '../core/dom.js';
 import {
   escapeHtml, safeUrl, cssUrl, getOpenStatus, describeStatusTimer, scheduleHtml, telHref, displayHost,
@@ -260,6 +261,7 @@ async function renderMap(place) {
   if (!map) $('#show-on-map')?.setAttribute('hidden', '');
   const routeLink = $('#route-link');
   if (routeLink) routeLink.href = routeUrl(place);
+  on(routeLink, 'click', () => goal('route_click', { place: place.slug }));
 }
 
 function renderSimilar(place, allPlaces) {
@@ -363,13 +365,19 @@ function attachEventListeners(place, allPlaces) {
     if (place.phone) on(actionCall, 'click', () => callBtn.click());
     else actionCall.style.display = 'none';
   }
-  on($('#action-route'), 'click', () => { if (place.coords) window.open(routeUrl(place), '_blank'); });
+  on($('#action-route'), 'click', () => {
+    if (!place.coords) return;
+    goal('route_click', { place: place.slug });
+    window.open(routeUrl(place), '_blank');
+  });
 
   // Скролл к карте
   on($('#show-on-map'), 'click', () => $('#on-map')?.scrollIntoView({ behavior: 'smooth', block: 'center' }));
 
   // Сообщить о неточности — Яндекс Форма в окне
-  const reportModal = createModal($('#report-modal'), { onOpen: () => loadReportForm(place) });
+  const reportModal = createModal($('#report-modal'), {
+    onOpen: () => { goal('report_open', { place: place.slug }); loadReportForm(place); }
+  });
   on($('#suggest-edit'), 'click', () => reportModal?.open());
 
   // Форма отзыва
