@@ -6,6 +6,7 @@
 // Метрики цель с таким идентификатором заводится вручную — «JavaScript-
 // событие». Список — docs/analytics.md.
 
+import { categoryLabel } from './places.js';
 import { onAnalyticsConsent } from '../components/consent.js';
 
 const COUNTER_ID = 113169704;
@@ -34,6 +35,13 @@ function start() {
 
 export function initAnalytics() {
   onAnalyticsConsent(start);
+}
+
+/** Выбор раздела: в отчёте «Параметры визитов» — дерево
+ *  «Раздел → Еда → Лента»: что выбирают и откуда. «Все» не считаем. */
+export function categoryGoal(category, from) {
+  if (!category || category === 'all') return;
+  goal('category_select', { 'Раздел': { [categoryLabel(category)]: from } });
 }
 
 /** Достижение цели. params — подробности, видны в отчёте «Параметры

@@ -5,7 +5,7 @@
 // запоминается. Места не повторяются, пока не покажутся все из выбора;
 // закрыл окно и открыл снова — то же место, а не новое.
 
-import { goal } from '../core/analytics.js';
+import { goal, categoryGoal } from '../core/analytics.js';
 import { $, $$, on } from '../core/dom.js';
 import { escapeHtml, getOpenStatus, openStatusLabel, scheduleSummary } from '../core/format.js';
 import { categoryLabel, pickRandom, placeUrl, metroList, CATEGORIES } from '../core/places.js';
@@ -133,6 +133,7 @@ export function initRandomizer(places) {
 
   chips.forEach((chip) => on(chip, 'click', () => {
     category = chip.dataset.category;
+    categoryGoal(category, 'Случайное место');
     setPressed(chips, (c) => c === chip);
     chip.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
     restart();

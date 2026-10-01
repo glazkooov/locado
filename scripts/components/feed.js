@@ -1,7 +1,7 @@
 // components/feed.js — лента мест на главной: категории, поиск, бесконечная
 // подгрузка и раскладка «как в Pinterest» (колонки разной высоты).
 
-import { goal } from '../core/analytics.js';
+import { goal, categoryGoal } from '../core/analytics.js';
 import { $, $$, on, toggleClear } from '../core/dom.js';
 import { filterPlaces, searchDetails, categoryLabel } from '../core/places.js';
 import { EXAMPLES } from '../core/search-words.js';
@@ -147,8 +147,9 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
     clearTimeout(searchTimer);
     if (!query) return;
     searchTimer = setTimeout(() => {
-      goal('search', { search: query });
-      if (!found) goal('search_empty', { search_empty: query });
+      const q = query.toLowerCase();
+      goal('search', { 'Поиск': { [q]: found ? 'нашлось' : 'ничего' } });
+      if (!found) goal('search_empty', { 'Поиск без результата': q });
     }, 1500);
   };
 
@@ -254,6 +255,7 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
     e.preventDefault();
     const bar = btn.parentElement;
     setCategory(btn.dataset.category);
+    categoryGoal(btn.dataset.category, 'Вкладки ленты');
     // Выбранную вкладку — к центру ряда (только по горизонтали: scrollIntoView
     // двигал бы и страницу)
     bar.scrollTo({ left: btn.offsetLeft - (bar.clientWidth - btn.offsetWidth) / 2, behavior: 'smooth' });
