@@ -5,6 +5,7 @@
 // запоминается. Места не повторяются, пока не покажутся все из выбора;
 // закрыл окно и открыл снова — то же место, а не новое.
 
+import { goal } from '../core/analytics.js';
 import { $, $$, on } from '../core/dom.js';
 import { escapeHtml, getOpenStatus, openStatusLabel, scheduleSummary } from '../core/format.js';
 import { categoryLabel, pickRandom, placeUrl, metroList, CATEGORIES } from '../core/places.js';
@@ -120,6 +121,7 @@ export function initRandomizer(places) {
 
   const modal = createModal(modalEl, {
     onOpen: () => {
+      goal('random_open');
       setPressed(modeBtns, (b) => b.dataset.mode === mode);
       // Повторное открытие показывает прежнее место, если оно ещё подходит
       if (current && pool().some((p) => p.slug === current.slug)) { render(current); return; }

@@ -2,6 +2,7 @@
 // открывается в окне по кнопке и грузится только при первом открытии
 // (как собрать форму — docs/suggest-form.md).
 
+import { goal } from '../core/analytics.js';
 import { createModal } from '../components/modal.js';
 
 const SUGGEST_FORM_ID = '6ab90833e010db752e550dfc';
@@ -20,5 +21,7 @@ function loadForm() {
 }
 
 document.getElementById('suggest-fallback').href = FORM_URL;
-const modal = createModal(document.getElementById('suggest-modal'), { onOpen: loadForm });
+const modal = createModal(document.getElementById('suggest-modal'), {
+  onOpen: () => { goal('suggest_open'); loadForm(); }
+});
 document.querySelectorAll('[data-suggest-open]').forEach((btn) => btn.addEventListener('click', () => modal.open()));

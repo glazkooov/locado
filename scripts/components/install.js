@@ -7,6 +7,7 @@
 // Android/Chrome: кнопка сразу открывает системное окно установки
 // (beforeinstallprompt). iPhone: такого окна нет — показываем инструкцию.
 
+import { goal } from '../core/analytics.js';
 import { consentDecided } from './consent.js';
 import { $$, on } from '../core/dom.js';
 import { createModal } from './modal.js';
@@ -101,12 +102,14 @@ export function initInstall() {
     $$('#install-steps').forEach((el) => { el.hidden = true; });
   });
   window.addEventListener('appinstalled', () => {
+    goal('app_install');
     hideBanner();
     modal?.close();
     $$('[data-install]').forEach((el) => { el.hidden = true; });
   });
 
   const open = () => {
+    goal('install_open');
     if (deferredPrompt) {
       deferredPrompt.prompt();
       deferredPrompt.userChoice.finally(() => { deferredPrompt = null; });

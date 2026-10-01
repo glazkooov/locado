@@ -2,7 +2,8 @@
 // (маршрут или «под повод»). Текст — из data/collections.json, практические
 // данные мест (метро, часы, цена, фото) — из places.json.
 
-import { $ } from '../core/dom.js';
+import { goal } from '../core/analytics.js';
+import { $, on } from '../core/dom.js';
 import { escapeHtml, cssUrl, hoursForArticle } from '../core/format.js';
 import { loadPlaces, bySlug, placeUrl, metroList, categoryLabel } from '../core/places.js';
 import { loadCollections, COLLECTION_TYPES } from '../core/collections.js';
@@ -162,6 +163,7 @@ async function renderMap(c, ordered) {
   $('#collection-map-title').textContent = isRoute ? 'Маршрут на карте' : 'Все места на карте';
   if (isRoute && ordered.length > 1) {
     $('#collection-route-link').href = walkingRouteUrl(ordered);
+    on($('#collection-route-link'), 'click', () => goal('route_click', { collection: c.slug }));
     $('#collection-route').hidden = false;
   }
   await initCollectionMap($('#collection-map-container'), ordered, {
@@ -195,6 +197,7 @@ async function main() {
   if (!c) { showNotFound(); return; }
 
   setMeta(c);
+  goal('collection_open', { collection: c.slug });
   renderHero(c);
   renderByline(c);
   const ordered = renderBody(c, places);

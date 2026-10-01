@@ -10,6 +10,7 @@ import { initInstall } from './components/install.js';
 import { icon } from './core/icons.js';
 import { CATEGORIES } from './core/places.js';
 import { initConsent } from './components/consent.js';
+import { initAnalytics } from './core/analytics.js';
 
 const syncHeaderHeight = () => {
   const header = $('.main-header');
@@ -237,6 +238,7 @@ initHeaderOverlay();
 initScrollReveal();
 initCopyButtons();
 initConsent();
+initAnalytics();
 initInstall();
 initHeaderSearch();
 initAnchorLanding();
