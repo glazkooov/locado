@@ -16,6 +16,7 @@
     "favorites": 0,
     "address": "Ленинский просп. / Пушкинская наб., Москва",
     "metro": "Ленинский проспект",
+    "fromReaders": true,
     "schedule": {
       "mon": [
         "00:00",
