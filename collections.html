@@ -2,131 +2,15 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Подборки — Локадо</title>
-  <meta name="description" content="Готовые маршруты по Москве и места под повод — от редакции Локадо.">
-  <meta name="theme-color" content="#FF570A">
-
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="Подборки — Локадо">
-  <meta property="og:description" content="Готовые маршруты по Москве и места под повод — от редакции Локадо.">
-  <meta property="og:site_name" content="Локадо">
-  <meta property="og:locale" content="ru_RU">
-  <!-- Картинка для превью ссылки в мессенджерах и соцсетях. Адрес — полный:
-       по относительному пути Telegram и VK картинку не находят -->
-  <meta property="og:image" content="https://locado.ru/assets/og-image.jpg">
-  <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Локадо — куда пойти в Москве под настроение">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://locado.ru/assets/og-image.jpg">
-
-  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <!-- Установка на экран телефона как приложение (PWA). Пути относительные —
-       при переезде на свой домен ничего менять не нужно -->
-  <link rel="manifest" href="manifest.webmanifest">
-  <link rel="apple-touch-icon" href="assets/app/apple-touch-icon.png">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Локадо">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <link rel="preload" href="assets/fonts/unbounded-cyrillic-700-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/fonts/raleway-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="styles/main.css">
+  <title>Локадо</title>
+  <meta name="robots" content="noindex">
+  <!-- Старый адрес: страница переехала в collections/. Переадресация сохраняет
+       ?slug=… и #якорь — старые ссылки из чатов продолжают работать -->
+  <script>location.replace('collections/' + location.search + location.hash);</script>
+  <meta http-equiv="refresh" content="0; url=collections/">
+  <link rel="canonical" href="https://locado.ru/collections/">
 </head>
-<body class="collections-page">
-  <header class="main-header">
-    <div class="container header-content">
-      <a href="./" class="logo" aria-label="Локадо — главная">Локадо</a>
-      <!-- Поиск: ведёт к ленте «Все места» и ставит курсор в строку поиска (ui.js) -->
-      <a href="./#search" class="header-search" data-search aria-label="Найти место">
-        <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#search"></use></svg><span>Поиск</span>
-      </a>
-
-
-      <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Открыть меню" aria-expanded="false" aria-controls="main-nav">
-        <svg class="icon mobile-menu-toggle__open" aria-hidden="true" focusable="false"><use href="assets/icons.svg#menu"></use></svg><svg class="icon mobile-menu-toggle__close" aria-hidden="true" focusable="false"><use href="assets/icons.svg#x"></use></svg>
-      </button>
-
-      <nav class="nav" id="main-nav">
-        <ul class="nav-list">
-          <li><a href="collections.html" class="nav-item" aria-current="page">Подборки</a></li>
-          <li><a href="./#map-section" class="nav-item">Карта</a></li>
-          <li><a href="./#all-places" class="nav-item">Все места</a></li>
-        </ul>
-        <button type="button" class="install-link install-link--nav" data-install hidden>
-          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#smartphone"></use></svg> Добавить на экран телефона
-        </button>
-      </nav>
-    </div>
-  </header>
-
-
-  <main class="collections-index container">
-    <h1 class="section-title collections-index__title">Подборки</h1>
-    <p class="collections-index__lead">Готовые маршруты на день и места под повод</p>
-
-    <!-- Фильтр по формату — появляется, когда подборок больше шести (pages/collections.js) -->
-    <div class="collections-index__filters" id="collections-filters" role="group" aria-label="Формат подборок"></div>
-    <div class="collection-more__grid collections-index__grid" id="collections-list"></div>
-
-    <!-- Выход на остальной сайт, если среди подборок нет подходящей -->
-    <aside class="collections-index__more">
-      <p class="collections-index__more-title">Ничего не зацепило?</p>
-      <div class="collections-index__more-links">
-        <a class="btn btn-secondary" href="./#all-places">Все места</a>
-        <a class="btn btn-secondary" href="./#map-section">Места на карте</a>
-      </div>
-    </aside>
-  </main>
-
-  <footer class="site-footer">
-    <div class="footer-wave" aria-hidden="true">
-      <svg viewBox="0 0 1200 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M0,60 C200,10 400,0 600,20 C800,40 1000,10 1200,30 L1200,60 L0,60 Z"></path>
-      </svg>
-    </div>
-    <div class="container site-footer__top">
-      <div class="site-footer__brand">
-        <span class="logo footer-logo">Локадо</span>
-        <p class="site-footer__tagline">Город, рассказанный простыми словами. Места в Москве для дней, когда хочется выбраться, но непонятно куда.</p>
-        <!-- Установка на экран телефона — видна только на телефоне и если сайт ещё не установлен (install.js) -->
-        <button type="button" class="install-link" data-install hidden>
-          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#smartphone"></use></svg> Локадо на экране телефона
-        </button>
-      </div>
-
-      <nav class="site-footer__col" aria-label="Навигация">
-        <h4>Навигация</h4>
-        <a href="./#map-section">Карта</a>
-        <a href="collections.html">Подборки</a>
-        <a href="./#all-places">Все места</a>
-        <a href="suggest.html">Предложить место</a>
-      </nav>
-
-      <div class="site-footer__col">
-        <h4>Где работаем</h4>
-        <p class="site-footer__note">Москва и область</p>
-      </div>
-      <div class="site-footer__col">
-        <h4>Связаться</h4>
-        <p class="site-footer__note">Предложения, ошибки, вопросы — пиши:</p>
-        <div class="footer-email">
-          <a href="mailto:hello.locado@yandex.ru" class="footer-email__link">hello.locado@yandex.ru</a>
-          <!-- На телефоне без настроенной почты mailto часто ничего не открывает -->
-          <button type="button" class="footer-email__copy" data-copy="hello.locado@yandex.ru" aria-label="Скопировать адрес почты">
-            <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#copy"></use></svg>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <div class="container site-footer__bottom">
-      <p><span>© Локадо. Сделано с любовью к прогулкам.</span> <a href="privacy.html">Политика конфиденциальности</a></p>
-    </div>
-  </footer>
-
-  <script type="module" src="scripts/ui.js"></script>
-  <script type="module" src="scripts/pages/collections.js"></script>
+<body>
+  <p><a href="collections/">Страница переехала — открыть</a></p>
 </body>
 </html>

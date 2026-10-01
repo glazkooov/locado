@@ -24,7 +24,7 @@ function setMeta(c) {
   $('meta[name="description"]')?.setAttribute('content', c.lead || '');
   $('meta[property="og:title"]')?.setAttribute('content', c.title);
   $('meta[property="og:description"]')?.setAttribute('content', c.lead || '');
-  if (c.cover) $('meta[property="og:image"]')?.setAttribute('content', new URL(c.cover, location.href).href);
+  if (c.cover) $('meta[property="og:image"]')?.setAttribute('content', new URL(c.cover, document.baseURI).href);
 }
 
 const META_ICONS = { duration: 'clock', budget: 'ticket', when: 'calendar', area: 'map-pin', start: 'train-front' };

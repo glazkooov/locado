@@ -23,7 +23,7 @@ export async function loadCollections() {
   return cache;
 }
 
-export const collectionUrl = (slug) => `collection.html?slug=${encodeURIComponent(slug)}`;
+export const collectionUrl = (slug) => `collection/?slug=${encodeURIComponent(slug)}`;
 
 /** Слаги мест подборки по порядку появления в тексте. */
 export const collectionPlaceSlugs = (collection) =>

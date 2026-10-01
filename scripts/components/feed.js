@@ -18,7 +18,7 @@ const PAGE_SIZE = 12;
 const SUGGEST_AFTER = 7;
 const SUGGEST_RATIO = 1; // квадрат — высота для раскладки по колонкам
 const suggestCardHtml = () => `
-  <a class="feed-suggest" href="suggest.html">
+  <a class="feed-suggest" href="suggest/">
     <svg class="icon feed-suggest__icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#heart"></use></svg>
     <span class="feed-suggest__title">Знаешь место, которого здесь нет?</span>
     <span class="feed-suggest__link">Расскажи о нём →</span>

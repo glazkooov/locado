@@ -28,7 +28,7 @@ const menuExtraHtml = () => `
       ${Object.entries(CATEGORIES).map(([key, c]) =>
         `<li><a href="./?category=${key}">${icon(c.icon)} ${c.label}</a></li>`).join('')}
     </ul>
-    <a href="suggest.html" class="nav-suggest">${icon('heart')} Предложить место</a>
+    <a href="suggest/" class="nav-suggest">${icon('heart')} Предложить место</a>
   </div>`;
 const menuContactHtml = '<p class="nav-contact">Пиши нам: <a href="mailto:hello.locado@yandex.ru">hello.locado@yandex.ru</a></p>';
 
@@ -227,6 +227,20 @@ const initAnchorLanding = () => {
   }, { once: true });
 };
 
+/** Ссылки на якорь внутри страницы (#place-2, #collection-map). На
+ *  страницах в папках стоит <base href="../">, и браузер считал бы «#…»
+ *  от корня сайта — уводил бы на главную. Прокручиваем сами. */
+const initInPageAnchors = () => {
+  on(document, 'click', 'a[href^="#"]', (e, link) => {
+    const id = decodeURIComponent(link.getAttribute('href').slice(1));
+    const target = id && document.getElementById(id);
+    if (!target) return;
+    e.preventDefault();
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    history.replaceState(null, '', `${window.location.pathname}${window.location.search}#${id}`);
+  });
+};
+
 syncHeaderHeight();
 window.addEventListener('resize', syncHeaderHeight, { passive: true });
 window.addEventListener('load', syncHeaderHeight);
@@ -241,4 +255,5 @@ initConsent();
 initAnalytics();
 initInstall();
 initHeaderSearch();
+initInPageAnchors();
 initAnchorLanding();

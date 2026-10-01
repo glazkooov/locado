@@ -42,7 +42,7 @@ function showNotFound(message) {
 function setMetaTags(place) {
   document.title = `${place.name} — Локадо`;
   $('meta[property="og:title"]')?.setAttribute('content', place.name);
-  if (place.photo) $('meta[property="og:image"]')?.setAttribute('content', new URL(place.photo, location.href).href);
+  if (place.photo) $('meta[property="og:image"]')?.setAttribute('content', new URL(place.photo, document.baseURI).href);
   $('meta[property="og:description"]')?.setAttribute('content', place.description || '');
 }
 
