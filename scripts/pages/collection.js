@@ -203,7 +203,7 @@ async function main() {
   const ordered = renderBody(c, places);
   renderPlan(c, c.blocks || [], places);
   renderMore(c, collections);
-  initShare([$('#share-btn')], () => ({ title: c.title, text: c.lead }));
+  initShare([$('#share-btn')], () => ({ title: c.title, text: c.lead }), { what: `Подборка: ${c.title}` });
   await renderMap(c, ordered);
 }
 
