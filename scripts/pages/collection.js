@@ -2,6 +2,7 @@
 // (маршрут или «под повод»). Текст — из data/collections.json, практические
 // данные мест (метро, часы, цена, фото) — из places.json.
 
+import { renderCredit } from '../core/credits.js';
 import { goal } from '../core/analytics.js';
 import { $, on } from '../core/dom.js';
 import { escapeHtml, cssUrl, hoursForArticle } from '../core/format.js';
@@ -38,6 +39,7 @@ function renderHero(c) {
   img.onerror = () => hero.classList.add('place-hero--no-photo');
   if (c.cover) img.src = c.cover; else hero.classList.add('place-hero--no-photo');
 
+  renderCredit($('#photo-credit'), c.cover && c.photoCredit);
   $('#collection-type').textContent = COLLECTION_TYPES[c.type] || 'Подборка';
   $('#collection-title').textContent = c.title;
   $('#collection-lead').textContent = c.lead || '';
