@@ -2,16 +2,22 @@
 // у каждого места и подборки с фото есть файл и подпись автора.
 // Запуск из корня проекта:  node tools/check-photos.mjs
 
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, statSync } from 'node:fs';
 
 const LICENSES = ['CC BY 4.0', 'CC BY-SA 4.0', 'CC BY 3.0', 'CC BY-SA 3.0', 'CC0'];
 const places = JSON.parse(readFileSync('data/places.json', 'utf8'));
 const collections = JSON.parse(readFileSync('data/collections.json', 'utf8'));
 
-const problems = { noFile: [], noCredit: [], noSource: [], badLicense: [] };
+const problems = { noFile: [], noSmall: [], tooBig: [], noCredit: [], noSource: [], badLicense: [] };
 const check = (label, photo, credit) => {
   if (!photo) return;
-  if (!/^https?:/.test(photo) && !existsSync(photo)) problems.noFile.push(`${label} — ${photo}`);
+  const local = !/^https?:/.test(photo);
+  if (local && !existsSync(photo)) problems.noFile.push(`${label} — ${photo}`);
+  else if (local) {
+    const small = photo.replace(/^(assets\/images\/places\/)/, '$1sm/');
+    if (small !== photo && !existsSync(small)) problems.noSmall.push(label);
+    if (statSync(photo).size > 600_000) problems.tooBig.push(`${label} — ${Math.round(statSync(photo).size / 1024)} КБ`);
+  }
   if (!credit?.author) { problems.noCredit.push(label); return; }
   if (credit.license && !credit.source) problems.noSource.push(label);
   if (credit.license && !LICENSES.includes(credit.license)) problems.badLicense.push(`${label} — «${credit.license}»`);
@@ -21,6 +27,8 @@ collections.forEach((c) => check(`подборка ${c.slug}`, c.cover, c.photoC
 
 const titles = {
   noFile: 'Нет файла фото',
+  noSmall: 'Нет копии для карточек (sm/) — запусти python3 tools/photos.py',
+  tooBig: 'Фото тяжелее 600 КБ — запусти python3 tools/photos.py',
   noCredit: 'Нет подписи (photoCredit.author) — для своих фото: { "author": "Локадо" }',
   noSource: 'Есть лицензия, но нет ссылки на источник (photoCredit.source)',
   badLicense: `Неизвестная лицензия — допустимые: ${LICENSES.join(', ')}`
