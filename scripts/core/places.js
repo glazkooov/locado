@@ -25,7 +25,7 @@ export function categoryLabel(category, { emoji = false } = {}) {
 }
 
 export function placeUrl(slug) {
-  return `place.html?slug=${encodeURIComponent(slug)}`;
+  return `place/?slug=${encodeURIComponent(slug)}`;
 }
 
 /** Путь к фото в data/places.json уже хранится в готовом виде

@@ -42,7 +42,7 @@ function showNotFound(message) {
 function setMetaTags(place) {
   document.title = `${place.name} — Локадо`;
   $('meta[property="og:title"]')?.setAttribute('content', place.name);
-  if (place.photo) $('meta[property="og:image"]')?.setAttribute('content', new URL(place.photo, location.href).href);
+  if (place.photo) $('meta[property="og:image"]')?.setAttribute('content', new URL(place.photo, document.baseURI).href);
   $('meta[property="og:description"]')?.setAttribute('content', place.description || '');
 }
 
@@ -356,7 +356,7 @@ function attachEventListeners(place, allPlaces) {
   if (place.phone) on(callBtn, 'click', () => { window.location.href = telHref(place.phone); });
 
   // Шеринг
-  initShare([$('#share-btn'), $('#action-share')], () => ({ title: place.name, text: place.description }));
+  initShare([$('#share-btn'), $('#action-share')], () => ({ title: place.name, text: place.description }), { what: `Место: ${place.name}` });
 
   // Мобильная панель быстрых действий
   on($('#action-fav'), 'click', () => favBtn.click());

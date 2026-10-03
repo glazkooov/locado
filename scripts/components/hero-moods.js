@@ -4,6 +4,7 @@
 // категорий и карточки подборок (см. initCategoryTiles/initCollections в
 // scripts/pages/home.js) — просто третий источник того же действия.
 
+import { goal } from '../core/analytics.js';
 import { $, $$, on } from '../core/dom.js';
 import { escapeHtml } from '../core/format.js';
 import { MOODS, moodsFor, resolveMoodFilters } from '../core/moods.js';
@@ -35,6 +36,7 @@ export function initHeroMoods(feed, places, { onSelect } = {}) {
   on(container, 'click', '.mood-card[data-mood]', (e, card) => {
     const mood = MOODS.find((m) => m.id === card.dataset.mood);
     if (!mood) return;
+    goal('mood_select', { 'Настроение': mood.label });
     feed.setFilters(resolveMoodFilters(places, mood.id), { syncInput: true, label: { kind: 'Настроение', text: mood.label } });
     setActive(card);
     onSelect?.();

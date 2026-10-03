@@ -11,10 +11,10 @@ const collections = JSON.parse(readFileSync('data/collections.json', 'utf8'));
 
 const urls = [
   '',
-  'collections.html',
-  'suggest.html',
-  ...collections.map((c) => `collection.html?slug=${encodeURIComponent(c.slug)}`),
-  ...places.map((p) => `place.html?slug=${encodeURIComponent(p.slug)}`)
+  'collections/',
+  'suggest/',
+  ...collections.map((c) => `collection/?slug=${encodeURIComponent(c.slug)}`),
+  ...places.map((p) => `place/?slug=${encodeURIComponent(p.slug)}`)
 ];
 
 // & в адресе в XML нужно экранировать

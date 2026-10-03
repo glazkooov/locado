@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <!-- Страница лежит в папке (адрес …/collection/): все относительные пути —
+       к стилям, картинкам, другим страницам — считаются от корня сайта -->
+  <base href="../">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Подборка — Локадо</title>
+  <meta name="description" content="Авторские маршруты и подборки мест в Москве от редакции Локадо.">
+  <meta name="theme-color" content="#FF570A">
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Подборка — Локадо">
+  <meta property="og:description" content="Маршрут по Москве или места под повод — от редакции Локадо.">
+  <meta property="og:site_name" content="Локадо">
+  <meta property="og:locale" content="ru_RU">
+  <!-- Картинка для превью ссылки в мессенджерах и соцсетях. Адрес — полный:
+       по относительному пути Telegram и VK картинку не находят -->
+  <meta property="og:image" content="https://locado.ru/assets/og-image.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Локадо — куда пойти в Москве под настроение">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://locado.ru/assets/og-image.jpg">
+
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <!-- Установка на экран телефона как приложение (PWA). Пути относительные —
+       при переезде на свой домен ничего менять не нужно -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="assets/app/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Локадо">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="preload" href="assets/fonts/unbounded-cyrillic-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/raleway-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body class="collection-page">
+  <header class="main-header main-header--overlay">
+    <div class="container header-content">
+      <a href="./" class="logo" aria-label="Локадо — главная">Локадо</a>
+      <!-- Поиск: ведёт к ленте «Все места» и ставит курсор в строку поиска (ui.js) -->
+      <a href="./#search" class="header-search" data-search aria-label="Найти место">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#search"></use></svg><span>Поиск</span>
+      </a>
+
+
+      <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Открыть меню" aria-expanded="false" aria-controls="main-nav">
+        <svg class="icon mobile-menu-toggle__open" aria-hidden="true" focusable="false"><use href="assets/icons.svg#menu"></use></svg><svg class="icon mobile-menu-toggle__close" aria-hidden="true" focusable="false"><use href="assets/icons.svg#x"></use></svg>
+      </button>
+
+      <nav class="nav" id="main-nav">
+        <ul class="nav-list">
+          <li><a href="collections/" class="nav-item" aria-current="page">Подборки</a></li>
+          <li><a href="./#map-section" class="nav-item">Карта</a></li>
+          <li><a href="./#all-places" class="nav-item">Все места</a></li>
+        </ul>
+        <button type="button" class="install-link install-link--nav" data-install hidden>
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#smartphone"></use></svg> Добавить на экран телефона
+        </button>
+      </nav>
+    </div>
+  </header>
+
+
+  <!-- Подборка не найдена -->
+  <section class="state-screen" id="collection-error" hidden>
+    <div class="container state-screen__inner">
+      <p class="state-screen__code" aria-hidden="true">404</p>
+      <h1 class="state-screen__title">Такой подборки у нас нет</h1>
+      <p class="state-screen__text" id="collection-error-text">
+        Возможно, ссылка устарела или в адресе опечатка. Загляни в другие подборки.
+      </p>
+      <div class="state-screen__actions">
+        <a href="collections/" class="btn state-screen__btn">Все подборки</a>
+        <a href="./" class="state-screen__link">Вернуться на главную</a>
+      </div>
+    </div>
+  </section>
+
+  <main id="collection-content">
+    <!-- Обложка — тот же первый экран, что у страницы места -->
+    <section class="place-hero collection-hero is-loading">
+      <div class="hero-bg" id="hero-bg"></div>
+      <div class="hero-overlay" aria-hidden="true"></div>
+      <div class="container hero-content">
+        <p class="hero-category" id="collection-type"></p>
+        <h1 class="hero-title" id="collection-title">Загружаем…</h1>
+        <p class="hero-subtitle" id="collection-lead"></p>
+        <ul class="hero-facts" id="collection-meta"></ul>
+      </div>
+    </section>
+
+    <!-- Текст статьи: блоки «текст / место / переход» рендерит pages/collection.js -->
+    <article class="collection-article container">
+      <div class="collection-byline-row">
+        <p class="collection-byline" id="collection-byline"></p>
+        <button type="button" class="collection-share" id="share-btn" aria-label="Поделиться">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#share-2"></use></svg><span>Поделиться</span>
+        </button>
+      </div>
+
+      <!-- План: все остановки сразу и ссылка на карту — заполняет collection.js -->
+      <nav class="collection-plan" id="collection-plan" aria-labelledby="collection-plan-title" hidden>
+        <p class="collection-plan__title" id="collection-plan-title"></p>
+        <ol class="collection-plan__list" id="collection-plan-list"></ol>
+        <a class="collection-plan__map" href="#collection-map">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#map-pin"></use></svg> Все места на карте
+        </a>
+      </nav>
+
+      <div class="collection-body" id="collection-body"></div>
+    </article>
+
+    <!-- Все места подборки на карте -->
+    <section class="collection-map container" id="collection-map">
+      <div class="section-head">
+        <h2 class="section-title" id="collection-map-title">Все места на карте</h2>
+      </div>
+      <div class="map-container" id="collection-map-container" aria-label="Карта мест подборки"></div>
+      <div class="map-actions" id="collection-route" hidden>
+        <a class="btn route-btn" id="collection-route-link" href="https://yandex.ru/maps/" target="_blank" rel="noopener">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#navigation"></use></svg> Маршрут в Яндекс.Картах
+        </a>
+      </div>
+    </section>
+
+    <!-- Другие подборки -->
+    <section class="collection-more container" id="collection-more" hidden>
+      <div class="section-head section-head--row">
+        <div>
+          <h2 class="section-title">Ещё подборки</h2>
+        </div>
+        <a class="section-link" href="collections/">Все подборки →</a>
+      </div>
+      <div class="collection-more__grid" id="collection-more-grid"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-wave" aria-hidden="true">
+      <svg viewBox="0 0 1200 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0,60 C200,10 400,0 600,20 C800,40 1000,10 1200,30 L1200,60 L0,60 Z"></path>
+      </svg>
+    </div>
+    <div class="container site-footer__top">
+      <div class="site-footer__brand">
+        <span class="logo footer-logo">Локадо</span>
+        <p class="site-footer__tagline">Город, рассказанный простыми словами. Места в Москве для дней, когда хочется выбраться, но непонятно куда.</p>
+        <!-- Установка на экран телефона — видна только на телефоне и если сайт ещё не установлен (install.js) -->
+        <button type="button" class="install-link" data-install hidden>
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#smartphone"></use></svg> Локадо на экране телефона
+        </button>
+      </div>
+
+      <nav class="site-footer__col" aria-label="Навигация">
+        <h4>Навигация</h4>
+        <a href="./#map-section">Карта</a>
+        <a href="collections/">Подборки</a>
+        <a href="./#all-places">Все места</a>
+        <a href="suggest/">Предложить место</a>
+      </nav>
+
+      <div class="site-footer__col">
+        <h4>Где работаем</h4>
+        <p class="site-footer__note">Москва и область</p>
+      </div>
+      <div class="site-footer__col">
+        <h4>Связаться</h4>
+        <p class="site-footer__note">Предложения, ошибки, вопросы — пиши:</p>
+        <div class="footer-email">
+          <a href="mailto:hello.locado@yandex.ru" class="footer-email__link">hello.locado@yandex.ru</a>
+          <!-- На телефоне без настроенной почты mailto часто ничего не открывает -->
+          <button type="button" class="footer-email__copy" data-copy="hello.locado@yandex.ru" aria-label="Скопировать адрес почты">
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#copy"></use></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="container site-footer__bottom">
+      <p><span>© Локадо. Сделано с любовью к прогулкам.</span> <a href="privacy/">Политика конфиденциальности</a></p>
+    </div>
+  </footer>
+
+  <!-- Модалка шеринга -->
+  <!-- Нейтральные кнопки вместо фирменных цветов соцсетей: ярко-синие и
+       зелёные плашки спорили с тёплой палитрой сайта -->
+  <div class="modal share-modal" id="share-modal" role="dialog" aria-modal="true" aria-labelledby="share-modal-title">
+    <div class="modal-content modal-content--sm">
+      <div class="modal-header">
+        <h3 id="share-modal-title">Поделиться подборкой</h3>
+        <button type="button" class="modal-close" id="share-close" data-modal-close aria-label="Закрыть"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#x"></use></svg></button>
+      </div>
+      <div class="modal-body">
+        <div class="share-buttons">
+          <button type="button" class="share-option share-telegram"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#send"></use></svg> Telegram</button>
+          <button type="button" class="share-option share-vk"><span class="share-option__mark" aria-hidden="true">VK</span> ВКонтакте</button>
+          <button type="button" class="share-option share-whatsapp"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#message-circle"></use></svg> WhatsApp</button>
+          <button type="button" class="share-option share-copy"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#copy"></use></svg> Скопировать ссылку</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button id="back-to-top" class="back-to-top" aria-label="Наверх">
+    <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#arrow-up"></use></svg>
+  </button>
+
+  <script type="module" src="scripts/ui.js"></script>
+  <script type="module" src="scripts/pages/collection.js"></script>
+</body>
+</html>

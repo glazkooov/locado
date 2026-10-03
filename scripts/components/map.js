@@ -1,6 +1,7 @@
 // components/map.js — обёртка над Яндекс.Картами: карта мест на главной
 // (кластеризация, фильтры) и одиночная карта места.
 
+import { categoryGoal } from '../core/analytics.js';
 import { $, $$, on, toggleClear } from '../core/dom.js';
 import { setPressed } from './category-buttons.js';
 import { escapeHtml, cssUrl, openStatusLabel } from '../core/format.js';
@@ -370,7 +371,11 @@ export async function initPlacesMap(places) {
     setPressed(catButtons, (b) => b.dataset.category === category);
     refresh();
   };
-  catButtons.forEach((btn) => on(btn, 'click', (e) => { e.preventDefault(); setCategory(btn.dataset.category); }));
+  catButtons.forEach((btn) => on(btn, 'click', (e) => {
+    e.preventDefault();
+    setCategory(btn.dataset.category);
+    categoryGoal(btn.dataset.category, 'Карта');
+  }));
 
   // Поиск
   const searchInput = $('#map-search-input');

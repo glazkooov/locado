@@ -1,5 +1,6 @@
 // pages/home.js — точка входа index.html.
 
+import { goal, categoryGoal } from '../core/analytics.js';
 import { $, $$, on } from '../core/dom.js';
 import { escapeHtml, cssUrl } from '../core/format.js';
 import { loadPlaces, popular, sample, categoryLabel, CATEGORIES } from '../core/places.js';
@@ -35,8 +36,11 @@ function applyUrlFilter(feed) {
   const tag = params.get('tag');
   const category = params.get('category');
   if (tag) {
+    goal('tag_select', { 'Тег': tag });
     feed.setFilters({ category: 'all', query: '', tags: [tag], tagsAll: null }, { syncInput: true, label: { kind: 'Тег', text: `#${tag}` } });
   } else if (category && CATEGORIES[category]) {
+    // Ссылка ?category= — из меню или «Ещё места» на странице места
+    categoryGoal(category, 'Ссылка (меню, страница места)');
     feed.setFilters({ category, query: '', tags: null, tagsAll: null }, { syncInput: true });
   } else {
     return;
@@ -50,7 +54,7 @@ function renderSuggested(places) {
   const picks = sample(places.filter((p) => p.description), 2);
   if (!picks.length) { container.closest('.suggested-places')?.remove(); return; }
   container.innerHTML = picks.map((p) => `
-    <a href="place.html?slug=${encodeURIComponent(p.slug)}" class="suggested-card">
+    <a href="place/?slug=${encodeURIComponent(p.slug)}" class="suggested-card">
       <div class="suggested-img" style='background-image: ${cssUrl(p.photo)}'></div>
       <div class="suggested-content">
         <h3>${escapeHtml(p.name)}</h3>
@@ -86,6 +90,7 @@ function showLoadError() {
 function initCategoryTiles(feed) {
   $$('.category-masonry').forEach((tile) => {
     on(tile, 'click', () => {
+      categoryGoal(tile.dataset.category, 'Плитки на главной');
       feed?.setFilters({ category: tile.dataset.category, query: '', tags: null, tagsAll: null }, { syncInput: true });
       scrollToFeed();
     });
