@@ -1,0 +1,52 @@
+# Фото мест: при загрузке в assets/images/places/ сжимает фото для первого
+# экрана и делает уменьшенную копию для карточек (tools/photos.py), затем
+# коммитит результат в ту же ветку. Можно запустить и вручную:
+# вкладка Actions → «Фото мест» → Run workflow — обработает все фото.
+
+name: Фото мест
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'assets/images/places/*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  photos:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - run: pip install pillow
+
+      - name: Сжать фото и сделать копии для карточек
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            # только что загруженные или заменённые фото
+            CHANGED=$(git diff --name-only --diff-filter=AM HEAD^ HEAD -- 'assets/images/places/*' | grep -v '/sm/' || true)
+            if [ -n "$CHANGED" ]; then python tools/photos.py $CHANGED; fi
+          else
+            python tools/photos.py
+          fi
+
+      - name: Сохранить результат
+        run: |
+          git add assets/images/places
+          if git diff --cached --quiet; then
+            echo "Фото уже готовы — коммитить нечего"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898699+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Фото мест: сжатие и копии для карточек"
+          git push

@@ -981,3 +981,19 @@
 @media (prefers-reduced-motion: reduce) {
   .place-hero.is-loading .hero-bg { animation: none; }
 }
+
+/* Автор фото под первым экраном (place, collection) — мелко, справа */
+.photo-credit {
+  margin-top: 8px;
+  font-size: var(--fs-caption);
+  line-height: 1.4;
+  text-align: right;
+  color: var(--text-light);
+}
+
+.photo-credit[hidden] { display: none; }
+.photo-credit a { color: inherit; text-underline-offset: 2px; }
+.photo-credit a:hover { color: var(--primary-text); }
+
+/* Подпись есть — первый блок под ней ближе, чтобы не было двойного зазора */
+.photo-credit:not([hidden]) + .place-info { margin-top: 24px; }

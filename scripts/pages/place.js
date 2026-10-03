@@ -1,5 +1,6 @@
 // pages/place.js — точка входа place.html.
 
+import { renderCredit } from '../core/credits.js';
 import { goal } from '../core/analytics.js';
 import { $, $$, on } from '../core/dom.js';
 import {
@@ -61,6 +62,7 @@ function updateFavButtonUI(isFav) {
 function renderHero(place) {
   $('.place-hero')?.classList.remove('is-loading');
   setHeroPhoto(place);
+  renderCredit($('#photo-credit'), place.photo && place.photoCredit);
   $('#place-category').textContent = place.type || categoryLabel(place.category);
   $('#place-name').textContent = place.name;
   // Краткое описание вместо шаблонного «… в центре Москвы» (не у всех мест правда)

@@ -63,3 +63,17 @@
   text-underline-offset: 3px;
   cursor: pointer;
 }
+
+/* photos/: список «место — автор · лицензия» */
+.credits-list { list-style: none; padding: 0; }
+.credits-list li {
+  display: grid;
+  gap: 2px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: var(--fs-sm);
+  color: var(--text-light);
+}
+.credits-list li + li { margin-top: 0; }
+.credits-list__name { color: var(--text); font-weight: 600; text-decoration: none; }
+.credits-list a { color: var(--text); }
