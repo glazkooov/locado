@@ -88,10 +88,15 @@ export async function loadPlaces() {
 
 // ---------- Выборки ----------
 export const bySlug = (places, slug) => places.find((p) => p.slug === slug);
+/** Место в разделе: основная категория или дополнительная из alsoIn
+ *  (Парк Горького — развлечения, но и природа). Карточка и цвет — по основной. */
+export const inCategory = (place, category) =>
+  place.category === category || (place.alsoIn || []).includes(category);
+
 export const byCategory = (places, category) => {
   if (!category || category === 'all') return places.slice();
-  if (Array.isArray(category)) return places.filter((p) => category.includes(p.category));
-  return places.filter((p) => p.category === category);
+  if (Array.isArray(category)) return places.filter((p) => category.some((c) => inCategory(p, c)));
+  return places.filter((p) => inCategory(p, category));
 };
 
 export const metroList = (place) => (Array.isArray(place.metro) ? place.metro : [place.metro]).filter(Boolean);

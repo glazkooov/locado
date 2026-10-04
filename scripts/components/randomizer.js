@@ -8,7 +8,7 @@
 import { goal, categoryGoal } from '../core/analytics.js';
 import { $, $$, on } from '../core/dom.js';
 import { escapeHtml, getOpenStatus, openStatusLabel, scheduleSummary } from '../core/format.js';
-import { categoryLabel, pickRandom, placeUrl, metroList, CATEGORIES } from '../core/places.js';
+import { categoryLabel, pickRandom, placeUrl, metroList, CATEGORIES, inCategory } from '../core/places.js';
 import { createModal } from './modal.js';
 import { setPressed } from './category-buttons.js';
 import { icon } from '../core/icons.js';
@@ -53,7 +53,7 @@ export function initRandomizer(places) {
 
   const pool = () => {
     const now = new Date();
-    return places.filter((p) => (category === 'all' || p.category === category)
+    return places.filter((p) => (category === 'all' || inCategory(p, category))
       && (mode === 'any' || openForAWhile(p, now)));
   };
 
