@@ -11,20 +11,23 @@ foto.mos.ru) — скрипт делает из него две версии:
 Поворот с телефона учитывается, служебные данные снимка (EXIF: модель
 камеры, координаты съёмки) удаляются.
 
-Запуск:
+Запуск (из любой папки проекта):
   python3 tools/photos.py                 — все фото, которым это нужно
   python3 tools/photos.py путь/к/фото.jpg — только указанные (и заново)
+На Windows вместо python3 — py:  py tools\\photos.py
 
-Нужна библиотека Pillow:  pip install pillow
+Нужна библиотека Pillow:  pip install pillow  (на Windows: py -m pip install pillow)
 Автоматически скрипт запускает GitHub Actions при загрузке фото в
 репозиторий (.github/workflows/photos.yml).
 """
 
+import os
 import sys
 from pathlib import Path
 
 from PIL import Image, ImageOps
 
+ROOT = Path(__file__).resolve().parent.parent
 PLACES = Path('assets/images/places')
 SMALL = PLACES / 'sm'
 FULL_WIDTH = 2000      # первый экран страницы места
@@ -67,6 +70,10 @@ def process(src, force=False):
 
 
 def main(args):
+    # Пути к фото — от корня проекта, откуда бы ни запустили скрипт
+    # (из папки tools, из корня, двойным щелчком)
+    args = [os.path.relpath(Path(a).resolve(), ROOT) for a in args]
+    os.chdir(ROOT)
     if args:
         files = [Path(a) for a in args]
         force = True

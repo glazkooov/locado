@@ -3,6 +3,10 @@
 // Запуск из корня проекта:  node tools/check-photos.mjs
 
 import { readFileSync, existsSync, statSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+
+// Пути — от корня проекта, откуда бы ни запустили
+process.chdir(fileURLToPath(new URL('..', import.meta.url)));
 
 const LICENSES = ['CC BY 4.0', 'CC BY-SA 4.0', 'CC BY 3.0', 'CC BY-SA 3.0', 'CC0'];
 const places = JSON.parse(readFileSync('data/places.json', 'utf8'));
