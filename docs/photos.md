@@ -32,7 +32,13 @@ GitHub Actions (`.github/workflows/photos.yml`) при загрузке фото
 - копию для карточек — `assets/images/places/sm/<имя>`, 640 px.
 
 Вручную для всех фото: вкладка **Actions → «Фото мест» → Run workflow**.
-Локально: `pip install pillow`, затем `python3 tools/photos.py`.
+Локально (из любой папки проекта):
+
+- Mac/Linux: `pip3 install pillow`, затем `python3 tools/photos.py`;
+- Windows: `py -m pip install pillow`, затем `py tools\photos.py`.
+  Если в ответ на команду просто пишется «Python» или открывается
+  Microsoft Store — Python не установлен: поставить с python.org
+  (галочка «Add python.exe to PATH») и открыть PowerShell заново.
 
 ## Где видна подпись
 

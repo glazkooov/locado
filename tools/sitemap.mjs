@@ -3,6 +3,10 @@
 // списка мест или подборок:  node tools/sitemap.mjs
 
 import { readFileSync, writeFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+
+// Пути — от корня проекта, откуда бы ни запустили
+process.chdir(fileURLToPath(new URL('..', import.meta.url)));
 
 const SITE = 'https://locado.ru/';
 
