@@ -4,7 +4,7 @@
 // расходились («Музеи» / «Искусство», «Театр» / «Театры»).
 
 import { $ } from '../core/dom.js';
-import { CATEGORIES } from '../core/places.js';
+import { CATEGORIES, inCategory } from '../core/places.js';
 import { pluralize } from '../core/format.js';
 import { icon } from '../core/icons.js';
 
@@ -45,7 +45,7 @@ export function renderCategoryButtons() {
 /** «13 мест» на плитках категорий — после загрузки базы. */
 export function renderCategoryCounts(places) {
   document.querySelectorAll('.category-masonry[data-category]').forEach((tile) => {
-    const n = places.filter((p) => p.category === tile.dataset.category).length;
+    const n = places.filter((p) => inCategory(p, tile.dataset.category)).length;
     tile.querySelector('.masonry-count')?.remove();
     if (!n) return;
     tile.insertAdjacentHTML('beforeend', `<span class="masonry-count">${n} ${pluralize(n, ['место', 'места', 'мест'])}</span>`);

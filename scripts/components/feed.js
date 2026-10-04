@@ -203,7 +203,9 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
     if (showMoreBtn) {
       const rest = list.length - shown;
       showMoreBtn.classList.toggle('invisible', rest <= 0);
-      showMoreBtn.textContent = `Показать ещё ${Math.min(rest, pageSize)}`;
+      // Сколько осталось всего, а не размер следующей порции: «ещё 12»
+      // читалось как «осталось 12 мест»
+      showMoreBtn.textContent = `Показать ещё · осталось ${rest} ${pluralize(rest, ['место', 'места', 'мест'])}`;
     }
     requestAnimationFrame(maybeLoadMore);
   };

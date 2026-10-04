@@ -8,6 +8,7 @@
 // - порядок: совпадение в названии выше, чем в описании.
 
 import { SYNONYMS, STOP_WORDS, NOTES } from './search-words.js';
+import { inCategory } from './places.js';
 
 /** Нижний регистр, ё → е, всё кроме букв и цифр — пробел. */
 export const normalizeText = (s = '') =>
@@ -77,7 +78,7 @@ function fieldsOf(place, categoryLabel) {
 
 /** Вес лучшего совпадения варианта (основы или слова из словаря) в полях. */
 function matchScore(place, fields, alt) {
-  if (alt.startsWith('cat:')) return place.category === alt.slice(4) ? FIELD_WEIGHTS.category : 0;
+  if (alt.startsWith('cat:')) return inCategory(place, alt.slice(4)) ? FIELD_WEIGHTS.category : 0;
   let best = 0;
   const multi = alt.includes(' ');
   for (const [key, { text, words }] of Object.entries(fields)) {
