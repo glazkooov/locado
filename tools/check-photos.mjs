@@ -16,8 +16,9 @@ const problems = { noFile: [], noSmall: [], tooBig: [], noCredit: [], noSource: 
 const check = (label, photo, credit) => {
   if (!photo) return;
   const local = !/^https?:/.test(photo);
-  if (local && !existsSync(photo)) problems.noFile.push(`${label} — ${photo}`);
-  else if (local) {
+  // Фото ещё нет — подпись проверим, когда оно появится
+  if (local && !existsSync(photo)) { problems.noFile.push(`${label} — ${photo}`); return; }
+  if (local) {
     const small = photo.replace(/^(assets\/images\/places\/)/, '$1sm/');
     if (small !== photo && !existsSync(small)) problems.noSmall.push(label);
     if (statSync(photo).size > 600_000) problems.tooBig.push(`${label} — ${Math.round(statSync(photo).size / 1024)} КБ`);
@@ -34,7 +35,7 @@ const titles = {
   noSmall: 'Нет копии для карточек (sm/) — запусти python3 tools/photos.py',
   tooBig: 'Фото тяжелее 600 КБ — запусти python3 tools/photos.py',
   noCredit: 'Нет подписи (photoCredit.author) — для своих фото: { "author": "Локадо" }',
-  noSource: 'Есть лицензия, но нет ссылки на источник (photoCredit.source)',
+  noSource: 'Фото есть, но нет ссылки на источник (photoCredit.source) — без неё подпись не показывается',
   badLicense: `Неизвестная лицензия — допустимые: ${LICENSES.join(', ')}`
 };
 let total = 0;
