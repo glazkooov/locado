@@ -941,8 +941,8 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .places-grid .place-card__info { padding: 10px 12px; }
-  .places-grid .place-card__info h3 { font-size: var(--fs-md); line-height: 1.2; }
+  .places-grid .place-card__info { padding: 12px 14px; }
+  .places-grid .place-card__info h3 { font-size: var(--fs-lg); line-height: 1.2; }
 }
 
 @media (max-width: 480px) {

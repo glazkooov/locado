@@ -27,6 +27,11 @@ const suggestCardHtml = () => `
 // Пропорции карточек (высота / ширина) — классы .place-card--r0…r4 в
 // card.css. По ним без замеров DOM знаем высоту каждой колонки.
 const CARD_RATIOS = [5 / 4, 4 / 3, 1, 1.4, 4 / 5];
+// На телефоне карточки вытянуты вверх, как в Пинтересте: фото крупнее,
+// а узкие поля не съедают ширину. Брейкпоинт — как в card.css
+const PHONE = window.matchMedia('(max-width: 767px)');
+const PHONE_RATIOS = [3 / 2, 4 / 3, 5 / 4, 5 / 3, 1];
+const cardRatios = () => (PHONE.matches ? PHONE_RATIOS : CARD_RATIOS);
 
 /** Пропорция карточки зависит от самого места (простой хеш slug): у места
  *  одна и та же форма при любом фильтре, а соседние карточки различаются. */
@@ -93,7 +98,9 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
   let heights = [];
   const columnCount = () => getComputedStyle(container).gridTemplateColumns.split(' ').length || 1;
 
+  let phoneLayout = PHONE.matches; // по каким пропорциям разложены колонки
   const resetColumns = () => {
+    phoneLayout = PHONE.matches;
     container.innerHTML = Array.from({ length: columnCount() }, () => '<div class="places-grid__col"></div>').join('');
     columns = [...container.children];
     heights = columns.map(() => 0);
@@ -110,7 +117,7 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
       const ratio = ratioIndex(place.slug);
       const col = shortest();
       columns[col].insertAdjacentHTML('beforeend', cardHtml(place, favorites.includes(place.slug), `place-card--r${ratio}`));
-      heights[col] += CARD_RATIOS[ratio];
+      heights[col] += cardRatios()[ratio];
       if (start + i + 1 === SUGGEST_AFTER && isUnfiltered()) {
         const c = shortest();
         columns[c].insertAdjacentHTML('beforeend', suggestCardHtml());
@@ -313,7 +320,8 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(() => {
-      if (columnCount() === columns.length) return;
+      // Число колонок то же и телефон остался телефоном — раскладка в порядке
+      if (columnCount() === columns.length && phoneLayout === PHONE.matches) return;
       const count = shown;
       resetColumns();
       appendCards(list.slice(0, count));
