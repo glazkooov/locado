@@ -392,7 +392,6 @@
   transition: transform 0.3s ease;
 }
 
-.now-card:hover .now-card__photo { transform: translateY(-4px); }
 
 .now-card__name {
   display: block;
@@ -404,7 +403,6 @@
   color: var(--ink);
 }
 
-.now-card:hover .now-card__name { color: var(--primary-text); }
 
 .now-card__text {
   margin-top: 4px;
@@ -414,6 +412,13 @@
 }
 
 .now-card__text b { font-weight: 700; color: var(--primary-text); }
+
+/* Название всегда тёмное: оранжевым при наведении оно выглядело как
+   выделенное, а на телефоне :hover ещё и «залипал» после касания.
+   Отклик на курсор — только фото чуть приподнимается */
+@media (hover: hover) {
+  .now-card:hover .now-card__photo { transform: translateY(-4px); }
+}
 
 .suggested-places {
   margin-top: 96px;
