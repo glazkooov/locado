@@ -7,6 +7,10 @@
 // взято; license — из списка ниже (или без неё — для своих фото);
 // modified — если фото кадрировали или меняли цвет (просто уменьшение
 // размера изменением не считается).
+//
+// У всех мест уже стоит заготовка «редакция «Мосфото»» с пустым source:
+// подпись с лицензией появляется на сайте, только когда вписана ссылка —
+// без неё лицензию CC BY не соблюсти, а фото, может, ещё и нет.
 
 import { escapeHtml } from './format.js';
 
@@ -23,9 +27,12 @@ const link = (text, href) => (href
   ? `<a href="${escapeHtml(href)}" target="_blank" rel="noopener">${escapeHtml(text)}</a>`
   : escapeHtml(text));
 
+/** Подпись готова к показу: есть автор, а у фото по лицензии — и ссылка. */
+export const hasCredit = (credit) => Boolean(credit?.author && (credit.source || !credit.license));
+
 /** «Фото: автор · CC BY 4.0 · изменено» со ссылками; '' — если подписи нет. */
 export function creditHtml(credit) {
-  if (!credit || !credit.author) return '';
+  if (!hasCredit(credit)) return '';
   const parts = [`Фото: ${link(credit.author, credit.source)}`];
   if (credit.license) parts.push(link(credit.license, LICENSES[credit.license]));
   if (credit.modified) parts.push('изменено');
