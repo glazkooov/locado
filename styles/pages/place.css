@@ -996,4 +996,69 @@
 .photo-credit a:hover { color: var(--primary-text); }
 
 /* Подпись есть — первый блок под ней ближе, чтобы не было двойного зазора */
-.photo-credit:not([hidden]) + .place-info { margin-top: 24px; }
+.photo-credit:not([hidden]) + .place-info,
+.photo-credit:not([hidden]) + .place-story { margin-top: 24px; }
+
+/* «Почему стоит пойти / Когда лучше / Что заметить» — сразу под первым
+   экраном: это то, чего нет в справочниках. «Почему» — крупно, на всю
+   ширину; два других — рядом на широком экране */
+.place-story {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  margin-top: 40px;
+}
+
+.place-story[hidden] { display: none; }
+.place-story + .place-info { margin-top: 12px; }
+
+@media (min-width: 768px) {
+  .place-story { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .place-story__item--why { grid-column: 1 / -1; }
+  .place-story + .place-info { margin-top: 16px; }
+}
+
+.place-story__item {
+  padding: 20px 22px;
+  border-radius: var(--radius-card);
+  background: var(--card-bg);
+  box-shadow: var(--shadow-soft);
+}
+
+.place-story__item--why {
+  background: var(--accent-soft);
+  box-shadow: none;
+}
+
+.place-story__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--primary-text);
+}
+
+.place-story__title .icon { width: 16px; height: 16px; flex: none; }
+
+.place-story__text {
+  font-size: var(--fs-md);
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.place-story__item--why .place-story__text {
+  font-family: var(--font-heading);
+  font-size: var(--fs-lg);
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+@media (min-width: 768px) {
+  .place-story__item--why .place-story__text { font-size: var(--fs-xl); }
+}

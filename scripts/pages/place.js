@@ -184,6 +184,25 @@ function refreshOpenStatus(place) {
   timerSpan.classList.toggle('closing-timer--open', status.isOpen);
 }
 
+// Три ответа редакции — как другу: почему идти, когда, на что смотреть
+const STORY_PARTS = [
+  { key: 'why', title: 'Почему стоит пойти', icon: 'heart' },
+  { key: 'when', title: 'Когда лучше', icon: 'clock' },
+  { key: 'notice', title: 'Что заметить', icon: 'star' }
+];
+
+function renderStory(place) {
+  const el = $('#place-story');
+  const story = place.story || {};
+  const parts = STORY_PARTS.filter((p) => story[p.key]);
+  el.innerHTML = parts.map((p) => `
+      <div class="place-story__item place-story__item--${p.key}">
+        <h2 class="place-story__title">${icon(p.icon)} ${p.title}</h2>
+        <p class="place-story__text">${escapeHtml(story[p.key])}</p>
+      </div>`).join('');
+  el.hidden = !parts.length;
+}
+
 function renderDescription(place) {
   const text = place.description_long || place.description || '';
   const el = $('#place-description');
@@ -457,6 +476,7 @@ async function main() {
   setMetaTags(place);
 
   renderHero(place);
+  renderStory(place);
   renderInfo(place);
   renderDescription(place);
   renderTags(place);
