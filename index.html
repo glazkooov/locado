@@ -111,13 +111,17 @@
       </div>
     </section>
 
-    <!-- 3. Сейчас в центре внимания (популярные места) -->
-    <section class="popular">
+    <!-- 3. «Сейчас»: что смотреть в это время года. Заголовок и места —
+         data/now.json (core/now.js), карточки рендерит pages/home.js.
+         Нет записи на сегодня — секция остаётся скрытой -->
+    <section class="now" id="now-section" hidden>
       <div class="container">
         <div class="section-head">
-          <h2 class="section-title">Сейчас в центре внимания</h2>
+          <p class="section-eyebrow" id="now-eyebrow"></p>
+          <h2 class="section-title" id="now-title"></h2>
+          <p class="section-lead" id="now-lead"></p>
         </div>
-        <div class="popular__cards" id="popular-places-container"></div>
+        <div class="now__cards" id="now-cards"></div>
       </div>
     </section>
 
@@ -135,21 +139,21 @@
     </section>
     -->
 
-    <!-- 5. Категории и подборки -->
+    <!-- 5. Готовые планы на день — подборки. Плитки категорий убраны:
+         те же разделы есть вкладками над лентой и в меню -->
     <section class="categories-collections" id="collections">
       <div class="container">
         <div class="section-head section-head--row">
           <div>
-            <h2 class="section-title">Категории и подборки</h2>
+            <p class="section-eyebrow">Не хочешь думать</p>
+            <h2 class="section-title">Готовые планы на день</h2>
+            <p class="section-lead">Маршрут целиком: где начать, где поесть, сколько времени и денег.</p>
           </div>
           <a class="section-link" href="collections/">Все подборки →</a>
         </div>
 
-        <!-- Плитки рендерит components/category-buttons.js из словаря CATEGORIES -->
-        <div class="category-masonry-grid" id="categoryGrid"></div>
-
         <!-- Карточки рендерит pages/home.js из data/collections.json и ведут
-             на страницу подборки collection.html -->
+             на страницу подборки collection/ -->
         <div class="collections-grid" id="collections-grid"></div>
       </div>
     </section>
