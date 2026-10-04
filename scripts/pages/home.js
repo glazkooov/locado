@@ -1,19 +1,20 @@
 // pages/home.js — точка входа index.html.
 
 import { goal, categoryGoal } from '../core/analytics.js';
-import { $, $$, on } from '../core/dom.js';
+import { $ } from '../core/dom.js';
 import { escapeHtml, cssUrl } from '../core/format.js';
-import { loadPlaces, popular, sample, categoryLabel, CATEGORIES } from '../core/places.js';
-import { bindCards, renderCards } from '../components/card.js';
+import { loadPlaces, sample, bySlug, placeUrl, CATEGORIES } from '../core/places.js';
+import { bindCards } from '../components/card.js';
 import { initFeed } from '../components/feed.js';
 import { initRandomizer } from '../components/randomizer.js';
 import { initHeroMoods, renderHeroMoods } from '../components/hero-moods.js';
 import { heroGreeting } from '../core/daypart.js';
-import { renderCategoryButtons, renderCategoryCounts } from '../components/category-buttons.js';
+import { renderCategoryButtons } from '../components/category-buttons.js';
 import { initPlacesMap } from '../components/map.js';
 import { showToast } from '../components/toast.js';
 import { loadCollections } from '../core/collections.js';
 import { collectionCardHtml } from '../components/collection-card.js';
+import { loadNow } from '../core/now.js';
 
 // Скроллим к заголовку ленты, а не к карточкам: так видны вкладки и
 // плашка выбранного настроения/подборки над ними.
@@ -79,22 +80,37 @@ function skeletonCards(n, cardClass) {
 
 function showLoadError() {
   const message = '<p class="feed-load-error">Не получилось загрузить места. Обнови страницу — обычно помогает.</p>';
-  const popularContainer = $('#popular-places-container');
   const suggestedContainer = $('#suggested-grid');
   const feedContainer = $('#places-container');
-  if (popularContainer) popularContainer.innerHTML = message;
   if (suggestedContainer) suggestedContainer.closest('.suggested-places')?.remove();
   if (feedContainer) feedContainer.innerHTML = message;
 }
 
-function initCategoryTiles(feed) {
-  $$('.category-masonry').forEach((tile) => {
-    on(tile, 'click', () => {
-      categoryGoal(tile.dataset.category, 'Плитки на главной');
-      feed?.setFilters({ category: tile.dataset.category, query: '', tags: null, tagsAll: null }, { syncInput: true });
-      scrollToFeed();
-    });
-  });
+/** «Сейчас»: сезонная подборка из data/now.json. Под фото — «когда лучше»
+ *  из story места, а если его ещё нет — короткое описание.
+ *  Возвращает показанные места (их не повторяем в начале ленты). */
+function renderNow(entry, places) {
+  const section = $('#now-section');
+  if (!section || !entry) return [];
+  const picks = (entry.places || []).map((slug) => bySlug(places, slug)).filter(Boolean);
+  if (!picks.length) return [];
+  $('#now-eyebrow').textContent = entry.eyebrow || '';
+  $('#now-eyebrow').hidden = !entry.eyebrow;
+  $('#now-title').textContent = entry.title || '';
+  $('#now-lead').textContent = entry.lead || '';
+  $('#now-lead').hidden = !entry.lead;
+  $('#now-cards').innerHTML = picks.map((p) => {
+    const when = p.story?.when;
+    const text = when ? `<b>Когда:</b> ${escapeHtml(when)}` : escapeHtml(p.description || '');
+    return `
+      <a class="now-card" href="${placeUrl(p.slug)}">
+        <img class="now-card__photo" src="${escapeHtml(p.photoSm || p.photo || '')}" alt="${escapeHtml(p.name)}" loading="lazy">
+        <span class="now-card__name">${escapeHtml(p.name)}</span>
+        <p class="now-card__text">${text}</p>
+      </a>`;
+  }).join('');
+  section.hidden = false;
+  return picks;
 }
 
 
@@ -117,10 +133,9 @@ async function main() {
   renderCategoryButtons();
   bindCards(document.body);
 
-  const popularContainer = $('#popular-places-container');
+  const nowEntry = loadNow(); // параллельно с местами
   const suggestedContainer = $('#suggested-grid');
   const feedContainer = $('#places-container');
-  if (popularContainer) popularContainer.innerHTML = skeletonCards(4, 'place-card');
   if (suggestedContainer) suggestedContainer.innerHTML = skeletonCards(2, 'suggested-card');
   if (feedContainer) feedContainer.innerHTML = skeletonCards(8, 'place-card');
 
@@ -134,19 +149,16 @@ async function main() {
     return;
   }
 
-  const spotlight = popular(places, 4);
-  if (popularContainer) renderCards(popularContainer, spotlight);
+  const spotlight = renderNow(await nowEntry, places);
 
   renderSuggested(places);
 
-  renderCategoryCounts(places);
-  // Места из «Сейчас в центре внимания» — в конец ленты: иначе первый ряд
-  // ленты повторял блок, который человек только что пролистал
+  // Места из «Сейчас» — в конец ленты: иначе первый ряд ленты повторял
+  // блок, который человек только что пролистал
   const inSpotlight = new Set(spotlight.map((p) => p.slug));
   const feed = initFeed([...places.filter((p) => !inSpotlight.has(p.slug)), ...places.filter((p) => inSpotlight.has(p.slug))]);
   applyUrlFilter(feed);
   initHeroMoods(feed, places, { onSelect: () => scrollToFeed() });
-  initCategoryTiles(feed);
   initRandomizer(places);
   initPlacesMap(places);
 }

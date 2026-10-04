@@ -277,7 +277,8 @@
 /* Небольшие превью: вместо битого файла — прозрачная картинка на подложке */
 .similar-card img.is-broken,
 .randomizer-preview img.is-broken,
-.state-card img.is-broken {
+.state-card img.is-broken,
+.now-card__photo.is-broken {
   visibility: visible;
   content: url("data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==");
   background: var(--photo-placeholder);

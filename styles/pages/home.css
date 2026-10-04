@@ -360,14 +360,64 @@
   opacity: 0.6;
 }
 
-.popular {
+/* «Сейчас»: сезонная подборка мест (data/now.json). Карточка — высокое фото,
+   под ним название и «когда лучше» из story места: голос Локадо прямо
+   на главной */
+.now {
   margin-top: 56px;
 }
 
-.popular__cards {
+.now[hidden] { display: none; }
+
+.now__cards {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 20px;
+}
+
+.now-card {
+  display: block;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}
+
+.now-card__photo {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: var(--radius-card);
+  background: var(--cream-deep);
+  transition: transform 0.3s ease;
+}
+
+
+.now-card__name {
+  display: block;
+  margin-top: 12px;
+  font-family: var(--font-heading);
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+
+.now-card__text {
+  margin-top: 4px;
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+  color: var(--text);
+}
+
+.now-card__text b { font-weight: 700; color: var(--primary-text); }
+
+/* Название всегда тёмное: оранжевым при наведении оно выглядело как
+   выделенное, а на телефоне :hover ещё и «залипал» после касания.
+   Отклик на курсор — только фото чуть приподнимается */
+@media (hover: hover) {
+  .now-card:hover .now-card__photo { transform: translateY(-4px); }
 }
 
 .suggested-places {
@@ -799,7 +849,7 @@
 
 @media (max-width: 768px) {
   /* Секции шли с одинаковым большим отступом и на телефоне давали пустые экраны */
-  .popular { margin-top: 40px; }
+  .now { margin-top: 40px; }
 
   .suggested-places,
   .categories-collections,
@@ -860,11 +910,10 @@
 }
 
 /* Узкие карточки в две колонки на телефоне: мельче подписи и плашки */
-/* «Избранное от города» на телефоне и планшете — один ряд с прокруткой
-   вбок, как карточки настроений в hero: край следующей карточки
-   подсказывает, что их больше */
+/* «Сейчас» на телефоне — один ряд с прокруткой вбок, как карточки
+   настроений в hero: край следующей карточки подсказывает, что их больше */
 @media (max-width: 767px) {
-  .popular__cards {
+  .now__cards {
     display: flex;
     gap: 12px;
     width: calc(100% + 32px);
@@ -875,12 +924,9 @@
     scroll-padding-inline: 16px;
     scrollbar-width: none;
   }
-  .popular__cards::-webkit-scrollbar { display: none; }
-  .popular__cards .place-card {
-    flex: 0 0 min(64%, 260px);
-    max-width: none;
-    min-height: 0;
-    aspect-ratio: 3 / 4;
+  .now__cards::-webkit-scrollbar { display: none; }
+  .now-card {
+    flex: 0 0 min(76%, 300px);
     scroll-snap-align: start;
   }
 }

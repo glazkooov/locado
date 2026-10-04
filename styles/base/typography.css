@@ -44,6 +44,27 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 28px;
 }
 
+/* Заголовок со ссылкой справа (section-head--row): подпись, заголовок и
+   лид — одной колонкой */
+.section-head > div { display: grid; gap: 8px; }
+
+/* Подпись над заголовком секции: «Сейчас, осенью», «Не хочешь думать» */
+.section-eyebrow {
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--primary-text);
+}
+
+/* Лид под заголовком: одна-две фразы, зачем этот блок */
+.section-lead {
+  max-width: 560px;
+  font-size: var(--fs-md);
+  line-height: 1.5;
+  color: var(--text-light);
+}
+
 .hero__title {
   font-size: 2rem; /* мобильный */
   line-height: 1.15;
