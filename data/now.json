@@ -1,10 +1,119 @@
 [
   {
+    "from": "12-15",
+    "to": "01-08",
+    "eyebrow": "Сейчас, в новогодние недели",
+    "title": "Город в огнях",
+    "lead": "Катки, гирлянды и горячий чай. Куда выбраться, пока Москва празднует.",
+    "places": [
+      "vdnh",
+      "park-gorkogo",
+      "chistye-prudy",
+      "krasnaya-ploshchad"
+    ]
+  },
+  {
+    "from": "01-09",
+    "to": "02-29",
+    "eyebrow": "Сейчас, зимой",
+    "title": "Снежные парки и тёплые музеи",
+    "lead": "Погулять по снегу, пока он белый, а потом отогреться среди картин.",
+    "places": [
+      "sokolniki",
+      "kolomenskoe",
+      "izmaylovsky-park",
+      "muzey-russkogo-impressionizma"
+    ]
+  },
+  {
+    "from": "03-01",
+    "to": "04-10",
+    "eyebrow": "Сейчас, в межсезонье",
+    "title": "Пока слякоть — под крышу",
+    "lead": "Снег уже грязный, листьев ещё нет. Места, где погода не важна.",
+    "places": [
+      "ges-2",
+      "aptekarsky-ogorod",
+      "moskvarium",
+      "vinzavod"
+    ]
+  },
+  {
+    "from": "04-11",
+    "to": "05-31",
+    "eyebrow": "Сейчас, весной",
+    "title": "Сады зацветают",
+    "lead": "Яблони, сирень, сакура — цветут по очереди и недолго. Ловим, пока не отцвело.",
+    "places": [
+      "kolomenskoe",
+      "aptekarsky-ogorod",
+      "glavny-botanichesky-sad",
+      "park-huamin"
+    ]
+  },
+  {
+    "from": "06-01",
+    "to": "06-30",
+    "eyebrow": "Сейчас, в июне",
+    "title": "Длинные вечера у воды",
+    "lead": "Темнеет поздно — самое время для закатов на набережных и смотровых.",
+    "places": [
+      "krymskaya-naberezhnaya",
+      "vorobyovy-gory",
+      "park-zaryadye",
+      "naberezhnaya-naprotiv-siti"
+    ]
+  },
+  {
+    "from": "07-01",
+    "to": "08-31",
+    "eyebrow": "Сейчас, летом",
+    "title": "Вода и тень",
+    "lead": "Жарко? Туда, где можно искупаться или спрятаться в лесу.",
+    "places": [
+      "serebryany-bor",
+      "meshchersky-park",
+      "park-fili",
+      "park-mitino"
+    ]
+  },
+  {
+    "from": "09-01",
+    "to": "09-14",
+    "eyebrow": "Сейчас, в начале сентября",
+    "title": "Последние тёплые вечера",
+    "lead": "Лето уходит, но на улице ещё хорошо. Сады и бульвары, пока не похолодало.",
+    "places": [
+      "sad-ermitazh",
+      "patriarshie-prudy",
+      "muzeon",
+      "gogolevsky-bulvar"
+    ]
+  },
+  {
     "from": "09-15",
     "to": "10-31",
     "eyebrow": "Сейчас, осенью",
     "title": "Золотая осень — время усадеб",
     "lead": "Пара недель, когда старые парки красивее всего в году. Наши любимые — и когда туда лучше успеть.",
-    "places": ["kolomenskoe", "tsaritsyno", "kuskovo", "novodevichy-prud"]
+    "places": [
+      "kolomenskoe",
+      "tsaritsyno",
+      "kuskovo",
+      "novodevichy-prud"
+    ]
+  },
+  {
+    "from": "11-01",
+    "to": "12-14",
+    "eyebrow": "Сейчас, в ноябре",
+    "title": "Серо и сыро — значит, уютно",
+    "lead": "Самый тёмный месяц. Кино, книги, картины и вкусная еда — без зонта.",
+    "places": [
+      "kinoteatr-hudozhestvenny",
+      "knizhny-tsiolkovsky",
+      "novaya-tretyakovka",
+      "depo"
+    ]
   }
 ]
