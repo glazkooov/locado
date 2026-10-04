@@ -6987,6 +6987,9 @@
     "slug": "krymskaya-naberezhnaya",
     "name": "Крымская набережная",
     "category": "photo",
+    "alsoIn": [
+      "nature"
+    ],
     "type": "Набережная",
     "coords": [
       55.7365,
