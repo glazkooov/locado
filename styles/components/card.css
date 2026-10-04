@@ -41,6 +41,20 @@
 .places-grid .place-card--r3 { aspect-ratio: 4 / 5.6; }
 .places-grid .place-card--r4 { aspect-ratio: 5 / 4; }
 
+/* Телефон: как в Пинтересте — узкие поля, карточки вытянуты вверх.
+   Пропорции — синхронно с PHONE_RATIOS в feed.js */
+@media (max-width: 767px) {
+  .places-grid { gap: 8px; margin-inline: -8px; }
+  .places-grid__col { gap: 8px; }
+  .places-grid .place-card,
+  .places-grid .feed-suggest { border-radius: 16px; }
+  .places-grid .place-card--r0 { aspect-ratio: 2 / 3; }
+  .places-grid .place-card--r1 { aspect-ratio: 3 / 4; }
+  .places-grid .place-card--r2 { aspect-ratio: 4 / 5; }
+  .places-grid .place-card--r3 { aspect-ratio: 3 / 5; }
+  .places-grid .place-card--r4 { aspect-ratio: 1 / 1; }
+}
+
 /* «Знаешь место, которого здесь нет?» среди карточек ленты — пунктир,
    как у «Не могу выбрать — удиви меня» в hero: не место, а приглашение */
 .feed-suggest {
