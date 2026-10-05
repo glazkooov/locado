@@ -121,18 +121,23 @@ function parseQuery(query) {
   let q = ` ${normalizeText(query).split(' ').map(stem).join(' ')} `;
   const groups = [];
   const noteKeys = new Set();
+  const excludes = new Set(); // '!cat:nature' из словаря — разделы, которых в выдаче быть не должно
   // Сначала ключи-фразы («вид на город»)
   phraseKeys.forEach((key) => {
     if (q.includes(` ${key} `)) {
-      groups.push(normSynonyms.get(key).map((t) => (t.startsWith('cat:') ? t : normalizeText(t))));
+      const syn = normSynonyms.get(key);
+      syn.filter((t) => t.startsWith('!cat:')).forEach((t) => excludes.add(t.slice(5)));
+      groups.push(syn.filter((t) => !t.startsWith('!')).map((t) => (t.startsWith('cat:') ? t : normalizeText(t))));
       noteKeys.add(key);
       q = q.replace(` ${key} `, ' ');
     }
   });
   q.trim().split(' ').filter(Boolean).forEach((token) => {
     if (stopWords.has(token)) return;
-    const syn = normSynonyms.get(token);
+    let syn = normSynonyms.get(token);
     if (syn) {
+      syn.filter((t) => t.startsWith('!cat:')).forEach((t) => excludes.add(t.slice(5)));
+      syn = syn.filter((t) => !t.startsWith('!'));
       noteKeys.add(token);
       // Слово из словаря ищется по словарю. Само слово — только целиком
       // («бар» не находит «барокко») и только если словарь не ограничивает
@@ -150,7 +155,7 @@ function parseQuery(query) {
       groups.push([token]);
     }
   });
-  return { groups, noteKeys };
+  return { groups, noteKeys, excludes };
 }
 
 /** Слова запроса без словаря и стоп-слов — для поиска фразы целиком.
@@ -167,9 +172,10 @@ function hasPhrase(fields, phrase) {
     words.some((_, i) => phrase.every((token, j) => words[i + j]?.startsWith(token))));
 }
 
-function rank(places, groups, categoryLabel) {
+function rank(places, groups, categoryLabel, excludes = new Set()) {
   const scored = [];
   places.forEach((place, order) => {
+    if ([...excludes].some((c) => inCategory(place, c))) return;
     const fields = fieldsOf(place, categoryLabel);
     let total = 0;
     for (const alts of groups) {
@@ -204,9 +210,9 @@ function rank(places, groups, categoryLabel) {
 export function searchPlaces(places, query, { categoryLabel = (c) => c } = {}) {
   const empty = { list: places, note: '', suggest: '', corrected: '', transliterated: false };
   if (!normalizeText(query)) return empty;
-  let { groups, noteKeys } = parseQuery(query);
+  let { groups, noteKeys, excludes } = parseQuery(query);
   if (!groups.length) return empty;
-  let list = rank(places, groups, categoryLabel);
+  let list = rank(places, groups, categoryLabel, excludes);
   let corrected = '';
   let transliterated = false;
   // Латиница без результата: сначала английская раскладка («gfhr» → «парк»),
@@ -215,7 +221,7 @@ export function searchPlaces(places, query, { categoryLabel = (c) => c } = {}) {
     for (const [convert, isTranslit] of [[fromLatin, false], [fromTranslit, true]]) {
       const attempt = convert(query);
       const parsed = parseQuery(attempt);
-      const found = parsed.groups.length ? rank(places, parsed.groups, categoryLabel) : [];
+      const found = parsed.groups.length ? rank(places, parsed.groups, categoryLabel, parsed.excludes) : [];
       if (found.length) {
         ({ groups, noteKeys } = parsed);
         list = found;
