@@ -166,7 +166,7 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
     const details = query ? searchDetails(allPlaces, query) : { note: '', suggest: '', corrected: '' };
     if (noteEl) {
       const text = details.corrected
-        ? `Показываем по запросу «${details.corrected}» — похоже, была английская раскладка`
+        ? `Показываем по запросу «${details.corrected}»${details.transliterated ? '' : ' — похоже, была английская раскладка'}`
         : (list.length ? details.note : '');
       noteEl.textContent = text;
       noteEl.hidden = !text;
