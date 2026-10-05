@@ -4,7 +4,10 @@
 // - совпадение считается только с начала слова: «бар» не находит «барокко»;
 // - ё = е, регистр не важен;
 // - бытовые слова переводятся словарём (search-words.js): «кафе» → еда;
-// - набранное в английской раскладке («gfhr») пробуем как русское;
+// - набранное в английской раскладке («gfhr») пробуем как русское,
+//   а латиницу («vdnh», «gorky park») — как транслит;
+// - запрос из нескольких слов, который встречается целиком («красная
+//   площадь»), оставляет только места с этой фразой;
 // - порядок: совпадение в названии выше, чем в описании.
 
 import { SYNONYMS, STOP_WORDS, NOTES } from './search-words.js';
@@ -45,6 +48,28 @@ const fromLatin = (s) => s.toLowerCase().split('').map((c) => {
   const i = EN.indexOf(c);
   return i === -1 ? c : RU[i];
 }).join('');
+
+// Транслит → кириллица: сначала сочетания букв, потом одиночные.
+// Мягкого знака в транслите нет — «gorky» без правила стал бы «горкы»
+// и не нашёл бы «Горького»
+const TRANSLIT = [
+  ['rkiy', 'рький'], ['rky', 'рький'],
+  ['shch', 'щ'], ['sch', 'щ'], ['zh', 'ж'], ['kh', 'х'], ['ts', 'ц'], ['ch', 'ч'], ['sh', 'ш'],
+  ['yu', 'ю'], ['ya', 'я'], ['yo', 'е'], ['ye', 'е'], ['iy', 'ий'], ['yy', 'ый'],
+  ['a', 'а'], ['b', 'б'], ['v', 'в'], ['g', 'г'], ['d', 'д'], ['e', 'е'], ['z', 'з'], ['i', 'и'],
+  ['j', 'й'], ['k', 'к'], ['l', 'л'], ['m', 'м'], ['n', 'н'], ['o', 'о'], ['p', 'п'], ['r', 'р'],
+  ['s', 'с'], ['t', 'т'], ['u', 'у'], ['f', 'ф'], ['h', 'х'], ['c', 'к'], ['w', 'в'], ['x', 'кс'],
+  ['y', 'ы'], ['q', 'к']
+];
+const fromTranslit = (s) => {
+  let out = '';
+  const low = s.toLowerCase();
+  for (let i = 0; i < low.length;) {
+    const pair = TRANSLIT.find(([lat]) => low.startsWith(lat, i));
+    if (pair) { out += pair[1]; i += pair[0].length; } else { out += low[i]; i += 1; }
+  }
+  return out;
+};
 
 // Поля места с весом: чем важнее поле, тем выше место в выдаче
 // Метро не ищем: для него на карте свой фильтр, а в поиске оно смешивало
@@ -128,6 +153,20 @@ function parseQuery(query) {
   return { groups, noteKeys };
 }
 
+/** Слова запроса без словаря и стоп-слов — для поиска фразы целиком.
+ *  null, если слово одно или какое-то из слов переводится словарём. */
+function phraseOf(groups) {
+  if (groups.length < 2) return null;
+  if (!groups.every((alts) => alts.length === 1 && !alts[0].startsWith('=') && !alts[0].startsWith('cat:'))) return null;
+  return groups.map((alts) => alts[0]);
+}
+
+/** Слова фразы идут подряд в каком-нибудь поле места (каждое — с начала слова). */
+function hasPhrase(fields, phrase) {
+  return Object.values(fields).some(({ words }) =>
+    words.some((_, i) => phrase.every((token, j) => words[i + j]?.startsWith(token))));
+}
+
 function rank(places, groups, categoryLabel) {
   const scored = [];
   places.forEach((place, order) => {
@@ -147,26 +186,46 @@ function rank(places, groups, categoryLabel) {
     scored.push({ place, total, order });
   });
   scored.sort((a, b) => b.total - a.total || a.order - b.order);
+  // «Красная площадь»: если фраза где-то встречается целиком, места, где
+  // слова разбросаны («красный кирпич… детская площадка»), не показываем
+  const phrase = phraseOf(groups);
+  if (phrase) {
+    const exact = scored.filter((x) => hasPhrase(fieldsOf(x.place, categoryLabel), phrase));
+    if (exact.length) return exact.map((x) => x.place);
+  }
   return scored.map((x) => x.place);
 }
 
 /** Поиск с порядком по важности совпадения. Возвращает { list, note,
  *  suggest, corrected } — note: честная подсказка («кафе у нас пока нет…»),
  *  suggest: текст ссылки на «Предложить место» для пустого результата,
- *  corrected: запрос, переведённый из английской раскладки. */
+ *  corrected: запрос, переведённый из английской раскладки или транслита,
+ *  transliterated: перевод был из транслита («vdnh» → «вднх»). */
 export function searchPlaces(places, query, { categoryLabel = (c) => c } = {}) {
-  if (!normalizeText(query)) return { list: places, note: '', suggest: '', corrected: '' };
+  const empty = { list: places, note: '', suggest: '', corrected: '', transliterated: false };
+  if (!normalizeText(query)) return empty;
   let { groups, noteKeys } = parseQuery(query);
-  if (!groups.length) return { list: places, note: '', suggest: '', corrected: '' };
+  if (!groups.length) return empty;
   let list = rank(places, groups, categoryLabel);
   let corrected = '';
+  let transliterated = false;
+  // Латиница без результата: сначала английская раскладка («gfhr» → «парк»),
+  // потом транслит («vdnh» → «вднх»)
   if (!list.length && /[a-z]/i.test(query) && !/[а-яё]/i.test(query)) {
-    corrected = fromLatin(query);
-    ({ groups, noteKeys } = parseQuery(corrected));
-    list = groups.length ? rank(places, groups, categoryLabel) : [];
-    if (!list.length) corrected = '';
+    for (const [convert, isTranslit] of [[fromLatin, false], [fromTranslit, true]]) {
+      const attempt = convert(query);
+      const parsed = parseQuery(attempt);
+      const found = parsed.groups.length ? rank(places, parsed.groups, categoryLabel) : [];
+      if (found.length) {
+        ({ groups, noteKeys } = parsed);
+        list = found;
+        corrected = attempt;
+        transliterated = isTranslit;
+        break;
+      }
+    }
   }
   const stems = (words) => words.map((w) => stem(normalizeText(w)));
   const found = NOTES.find((n) => stems(n.words).some((w) => noteKeys.has(w)));
-  return { list, note: found?.text || '', suggest: found?.suggest || '', corrected };
+  return { list, note: found?.text || '', suggest: found?.suggest || '', corrected, transliterated };
 }
