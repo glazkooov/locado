@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 // Пути — от корня проекта, откуда бы ни запустили
 process.chdir(fileURLToPath(new URL('..', import.meta.url)));
 
-const SITE = 'https://locado.ru/';
+const SITE = 'https://glazkooov.github.io/locado/';
 
 const places = JSON.parse(readFileSync('data/places.json', 'utf8'));
 const collections = JSON.parse(readFileSync('data/collections.json', 'utf8'));
