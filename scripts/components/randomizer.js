@@ -1,7 +1,8 @@
 // components/randomizer.js — окно «Случайное место».
 //
-// Два режима: «Сейчас» — только места, открытые ещё хотя бы час (успеть
-// доехать), и «На потом» — все, с часами работы вместо статуса. Режим
+// Два режима: «Открыто сейчас» — только места, открытые ещё хотя бы час
+// (успеть доехать), и «Любое место» — все, с часами работы вместо статуса,
+// на другой день. Под переключателем — подсказка, что именно покажем. Режим
 // запоминается. Места не повторяются, пока не покажутся все из выбора;
 // закрыл окно и открыл снова — то же место, а не новое.
 
@@ -14,6 +15,10 @@ import { setPressed } from './category-buttons.js';
 import { icon } from '../core/icons.js';
 
 const MODE_KEY = 'locado:randomizer-mode';
+const MODE_HINTS = {
+  now: 'Покажем то, что работает ещё хотя бы час',
+  any: 'Покажем всё — с часами работы, на другой день'
+};
 const MIN_OPEN_MS = 60 * 60000; // «открыто сейчас» — ещё хотя бы час
 
 const readMode = () => { try { return localStorage.getItem(MODE_KEY) === 'any' ? 'any' : 'now'; } catch { return 'now'; } };
@@ -111,10 +116,16 @@ export function initRandomizer(places) {
 
   const restart = () => { seen.clear(); current = null; roll(); };
 
+  const modeHint = $('#randomizer-mode-hint', modalEl);
+  const syncMode = () => {
+    setPressed(modeBtns, (b) => b.dataset.mode === mode);
+    if (modeHint) modeHint.textContent = MODE_HINTS[mode] || '';
+  };
+
   const setMode = (value) => {
     mode = value;
     saveMode(mode);
-    setPressed(modeBtns, (b) => b.dataset.mode === mode);
+    syncMode();
   };
 
   const goToPlace = () => { if (current) window.location.href = placeUrl(current.slug); };
@@ -122,7 +133,7 @@ export function initRandomizer(places) {
   const modal = createModal(modalEl, {
     onOpen: () => {
       goal('random_open');
-      setPressed(modeBtns, (b) => b.dataset.mode === mode);
+      syncMode();
       // Повторное открытие показывает прежнее место, если оно ещё подходит
       if (current && pool().some((p) => p.slug === current.slug)) { render(current); return; }
       roll({ animate: false });
