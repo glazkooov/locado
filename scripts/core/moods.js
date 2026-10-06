@@ -39,7 +39,7 @@ export const MOODS = [
     photo: 'assets/images/moods/culture-art.jpg',
     bestAt: ['day'],
     any: ['смотреть искусство', 'смотреть спектакль'],
-    categories: ['art', 'theater']
+    categories: ['art']
   },
   {
     id: 'food',

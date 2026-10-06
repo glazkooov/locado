@@ -13,7 +13,8 @@ export const CATEGORIES = {
   food: { label: 'Еда', emoji: '🍕', icon: 'utensils' },
   nature: { label: 'Природа', emoji: '🌳', icon: 'trees' },
   art: { label: 'Музеи и выставки', emoji: '🎨', icon: 'landmark' },
-  theater: { label: 'Театры', emoji: '🎭', icon: 'drama' },
+  // Театры убраны, пока мест нет (Большой театр — слишком очевидный).
+  // Вернуть: theater: { label: 'Театры', emoji: '🎭', icon: 'drama' },
   photo: { label: 'Фотолокации', emoji: '📸', icon: 'camera' },
   entertainment: { label: 'Развлечения', emoji: '🎉', icon: 'ticket' }
 };
