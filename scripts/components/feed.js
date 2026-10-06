@@ -64,7 +64,11 @@ const PRELOAD_MARGIN = 800;
 // базы — при 100 и при 500 местах он тот же.
 const AUTO_LOAD_LIMIT = 36;
 
-export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
+// seasonal — слаги мест из блока «Сейчас» (data/now.json). В полной ленте
+// они в конце (home.js): человек только что видел их наверху. А после
+// настроения или раздела он этот блок проскочил — там они идут первыми
+// и с плашкой «Сейчас в сезон».
+export function initFeed(allPlaces, { pageSize = PAGE_SIZE, seasonal = new Set() } = {}) {
   const container = $('#places-container');
   if (!container) return null; // не на этой странице
 
@@ -116,7 +120,7 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
     places.forEach((place, i) => {
       const ratio = ratioIndex(place.slug);
       const col = shortest();
-      columns[col].insertAdjacentHTML('beforeend', cardHtml(place, favorites.includes(place.slug), `place-card--r${ratio}`));
+      columns[col].insertAdjacentHTML('beforeend', cardHtml(place, favorites.includes(place.slug), `place-card--r${ratio}`, { season: seasonal.has(place.slug) }));
       heights[col] += cardRatios()[ratio];
       if (start + i + 1 === SUGGEST_AFTER && isUnfiltered()) {
         const c = shortest();
@@ -126,7 +130,12 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE } = {}) {
     });
   };
 
-  const filtered = () => filterPlaces(allPlaces, state);
+  const filtered = () => {
+    const list = filterPlaces(allPlaces, state);
+    // В поиске порядок — по точности совпадения, его не трогаем
+    if (!seasonal.size || isUnfiltered() || state.query) return list;
+    return [...list.filter((p) => seasonal.has(p.slug)), ...list.filter((p) => !seasonal.has(p.slug))];
+  };
 
   const syncTabs = () => {
     // Пока действует настроение из hero-pill (tags или список категорий),

@@ -8,8 +8,8 @@
     "places": [
       "vdnh",
       "park-gorkogo",
-      "chistye-prudy",
-      "krasnaya-ploshchad"
+      "park-zaryadye",
+      "gogolevsky-bulvar"
     ]
   },
   {
@@ -61,7 +61,7 @@
       "krymskaya-naberezhnaya",
       "vorobyovy-gory",
       "park-zaryadye",
-      "naberezhnaya-naprotiv-siti"
+      "naberezhnaya-beregovoy"
     ]
   },
   {
@@ -85,7 +85,7 @@
     "lead": "Лето уходит, но на улице ещё хорошо. Сады и бульвары, пока не похолодало.",
     "places": [
       "sad-ermitazh",
-      "patriarshie-prudy",
+      "neskuchny-sad",
       "muzeon",
       "gogolevsky-bulvar"
     ]
