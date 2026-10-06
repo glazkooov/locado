@@ -20,8 +20,10 @@ function favButtonHtml(place, isFavorite) {
         </button>`;
 }
 
-export function cardHtml(place, isFavorite, extraClass = '') {
-  const badge = place.temporary ? '<div class="badge-temporary">Успей посетить</div>' : '';
+/** season — место из блока «Сейчас» (data/now.json): плашка «Сейчас в сезон». */
+export function cardHtml(place, isFavorite, extraClass = '', { season = false } = {}) {
+  const badge = (place.temporary ? '<div class="badge-temporary">Успей посетить</div>' : '')
+    + (season ? '<div class="badge-season">Сейчас в сезон</div>' : '');
   return `
     <div class="place-card${extraClass ? ` ${extraClass}` : ''}" data-category="${escapeHtml(place.category)}" data-slug="${escapeHtml(place.slug)}">
       <div class="place-card__top">

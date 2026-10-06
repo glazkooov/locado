@@ -156,7 +156,10 @@ async function main() {
   // Места из «Сейчас» — в конец ленты: иначе первый ряд ленты повторял
   // блок, который человек только что пролистал
   const inSpotlight = new Set(spotlight.map((p) => p.slug));
-  const feed = initFeed([...places.filter((p) => !inSpotlight.has(p.slug)), ...places.filter((p) => inSpotlight.has(p.slug))]);
+  const feed = initFeed(
+    [...places.filter((p) => !inSpotlight.has(p.slug)), ...places.filter((p) => inSpotlight.has(p.slug))],
+    { seasonal: inSpotlight }
+  );
   applyUrlFilter(feed);
   initHeroMoods(feed, places, { onSelect: () => scrollToFeed() });
   initRandomizer(places);
