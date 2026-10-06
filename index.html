@@ -342,12 +342,14 @@
         <button type="button" class="modal-close" data-modal-close aria-label="Закрыть"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#x"></use></svg></button>
       </div>
       <div class="modal-body">
-        <!-- «Сейчас» — только открытые ещё хотя бы час; «На потом» — все места с часами работы.
-             Выбор запоминается (components/randomizer.js) -->
-        <div class="randomizer__mode" role="group" aria-label="Когда идём">
-          <button type="button" class="randomizer__mode-btn" data-mode="now" aria-pressed="true">Сейчас</button>
-          <button type="button" class="randomizer__mode-btn" data-mode="any" aria-pressed="false">На потом</button>
+        <!-- «Открыто сейчас» — только открытые ещё хотя бы час; «Любое место» — все,
+             с часами работы. Не «Сейчас / На потом»: «Сейчас» на главной — сезонный
+             блок. Подсказку под переключателем меняет components/randomizer.js -->
+        <div class="randomizer__mode" role="group" aria-label="Какие места показывать" aria-describedby="randomizer-mode-hint">
+          <button type="button" class="randomizer__mode-btn" data-mode="now" aria-pressed="true">Открыто сейчас</button>
+          <button type="button" class="randomizer__mode-btn" data-mode="any" aria-pressed="false">Любое место</button>
         </div>
+        <p class="randomizer__hint" id="randomizer-mode-hint">Покажем то, что работает ещё хотя бы час</p>
 
         <!-- Категории одной строкой с прокруткой: главное в окне — само место -->
         <div class="category-chips randomizer__chips" id="randomizer-categories" role="group" aria-label="Категория случайного места"></div>

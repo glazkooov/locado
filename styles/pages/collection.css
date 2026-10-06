@@ -247,6 +247,10 @@
    пустая плашка выглядит как ошибка вёрстки */
 .c-place__photo:has(img.is-broken) { display: none; }
 
+/* Подпись автора под фото места (CC BY) — вплотную к фото */
+.c-place__credit { margin: -12px 0 18px; }
+.c-place__photo:has(img.is-broken) + .c-place__credit { display: none; }
+
 /* Совет — тёплая плашка, как «Настроение места» */
 .c-place__tip {
   margin-top: 18px;

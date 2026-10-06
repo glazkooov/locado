@@ -106,11 +106,11 @@ body.modal-open { overflow: hidden; }
 .chip.active { background: var(--ink); border-color: var(--ink); color: #fff; }
 
 /* ---------- Случайное место ---------- */
-/* Переключатель «Сейчас / На потом» — сегменты одной плашки */
+/* Переключатель «Открыто сейчас / Любое место» — сегменты одной плашки */
 .randomizer__mode {
   display: flex;
   padding: 4px;
-  margin-bottom: 14px;
+  margin-bottom: 8px;
   border-radius: var(--radius-pill);
   background: var(--cream-deep);
 }
@@ -133,6 +133,15 @@ body.modal-open { overflow: hidden; }
   background: var(--card-bg);
   color: var(--ink);
   box-shadow: var(--shadow-bar);
+}
+
+/* Что покажем в выбранном режиме — одна строка под переключателем */
+.randomizer__hint {
+  margin-bottom: 14px;
+  font-size: var(--fs-xs);
+  line-height: 1.4;
+  color: var(--text-light);
+  text-align: center;
 }
 
 /* Категории — одна строка с прокруткой, край гаснет */
@@ -259,7 +268,8 @@ body.modal-open { overflow: hidden; }
   .randomizer__chips { margin-inline: -18px; padding-inline: 18px; }
   /* Компактнее: окно помещается на экран 320×568 без прокрутки */
   .randomizer .modal-header { padding: 16px 16px 0 18px; }
-  .randomizer__mode { margin-bottom: 12px; }
+  .randomizer__mode { margin-bottom: 6px; }
+  .randomizer__hint { margin-bottom: 12px; }
   .randomizer__chips { margin-bottom: 12px; }
   .randomizer-preview { padding: 10px; gap: 12px; }
   .randomizer-preview img { width: 64px; height: 64px; }
