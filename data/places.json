@@ -3431,15 +3431,15 @@
   },
   {
     "id": 78,
-    "slug": "filevskaya-naberezhnaya",
-    "name": "Филёвская набережная",
+    "slug": "naberezhnaya-beregovoy",
+    "name": "Набережная у ЖК «Береговой»",
     "category": "photo",
     "type": "Набережная",
     "coords": [
       55.7571,
       37.5117
     ],
-    "photo": "assets/images/places/filevskaya-naberezhnaya.jpg",
+    "photo": "assets/images/places/naberezhnaya-beregovoy.jpg",
     "photoCredit": {
       "author": "редакция «Мосфото»",
       "source": "",
