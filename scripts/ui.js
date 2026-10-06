@@ -10,7 +10,7 @@ import { initInstall } from './components/install.js';
 import { icon } from './core/icons.js';
 import { CATEGORIES } from './core/places.js';
 import { initConsent } from './components/consent.js';
-import { initAnalytics } from './core/analytics.js';
+import { initAnalytics, goal } from './core/analytics.js';
 
 const syncHeaderHeight = () => {
   const header = $('.main-header');
@@ -210,6 +210,18 @@ const initHeaderSearch = () => {
  *  браузер прокручивает сразу, а разделы выше ещё дорисовываются после
  *  загрузки данных, и раздел уезжал вниз. Докручиваем, когда страница
  *  встала, — если человек не начал листать сам. */
+/** Цель: клик по карточке подборки — какую выбрали и откуда (главная,
+ *  список подборок, страница места, «Ещё подборки»). */
+const initPlanGoal = () => {
+  const path = window.location.pathname;
+  const from = /\/collections\/?$/.test(path) ? 'Все подборки'
+    : /\/place\//.test(path) ? 'Страница места'
+      : /\/collection\//.test(path) ? 'Другая подборка' : 'Главная';
+  on(document, 'click', '.collection-card', (e, card) => {
+    goal('plan_select', { 'Подборка': { [card.dataset.title || '']: from } });
+  });
+};
+
 const initAnchorLanding = () => {
   const id = decodeURIComponent(window.location.hash.slice(1));
   if (!id || id === 'search' || !document.getElementById(id)) return;
@@ -257,3 +269,4 @@ initInstall();
 initHeaderSearch();
 initInPageAnchors();
 initAnchorLanding();
+initPlanGoal();

@@ -1,7 +1,7 @@
 // pages/home.js — точка входа index.html.
 
 import { goal, categoryGoal } from '../core/analytics.js';
-import { $ } from '../core/dom.js';
+import { $, $$, on } from '../core/dom.js';
 import { escapeHtml, cssUrl } from '../core/format.js';
 import { loadPlaces, sample, bySlug, placeUrl, CATEGORIES } from '../core/places.js';
 import { bindCards } from '../components/card.js';
@@ -110,6 +110,10 @@ function renderNow(entry, places) {
       </a>`;
   }).join('');
   section.hidden = false;
+  // Цель: что из «Сейчас» открывают — работает ли сезонный блок
+  $$('.now-card', section).forEach((card, i) => on(card, 'click', () => {
+    goal('now_open', { 'Сейчас': { [entry.title || '']: picks[i].name } });
+  }));
   return picks;
 }
 

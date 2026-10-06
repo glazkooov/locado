@@ -15,6 +15,7 @@ import { setPressed } from './category-buttons.js';
 import { icon } from '../core/icons.js';
 
 const MODE_KEY = 'locado:randomizer-mode';
+const MODE_LABELS = { now: 'Открыто сейчас', any: 'Любое место' };
 const MODE_HINTS = {
   now: 'Покажем то, что работает ещё хотя бы час',
   any: 'Покажем всё — с часами работы, на другой день'
@@ -128,7 +129,12 @@ export function initRandomizer(places) {
     syncMode();
   };
 
-  const goToPlace = () => { if (current) window.location.href = placeUrl(current.slug); };
+  // Цель: из случайного места перешли на страницу — какое место и в каком режиме
+  const goToPlace = () => {
+    if (!current) return;
+    goal('random_go', { 'Случайное место': { [MODE_LABELS[mode]]: current.name } });
+    window.location.href = placeUrl(current.slug);
+  };
 
   const modal = createModal(modalEl, {
     onOpen: () => {
@@ -152,11 +158,12 @@ export function initRandomizer(places) {
   modeBtns.forEach((btn) => on(btn, 'click', () => {
     if (btn.dataset.mode === mode) return;
     setMode(btn.dataset.mode);
+    goal('random_mode', { 'Режим случайного места': MODE_LABELS[mode] });
     restart();
   }));
   on($('#randomizer-any', modalEl), 'click', () => { setMode('any'); restart(); });
 
-  on(rerollBtn, 'click', () => roll());
+  on(rerollBtn, 'click', () => { goal('random_reroll'); roll(); });
   on(acceptBtn, 'click', goToPlace);
   on(preview, 'click', goToPlace);
   on(preview, 'keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goToPlace(); } });
