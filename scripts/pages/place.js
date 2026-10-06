@@ -374,7 +374,10 @@ function attachEventListeners(place, allPlaces) {
 
   // Позвонить
   const callBtn = $('#call-btn');
-  if (place.phone) on(callBtn, 'click', () => { window.location.href = telHref(place.phone); });
+  const contactGoal = (how) => goal('contact_click', { 'Связаться': { [place.name]: how } });
+  if (place.phone) on(callBtn, 'click', () => { contactGoal('Звонок'); window.location.href = telHref(place.phone); });
+  on($('#place-phone'), 'click', (e) => { if (e.target.closest('a')) contactGoal('Звонок'); });
+  on($('#place-website'), 'click', (e) => { if (e.target.closest('a')) contactGoal('Сайт'); });
 
   // Шеринг
   initShare([$('#share-btn'), $('#action-share')], () => ({ title: place.name, text: place.description }), { what: `Место: ${place.name}` });

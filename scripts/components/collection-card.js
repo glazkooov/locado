@@ -32,7 +32,7 @@ function titleHtml(title = '') {
 export function collectionCardHtml(collection) {
   const type = COLLECTION_TYPES[collection.type] || '';
   return `
-    <a class="collection-card" href="${collectionUrl(collection.slug)}">
+    <a class="collection-card" href="${collectionUrl(collection.slug)}" data-title="${escapeHtml(collection.title)}">
       <span class="collection-card__inner">
         <span class="collection-card__photo" style='background-image: ${cssUrl(collection.coverSm || collection.cover)}' aria-hidden="true"></span>
         <span class="collection-card__body">
