@@ -2,7 +2,7 @@
 // (маршрут или «под повод»). Текст — из data/collections.json, практические
 // данные мест (метро, часы, цена, фото) — из places.json.
 
-import { renderCredit } from '../core/credits.js';
+import { renderCredit, creditHtml } from '../core/credits.js';
 import { goal } from '../core/analytics.js';
 import { $, on } from '../core/dom.js';
 import { escapeHtml, cssUrl, hoursForArticle } from '../core/format.js';
@@ -68,6 +68,9 @@ function placeBlock(b, place, num, day) {
   const [metro] = metroList(place);
   // Часы — на день маршрута, а не «открыто сейчас»: статью читают заранее
   const hours = hoursForArticle(place.schedule, day);
+  // Крупное фото в статье — с подписью автора рядом (CC BY), как на
+  // странице места; пустая, пока у фото не вписан источник
+  const credit = creditHtml(place.photoCredit);
   const facts = [
     metro && `${icon('train-front')} м. ${escapeHtml(metro)}`,
     hours && `${icon('clock')} ${escapeHtml(hours)}`,
@@ -86,7 +89,8 @@ function placeBlock(b, place, num, day) {
       ${place.photo ? `
       <a class="c-place__photo" href="${url}" tabindex="-1" aria-hidden="true">
         <img src="${escapeHtml(place.photo)}" alt="" loading="lazy">
-      </a>` : ''}
+      </a>${credit ? `
+      <p class="photo-credit c-place__credit">${credit}</p>` : ''}` : ''}
       <div class="c-place__text">${paragraphs(b.paragraphs)}</div>
       ${b.tip ? `<p class="c-place__tip"><strong>Совет</strong> ${escapeHtml(b.tip)}</p>` : ''}
       <div class="c-place__footer">
