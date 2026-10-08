@@ -20,4 +20,4 @@ Allow: /
 User-agent: *
 Disallow: /
 
-Sitemap: https://glazkooov.github.io/locado/sitemap.xml
+Sitemap: https://locado.ru/sitemap.xml
