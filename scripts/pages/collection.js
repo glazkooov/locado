@@ -68,8 +68,8 @@ function placeBlock(b, place, num, day) {
   const [metro] = metroList(place);
   // Часы — на день маршрута, а не «открыто сейчас»: статью читают заранее
   const hours = hoursForArticle(place.schedule, day);
-  // Крупное фото в статье — с подписью автора рядом (CC BY), как на
-  // странице места; пустая, пока у фото не вписан источник
+  // Крупное фото в статье — с подписью источника рядом, как на странице
+  // места (условия foto.mos.ru и CC BY требуют указать источник)
   const credit = creditHtml(place.photoCredit);
   const facts = [
     metro && `${icon('train-front')} м. ${escapeHtml(metro)}`,
