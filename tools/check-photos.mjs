@@ -12,7 +12,8 @@ const LICENSES = ['CC BY 4.0', 'CC BY-SA 4.0', 'CC BY 3.0', 'CC BY-SA 3.0', 'CC0
 const places = JSON.parse(readFileSync('data/places.json', 'utf8'));
 const collections = JSON.parse(readFileSync('data/collections.json', 'utf8'));
 
-const problems = { noFile: [], noSmall: [], tooBig: [], noCredit: [], noSource: [], badLicense: [] };
+const problems = { noFile: [], noSmall: [], tooBig: [], noCredit: [], noSource: [], badLicense: [], mosRoot: [] };
+const MOS_ROOT = /^https?:\/\/(www\.)?mos\.ru\/?$/;
 const check = (label, photo, credit) => {
   if (!photo) return;
   const local = !/^https?:/.test(photo);
@@ -25,6 +26,7 @@ const check = (label, photo, credit) => {
   }
   if (!credit?.author) { problems.noCredit.push(label); return; }
   if (credit.license && !credit.source) problems.noSource.push(label);
+  if (MOS_ROOT.test(credit.source || '')) problems.mosRoot.push(label);
   if (credit.license && !LICENSES.includes(credit.license)) problems.badLicense.push(`${label} — «${credit.license}»`);
 };
 places.forEach((p) => check(`место ${p.slug}`, p.photo, p.photoCredit));
@@ -34,9 +36,10 @@ const titles = {
   noFile: 'Нет файла фото',
   noSmall: 'Нет копии для карточек (sm/) — запусти python3 tools/photos.py',
   tooBig: 'Фото тяжелее 600 КБ — запусти python3 tools/photos.py',
-  noCredit: 'Нет подписи (photoCredit.author) — для своих фото: { "author": "Локадо" }',
+  noCredit: 'Нет подписи (photoCredit) — с foto.mos.ru: { "author": "mos.ru", "source": "https://www.mos.ru/" }, свои: { "author": "Локадо" }',
   noSource: 'Фото есть, но нет ссылки на источник (photoCredit.source) — без неё подпись не показывается',
-  badLicense: `Неизвестная лицензия — допустимые: ${LICENSES.join(', ')}`
+  badLicense: `Неизвестная лицензия — допустимые: ${LICENSES.join(', ')}`,
+  mosRoot: 'Можно лучше: ссылка ведёт на главную mos.ru — по возможности замени на страницу снимка на foto.mos.ru'
 };
 let total = 0;
 for (const [key, list] of Object.entries(problems)) {
