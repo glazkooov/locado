@@ -982,8 +982,8 @@
   .place-hero.is-loading .hero-bg { animation: none; }
 }
 
-/* Автор фото под первым экраном (place, collection): мелкий значок «i»
-   справа, по нажатию слева от него раскрывается «Фото: …» (core/credits.js) */
+/* Автор фото (place, collection): мелкий значок «i» справа, по нажатию
+   слева от него раскрывается «Фото: …» (core/credits.js) */
 .photo-credit {
   display: flex;
   justify-content: flex-end;
@@ -1023,9 +1023,37 @@
 .credit-toggle[aria-expanded="true"] { opacity: 1; }
 .credit-toggle:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; opacity: 1; }
 
-/* Подпись есть — первый блок под ней ближе, чтобы не было двойного зазора */
-.photo-credit:not([hidden]) + .place-info,
-.photo-credit:not([hidden]) + .place-story { margin-top: 24px; }
+/* Значок прямо на фото (первый экран, фото мест в подборке): светлым по
+   полупрозрачной тёмной плашке, чтобы читался на любом снимке */
+.photo-credit--on-photo {
+  margin: 0;
+  color: #fff;
+  pointer-events: none;
+}
+.photo-credit--on-photo > * { pointer-events: auto; }
+.photo-credit--on-photo .credit-toggle {
+  border-color: transparent;
+  background: rgba(20, 16, 12, 0.45);
+  opacity: 0.85;
+  backdrop-filter: blur(4px);
+}
+.photo-credit--on-photo .credit-text {
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+  background: rgba(20, 16, 12, 0.6);
+  backdrop-filter: blur(4px);
+}
+.photo-credit--on-photo a:hover { color: #fff; }
+
+/* На первом экране — справа внизу, над волной */
+.place-hero .photo-credit--on-photo {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--hero-wave-h) + 14px);
+  margin: 0 auto;
+  z-index: 3;
+}
 
 /* «Почему стоит пойти / Когда лучше / Что заметить» — сразу под первым
    экраном: это то, чего нет в справочниках. «Почему» — крупно, на всю

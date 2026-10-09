@@ -91,7 +91,7 @@ function placeBlock(b, place, num, day) {
         <a class="c-place__photo" href="${url}" tabindex="-1" aria-hidden="true">
           <img src="${escapeHtml(place.photo)}" alt="" loading="lazy">
         </a>${credit ? `
-        <p class="photo-credit c-place__credit">${credit}</p>` : ''}
+        <p class="photo-credit photo-credit--on-photo c-place__credit">${credit}</p>` : ''}
       </div>` : ''}
       <div class="c-place__text">${paragraphs(b.paragraphs)}</div>
       ${b.tip ? `<p class="c-place__tip"><strong>Совет</strong> ${escapeHtml(b.tip)}</p>` : ''}

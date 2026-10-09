@@ -247,31 +247,14 @@
    пустая плашка выглядит как ошибка вёрстки */
 .c-place__photo:has(img.is-broken) { display: none; }
 
-/* Значок «i» с автором фото — в углу самого фото, светлым по тёмной плашке */
+/* Значок «i» с автором фото — в углу самого фото (вид — .photo-credit--on-photo) */
 .c-place__media { position: relative; }
 .c-place__credit {
   position: absolute;
   right: 10px;
   bottom: 28px; /* над нижним отступом .c-place__photo */
   left: 10px;
-  margin: 0;
-  color: #fff;
-  pointer-events: none;
 }
-.c-place__credit > * { pointer-events: auto; }
-.c-place__credit .credit-toggle {
-  border-color: transparent;
-  background: rgba(20, 16, 12, 0.45);
-  opacity: 0.85;
-  backdrop-filter: blur(4px);
-}
-.c-place__credit .credit-text {
-  padding: 3px 10px;
-  border-radius: var(--radius-pill);
-  background: rgba(20, 16, 12, 0.6);
-  backdrop-filter: blur(4px);
-}
-.c-place__credit a:hover { color: #fff; }
 .c-place__photo:has(img.is-broken) + .c-place__credit { display: none; }
 
 /* Совет — тёплая плашка, как «Настроение места» */
