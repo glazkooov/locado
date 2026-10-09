@@ -42,7 +42,7 @@
 .footer-logo {
   font-size: var(--fs-xl);
   color: #fff;
-  display: inline-block;
+  display: inline-flex;
   margin-bottom: 14px;
 }
 

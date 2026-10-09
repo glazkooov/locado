@@ -85,6 +85,7 @@
   --hero-muted: rgba(255, 255, 255, 0.74);
   --hero-accent: #FF8A4C;
   --hero-logo: #fff;
+  --hero-logo-text: #fff;
   --hero-glass: rgba(255, 255, 255, 0.10);
   --hero-glass-hover: rgba(255, 255, 255, 0.16);
   --hero-line: rgba(255, 255, 255, 0.38);
@@ -100,6 +101,7 @@
   --hero-muted: rgba(42, 37, 33, 0.66);
   --hero-accent: #E2560F;
   --hero-logo: var(--primary);
+  --hero-logo-text: var(--text);
   --hero-glass: rgba(255, 255, 255, 0.42);
   --hero-glass-hover: rgba(255, 255, 255, 0.62);
   --hero-line: rgba(42, 37, 33, 0.28);
@@ -117,6 +119,7 @@
   --hero-muted: rgba(42, 37, 33, 0.66);
   --hero-accent: #D9480F;
   --hero-logo: var(--primary);
+  --hero-logo-text: var(--text);
   --hero-glass: rgba(255, 255, 255, 0.38);
   --hero-glass-hover: rgba(255, 255, 255, 0.58);
   --hero-line: rgba(42, 37, 33, 0.28);
@@ -132,6 +135,7 @@
   --hero-muted: rgba(255, 255, 255, 0.7);
   --hero-accent: #FF9A5C;
   --hero-logo: #fff;
+  --hero-logo-text: #fff;
   --hero-glass: rgba(255, 255, 255, 0.08);
   --hero-glass-hover: rgba(255, 255, 255, 0.14);
   --hero-line: rgba(255, 255, 255, 0.32);
