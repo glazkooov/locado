@@ -29,9 +29,31 @@
 .logo {
   font-size: 1.5rem; /* телефон: шапка ниже, больше места контенту */
   font-weight: 700;
-  color: var(--primary);
+  color: var(--text);
   letter-spacing: -0.5px;
 }
+
+/* Логотип (assets/logo.svg — тот же рисунок отдельным файлом): «Л» —
+   начало оранжевого маршрута, линия идёт волной за словом (спереди — только
+   по краям «к» и «д») и приводит к точке. Буквы — цвета текста (белые на
+   фото и в подвале), маршрут и точка всегда оранжевые */
+.logo { display: inline-flex; line-height: 1; }
+.logo__svg {
+  display: block;
+  height: 1.2em;
+  width: auto;
+  overflow: visible;
+}
+.logo__word { fill: currentColor; }
+.logo__route {
+  fill: none;
+  stroke: var(--primary);
+  stroke-width: 120;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.logo__route--l { stroke-width: 205; } /* «Л» толщиной с буквы — часть слова и знак в иконках */
+.logo__dot { fill: var(--primary); }
 @media (min-width: 576px) {
   .logo {
     font-size: var(--fs-2xl);
@@ -391,7 +413,7 @@ body.nav-open .main-header--overlay {
   box-shadow: var(--shadow-bar);
 }
 
-body:not(.nav-open) .main-header--overlay:not(.is-scrolled) .logo,
+body:not(.nav-open) .main-header--overlay:not(.is-scrolled) .logo { color: var(--hero-logo-text, var(--hero-logo)); }
 body:not(.nav-open) .main-header--overlay:not(.is-scrolled) .mobile-menu-toggle,
 body:not(.nav-open) .main-header--overlay:not(.is-scrolled) .header-search {
   color: var(--hero-logo);
