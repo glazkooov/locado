@@ -78,7 +78,8 @@ function renderHero(place) {
  *  файл битый — тёплая подложка по категории места (place.css,
  *  .place-hero--no-photo) и hero ниже: пустой тёмный экран ничего не говорит.
  *  Подпись к фото — тоже только у загрузившегося фото: подпись можно внести
- *  раньше, чем сам файл. */
+ *  раньше, чем сам файл. photoFocus («50% 70%») — какую часть кадра
+ *  оставить, когда широкий экран обрезает вертикальное фото. */
 function setHeroPhoto(place) {
   const hero = $('.place-hero');
   const heroBg = $('#hero-bg');
@@ -92,6 +93,7 @@ function setHeroPhoto(place) {
   const img = new Image();
   img.onload = () => {
     heroBg.style.backgroundImage = cssUrl(place.photo);
+    if (place.photoFocus) heroBg.style.backgroundPosition = place.photoFocus;
     renderCredit($('#photo-credit'), place.photoCredit);
   };
   img.onerror = noPhoto;
