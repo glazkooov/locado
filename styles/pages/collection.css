@@ -247,12 +247,16 @@
    пустая плашка выглядит как ошибка вёрстки */
 .c-place__photo:has(img.is-broken) { display: none; }
 
-/* Значок «i» с автором фото — в углу самого фото (вид — .photo-credit--on-photo) */
-.c-place__media { position: relative; }
+/* Значок «i» с автором фото — в углу самого фото (вид — .photo-credit--on-photo).
+   Отступ под фото — у обёртки, иначе он «проваливается» сквозь неё и значок
+   отсчитывается не от края фото */
+.c-place__media { position: relative; margin-bottom: 18px; }
+.c-place__media .c-place__photo { margin-bottom: 0; }
+.c-place__media:has(img.is-broken) { display: none; }
 .c-place__credit {
   position: absolute;
   right: 10px;
-  bottom: 28px; /* над нижним отступом .c-place__photo */
+  bottom: 10px;
   left: 10px;
 }
 .c-place__photo:has(img.is-broken) + .c-place__credit { display: none; }
