@@ -37,8 +37,11 @@ ErrorDocument 404 /404.html
 AddType application/manifest+json .webmanifest
 AddType font/woff2 .woff2
 
-# Кэш в браузере. Фото и шрифты меняются редко — месяц. Код и данные
-# меняются при каждом обновлении сайта — час, чтобы правки доходили быстро.
+# Кэш в браузере. Фото и шрифты меняются редко — месяц.
+# Страницы, стили, скрипты и данные браузер перепроверяет при каждом заходе
+# (no-cache: если файл не менялся, сервер отвечает коротким 304). Иначе после
+# обновления сайта браузер мог взять новую страницу со старыми стилями из
+# кэша — и вёрстка ломалась.
 <IfModule mod_expires.c>
   ExpiresActive On
   ExpiresByType image/jpeg "access plus 30 days"
@@ -46,8 +49,13 @@ AddType font/woff2 .woff2
   ExpiresByType image/webp "access plus 30 days"
   ExpiresByType image/svg+xml "access plus 30 days"
   ExpiresByType font/woff2 "access plus 1 year"
-  ExpiresByType text/css "access plus 1 hour"
-  ExpiresByType application/javascript "access plus 1 hour"
-  ExpiresByType application/json "access plus 1 hour"
+  ExpiresByType text/css "access plus 0 seconds"
+  ExpiresByType application/javascript "access plus 0 seconds"
+  ExpiresByType application/json "access plus 0 seconds"
   ExpiresByType text/html "access plus 0 seconds"
+</IfModule>
+<IfModule mod_headers.c>
+  <FilesMatch "\.(html|css|js|mjs|json|webmanifest)$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
 </IfModule>
