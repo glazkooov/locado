@@ -34,6 +34,7 @@ FULL_WIDTH = 2000      # первый экран страницы места
 SMALL_WIDTH = 640      # карточки ленты, похожие места, превью
 MAX_BYTES = 600_000    # больше — пережимаем, даже если ширина в норме
 EXTS = {'.jpg', '.jpeg', '.png', '.webp'}
+AS_JPG = {'.jfif', '.jpe'}  # тот же JPEG под другим расширением — сохраним как .jpg
 
 
 def save(img, path, width, quality):
@@ -69,6 +70,17 @@ def process(src, force=False):
             f'карточка {small.stat().st_size // 1024} КБ')
 
 
+def as_jpg(src):
+    """severnoe-tushino.jfif → severnoe-tushino.jpg (сайт ждёт .jpg)."""
+    dst = src.with_suffix('.jpg')
+    with Image.open(src) as opened:
+        img = ImageOps.exif_transpose(opened)
+        img.load()
+    save(img, dst, FULL_WIDTH, 82)
+    print(f'{src.name} → {dst.name}')
+    return dst
+
+
 def main(args):
     # Пути к фото — от корня проекта, откуда бы ни запустили скрипт
     # (из папки tools, из корня, двойным щелчком)
@@ -80,6 +92,7 @@ def main(args):
     else:
         files = sorted(p for p in PLACES.iterdir() if p.is_file())
         force = False
+    files = [as_jpg(f) if f.suffix.lower() in AS_JPG and f.exists() else f for f in files]
     files = [f for f in files if f.suffix.lower() in EXTS and f.parent == PLACES and f.exists()]
 
     done = [line for f in files if (line := process(f, force))]
