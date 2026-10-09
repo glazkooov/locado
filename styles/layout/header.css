@@ -33,35 +33,26 @@
   letter-spacing: -0.5px;
 }
 
-/* Логотип: «Л» — оранжевая линия маршрута, «окадо» — шрифтом заголовков,
-   точка в конце — место, куда маршрут приводит. Буквы берут цвет текста
-   (белые на фото и в подвале), маршрут и точка всегда оранжевые */
-.logo {
-  display: inline-flex;
-  align-items: baseline;
-  line-height: 1;
-}
-.logo__route {
-  align-self: flex-end;
-  height: 0.98em;
+/* Логотип (assets/logo.svg — тот же рисунок отдельным файлом): «Л» —
+   начало оранжевого маршрута, линия идёт волной за словом (спереди — только
+   по краям «к» и «д») и приводит к точке. Буквы — цвета текста (белые на
+   фото и в подвале), маршрут и точка всегда оранжевые */
+.logo { display: inline-flex; line-height: 1; }
+.logo__svg {
+  display: block;
+  height: 1.2em;
   width: auto;
-  margin-right: -0.02em;
-  transform: translateY(0.02em);
   overflow: visible;
+}
+.logo__word { fill: currentColor; }
+.logo__route {
   fill: none;
   stroke: var(--primary);
-  stroke-width: 13;
+  stroke-width: 120;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-.logo__dot {
-  width: 0.24em;
-  height: 0.24em;
-  margin-left: 0.06em;
-  border-radius: 50%;
-  background: var(--primary);
-  transform: translateY(-0.62em);
-}
+.logo__dot { fill: var(--primary); }
 @media (min-width: 576px) {
   .logo {
     font-size: var(--fs-2xl);
