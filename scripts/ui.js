@@ -30,7 +30,7 @@ const menuExtraHtml = () => `
     </ul>
     <a href="suggest/" class="nav-suggest">${icon('heart')} Предложить место</a>
   </div>`;
-const menuContactHtml = '<p class="nav-contact">Пиши нам: <a href="mailto:hello.locado@yandex.ru">hello.locado@yandex.ru</a></p>';
+const menuContactHtml = '<p class="nav-contact">Пиши нам: <a href="mailto:hello@locado.ru">hello@locado.ru</a></p>';
 
 // Прокрутка под открытым меню: overflow: hidden у body Safari на iPhone
 // частично игнорирует, поэтому body фиксируем и возвращаем позицию
