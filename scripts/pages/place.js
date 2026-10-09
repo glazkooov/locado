@@ -200,6 +200,22 @@ const STORY_PARTS = [
   { key: 'notice', title: 'Что заметить', icon: 'star' }
 ];
 
+// «Выбрать вместе» (vmeste/) с этим местом в выборе: кнопка в шапке на
+// компьютере; на телефоне — карточка, но только у мест для свиданий и компаний,
+// чтобы не висела на каждой странице
+const TOGETHER_TAGS = ['свидание', 'с друзьями'];
+
+function renderTogether(place) {
+  const url = `vmeste/?with=${encodeURIComponent(place.id)}`;
+  const btn = $('#together-btn');
+  if (btn) on(btn, 'click', () => { window.location.href = url; });
+  const invite = $('#together-invite');
+  if (!invite) return;
+  invite.hidden = !(place.tags || []).some((t) => TOGETHER_TAGS.includes(t));
+  $('#together-invite-text').textContent = `${place.name} уже будет в выборе. Добавь ещё пару мест, а друг отметит, куда хочет он.`;
+  $('#together-invite-btn').href = url;
+}
+
 function renderStory(place) {
   const el = $('#place-story');
   const story = place.story || {};
@@ -489,6 +505,7 @@ async function main() {
 
   renderHero(place);
   renderStory(place);
+  renderTogether(place);
   renderInfo(place);
   renderDescription(place);
   renderTags(place);

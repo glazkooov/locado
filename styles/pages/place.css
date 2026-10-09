@@ -1124,3 +1124,42 @@
 @media (min-width: 768px) {
   .place-story__item--why .place-story__text { font-size: var(--fs-xl); }
 }
+
+/* «Идёшь не один?» — приглашение в «Выбрать вместе» (vmeste/). Только
+   телефон: на компьютере есть кнопка «Позвать друга» в шапке */
+.together-invite { margin-top: 20px; }
+.together-invite[hidden] { display: none; }
+@media (min-width: 769px) {
+  .together-invite { display: none; }
+}
+.together-invite__card {
+  padding: 16px;
+  border-radius: 20px;
+  background: linear-gradient(120deg, #FFE3CF, #FFD0B5);
+  color: var(--ink);
+}
+.together-invite__title {
+  margin: 0 0 6px;
+  font-family: var(--font-heading);
+  font-size: var(--fs-md);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.together-invite__text {
+  margin: 0 0 12px;
+  font-size: var(--fs-sm);
+  line-height: 1.45;
+  color: var(--text);
+}
+.together-invite__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: var(--radius-pill);
+  background: var(--primary);
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+}

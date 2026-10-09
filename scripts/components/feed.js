@@ -150,6 +150,12 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE, seasonal = new Set()
   const syncActiveBar = (count) => {
     if (!activeBar) return;
     activeBar.hidden = !state.label;
+    // Настроение — можно сразу позвать друга выбирать из этих мест (vmeste/)
+    const together = $('#feed-active-together');
+    if (together) {
+      together.hidden = !state.label?.moodId;
+      if (state.label?.moodId) together.href = `vmeste/?mood=${encodeURIComponent(state.label.moodId)}`;
+    }
     if (!state.label || !activeLabel) return;
     activeLabel.textContent = `${state.label.kind}: ${state.label.text} · ${count} ${pluralize(count, ['место', 'места', 'мест'])}`;
   };

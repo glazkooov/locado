@@ -5,7 +5,9 @@
 //   ?p=1,5,9       — друга позвали: он листает только эти места (больше ни
 //                    одно не может совпасть) и сразу видит совпадения;
 //   &m=5           — совпадения, которые уже есть (после «Предложить своё»);
-//   ?m=5,9         — ответ другу: только экран совпадений.
+//   ?m=5,9         — ответ другу: только экран совпадений;
+//   ?with=65       — «Позвать друга» со страницы места: оно уже в выборе;
+//   ?mood=friends  — «Выбрать из них вместе» из ленты: колода по настроению.
 // В ссылке — id мест из places.json: они постоянные и короче slug.
 
 import { $, $$, on } from '../core/dom.js';
@@ -168,10 +170,10 @@ function show(screen) {
   window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
-function startDeck(deck, mode) {
+function startDeck(deck, mode, liked = []) {
   state.mode = mode;
   state.deck = deck;
-  state.liked = [];
+  state.liked = [...liked];
   $('#together-done').hidden = mode === 'friend';
   $('#together-hint').textContent = mode === 'friend'
     ? 'Вправо — хочу, влево — не сейчас'
@@ -208,13 +210,15 @@ function renderSources() {
   });
 }
 
-async function beginOwn(exclude = []) {
-  const source = $('.together-source.is-active')?.dataset.source || 'all';
-  const skip = new Set(exclude);
-  const pool = (source === 'all' ? state.places : filterPlaces(state.places, resolveMoodFilters(state.places, source)))
+/** Своя колода. source — 'all' или id настроения; from — откуда пришли
+ *  (для Метрики); liked — места, которые уже в выборе. */
+async function beginOwn(exclude = [], { source, from = 'Страница «Выбрать вместе»', liked = [] } = {}) {
+  const src = source || $('.together-source.is-active')?.dataset.source || 'all';
+  const skip = new Set([...exclude, ...liked]);
+  const pool = (src === 'all' ? state.places : filterPlaces(state.places, resolveMoodFilters(state.places, src)))
     .filter((p) => !skip.has(p.id));
-  goal('together_start', { 'Выбрать вместе': source });
-  startDeck(await ownDeck(pool), 'own');
+  goal('together_start', { 'Выбрать вместе': { [from]: src } });
+  startDeck(await ownDeck(pool), 'own', liked);
 }
 
 // --- отправка другу ---
@@ -327,6 +331,7 @@ function showResult() {
   const more = $('#together-more');
   more.classList.toggle('together__btn--ghost', Boolean(n));
   more.onclick = () => {
+    $('#together-intro').hidden = true;
     state.matches = matchIds;
     beginOwn([...state.toRate, ...matchIds]);
   };
@@ -336,6 +341,11 @@ function showResult() {
     ? `Друг хотел ещё: ${missed.join(', ')}. Может, передумаешь?`
     : '';
   show('result');
+}
+
+function showIntro(text) {
+  $('#together-intro').textContent = text;
+  $('#together-intro').hidden = false;
 }
 
 // --- запуск ---
@@ -374,14 +384,22 @@ async function main() {
 
   if (state.toRate.length) {
     goal('together_open', { 'Выбрать вместе': 'Открыл ссылку друга' });
-    $('#together-intro').hidden = false;
-    $('#together-intro').textContent = state.matches.length
+    showIntro(state.matches.length
       ? 'Друг предложил ещё места. Отметь, куда хочешь, — совпадения добавятся к прошлым.'
-      : 'Тебя позвали выбрать, куда пойти. Отметь места, которые нравятся, — и сразу увидишь совпадения.';
+      : 'Тебя позвали выбрать, куда пойти. Отметь места, которые нравятся, — и сразу увидишь совпадения.');
     startDeck(shuffle(state.toRate.map((id) => state.byId.get(id))), 'friend');
   } else if (state.matches.length) {
     state.mode = 'answer';
     showResult();
+  } else if (state.byId.has(Number(params.get('with')))) {
+    // со страницы места: оно уже в выборе — можно сразу отправить или добавить ещё
+    const place = state.byId.get(Number(params.get('with')));
+    showIntro(`${place.name} — уже в выборе. Добавь ещё пару мест — или сразу отправляй другу.`);
+    beginOwn([], { source: 'all', from: 'Страница места', liked: [place.id] });
+  } else if (MOODS.some((m) => m.id === params.get('mood'))) {
+    const mood = MOODS.find((m) => m.id === params.get('mood'));
+    showIntro(`Места под настроение «${mood.label}». Отмечай, куда хочешь, — потом отправишь другу.`);
+    beginOwn([], { source: mood.id, from: 'Лента после настроения' });
   } else {
     show('start');
   }
