@@ -875,6 +875,12 @@
   gap: 10px;
 }
 
+.schedule-season {
+  margin: 4px 0 0;
+  font-size: var(--fs-sm);
+  color: var(--text-light);
+}
+
 .show-full-schedule-btn {
   background: none;
   border: none;

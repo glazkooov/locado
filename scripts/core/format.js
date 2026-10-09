@@ -80,10 +80,58 @@ export const isRoundTheClock = (hours) => Boolean(hours) && hours[0] === '00:00'
 /** Круглосуточно во все дни недели — часы работы показывать незачем. */
 export const isAlwaysOpen = (schedule) => Boolean(schedule) && DAY_KEYS.every((key) => isRoundTheClock(schedule[key]));
 
+// Сезонные места (Японский сад и т. п.): place.season = { from: 'MM-DD',
+// to: 'MM-DD' } — вне этих дат закрыто, какое бы ни было расписание.
+// Даты открытия плавают от года к году, поэтому на сайте они звучат
+// приблизительно: «в конце апреля», «до середины октября».
+const MONTHS_GEN_RU = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+const PART_RU = {
+  в: ['в начале', 'в середине', 'в конце'],
+  с: ['с начала', 'с середины', 'с конца'],
+  до: ['до начала', 'до середины', 'до конца']
+};
+const mmdd = (date) => `${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+
+/** Сейчас сезон? Без season — всегда да. Сезон может переходить через Новый год. */
+export function inSeason(season, now = new Date()) {
+  if (!season?.from || !season?.to) return true;
+  const today = mmdd(now);
+  return season.from <= season.to
+    ? today >= season.from && today <= season.to
+    : today >= season.from || today <= season.to;
+}
+
+/** '04-25' → «в конце апреля» / «с конца апреля» / «до конца апреля». */
+export function roughDate(md, prep = 'в') {
+  const [m, d] = md.split('-').map(Number);
+  const part = d <= 10 ? 0 : d <= 20 ? 1 : 2;
+  return `${PART_RU[prep][part]} ${MONTHS_GEN_RU[m - 1]}`;
+}
+
+/** «с конца апреля до середины октября». */
+export const seasonRange = (season) => `${roughDate(season.from, 'с')} ${roughDate(season.to, 'до')}`;
+
+/** Ближайшее открытие сезона после now. */
+function seasonOpensAt(season, now) {
+  const [m, d] = season.from.split('-').map(Number);
+  const opensAt = new Date(now.getFullYear(), m - 1, d);
+  if (opensAt <= now) opensAt.setFullYear(opensAt.getFullYear() + 1);
+  return opensAt;
+}
+
 export function getOpenStatus(place, now = new Date()) {
   if (!place || !place.schedule) {
     return { isOpen: false, hoursToday: null, nextChangeAt: null };
   }
+  const offSeason = () => ({ isOpen: false, hoursToday: null, nextChangeAt: seasonOpensAt(place.season, now), offSeason: true });
+  if (!inSeason(place.season, now)) return offSeason();
+  const status = weekOpenStatus(place, now);
+  // последний день сезона: «откроется завтра» было бы неправдой
+  if (place.season && !status.isOpen && status.nextChangeAt && !inSeason(place.season, status.nextChangeAt)) return offSeason();
+  return status;
+}
+
+function weekOpenStatus(place, now) {
   const todayIdx = now.getDay();
   const todayKey = DAY_KEYS[todayIdx];
   // Круглосуточно: открыто без «закроется через …» (иначе в 23:59 на минуту
@@ -210,8 +258,17 @@ function openingPhrase(date, now) {
 /** Возвращает markup сегодняшнего расписания + сворачиваемый список на все дни.
  *  Модалка использует атрибут hidden — переключать его должен вызывающий код
  *  (core/format.js ничего не знает про DOM-события). */
-export function scheduleHtml(schedule, now = new Date()) {
+export function scheduleHtml(schedule, now = new Date(), season = null) {
   if (!schedule) return '<span class="no-schedule">Часы работы пока не знаем</span>';
+  // Сезонное место: вне сезона — одна строка, в сезон — часы и под ними сезон
+  if (season && !inSeason(season, now)) {
+    return `<div class="today-schedule"><span>${escapeHtml(`Сейчас закрыто — работает ${seasonRange(season)}`)}</span></div>`;
+  }
+  const seasonNote = season ? `<p class="schedule-season">${escapeHtml(`Работает ${seasonRange(season)}`)}</p>` : '';
+  return scheduleWeekHtml(schedule, now) + seasonNote;
+}
+
+function scheduleWeekHtml(schedule, now) {
   const todayKey = DAY_KEYS[now.getDay()];
   const todayHours = schedule[todayKey];
 
@@ -281,6 +338,7 @@ export function scheduleSummary(schedule, now = new Date()) {
 export function openStatusLabel(place, now = new Date()) {
   if (!place?.schedule) return null;
   const status = getOpenStatus(place, now);
+  if (status.offSeason) return { isOpen: false, text: `Откроется ${roughDate(place.season.from)}` };
   if (status.roundTheClock) return { isOpen: true, text: 'Открыто круглосуточно' };
   if (status.isOpen && status.hoursToday) {
     const close = status.hoursToday[1];
