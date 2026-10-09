@@ -233,30 +233,46 @@ function shareLink(url, text, what) {
 }
 
 function bindApps(url, text, what) {
-  $('#together-tg').href = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
-  $('#together-wa').href = `https://api.whatsapp.com/send?text=${encodeURIComponent(`${text} ${url}`)}`;
-  const sent = () => goal('together_send', { 'Выбрать вместе: отправил': what });
-  $('#together-tg').onclick = sent;
-  $('#together-wa').onclick = sent;
   $('#together-copy').onclick = () => navigator.clipboard.writeText(url)
-    .then(() => { sent(); showToast('Ссылка скопирована'); })
+    .then(() => { goal('together_send', { 'Выбрать вместе: отправил': what }); showToast('Ссылка скопирована'); })
     .catch(() => showToast('Не удалось скопировать ссылку', true));
   $('#together-share').onclick = () => shareLink(url, text, what);
 }
 
+function pickedHtml(id) {
+  const p = state.byId.get(id);
+  return `
+    <li class="together-picked" data-id="${id}">
+      <img src="${escapeHtml(p.photoSm || p.photo || '')}" alt="">
+      <span>${escapeHtml(p.name)}</span>
+      <button type="button" class="together-picked__remove" aria-label="Убрать «${escapeHtml(p.name)}»">${icon('x')}</button>
+    </li>`;
+}
+
 function showSend() {
   const n = state.liked.length;
+  if (!n) { backToDeck(); return; }
   const url = linkFor({ p: state.liked, m: state.matches });
   const text = 'Выберем, куда пойти? Отметь места, которые нравятся, — посмотрим, где совпадём';
   $('#together-send-title').textContent = `${n} ${placesWord(n)} — теперь очередь друга`;
   $('#together-send-lead').textContent = 'Друг пролистает твои находки и отметит, куда хочет он. Где вы сойдётесь — туда и идти.'
     + (state.matches.length ? ' Совпадения, которые уже есть, он тоже увидит.' : '');
-  $('#together-thumbs').innerHTML = state.liked.slice(0, 8).map((id) => {
-    const p = state.byId.get(id);
-    return `<img src="${escapeHtml(p.photoSm || p.photo || '')}" alt="${escapeHtml(p.name)}" title="${escapeHtml(p.name)}">`;
-  }).join('') + (n > 8 ? `<span class="together__more">+${n - 8}</span>` : '');
+  $('#together-picked').innerHTML = state.liked.map(pickedHtml).join('');
+  $('#together-back').textContent = state.deck.length ? 'Добавить ещё места' : 'Полистать другие места';
   bindApps(url, text, 'Свой выбор');
   show('send');
+}
+
+/** Назад к колоде — с того же места; если она кончилась, новая из оставшихся. */
+async function backToDeck() {
+  if (!state.deck.length) {
+    const skip = new Set([...state.liked, ...state.toRate, ...state.matches]);
+    state.deck = await ownDeck(state.places.filter((p) => !skip.has(p.id)));
+    if (!state.deck.length) { showToast('Ты пролистал все места'); return; }
+  }
+  $('#together-done').hidden = false;
+  show('deck');
+  renderDeck();
 }
 
 // --- совпадения ---
@@ -336,6 +352,12 @@ async function main() {
   on($('#together-begin'), 'click', () => beginOwn());
   on($('#together-yes'), 'click', () => flyOut($('.together-card.is-top'), true));
   on($('#together-no'), 'click', () => flyOut($('.together-card.is-top'), false));
+  on($('#together-back'), 'click', () => backToDeck());
+  on($('#together-picked'), 'click', '.together-picked__remove', (e, btn) => {
+    const id = Number(btn.closest('.together-picked').dataset.id);
+    state.liked = state.liked.filter((x) => x !== id);
+    showSend();
+  });
   on($('#together-done'), 'click', () => {
     if (!state.liked.length) { showToast('Отметь хотя бы одно место'); return; }
     showSend();

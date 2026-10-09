@@ -88,13 +88,14 @@
       <p class="together__eyebrow">Твой выбор</p>
       <h1 class="together__title" id="together-send-title"></h1>
       <p class="together__lead" id="together-send-lead"></p>
-      <div class="together__thumbs" id="together-thumbs"></div>
+      <!-- Выбранные места: крестик убирает место из выбора -->
+      <ul class="together__picked" id="together-picked"></ul>
+      <button type="button" class="together__btn together__btn--ghost" id="together-back">Добавить ещё места</button>
+      <!-- На телефоне — системное «Поделиться»: человек сам выбирает
+           мессенджер. Отдельных кнопок мессенджеров нет — у них в России
+           меняется доступность, а меню телефона покажет то, чем он пользуется -->
       <button type="button" class="together__btn" id="together-share">Отправить другу</button>
-      <div class="together__apps">
-        <a class="together__app" id="together-tg" target="_blank" rel="noopener">Telegram</a>
-        <a class="together__app" id="together-wa" target="_blank" rel="noopener">WhatsApp</a>
-        <button type="button" class="together__app" id="together-copy">Копировать</button>
-      </div>
+      <button type="button" class="together__btn together__btn--ghost" id="together-copy">Скопировать ссылку</button>
       <p class="together__note">Регистрация не нужна — всё нужное лежит в самой ссылке.</p>
     </section>
 

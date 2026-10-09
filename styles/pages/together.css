@@ -282,47 +282,50 @@
   color: var(--text-light);
 }
 
-/* Отправка */
-.together__thumbs {
+/* Отправка: выбранные места, крестик убирает место */
+.together__picked {
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0 0 4px;
+  padding: 0;
+  list-style: none;
 }
-.together__thumbs img,
-.together__more {
-  width: 56px;
-  height: 56px;
+.together-picked {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 2px 10px rgba(60, 25, 5, 0.06);
+}
+.together-picked img {
+  flex: none;
+  width: 48px;
+  height: 48px;
   border-radius: 12px;
   object-fit: cover;
 }
-.together__more {
-  display: grid;
-  place-items: center;
-  background: var(--cream-deep);
-  font-weight: 700;
-  color: var(--ink);
-}
-
-.together__apps {
-  display: flex;
-  gap: 8px;
-  margin-top: 10px;
-}
-.together__app {
+.together-picked span {
   flex: 1;
-  padding: 10px 0;
-  border: none;
-  border-radius: 14px;
-  background: #fff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  font: inherit;
-  font-size: var(--fs-sm);
+  min-width: 0;
   font-weight: 600;
   color: var(--ink);
-  text-align: center;
-  text-decoration: none;
+}
+.together-picked__remove {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: var(--text-light);
   cursor: pointer;
 }
+.together-picked__remove:hover { background: var(--cream-deep); color: var(--ink); }
 
 /* Совпадения */
 .together__matches {
