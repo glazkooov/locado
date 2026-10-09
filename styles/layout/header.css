@@ -359,7 +359,7 @@
   .nav-cats .icon { color: var(--primary); }
 
   .nav-suggest {
-    display: inline-flex;
+    display: flex;
     align-items: center;
     gap: 8px;
     min-height: 44px;

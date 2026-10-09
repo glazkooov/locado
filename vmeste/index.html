@@ -6,9 +6,17 @@
        к стилям, картинкам, другим страницам — считаются от корня сайта -->
   <base href="../">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Фото на сайте — Локадо</title>
-  <meta name="description" content="Авторы и лицензии фотографий на Локадо.">
-  <meta name="robots" content="noindex">
+  <title>Выбрать вместе — Локадо</title>
+  <meta name="description" content="Листай места и отмечай, куда хочешь. Друг сделает то же — и вы увидите совпадения.">
+  <!-- Превью ссылки в мессенджере — одно на все наборы мест -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Локадо">
+  <meta property="og:title" content="Выберем, куда пойти?">
+  <meta property="og:description" content="Отметь места, куда хочешь. Где совпадём — туда и пойдём.">
+  <meta property="og:image" content="https://locado.ru/assets/og-image.jpg?v=4">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="robots" content="noindex, nofollow">
   <meta name="theme-color" content="#FF570A">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <!-- Установка на экран телефона как приложение (PWA). Пути относительные —
@@ -50,18 +58,58 @@
     </div>
   </header>
 
-  <main class="legal container">
-    <article class="legal__article">
-      <h1 class="legal__title">Фото на сайте</h1>
-      <p>Фотографии мест взяты из фотобанка портала mos.ru (foto.mos.ru) на условиях его пользовательского соглашения. Здесь — источник каждого снимка. Эти же фото используются в карточках, подборках, на карте и в превью ссылок.</p>
-      <p>Если ты автор фото и хочешь изменить подпись или убрать снимок, напиши на <a href="mailto:hello@locado.ru">hello@locado.ru</a>.</p>
+  <main class="together container" id="together">
+    <!-- Экраны «Выбрать вместе» (pages/together.js): старт → колода →
+         отправка другу; по ссылке друга — его колода → совпадения.
+         Всё состояние — в адресе ссылки, сервер не нужен -->
+    <section class="together__screen" data-screen="start" hidden>
+      <p class="together__eyebrow">Выбрать вместе</p>
+      <h1 class="together__title">Куда пойдём?</h1>
+      <p class="together__lead">Листай места и отмечай, куда хочешь. Потом отправишь свой выбор другу — он отметит, что нравится ему, и вы увидите совпадения.</p>
+      <div class="together__sources" id="together-sources" role="radiogroup" aria-label="Из чего выбираем"></div>
+      <button type="button" class="together__btn" id="together-begin">Начать листать</button>
+    </section>
 
-      <h2>Места</h2>
-      <ul class="credits-list" id="credits-places"><li>Загружаем…</li></ul>
+    <section class="together__screen" data-screen="deck" hidden>
+      <div class="together__intro" id="together-intro" hidden></div>
+      <div class="together__bar">
+        <span class="together__count" id="together-count"></span>
+        <button type="button" class="together__done" id="together-done">Хватит — отправить</button>
+      </div>
+      <div class="together__deck" id="together-deck"></div>
+      <div class="together__votes">
+        <button type="button" class="together__vote together__vote--no" id="together-no" aria-label="Не сейчас"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#x"></use></svg></button>
+        <button type="button" class="together__vote together__vote--yes" id="together-yes" aria-label="Хочу"><svg class="icon icon--filled" aria-hidden="true" focusable="false"><use href="assets/icons.svg#heart"></use></svg></button>
+      </div>
+      <p class="together__hint" id="together-hint">Вправо — хочу, влево — не сейчас</p>
+    </section>
 
-      <h2 id="credits-collections-title" hidden>Подборки</h2>
-      <ul class="credits-list" id="credits-collections" hidden></ul>
-    </article>
+    <section class="together__screen" data-screen="send" hidden>
+      <p class="together__eyebrow">Твой выбор</p>
+      <h1 class="together__title" id="together-send-title"></h1>
+      <p class="together__lead" id="together-send-lead"></p>
+      <div class="together__thumbs" id="together-thumbs"></div>
+      <button type="button" class="together__btn" id="together-share">Отправить другу</button>
+      <div class="together__apps">
+        <a class="together__app" id="together-tg" target="_blank" rel="noopener">Telegram</a>
+        <a class="together__app" id="together-wa" target="_blank" rel="noopener">WhatsApp</a>
+        <button type="button" class="together__app" id="together-copy">Копировать</button>
+      </div>
+      <p class="together__note">Регистрация не нужна — всё нужное лежит в самой ссылке.</p>
+    </section>
+
+    <section class="together__screen" data-screen="result" hidden>
+      <p class="together__eyebrow">Совпадения</p>
+      <h1 class="together__title" id="together-result-title"></h1>
+      <p class="together__lead" id="together-result-lead"></p>
+      <div class="together__matches" id="together-matches"></div>
+      <a class="together__btn" id="together-route" target="_blank" rel="noopener" hidden>Маршрут по совпадениям</a>
+      <button type="button" class="together__btn together__btn--ghost" id="together-answer" hidden>Отправить ответ другу</button>
+      <button type="button" class="together__btn together__btn--ghost" id="together-more">Предложить своё</button>
+      <p class="together__note" id="together-result-note"></p>
+    </section>
+
+    <p class="together__loading" id="together-loading">Загружаем места…</p>
   </main>
 
   <footer class="site-footer">
@@ -112,6 +160,6 @@
   </footer>
 
   <script type="module" src="scripts/ui.js"></script>
-  <script type="module" src="scripts/pages/photos.js"></script>
+  <script type="module" src="scripts/pages/together.js"></script>
 </body>
 </html>
