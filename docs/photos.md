@@ -14,7 +14,7 @@
    снимка на foto.mos.ru — поставь её в `source` вместо главной mos.ru.
    - Другие источники (Wikimedia Commons): `author` — как подписан снимок,
      `source` — страница файла, `license` — `CC BY 4.0`, `CC BY-SA 4.0`,
-     `CC BY 3.0`, `CC BY-SA 3.0` или `CC0`; `"modified": true` — если фото
+     `CC BY 3.0`, `CC BY-SA 3.0`, `CC BY 2.0`, `CC BY-SA 2.0` или `CC0`; `"modified": true` — если фото
      кадрировали или меняли цвет;
    - своё фото: `"photoCredit": { "author": "Локадо" }`.
 
