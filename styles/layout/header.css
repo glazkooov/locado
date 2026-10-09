@@ -52,6 +52,7 @@
   stroke-linecap: round;
   stroke-linejoin: round;
 }
+.logo__route--l { stroke-width: 150; } /* «Л» чуть толще линии — она же знак в иконках */
 .logo__dot { fill: var(--primary); }
 @media (min-width: 576px) {
   .logo {
