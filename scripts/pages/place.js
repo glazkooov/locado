@@ -149,7 +149,7 @@ function renderInfo(place) {
   if (hoursRow) hoursRow.hidden = !place.schedule || isAlwaysOpen(place.schedule);
 
   const scheduleContainer = $('#place-schedule');
-  scheduleContainer.innerHTML = scheduleHtml(place.schedule);
+  scheduleContainer.innerHTML = scheduleHtml(place.schedule, new Date(), place.season);
   const showBtn = $('.show-full-schedule-btn', scheduleContainer);
   const fullSchedule = $('.full-schedule-modal', scheduleContainer);
   if (showBtn && fullSchedule) {
