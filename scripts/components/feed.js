@@ -239,8 +239,27 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE, seasonal = new Set()
     if (showMoreBtn.getBoundingClientRect().top < window.innerHeight + PRELOAD_MARGIN) loadMore();
   }
 
+  // Ссылка ?tag=… или ?category=… открывает ленту с фильтром (pages/home.js).
+  // Когда фильтр сняли или сменили, параметр из адреса убираем — иначе
+  // обновление страницы снова включало бы старый тег.
+  function syncUrl() {
+    const params = new URLSearchParams(window.location.search);
+    const tag = params.get('tag');
+    const category = params.get('category');
+    if (!tag && !category) return;
+    const stillApplies = tag
+      ? state.tags?.length === 1 && state.tags[0] === tag && !state.query
+      : state.category === category && !state.tags && !state.tagsAll && !state.query;
+    if (stillApplies) return;
+    params.delete('tag');
+    params.delete('category');
+    const search = params.toString();
+    history.replaceState(history.state, '', `${window.location.pathname}${search ? `?${search}` : ''}${window.location.hash}`);
+  }
+
   const setFilters = (next, { syncInput = false, label = null } = {}) => {
     state = { ...state, ...next, label };
+    syncUrl();
     syncTabs();
     if (syncInput) {
       const input = $('#categories-search-input');
@@ -347,6 +366,7 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE, seasonal = new Set()
 
   const restore = (snapshot) => {
     state = { category: 'all', query: '', tags: null, tagsAll: null, label: null, ...snapshot.state };
+    syncUrl();
     syncTabs();
     const input = $('#categories-search-input');
     if (input) { input.value = state.query || ''; toggleClear(input, $('#categories-clear-btn')); }
