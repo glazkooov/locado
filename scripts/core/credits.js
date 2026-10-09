@@ -42,10 +42,48 @@ export function creditHtml(credit) {
   return parts.join(' · ');
 }
 
+/** Подпись, свёрнутая в значок «i»: по нажатию раскрывается «Фото: …».
+ *  Так подпись не спорит с фото, но всегда в одном нажатии — этого хватает
+ *  и Creative Commons («любым разумным способом»), и foto.mos.ru (источник
+ *  со ссылкой на странице). Открыто видны все подписи на странице «Фото на сайте». */
+export function creditToggleHtml(credit) {
+  const html = creditHtml(credit);
+  if (!html) return '';
+  initCreditToggles();
+  return `<span class="credit-text" hidden>${html}</span>`
+    + '<button type="button" class="credit-toggle" aria-expanded="false" aria-label="Автор фото">'
+    + '<span aria-hidden="true">i</span></button>';
+}
+
 /** Подпись под первым экраном страницы (place, collection). */
 export function renderCredit(el, credit) {
   if (!el) return;
-  const html = creditHtml(credit);
+  const html = creditToggleHtml(credit);
   el.innerHTML = html;
   el.hidden = !html;
+}
+
+function setOpen(btn, open) {
+  btn.setAttribute('aria-expanded', String(open));
+  btn.previousElementSibling.hidden = !open;
+  btn.closest('.photo-credit')?.classList.toggle('is-open', open);
+}
+
+const openToggles = () => document.querySelectorAll('.credit-toggle[aria-expanded="true"]');
+
+// Один обработчик на страницу: «i» открывает подпись, нажатие мимо или Esc — закрывает
+let ready = false;
+function initCreditToggles() {
+  if (ready) return;
+  ready = true;
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.credit-toggle');
+    if (e.target.closest('.credit-text')) return; // клик по ссылке в подписи
+    openToggles().forEach((b) => { if (b !== btn) setOpen(b, false); });
+    if (btn) setOpen(btn, btn.getAttribute('aria-expanded') !== 'true');
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    openToggles().forEach((b) => { setOpen(b, false); b.focus(); });
+  });
 }

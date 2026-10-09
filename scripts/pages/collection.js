@@ -2,7 +2,7 @@
 // (маршрут или «под повод»). Текст — из data/collections.json, практические
 // данные мест (метро, часы, цена, фото) — из places.json.
 
-import { renderCredit, creditHtml } from '../core/credits.js';
+import { renderCredit, creditToggleHtml } from '../core/credits.js';
 import { goal } from '../core/analytics.js';
 import { $, on } from '../core/dom.js';
 import { escapeHtml, cssUrl, hoursForArticle } from '../core/format.js';
@@ -70,7 +70,7 @@ function placeBlock(b, place, num, day) {
   const hours = hoursForArticle(place.schedule, day);
   // Крупное фото в статье — с подписью источника рядом, как на странице
   // места (условия foto.mos.ru и CC BY требуют указать источник)
-  const credit = creditHtml(place.photoCredit);
+  const credit = creditToggleHtml(place.photoCredit);
   const facts = [
     metro && `${icon('train-front')} м. ${escapeHtml(metro)}`,
     hours && `${icon('clock')} ${escapeHtml(hours)}`,
@@ -87,10 +87,12 @@ function placeBlock(b, place, num, day) {
         </div>
       </div>
       ${place.photo ? `
-      <a class="c-place__photo" href="${url}" tabindex="-1" aria-hidden="true">
-        <img src="${escapeHtml(place.photo)}" alt="" loading="lazy">
-      </a>${credit ? `
-      <p class="photo-credit c-place__credit">${credit}</p>` : ''}` : ''}
+      <div class="c-place__media">
+        <a class="c-place__photo" href="${url}" tabindex="-1" aria-hidden="true">
+          <img src="${escapeHtml(place.photo)}" alt="" loading="lazy">
+        </a>${credit ? `
+        <p class="photo-credit c-place__credit">${credit}</p>` : ''}
+      </div>` : ''}
       <div class="c-place__text">${paragraphs(b.paragraphs)}</div>
       ${b.tip ? `<p class="c-place__tip"><strong>Совет</strong> ${escapeHtml(b.tip)}</p>` : ''}
       <div class="c-place__footer">

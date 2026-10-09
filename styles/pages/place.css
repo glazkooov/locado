@@ -982,18 +982,46 @@
   .place-hero.is-loading .hero-bg { animation: none; }
 }
 
-/* Автор фото под первым экраном (place, collection) — мелко, справа */
+/* Автор фото под первым экраном (place, collection): мелкий значок «i»
+   справа, по нажатию слева от него раскрывается «Фото: …» (core/credits.js) */
 .photo-credit {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
   margin-top: 8px;
   font-size: var(--fs-caption);
   line-height: 1.4;
-  text-align: right;
   color: var(--text-light);
 }
 
-.photo-credit[hidden] { display: none; }
+.photo-credit[hidden],
+.credit-text[hidden] { display: none; }
 .photo-credit a { color: inherit; text-underline-offset: 2px; }
 .photo-credit a:hover { color: var(--primary-text); }
+
+.credit-toggle {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  background: none;
+  color: inherit;
+  font: italic 600 12px/1 Georgia, 'Times New Roman', serif;
+  opacity: 0.6;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  /* палец попадает и в маленький значок */
+  position: relative;
+}
+.credit-toggle::after { content: ''; position: absolute; inset: -11px; }
+.credit-toggle:hover,
+.credit-toggle[aria-expanded="true"] { opacity: 1; }
+.credit-toggle:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; opacity: 1; }
 
 /* Подпись есть — первый блок под ней ближе, чтобы не было двойного зазора */
 .photo-credit:not([hidden]) + .place-info,
