@@ -20,6 +20,8 @@ export const LICENSES = {
   'CC BY 4.0': 'https://creativecommons.org/licenses/by/4.0/deed.ru',
   'CC BY-SA 4.0': 'https://creativecommons.org/licenses/by-sa/4.0/deed.ru',
   'CC BY 3.0': 'https://creativecommons.org/licenses/by/3.0/deed.ru',
+  'CC BY 2.0': 'https://creativecommons.org/licenses/by/2.0/deed.ru',
+  'CC BY-SA 2.0': 'https://creativecommons.org/licenses/by-sa/2.0/deed.ru',
   'CC BY-SA 3.0': 'https://creativecommons.org/licenses/by-sa/3.0/deed.ru',
   'CC0': 'https://creativecommons.org/publicdomain/zero/1.0/deed.ru'
 };

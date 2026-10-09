@@ -62,7 +62,6 @@ function updateFavButtonUI(isFav) {
 function renderHero(place) {
   $('.place-hero')?.classList.remove('is-loading');
   setHeroPhoto(place);
-  renderCredit($('#photo-credit'), place.photo && place.photoCredit);
   $('#place-category').textContent = place.type || categoryLabel(place.category);
   $('#place-name').textContent = place.name;
   // Краткое описание вместо шаблонного «… в центре Москвы» (не у всех мест правда)
@@ -77,16 +76,26 @@ function renderHero(place) {
 
 /** Фото в hero — только если оно действительно загрузилось. Нет фото или
  *  файл битый — тёплая подложка по категории места (place.css,
- *  .place-hero--no-photo) и hero ниже: пустой тёмный экран ничего не говорит. */
+ *  .place-hero--no-photo) и hero ниже: пустой тёмный экран ничего не говорит.
+ *  Подпись к фото — тоже только у загрузившегося фото: подпись можно внести
+ *  раньше, чем сам файл. photoFocus («50% 70%») — какую часть кадра
+ *  оставить, когда широкий экран обрезает вертикальное фото. */
 function setHeroPhoto(place) {
   const hero = $('.place-hero');
   const heroBg = $('#hero-bg');
   if (!hero || !heroBg) return;
   hero.dataset.category = place.category || '';
-  const noPhoto = () => hero.classList.add('place-hero--no-photo');
+  const noPhoto = () => {
+    hero.classList.add('place-hero--no-photo');
+    renderCredit($('#photo-credit'), null);
+  };
   if (!place.photo) { noPhoto(); return; }
   const img = new Image();
-  img.onload = () => { heroBg.style.backgroundImage = cssUrl(place.photo); };
+  img.onload = () => {
+    heroBg.style.backgroundImage = cssUrl(place.photo);
+    if (place.photoFocus) heroBg.style.backgroundPosition = place.photoFocus;
+    renderCredit($('#photo-credit'), place.photoCredit);
+  };
   img.onerror = noPhoto;
   img.src = place.photo;
 }
