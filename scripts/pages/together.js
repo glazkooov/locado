@@ -223,9 +223,13 @@ async function beginOwn(exclude = [], { source, from = 'Страница «Вы�
 
 // --- отправка другу ---
 
+// Системное «Поделиться» — только на телефоне: на компьютере оно либо
+// недоступно, либо выглядит чужеродно, там просто копируем ссылку
+const canShareNatively = () => 'share' in navigator && window.matchMedia('(pointer: coarse)').matches;
+
 function shareLink(url, text, what) {
   const payload = { title: 'Локадо', text, url };
-  if ('share' in navigator && window.matchMedia('(pointer: coarse)').matches) {
+  if (canShareNatively()) {
     navigator.share(payload)
       .then(() => goal('together_send', { 'Выбрать вместе: отправил': what }))
       .catch(() => {});
@@ -241,6 +245,12 @@ function bindApps(url, text, what) {
     .then(() => { goal('together_send', { 'Выбрать вместе: отправил': what }); showToast('Ссылка скопирована'); })
     .catch(() => showToast('Не удалось скопировать ссылку', true));
   $('#together-share').onclick = () => shareLink(url, text, what);
+  // На компьютере «Отправить другу» делало бы то же самое, что «Скопировать
+  // ссылку», — оставляем одну главную кнопку
+  const native = canShareNatively();
+  $('#together-share').hidden = !native;
+  $('#together-copy').classList.toggle('together__btn--ghost', native);
+  $('#together-copy').textContent = native ? 'Скопировать ссылку' : 'Скопировать ссылку для друга';
 }
 
 function pickedHtml(id) {
