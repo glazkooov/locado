@@ -31,7 +31,8 @@ const state = {
   deck: [], // очередь мест
   liked: [], // id «хочу» в этой колоде
   toRate: [], // ?p= — что оценивает друг
-  matches: [] // ?m= — уже совпавшие
+  matches: [], // ?m= — уже совпавшие
+  from: 'Страница «Выбрать вместе»' // откуда пришли — для цели together_start
 };
 
 // --- адрес ---
@@ -258,7 +259,7 @@ function renderSources() {
 
 /** Своя колода. source — 'all' или id настроения; from — откуда пришли
  *  (для Метрики); liked — места, которые уже в выборе. */
-async function beginOwn(exclude = [], { source, from = 'Страница «Выбрать вместе»', liked = [] } = {}) {
+async function beginOwn(exclude = [], { source, from = state.from, liked = [] } = {}) {
   const src = source || $('.together-source.is-active')?.dataset.source || 'all';
   const skip = new Set([...exclude, ...liked]);
   const pool = (src === 'all' ? state.places : filterPlaces(state.places, resolveMoodFilters(state.places, src)))
@@ -444,6 +445,7 @@ async function main() {
   if (restoreDraft()) return;
 
   const params = new URLSearchParams(window.location.search);
+  if (params.get('from') === 'feed') state.from = 'Карточка в ленте';
   state.toRate = parseIds(params.get('p'));
   state.matches = parseIds(params.get('m'));
 
