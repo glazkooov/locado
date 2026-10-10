@@ -327,6 +327,21 @@
 }
 .together-picked__remove:hover { background: var(--cream-deep); color: var(--ink); }
 
+.together__restart {
+  display: block;
+  margin: 18px auto 0;
+  padding: 8px 12px;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-light);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
 /* Совпадения */
 .together__matches {
   display: flex;

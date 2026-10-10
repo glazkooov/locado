@@ -94,6 +94,7 @@ function renderDeck() {
   deckEl.innerHTML = (next ? cardHtml(next, false) : '') + (top ? cardHtml(top, true) : '');
   updateCount();
   if (top) bindSwipe($('.together-card.is-top', deckEl));
+  saveDraft('deck');
   // следующее крупное фото — заранее, чтобы не ждать его после свайпа
   if (next?.photo) new Image().src = next.photo;
 }
@@ -170,16 +171,61 @@ function show(screen) {
   window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
-function startDeck(deck, mode, liked = []) {
-  state.mode = mode;
-  state.deck = deck;
-  state.liked = [...liked];
+function deckUi(mode) {
   $('#together-done').hidden = mode === 'friend';
   $('#together-hint').textContent = mode === 'friend'
     ? 'Вправо — хочу, влево — не сейчас'
     : 'Вправо — хочу, влево — не сейчас. Листай сколько хочется';
+}
+
+function startDeck(deck, mode, liked = []) {
+  state.mode = mode;
+  state.deck = deck;
+  state.liked = [...liked];
+  deckUi(mode);
   show('deck');
   renderDeck();
+}
+
+// --- черновик: обновили страницу — продолжаем с того же места ---
+// Хранится в sessionStorage вкладки и привязан к адресу: по чужой ссылке
+// (другой ?p=…) черновик не подхватится
+
+const DRAFT_KEY = 'locado:together';
+
+function saveDraft(screen) {
+  try {
+    sessionStorage.setItem(DRAFT_KEY, JSON.stringify({
+      search: window.location.search,
+      screen,
+      mode: state.mode,
+      deck: state.deck.map((p) => p.id),
+      liked: state.liked,
+      toRate: state.toRate,
+      matches: state.matches,
+      intro: $('#together-intro').hidden ? '' : $('#together-intro').textContent
+    }));
+  } catch { /* приватный режим — просто без черновика */ }
+}
+
+function restoreDraft() {
+  let draft;
+  try { draft = JSON.parse(sessionStorage.getItem(DRAFT_KEY) || 'null'); } catch { return false; }
+  if (!draft || draft.search !== window.location.search) return false;
+  const known = (ids) => (ids || []).filter((id) => state.byId.has(id));
+  state.mode = draft.mode;
+  state.deck = known(draft.deck).map((id) => state.byId.get(id));
+  state.liked = known(draft.liked);
+  state.toRate = known(draft.toRate);
+  state.matches = known(draft.matches);
+  if (draft.intro) showIntro(draft.intro);
+  if (draft.screen === 'result') { showResult({ restored: true }); return true; }
+  if (draft.screen === 'send' && state.liked.length) { showSend(); return true; }
+  if (!state.deck.length) return false;
+  deckUi(state.mode);
+  show('deck');
+  renderDeck();
+  return true;
 }
 
 function deckFinished() {
@@ -275,6 +321,7 @@ function showSend() {
   $('#together-back').textContent = state.deck.length ? 'Добавить ещё места' : 'Полистать другие места';
   bindApps(url, text, 'Свой выбор');
   show('send');
+  saveDraft('send');
 }
 
 /** Назад к колоде — с того же места; если она кончилась, новая из оставшихся. */
@@ -307,12 +354,12 @@ function routeUrl(places) {
   return `https://yandex.ru/maps/?rtext=${points.join('~')}&rtt=pd`;
 }
 
-function showResult() {
+function showResult({ restored = false } = {}) {
   const fromFriend = state.mode === 'friend';
   const matchIds = [...new Set([...state.matches, ...state.liked])];
   const matches = matchIds.map((id) => state.byId.get(id));
   const n = matches.length;
-  goal('together_result', { 'Выбрать вместе: совпадений': String(n) });
+  if (!restored) goal('together_result', { 'Выбрать вместе: совпадений': String(n) });
 
   $('#together-result-title').textContent = n
     ? `Вам обоим ${pluralize(n, ['понравилось', 'понравились', 'понравились'])} ${n} ${placesWord(n)}`
@@ -351,6 +398,7 @@ function showResult() {
     ? `Друг хотел ещё: ${missed.join(', ')}. Может, передумаешь?`
     : '';
   show('result');
+  saveDraft('result');
 }
 
 function showIntro(text) {
@@ -373,6 +421,11 @@ async function main() {
   on($('#together-yes'), 'click', () => flyOut($('.together-card.is-top'), true));
   on($('#together-no'), 'click', () => flyOut($('.together-card.is-top'), false));
   on($('#together-back'), 'click', () => backToDeck());
+  // Начать заново: черновик забываем, возвращаемся к выбору «из чего листать»
+  on($('#together-restart'), 'click', () => {
+    try { sessionStorage.removeItem(DRAFT_KEY); } catch { /* ничего */ }
+    window.location.href = new URL('vmeste/', document.baseURI).toString();
+  });
   on($('#together-picked'), 'click', '.together-picked__remove', (e, btn) => {
     const id = Number(btn.closest('.together-picked').dataset.id);
     state.liked = state.liked.filter((x) => x !== id);
@@ -387,6 +440,8 @@ async function main() {
     if (e.key === 'ArrowRight') flyOut($('.together-card.is-top'), true);
     if (e.key === 'ArrowLeft') flyOut($('.together-card.is-top'), false);
   });
+
+  if (restoreDraft()) return;
 
   const params = new URLSearchParams(window.location.search);
   state.toRate = parseIds(params.get('p'));
