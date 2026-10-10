@@ -37,7 +37,7 @@ export function initHeroMoods(feed, places, { onSelect } = {}) {
     const mood = MOODS.find((m) => m.id === card.dataset.mood);
     if (!mood) return;
     goal('mood_select', { 'Настроение': mood.label });
-    feed.setFilters(resolveMoodFilters(places, mood.id), { syncInput: true, label: { kind: 'Настроение', text: mood.label } });
+    feed.setFilters(resolveMoodFilters(places, mood.id), { syncInput: true, label: { kind: 'Настроение', text: mood.label, moodId: mood.id } });
     setActive(card);
     onSelect?.();
   });

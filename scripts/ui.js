@@ -28,6 +28,7 @@ const menuExtraHtml = () => `
       ${Object.entries(CATEGORIES).map(([key, c]) =>
         `<li><a href="./?category=${key}">${icon(c.icon)} ${c.label}</a></li>`).join('')}
     </ul>
+    <a href="vmeste/" class="nav-suggest">${icon('users')} Выбрать вместе с другом</a>
     <a href="suggest/" class="nav-suggest">${icon('heart')} Предложить место</a>
   </div>`;
 const menuContactHtml = '<p class="nav-contact">Пиши нам: <a href="mailto:hello@locado.ru">hello@locado.ru</a></p>';

@@ -13,16 +13,19 @@ import { setPressed } from './category-buttons.js';
 // 12 делится на 2, 3 и 4 колонки — страница заполняет ряды ровно
 const PAGE_SIZE = 12;
 
-// Карточка «Знаешь место, которого здесь нет?» — встаёт в ленту после
-// этой карточки, только в полной ленте без фильтров
-const SUGGEST_AFTER = 7;
+// Служебные карточки в полной ленте без фильтров: после SERVICE_CARDS[n]
+// мест — своя карточка. «Выбрать вместе» — пораньше, «Знаешь место?» — дальше
 const SUGGEST_RATIO = 1; // квадрат — высота для раскладки по колонкам
-const suggestCardHtml = () => `
-  <a class="feed-suggest" href="suggest/">
-    <svg class="icon feed-suggest__icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#heart"></use></svg>
-    <span class="feed-suggest__title">Знаешь место, которого здесь нет?</span>
-    <span class="feed-suggest__link">Расскажи о нём →</span>
+const serviceCardHtml = ({ href, iconName, title, link }) => `
+  <a class="feed-suggest" href="${href}">
+    <svg class="icon feed-suggest__icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#${iconName}"></use></svg>
+    <span class="feed-suggest__title">${title}</span>
+    <span class="feed-suggest__link">${link}</span>
   </a>`;
+const SERVICE_CARDS = {
+  3: { href: 'vmeste/?from=feed', iconName: 'users', title: 'Выбираете вдвоём или компанией?', link: 'Выбрать вместе →' },
+  7: { href: 'suggest/', iconName: 'heart', title: 'Знаешь место, которого здесь нет?', link: 'Расскажи о нём →' }
+};
 
 // Пропорции карточек (высота / ширина) — классы .place-card--r0…r4 в
 // card.css. По ним без замеров DOM знаем высоту каждой колонки.
@@ -113,7 +116,7 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE, seasonal = new Set()
   const isUnfiltered = () => state.category === 'all' && !state.query && !state.tags && !state.tagsAll;
 
   // start — сколько карточек уже в ленте: по нему видно, где встать
-  // карточке «Знаешь место?»
+  // служебным карточкам (SERVICE_CARDS)
   const appendCards = (places, start = 0) => {
     const favorites = Storage.getFavorites();
     const shortest = () => heights.indexOf(Math.min(...heights));
@@ -122,9 +125,10 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE, seasonal = new Set()
       const col = shortest();
       columns[col].insertAdjacentHTML('beforeend', cardHtml(place, favorites.includes(place.slug), `place-card--r${ratio}`, { season: seasonal.has(place.slug) }));
       heights[col] += cardRatios()[ratio];
-      if (start + i + 1 === SUGGEST_AFTER && isUnfiltered()) {
+      const service = SERVICE_CARDS[start + i + 1];
+      if (service && isUnfiltered()) {
         const c = shortest();
-        columns[c].insertAdjacentHTML('beforeend', suggestCardHtml());
+        columns[c].insertAdjacentHTML('beforeend', serviceCardHtml(service));
         heights[c] += SUGGEST_RATIO;
       }
     });
@@ -150,6 +154,12 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE, seasonal = new Set()
   const syncActiveBar = (count) => {
     if (!activeBar) return;
     activeBar.hidden = !state.label;
+    // Настроение — можно сразу позвать друга выбирать из этих мест (vmeste/)
+    const together = $('#feed-active-together');
+    if (together) {
+      together.hidden = !state.label?.moodId;
+      if (state.label?.moodId) together.href = `vmeste/?mood=${encodeURIComponent(state.label.moodId)}`;
+    }
     if (!state.label || !activeLabel) return;
     activeLabel.textContent = `${state.label.kind}: ${state.label.text} · ${count} ${pluralize(count, ['место', 'места', 'мест'])}`;
   };

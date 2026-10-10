@@ -269,7 +269,8 @@
 
 @media (min-width: 900px) {
   .info-grid { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); }
-  .info-grid:has(> .info-card[hidden]) { grid-template-columns: 1fr; }
+  .info-grid:has(> .info-card[hidden]),
+  .info-grid:has(> .info-side[hidden]) { grid-template-columns: 1fr; }
 }
 
 .info-card {
@@ -1123,4 +1124,58 @@
 
 @media (min-width: 768px) {
   .place-story__item--why .place-story__text { font-size: var(--fs-xl); }
+}
+
+/* «Идёшь не один?» — приглашение в «Выбрать вместе» (vmeste/). На телефоне
+   — карточка под шапкой, на компьютере — в правой колонке (.together-side) */
+.info-side {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+.info-side[hidden] { display: none; }
+.together-side {
+  border: none;
+  background: linear-gradient(120deg, #FFE3CF, #FFD0B5);
+}
+.together-side[hidden] { display: none; }
+@media (max-width: 768px) {
+  .together-side { display: none; }
+}
+.together-invite { margin-top: 20px; }
+.together-invite[hidden] { display: none; }
+@media (min-width: 769px) {
+  .together-invite { display: none; }
+}
+.together-invite__card {
+  padding: 16px;
+  border-radius: 20px;
+  background: linear-gradient(120deg, #FFE3CF, #FFD0B5);
+  color: var(--ink);
+}
+.together-invite__title {
+  margin: 0 0 6px;
+  font-family: var(--font-heading);
+  font-size: var(--fs-md);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.together-invite__text {
+  margin: 0 0 12px;
+  font-size: var(--fs-sm);
+  line-height: 1.45;
+  color: var(--text);
+}
+.together-invite__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: var(--radius-pill);
+  background: var(--primary);
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
 }

@@ -200,6 +200,24 @@ const STORY_PARTS = [
   { key: 'notice', title: 'Что заметить', icon: 'star' }
 ];
 
+// «Выбрать вместе» (vmeste/) с этим местом в выборе: карточка «Идёшь не
+// один?» — на телефоне под шапкой, на компьютере в правой колонке. Только у
+// мест для свиданий и компаний, чтобы не висела на каждой странице
+const TOGETHER_TAGS = ['свидание', 'с друзьями'];
+
+function renderTogether(place) {
+  const show = (place.tags || []).some((t) => TOGETHER_TAGS.includes(t));
+  const url = `vmeste/?with=${encodeURIComponent(place.id)}`;
+  const text = `${place.name} уже будет в выборе. Добавь ещё пару мест, а друг отметит, куда хочет он.`;
+  [['#together-invite', '#together-invite-text', '#together-invite-btn'], ['#together-side', '#together-side-text', '#together-side-btn']]
+    .forEach(([box, textEl, btn]) => {
+      if (!$(box)) return;
+      $(box).hidden = !show;
+      $(textEl).textContent = text;
+      $(btn).href = url;
+    });
+}
+
 function renderStory(place) {
   const el = $('#place-story');
   const story = place.story || {};
@@ -242,6 +260,9 @@ function renderTags(place) {
   const card = $('#place-tags-card');
   const tags = visibleTags(place);
   if (card) card.hidden = !tags.length;
+  // Правая колонка пустая (ни тегов, ни приглашения) — её нет, список на всю ширину
+  const side = $('#info-side');
+  if (side) side.hidden = !tags.length && $('#together-side')?.hidden !== false;
   if (!tags.length) return;
   // Тег ведёт в ленту на главной с этим тегом — повод пойти дальше
   container.innerHTML = tags.map((t) =>
@@ -489,6 +510,7 @@ async function main() {
 
   renderHero(place);
   renderStory(place);
+  renderTogether(place);
   renderInfo(place);
   renderDescription(place);
   renderTags(place);

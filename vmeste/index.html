@@ -2,31 +2,22 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <!-- Страница лежит в папке (адрес …/collection/): все относительные пути —
+  <!-- Страница лежит в папке (адрес …/photos/): все относительные пути —
        к стилям, картинкам, другим страницам — считаются от корня сайта -->
   <base href="../">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Бета: страницы не индексируются (вместе с блоком в robots.txt — он
-       работает, только когда сайт в корне домена). На релизе убрать оба -->
-  <meta name="robots" content="noindex, nofollow">
-  <title>Подборка — Локадо</title>
-  <meta name="description" content="Авторские маршруты и подборки мест в Москве от редакции Локадо.">
-  <meta name="theme-color" content="#FF570A">
-
-  <meta property="og:type" content="article">
-  <meta property="og:title" content="Подборка — Локадо">
-  <meta property="og:description" content="Маршрут по Москве или места под повод — от редакции Локадо.">
+  <title>Выбрать вместе — Локадо</title>
+  <meta name="description" content="Листай места и отмечай, куда хочешь. Друг сделает то же — и вы увидите совпадения.">
+  <!-- Превью ссылки в мессенджере — одно на все наборы мест -->
+  <meta property="og:type" content="website">
   <meta property="og:site_name" content="Локадо">
-  <meta property="og:locale" content="ru_RU">
-  <!-- Картинка для превью ссылки в мессенджерах и соцсетях. Адрес — полный:
-       по относительному пути Telegram и VK картинку не находят -->
+  <meta property="og:title" content="Выберем, куда пойти?">
+  <meta property="og:description" content="Отметь места, куда хочешь. Где совпадём — туда и пойдём.">
   <meta property="og:image" content="https://locado.ru/assets/og-image.jpg?v=4">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Локадо — куда пойти в Москве под настроение">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:image" content="https://locado.ru/assets/og-image.jpg?v=4">
-
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#FF570A">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <!-- Установка на экран телефона как приложение (PWA). Пути относительные —
        при переезде на свой домен ничего менять не нужно -->
@@ -40,8 +31,8 @@
   <link rel="preload" href="assets/fonts/raleway-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles/main.css">
 </head>
-<body class="collection-page">
-  <header class="main-header main-header--overlay">
+<body>
+  <header class="main-header">
     <div class="container header-content">
       <a href="./" class="logo" aria-label="Локадо — главная"><svg class="logo__svg" viewBox="-1170 -890 5350 1090" aria-hidden="true" focusable="false"><defs><clipPath id="logo-front"><rect x="1360" y="-900" width="170" height="1200"/><rect x="2270" y="-900" width="190" height="1200"/></clipPath></defs><path class="logo__route" d="M 80 -170 C 170 -205 280 -210 380 -210 C 664 -210 876 -390 1160 -390 C 1444 -390 1656 -210 1940 -210 C 2224 -210 2436 -390 2720 -390 C 3004 -390 3216 -210 3500 -210 C 3720 -210 3870 -380 3990 -590"/><path class="logo__route logo__route--l" d="M -1050 -105 L -975 -105 C -925 -105 -905 -128 -890 -170 L -720 -640 C -675 -770 -445 -770 -400 -640 L -245 -185 C -220 -112 -180 -90 -110 -90 C -30 -90 40 -125 80 -170"/><path class="logo__word" d="M396 16Q286 16 204 -21Q122 -59 76 -127Q30 -196 30 -285Q30 -376 76 -444Q122 -512 204 -550Q286 -588 396 -588Q505 -588 587 -550Q670 -512 716 -444Q762 -376 762 -285Q762 -196 716 -127Q670 -59 587 -21Q505 16 396 16ZM396 -135Q446 -135 481 -153Q517 -171 536 -205Q555 -239 555 -285Q555 -333 536 -366Q517 -400 481 -418Q446 -436 396 -436Q346 -436 310 -418Q274 -400 255 -366Q236 -333 236 -286Q236 -239 255 -205Q274 -171 310 -153Q346 -135 396 -135ZM818 0V-571H1023V-159L963 -180L1281 -571H1497L1000 0ZM1283 0 1120 -279 1274 -387 1513 0ZM2046 0 2020 -206 2047 -285 2020 -364 2046 -571H2258L2222 -286L2258 0ZM2094 -285Q2080 -195 2038 -127Q1997 -59 1933 -21Q1870 16 1789 16Q1705 16 1641 -21Q1578 -59 1542 -127Q1506 -196 1506 -285Q1506 -376 1542 -444Q1578 -512 1641 -550Q1705 -588 1789 -588Q1870 -588 1933 -550Q1997 -513 2039 -445Q2081 -378 2094 -285ZM1713 -285Q1713 -243 1730 -210Q1748 -177 1779 -158Q1810 -140 1850 -140Q1892 -140 1929 -158Q1966 -177 1994 -210Q2022 -243 2036 -285Q2022 -328 1994 -361Q1966 -394 1929 -413Q1892 -432 1850 -432Q1810 -432 1779 -413Q1748 -394 1730 -361Q1713 -328 1713 -285ZM3139 -152V137H2963V0H2464V137H2288V-152H2460L2498 -149H2912L2947 -152ZM2407 -571H3035V-39H2832V-516L2925 -423H2507L2583 -497Q2597 -456 2600 -419Q2603 -383 2603 -353Q2603 -215 2556 -138Q2509 -62 2424 -62L2341 -132Q2419 -186 2419 -394Q2419 -434 2416 -479Q2413 -524 2407 -571ZM3531 16Q3421 16 3339 -21Q3257 -59 3211 -127Q3165 -196 3165 -285Q3165 -376 3211 -444Q3257 -512 3339 -550Q3421 -588 3531 -588Q3640 -588 3722 -550Q3805 -512 3851 -444Q3897 -376 3897 -285Q3897 -196 3851 -127Q3805 -59 3722 -21Q3640 16 3531 16ZM3531 -135Q3581 -135 3616 -153Q3652 -171 3671 -205Q3690 -239 3690 -285Q3690 -333 3671 -366Q3652 -400 3616 -418Q3581 -436 3531 -436Q3481 -436 3445 -418Q3409 -400 3390 -366Q3371 -333 3371 -286Q3371 -239 3390 -205Q3409 -171 3445 -153Q3481 -135 3531 -135Z"/><path class="logo__route" clip-path="url(#logo-front)" d="M 80 -170 C 170 -205 280 -210 380 -210 C 664 -210 876 -390 1160 -390 C 1444 -390 1656 -210 1940 -210 C 2224 -210 2436 -390 2720 -390 C 3004 -390 3216 -210 3500 -210 C 3720 -210 3870 -380 3990 -590"/><circle class="logo__dot" cx="4065" cy="-690" r="115"/></svg></a>
       <!-- Поиск: ведёт к ленте «Все места» и ставит курсор в строку поиска (ui.js) -->
@@ -56,7 +47,7 @@
 
       <nav class="nav" id="main-nav">
         <ul class="nav-list">
-          <li><a href="collections/" class="nav-item" aria-current="page">Подборки</a></li>
+          <li><a href="collections/" class="nav-item">Подборки</a></li>
           <li><a href="./#map-section" class="nav-item">Карта</a></li>
           <li><a href="./#all-places" class="nav-item">Все места</a></li>
         </ul>
@@ -67,82 +58,60 @@
     </div>
   </header>
 
-
-  <!-- Подборка не найдена -->
-  <section class="state-screen" id="collection-error" hidden>
-    <div class="container state-screen__inner">
-      <p class="state-screen__code" aria-hidden="true">404</p>
-      <h1 class="state-screen__title">Такой подборки у нас нет</h1>
-      <p class="state-screen__text" id="collection-error-text">
-        Возможно, ссылка устарела или в адресе опечатка. Загляни в другие подборки.
-      </p>
-      <div class="state-screen__actions">
-        <a href="collections/" class="btn state-screen__btn">Все подборки</a>
-        <a href="./" class="state-screen__link">Вернуться на главную</a>
-      </div>
-    </div>
-  </section>
-
-  <main id="collection-content">
-    <!-- Обложка — тот же первый экран, что у страницы места -->
-    <section class="place-hero collection-hero is-loading">
-      <div class="hero-bg" id="hero-bg"></div>
-      <div class="hero-overlay" aria-hidden="true"></div>
-      <div class="container hero-content">
-        <p class="hero-category" id="collection-type"></p>
-        <h1 class="hero-title" id="collection-title">Загружаем…</h1>
-        <p class="hero-subtitle" id="collection-lead"></p>
-        <ul class="hero-facts" id="collection-meta"></ul>
-      </div>
-      <!-- Автор фото (core/credits.js): значок «i» в углу фото, по нажатию —
-           «Фото: mos.ru» или автор и лицензия Creative Commons -->
-      <p class="photo-credit photo-credit--on-photo container" id="photo-credit" hidden></p>
+  <main class="together container" id="together">
+    <!-- Экраны «Выбрать вместе» (pages/together.js): старт → колода →
+         отправка другу; по ссылке друга — его колода → совпадения.
+         Всё состояние — в адресе ссылки, сервер не нужен -->
+    <section class="together__screen" data-screen="start" hidden>
+      <p class="together__eyebrow">Выбрать вместе</p>
+      <h1 class="together__title">Куда пойдём?</h1>
+      <p class="together__lead">Листай места и отмечай, куда хочешь. Потом отправишь свой выбор другу — он отметит, что нравится ему, и вы увидите совпадения.</p>
+      <div class="together__sources" id="together-sources" role="radiogroup" aria-label="Из чего выбираем"></div>
+      <button type="button" class="together__btn" id="together-begin">Начать листать</button>
     </section>
 
-    <!-- Текст статьи: блоки «текст / место / переход» рендерит pages/collection.js -->
-    <article class="collection-article container">
-      <div class="collection-byline-row">
-        <p class="collection-byline" id="collection-byline"></p>
-        <button type="button" class="collection-share" id="share-btn" aria-label="Поделиться">
-          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#share-2"></use></svg><span>Поделиться</span>
-        </button>
+    <section class="together__screen" data-screen="deck" hidden>
+      <div class="together__intro" id="together-intro" hidden></div>
+      <div class="together__bar">
+        <span class="together__count" id="together-count"></span>
+        <button type="button" class="together__done" id="together-done">Хватит — отправить</button>
       </div>
-
-      <!-- План: все остановки сразу и ссылка на карту — заполняет collection.js -->
-      <nav class="collection-plan" id="collection-plan" aria-labelledby="collection-plan-title" hidden>
-        <p class="collection-plan__title" id="collection-plan-title"></p>
-        <ol class="collection-plan__list" id="collection-plan-list"></ol>
-        <a class="collection-plan__map" href="#collection-map">
-          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#map-pin"></use></svg> Все места на карте
-        </a>
-      </nav>
-
-      <div class="collection-body" id="collection-body"></div>
-    </article>
-
-    <!-- Все места подборки на карте -->
-    <section class="collection-map container" id="collection-map">
-      <div class="section-head">
-        <h2 class="section-title" id="collection-map-title">Все места на карте</h2>
+      <div class="together__deck" id="together-deck"></div>
+      <div class="together__votes" id="together-votes">
+        <button type="button" class="together__vote together__vote--no" id="together-no" aria-label="Не сейчас"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#x"></use></svg></button>
+        <button type="button" class="together__vote together__vote--yes" id="together-yes" aria-label="Хочу"><svg class="icon icon--filled" aria-hidden="true" focusable="false"><use href="assets/icons.svg#heart"></use></svg></button>
       </div>
-      <div class="map-container" id="collection-map-container" aria-label="Карта мест подборки"></div>
-      <div class="map-actions" id="collection-route" hidden>
-        <a class="btn route-btn" id="collection-route-link" href="https://yandex.ru/maps/" target="_blank" rel="noopener">
-          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#navigation"></use></svg> Маршрут в Яндекс.Картах
-        </a>
-      </div>
+      <p class="together__hint" id="together-hint">Вправо — хочу, влево — не сейчас</p>
     </section>
 
-    <!-- Другие подборки -->
-    <section class="collection-more container" id="collection-more" hidden>
-      <div class="section-head section-head--row">
-        <div>
-          <h2 class="section-title">Ещё подборки</h2>
-        </div>
-        <a class="section-link" href="collections/">Все подборки →</a>
-      </div>
-      <div class="collection-more__grid" id="collection-more-grid"></div>
+    <section class="together__screen" data-screen="send" hidden>
+      <p class="together__eyebrow">Твой выбор</p>
+      <h1 class="together__title" id="together-send-title"></h1>
+      <p class="together__lead" id="together-send-lead"></p>
+      <!-- Выбранные места: крестик убирает место из выбора -->
+      <ul class="together__picked" id="together-picked"></ul>
+      <button type="button" class="together__btn together__btn--ghost" id="together-back">Добавить ещё места</button>
+      <!-- На телефоне — системное «Поделиться»: человек сам выбирает
+           мессенджер. Отдельных кнопок мессенджеров нет — у них в России
+           меняется доступность, а меню телефона покажет то, чем он пользуется -->
+      <button type="button" class="together__btn" id="together-share">Отправить другу</button>
+      <button type="button" class="together__btn together__btn--ghost" id="together-copy">Скопировать ссылку</button>
+      <p class="together__note">Регистрация не нужна — всё нужное лежит в самой ссылке.</p>
+      <button type="button" class="together__restart" id="together-restart">Начать заново</button>
     </section>
+
+    <section class="together__screen" data-screen="result" hidden>
+      <p class="together__eyebrow">Совпадения</p>
+      <h1 class="together__title" id="together-result-title"></h1>
+      <p class="together__lead" id="together-result-lead"></p>
+      <div class="together__matches" id="together-matches"></div>
+      <a class="together__btn" id="together-route" target="_blank" rel="noopener" hidden>Маршрут по совпадениям</a>
+      <button type="button" class="together__btn together__btn--ghost" id="together-answer" hidden>Отправить ответ другу</button>
+      <button type="button" class="together__btn together__btn--ghost" id="together-more">Предложить своё</button>
+      <p class="together__note" id="together-result-note"></p>
+    </section>
+
+    <p class="together__loading" id="together-loading">Загружаем места…</p>
   </main>
 
   <footer class="site-footer">
@@ -192,30 +161,7 @@
     </div>
   </footer>
 
-  <!-- Модалка шеринга -->
-  <!-- Нейтральные кнопки вместо фирменных цветов соцсетей: ярко-синие и
-       зелёные плашки спорили с тёплой палитрой сайта -->
-  <div class="modal share-modal" id="share-modal" role="dialog" aria-modal="true" aria-labelledby="share-modal-title">
-    <div class="modal-content modal-content--sm">
-      <div class="modal-header">
-        <h3 id="share-modal-title">Поделиться подборкой</h3>
-        <button type="button" class="modal-close" id="share-close" data-modal-close aria-label="Закрыть"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#x"></use></svg></button>
-      </div>
-      <div class="modal-body">
-        <div class="share-buttons">
-          <button type="button" class="share-option share-telegram"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#send"></use></svg> Telegram</button>
-          <button type="button" class="share-option share-vk"><span class="share-option__mark" aria-hidden="true">VK</span> ВКонтакте</button>
-          <button type="button" class="share-option share-copy"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#copy"></use></svg> Скопировать ссылку</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <button id="back-to-top" class="back-to-top" aria-label="Наверх">
-    <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#arrow-up"></use></svg>
-  </button>
-
   <script type="module" src="scripts/ui.js"></script>
-  <script type="module" src="scripts/pages/collection.js"></script>
+  <script type="module" src="scripts/pages/together.js"></script>
 </body>
 </html>

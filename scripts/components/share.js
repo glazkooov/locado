@@ -33,10 +33,8 @@ export function initShare(triggers, getData, { what = document.title } = {}) {
   on($('#share-close'), 'click', () => shareModal?.close());
   on($('.share-vk'), 'click', () => done('ВКонтакте'));
   on($('.share-telegram'), 'click', () => done('Telegram'));
-  on($('.share-whatsapp'), 'click', () => done('WhatsApp'));
   on($('.share-vk'), 'click', () => window.open(`https://vk.com/share.php?url=${encodeURIComponent(url())}&title=${encodeURIComponent(title())}`, '_blank'));
   on($('.share-telegram'), 'click', () => window.open(`https://t.me/share/url?url=${encodeURIComponent(url())}&text=${encodeURIComponent(title())}`, '_blank'));
-  on($('.share-whatsapp'), 'click', () => window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(`${title()} ${url()}`)}`, '_blank'));
   on($('.share-copy'), 'click', () => {
     navigator.clipboard.writeText(url())
       .then(() => { done('Скопировал ссылку'); showToast('Ссылка скопирована'); shareModal?.close(); })

@@ -130,6 +130,18 @@
 
     <!-- Практическая информация одной карточкой-списком + настроение места.
          Строки без данных place.js скрывает: прочерки только шумят -->
+    <!-- Телефон: приглашение выбрать вместе — только у мест для свиданий и
+         компаний (на компьютере та же карточка в правой колонке, #together-side) -->
+    <section class="together-invite container" id="together-invite" hidden>
+      <div class="together-invite__card">
+        <p class="together-invite__title">Идёшь не один?</p>
+        <p class="together-invite__text" id="together-invite-text"></p>
+        <a class="together-invite__btn" id="together-invite-btn" href="vmeste/">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#users"></use></svg> Позвать друга
+        </a>
+      </div>
+    </section>
+
     <section class="place-info container">
       <div class="info-grid">
         <div class="info-card info-list" id="info-list">
@@ -177,10 +189,21 @@
           </div>
         </div>
 
-        <div class="info-card info-card--mood" id="place-tags-card">
-          <h3><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#wand-sparkles"></use></svg> Настроение места</h3>
-          <!-- Тег ведёт в ленту главной с этим тегом -->
-          <div class="tags-section" id="place-tags"></div>
+        <!-- Правая колонка: настроение места и (с компьютера) приглашение
+             «Выбрать вместе»; на телефоне приглашение — карточкой выше -->
+        <div class="info-side" id="info-side">
+          <div class="info-card info-card--mood" id="place-tags-card">
+            <h3><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#wand-sparkles"></use></svg> Настроение места</h3>
+            <!-- Тег ведёт в ленту главной с этим тегом -->
+            <div class="tags-section" id="place-tags"></div>
+          </div>
+          <div class="info-card together-side" id="together-side" hidden>
+            <p class="together-invite__title">Идёшь не один?</p>
+            <p class="together-invite__text" id="together-side-text"></p>
+            <a class="together-invite__btn" id="together-side-btn" href="vmeste/">
+              <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#users"></use></svg> Позвать друга
+            </a>
+          </div>
         </div>
       </div>
       <!-- Сообщить о неточности — рядом с данными, в которых ошибаются чаще
@@ -316,7 +339,6 @@
         <div class="share-buttons">
           <button type="button" class="share-option share-telegram"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#send"></use></svg> Telegram</button>
           <button type="button" class="share-option share-vk"><span class="share-option__mark" aria-hidden="true">VK</span> ВКонтакте</button>
-          <button type="button" class="share-option share-whatsapp"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#message-circle"></use></svg> WhatsApp</button>
           <button type="button" class="share-option share-copy"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#copy"></use></svg> Скопировать ссылку</button>
         </div>
       </div>
@@ -363,6 +385,7 @@
         <h4>Навигация</h4>
         <a href="./#map-section">Карта</a>
         <a href="collections/">Подборки</a>
+        <a href="vmeste/">Выбрать вместе</a>
         <a href="./#all-places">Все места</a>
         <a href="suggest/">Предложить место</a>
       </nav>
