@@ -269,7 +269,8 @@
 
 @media (min-width: 900px) {
   .info-grid { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); }
-  .info-grid:has(> .info-card[hidden]) { grid-template-columns: 1fr; }
+  .info-grid:has(> .info-card[hidden]),
+  .info-grid:has(> .info-side[hidden]) { grid-template-columns: 1fr; }
 }
 
 .info-card {
@@ -1125,8 +1126,23 @@
   .place-story__item--why .place-story__text { font-size: var(--fs-xl); }
 }
 
-/* «Идёшь не один?» — приглашение в «Выбрать вместе» (vmeste/). Только
-   телефон: на компьютере есть кнопка «Позвать друга» в шапке */
+/* «Идёшь не один?» — приглашение в «Выбрать вместе» (vmeste/). На телефоне
+   — карточка под шапкой, на компьютере — в правой колонке (.together-side) */
+.info-side {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+.info-side[hidden] { display: none; }
+.together-side {
+  border: none;
+  background: linear-gradient(120deg, #FFE3CF, #FFD0B5);
+}
+.together-side[hidden] { display: none; }
+@media (max-width: 768px) {
+  .together-side { display: none; }
+}
 .together-invite { margin-top: 20px; }
 .together-invite[hidden] { display: none; }
 @media (min-width: 769px) {
