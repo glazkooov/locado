@@ -1,4 +1,4 @@
-/* pages/legal.css — privacy.html: длинный текст, узкая колонка для чтения */
+/* pages/legal.css — privacy/ и consent/: длинный текст, узкая колонка для чтения */
 
 .legal {
   padding-top: 48px;
@@ -34,6 +34,34 @@
 }
 
 .legal__article p + p { margin-top: 10px; }
+
+.legal__lead {
+  margin-top: 20px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--card-bg);
+}
+
+/* Таблица целей: на телефоне прокручивается сама, страница — нет */
+.legal__table-wrap {
+  margin: 12px 0;
+  overflow-x: auto;
+}
+.legal__table {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+  line-height: 1.5;
+}
+.legal__table th,
+.legal__table td {
+  padding: 10px 12px 10px 0;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+.legal__table th { font-weight: 600; }
 
 .legal__article ul {
   margin: 10px 0;
@@ -77,3 +105,8 @@
 .credits-list li + li { margin-top: 0; }
 .credits-list__name { color: var(--text); font-weight: 600; text-decoration: none; }
 .credits-list a { color: var(--text); }
+
+.legal__note {
+  font-size: var(--fs-sm);
+  color: var(--text-light);
+}

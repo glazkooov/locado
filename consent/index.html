@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <!-- Страница лежит в папке (адрес …/consent/): все относительные пути —
+       к стилям, картинкам, другим страницам — считаются от корня сайта -->
+  <base href="../">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Согласие на обработку данных — Локадо</title>
+  <meta name="description" content="Согласие на обработку персональных данных на сайте Локадо.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#FF570A">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <!-- Установка на экран телефона как приложение (PWA). Пути относительные —
+       при переезде на свой домен ничего менять не нужно -->
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="assets/app/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Локадо">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="preload" href="assets/fonts/unbounded-cyrillic-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/raleway-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+  <header class="main-header">
+    <div class="container header-content">
+      <a href="./" class="logo" aria-label="Локадо — главная"><svg class="logo__svg" viewBox="-1170 -890 5350 1090" aria-hidden="true" focusable="false"><defs><clipPath id="logo-front"><rect x="1360" y="-900" width="170" height="1200"/><rect x="2270" y="-900" width="190" height="1200"/></clipPath></defs><path class="logo__route" d="M 80 -170 C 170 -205 280 -210 380 -210 C 664 -210 876 -390 1160 -390 C 1444 -390 1656 -210 1940 -210 C 2224 -210 2436 -390 2720 -390 C 3004 -390 3216 -210 3500 -210 C 3720 -210 3870 -380 3990 -590"/><path class="logo__route logo__route--l" d="M -1050 -105 L -975 -105 C -925 -105 -905 -128 -890 -170 L -720 -640 C -675 -770 -445 -770 -400 -640 L -245 -185 C -220 -112 -180 -90 -110 -90 C -30 -90 40 -125 80 -170"/><path class="logo__word" d="M396 16Q286 16 204 -21Q122 -59 76 -127Q30 -196 30 -285Q30 -376 76 -444Q122 -512 204 -550Q286 -588 396 -588Q505 -588 587 -550Q670 -512 716 -444Q762 -376 762 -285Q762 -196 716 -127Q670 -59 587 -21Q505 16 396 16ZM396 -135Q446 -135 481 -153Q517 -171 536 -205Q555 -239 555 -285Q555 -333 536 -366Q517 -400 481 -418Q446 -436 396 -436Q346 -436 310 -418Q274 -400 255 -366Q236 -333 236 -286Q236 -239 255 -205Q274 -171 310 -153Q346 -135 396 -135ZM818 0V-571H1023V-159L963 -180L1281 -571H1497L1000 0ZM1283 0 1120 -279 1274 -387 1513 0ZM2046 0 2020 -206 2047 -285 2020 -364 2046 -571H2258L2222 -286L2258 0ZM2094 -285Q2080 -195 2038 -127Q1997 -59 1933 -21Q1870 16 1789 16Q1705 16 1641 -21Q1578 -59 1542 -127Q1506 -196 1506 -285Q1506 -376 1542 -444Q1578 -512 1641 -550Q1705 -588 1789 -588Q1870 -588 1933 -550Q1997 -513 2039 -445Q2081 -378 2094 -285ZM1713 -285Q1713 -243 1730 -210Q1748 -177 1779 -158Q1810 -140 1850 -140Q1892 -140 1929 -158Q1966 -177 1994 -210Q2022 -243 2036 -285Q2022 -328 1994 -361Q1966 -394 1929 -413Q1892 -432 1850 -432Q1810 -432 1779 -413Q1748 -394 1730 -361Q1713 -328 1713 -285ZM3139 -152V137H2963V0H2464V137H2288V-152H2460L2498 -149H2912L2947 -152ZM2407 -571H3035V-39H2832V-516L2925 -423H2507L2583 -497Q2597 -456 2600 -419Q2603 -383 2603 -353Q2603 -215 2556 -138Q2509 -62 2424 -62L2341 -132Q2419 -186 2419 -394Q2419 -434 2416 -479Q2413 -524 2407 -571ZM3531 16Q3421 16 3339 -21Q3257 -59 3211 -127Q3165 -196 3165 -285Q3165 -376 3211 -444Q3257 -512 3339 -550Q3421 -588 3531 -588Q3640 -588 3722 -550Q3805 -512 3851 -444Q3897 -376 3897 -285Q3897 -196 3851 -127Q3805 -59 3722 -21Q3640 16 3531 16ZM3531 -135Q3581 -135 3616 -153Q3652 -171 3671 -205Q3690 -239 3690 -285Q3690 -333 3671 -366Q3652 -400 3616 -418Q3581 -436 3531 -436Q3481 -436 3445 -418Q3409 -400 3390 -366Q3371 -333 3371 -286Q3371 -239 3390 -205Q3409 -171 3445 -153Q3481 -135 3531 -135Z"/><path class="logo__route" clip-path="url(#logo-front)" d="M 80 -170 C 170 -205 280 -210 380 -210 C 664 -210 876 -390 1160 -390 C 1444 -390 1656 -210 1940 -210 C 2224 -210 2436 -390 2720 -390 C 3004 -390 3216 -210 3500 -210 C 3720 -210 3870 -380 3990 -590"/><circle class="logo__dot" cx="4065" cy="-690" r="115"/></svg></a>
+      <!-- Поиск: ведёт к ленте «Все места» и ставит курсор в строку поиска (ui.js) -->
+      <a href="./#search" class="header-search" data-search aria-label="Найти место">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#search"></use></svg><span>Поиск</span>
+      </a>
+
+
+      <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Открыть меню" aria-expanded="false" aria-controls="main-nav">
+        <svg class="icon mobile-menu-toggle__open" aria-hidden="true" focusable="false"><use href="assets/icons.svg#menu"></use></svg><svg class="icon mobile-menu-toggle__close" aria-hidden="true" focusable="false"><use href="assets/icons.svg#x"></use></svg>
+      </button>
+
+      <nav class="nav" id="main-nav">
+        <ul class="nav-list">
+          <li><a href="collections/" class="nav-item">Подборки</a></li>
+          <li><a href="./#map-section" class="nav-item">Карта</a></li>
+          <li><a href="./#all-places" class="nav-item">Все места</a></li>
+        </ul>
+        <button type="button" class="install-link install-link--nav" data-install hidden>
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#smartphone"></use></svg> Добавить на экран телефона
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="legal container">
+    <article class="legal__article">
+      <h1 class="legal__title">Согласие на обработку персональных данных</h1>
+      <p class="legal__updated">Редакция от 10 октября 2026 года</p>
+
+      <p>Продолжая пользоваться сайтом locado.ru после уведомления о cookie, отправляя форму на сайте locado.ru или письмо на <a href="mailto:hello@locado.ru">hello@locado.ru</a>, я свободно, своей волей и в своём интересе даю согласие на обработку моих персональных данных на условиях ниже.</p>
+
+      <h2>Кому</h2>
+      <p>Глазков Григорий Константинович, сайт locado.ru, почта <a href="mailto:hello@locado.ru">hello@locado.ru</a> (далее — оператор).</p>
+
+      <h2>На что именно</h2>
+      <p><strong>Пользование сайтом после уведомления о cookie</strong> — на сбор статистики посещений через Яндекс Метрику, чтобы улучшать сайт. Данные: cookie, IP-адрес, сведения о браузере и устройстве, просмотренные страницы, источник перехода, клики и переходы по ссылкам.</p>
+      <p><strong>Отправка формы «Предложить место» или «Сообщить о неточности», письмо на почту</strong> — чтобы рассмотреть обращение, ответить на него, исправить сведения о месте или опубликовать рассказ о месте. Данные: текст обращения, название места, адрес почты и имя — если они указаны.</p>
+      <p>Рассказ о месте оператор может отредактировать и опубликовать без моего имени и почты. Имя и почта не публикуются.</p>
+
+      <h2>Что с данными можно делать</h2>
+      <p>Собирать, записывать, хранить, уточнять, использовать, удалять и уничтожать — с помощью компьютера. Поручать обработку ООО «Яндекс» (Метрика, Формы, Почта) и ООО «Бегет» (хостинг). Данные хранятся в России и за границу не передаются.</p>
+
+      <h2>Сколько действует</h2>
+      <p>Согласие на статистику — пока я его не отзову. Согласие на обработку обращения — до ответа на него или публикации места и ещё 30 дней.</p>
+
+      <h2>Как отозвать</h2>
+      <p>Согласие на статистику — кнопкой «Отключить статистику» в <a href="privacy/">политике конфиденциальности</a>, отключив cookie в браузере или перестав пользоваться сайтом. Любое согласие — письмом на <a href="mailto:hello@locado.ru">hello@locado.ru</a>. После отзыва оператор прекратит обработку и удалит данные в течение 30 дней.</p>
+
+      <p>Как оператор обращается с данными и какие у меня права — в <a href="privacy/">политике конфиденциальности</a>.</p>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-wave" aria-hidden="true">
+      <svg viewBox="0 0 1200 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0,60 C200,10 400,0 600,20 C800,40 1000,10 1200,30 L1200,60 L0,60 Z"></path>
+      </svg>
+    </div>
+    <div class="container site-footer__top">
+      <div class="site-footer__brand">
+        <span class="logo footer-logo" role="img" aria-label="Локадо"><svg class="logo__svg" viewBox="-1170 -890 5350 1090" aria-hidden="true" focusable="false"><defs><clipPath id="logo-front-footer"><rect x="1360" y="-900" width="170" height="1200"/><rect x="2270" y="-900" width="190" height="1200"/></clipPath></defs><path class="logo__route" d="M 80 -170 C 170 -205 280 -210 380 -210 C 664 -210 876 -390 1160 -390 C 1444 -390 1656 -210 1940 -210 C 2224 -210 2436 -390 2720 -390 C 3004 -390 3216 -210 3500 -210 C 3720 -210 3870 -380 3990 -590"/><path class="logo__route logo__route--l" d="M -1050 -105 L -975 -105 C -925 -105 -905 -128 -890 -170 L -720 -640 C -675 -770 -445 -770 -400 -640 L -245 -185 C -220 -112 -180 -90 -110 -90 C -30 -90 40 -125 80 -170"/><path class="logo__word" d="M396 16Q286 16 204 -21Q122 -59 76 -127Q30 -196 30 -285Q30 -376 76 -444Q122 -512 204 -550Q286 -588 396 -588Q505 -588 587 -550Q670 -512 716 -444Q762 -376 762 -285Q762 -196 716 -127Q670 -59 587 -21Q505 16 396 16ZM396 -135Q446 -135 481 -153Q517 -171 536 -205Q555 -239 555 -285Q555 -333 536 -366Q517 -400 481 -418Q446 -436 396 -436Q346 -436 310 -418Q274 -400 255 -366Q236 -333 236 -286Q236 -239 255 -205Q274 -171 310 -153Q346 -135 396 -135ZM818 0V-571H1023V-159L963 -180L1281 -571H1497L1000 0ZM1283 0 1120 -279 1274 -387 1513 0ZM2046 0 2020 -206 2047 -285 2020 -364 2046 -571H2258L2222 -286L2258 0ZM2094 -285Q2080 -195 2038 -127Q1997 -59 1933 -21Q1870 16 1789 16Q1705 16 1641 -21Q1578 -59 1542 -127Q1506 -196 1506 -285Q1506 -376 1542 -444Q1578 -512 1641 -550Q1705 -588 1789 -588Q1870 -588 1933 -550Q1997 -513 2039 -445Q2081 -378 2094 -285ZM1713 -285Q1713 -243 1730 -210Q1748 -177 1779 -158Q1810 -140 1850 -140Q1892 -140 1929 -158Q1966 -177 1994 -210Q2022 -243 2036 -285Q2022 -328 1994 -361Q1966 -394 1929 -413Q1892 -432 1850 -432Q1810 -432 1779 -413Q1748 -394 1730 -361Q1713 -328 1713 -285ZM3139 -152V137H2963V0H2464V137H2288V-152H2460L2498 -149H2912L2947 -152ZM2407 -571H3035V-39H2832V-516L2925 -423H2507L2583 -497Q2597 -456 2600 -419Q2603 -383 2603 -353Q2603 -215 2556 -138Q2509 -62 2424 -62L2341 -132Q2419 -186 2419 -394Q2419 -434 2416 -479Q2413 -524 2407 -571ZM3531 16Q3421 16 3339 -21Q3257 -59 3211 -127Q3165 -196 3165 -285Q3165 -376 3211 -444Q3257 -512 3339 -550Q3421 -588 3531 -588Q3640 -588 3722 -550Q3805 -512 3851 -444Q3897 -376 3897 -285Q3897 -196 3851 -127Q3805 -59 3722 -21Q3640 16 3531 16ZM3531 -135Q3581 -135 3616 -153Q3652 -171 3671 -205Q3690 -239 3690 -285Q3690 -333 3671 -366Q3652 -400 3616 -418Q3581 -436 3531 -436Q3481 -436 3445 -418Q3409 -400 3390 -366Q3371 -333 3371 -286Q3371 -239 3390 -205Q3409 -171 3445 -153Q3481 -135 3531 -135Z"/><path class="logo__route" clip-path="url(#logo-front-footer)" d="M 80 -170 C 170 -205 280 -210 380 -210 C 664 -210 876 -390 1160 -390 C 1444 -390 1656 -210 1940 -210 C 2224 -210 2436 -390 2720 -390 C 3004 -390 3216 -210 3500 -210 C 3720 -210 3870 -380 3990 -590"/><circle class="logo__dot" cx="4065" cy="-690" r="115"/></svg></span>
+        <p class="site-footer__tagline">Город, рассказанный простыми словами. Места в Москве для дней, когда хочется выбраться, но непонятно куда.</p>
+        <!-- Установка на экран телефона — видна только на телефоне и если сайт ещё не установлен (install.js) -->
+        <button type="button" class="install-link" data-install hidden>
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#smartphone"></use></svg> Локадо на экране телефона
+        </button>
+      </div>
+
+      <nav class="site-footer__col" aria-label="Навигация">
+        <h4>Навигация</h4>
+        <a href="./#map-section">Карта</a>
+        <a href="collections/">Подборки</a>
+        <a href="vmeste/">Выбрать вместе</a>
+        <a href="./#all-places">Все места</a>
+        <a href="suggest/">Предложить место</a>
+      </nav>
+
+      <div class="site-footer__col">
+        <h4>Где работаем</h4>
+        <p class="site-footer__note">Москва и область</p>
+      </div>
+      <div class="site-footer__col">
+        <h4>Связаться</h4>
+        <p class="site-footer__note">Предложения, ошибки, вопросы — пиши:</p>
+        <div class="footer-email">
+          <a href="mailto:hello@locado.ru" class="footer-email__link">hello@locado.ru</a>
+          <!-- На телефоне без настроенной почты mailto часто ничего не открывает -->
+          <button type="button" class="footer-email__copy" data-copy="hello@locado.ru" aria-label="Скопировать адрес почты">
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#copy"></use></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="container site-footer__bottom">
+      <p><span>© Локадо. Сделано с любовью к прогулкам.</span> <a href="privacy/">Политика конфиденциальности</a> <a href="photos/">Фото на сайте</a></p>
+    </div>
+  </footer>
+
+  <script type="module" src="scripts/ui.js"></script>
+</body>
+</html>

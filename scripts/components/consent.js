@@ -1,7 +1,8 @@
-// components/consent.js — плашка про cookie и согласие на статистику.
-// Выбор хранится в localStorage; пока его нет, плашка видна на каждой
-// странице. Метрику подключать через onAnalyticsConsent — она запустится
-// только после «Хорошо» (сразу, если согласие уже дали раньше).
+// components/consent.js — плашка про cookie и статистику.
+// Плашка только уведомляет: продолжая пользоваться сайтом, человек
+// соглашается на cookie. Кнопка «Хорошо» лишь закрывает плашку.
+// Метрика запускается сразу — кроме тех, кто отключил статистику
+// кнопкой в политике (или нажал «Не надо» в прежней версии плашки).
 
 const KEY = 'locado:cookie-consent'; // 'accepted' | 'declined'
 const listeners = [];
@@ -11,18 +12,17 @@ const save = (value) => { try { localStorage.setItem(KEY, value); } catch { /* �
 
 export const consentDecided = () => read() !== null;
 
-/** Запустить fn, когда пользователь разрешил статистику. */
+/** Запустить fn, если человек не отключал статистику. */
 export function onAnalyticsConsent(fn) {
-  if (read() === 'accepted') fn();
+  if (read() !== 'declined') fn();
   else listeners.push(fn);
 }
 
 function bannerHtml() {
   return `
   <div class="consent-banner" id="consent-banner" role="region" aria-label="Cookie">
-    <p class="consent-banner__text">Cookie помогают понять, что тебе нравится. <a href="privacy/">Подробнее</a></p>
+    <p class="consent-banner__text">Мы используем cookie для статистики в соответствии с <a href="privacy/">политикой конфиденциальности</a>.</p>
     <div class="consent-banner__actions">
-      <button type="button" class="consent-banner__btn consent-banner__btn--ghost" data-consent="declined">Не надо</button>
       <button type="button" class="consent-banner__btn" data-consent="accepted">Хорошо</button>
     </div>
   </div>`;
@@ -33,21 +33,41 @@ function showBanner() {
   document.body.insertAdjacentHTML('beforeend', bannerHtml());
   const banner = document.getElementById('consent-banner');
   document.body.classList.add('has-consent-banner');
-  banner.querySelectorAll('[data-consent]').forEach((btn) => btn.addEventListener('click', () => {
-    const value = btn.dataset.consent;
-    save(value);
+  banner.querySelector('[data-consent]').addEventListener('click', () => {
+    save('accepted');
     banner.remove();
     document.body.classList.remove('has-consent-banner');
-    if (value === 'accepted') listeners.splice(0).forEach((fn) => fn());
-    document.dispatchEvent(new CustomEvent('locado:consent', { detail: value }));
-  }));
+    document.dispatchEvent(new CustomEvent('locado:consent', { detail: 'accepted' }));
+  });
+}
+
+// Кнопка в политике: отключить статистику или включить обратно
+function initToggle(btn) {
+  const label = () => {
+    btn.textContent = read() === 'declined' ? 'Включить статистику' : 'Отключить статистику';
+  };
+  label();
+  btn.addEventListener('click', () => {
+    if (read() === 'declined') {
+      save('accepted');
+      listeners.splice(0).forEach((fn) => fn());
+    } else {
+      // Метрика на этой странице уже загружена — перестанет считать
+      // со следующей страницы
+      save('declined');
+    }
+    label();
+    const note = btn.parentElement.nextElementSibling;
+    if (note?.matches('[data-consent-note]')) {
+      note.hidden = false;
+      note.textContent = read() === 'declined'
+        ? 'Готово: со следующей страницы статистика не собирается.'
+        : 'Готово: статистика снова включена.';
+    }
+  });
 }
 
 export function initConsent() {
   if (!consentDecided()) showBanner();
-  // «Изменить выбор по cookie» на странице политики
-  document.querySelectorAll('[data-consent-reset]').forEach((btn) => btn.addEventListener('click', () => {
-    try { localStorage.removeItem(KEY); } catch { /* no-op */ }
-    showBanner();
-  }));
+  document.querySelectorAll('[data-consent-toggle]').forEach(initToggle);
 }
