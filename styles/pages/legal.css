@@ -105,3 +105,8 @@
 .credits-list li + li { margin-top: 0; }
 .credits-list__name { color: var(--text); font-weight: 600; text-decoration: none; }
 .credits-list a { color: var(--text); }
+
+.legal__note {
+  font-size: var(--fs-sm);
+  color: var(--text-light);
+}
