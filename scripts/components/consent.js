@@ -21,7 +21,7 @@ export function onAnalyticsConsent(fn) {
 function bannerHtml() {
   return `
   <div class="consent-banner" id="consent-banner" role="region" aria-label="Cookie">
-    <p class="consent-banner__text">Мы используем cookie для статистики. Оставаясь на сайте, ты соглашаешься с этим. Если не хочешь — отключи cookie в браузере или покинь сайт. <a href="privacy/">Подробнее</a></p>
+    <p class="consent-banner__text">Мы используем cookie для статистики в соответствии с <a href="privacy/">политикой конфиденциальности</a>.</p>
     <div class="consent-banner__actions">
       <button type="button" class="consent-banner__btn" data-consent="accepted">Хорошо</button>
     </div>
