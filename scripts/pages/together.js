@@ -32,7 +32,8 @@ const state = {
   liked: [], // id «хочу» в этой колоде
   toRate: [], // ?p= — что оценивает друг
   matches: [], // ?m= — уже совпавшие
-  from: 'Страница «Выбрать вместе»' // откуда пришли — для цели together_start
+  from: 'Страница «Выбрать вместе»', // откуда пришли — для цели together_start
+  pool: [] // из чего листали — для «Пролистать ещё раз»
 };
 
 // --- адрес ---
@@ -173,6 +174,8 @@ function show(screen) {
 }
 
 function deckUi(mode) {
+  $('#together-votes').hidden = false;
+  $('#together-hint').hidden = false;
   $('#together-done').hidden = mode === 'friend';
   $('#together-hint').textContent = mode === 'friend'
     ? 'Вправо — хочу, влево — не сейчас'
@@ -204,6 +207,7 @@ function saveDraft(screen) {
       liked: state.liked,
       toRate: state.toRate,
       matches: state.matches,
+      pool: state.pool.map((p) => p.id),
       intro: $('#together-intro').hidden ? '' : $('#together-intro').textContent
     }));
   } catch { /* приватный режим — просто без черновика */ }
@@ -219,6 +223,7 @@ function restoreDraft() {
   state.liked = known(draft.liked);
   state.toRate = known(draft.toRate);
   state.matches = known(draft.matches);
+  state.pool = known(draft.pool).map((id) => state.byId.get(id));
   if (draft.intro) showIntro(draft.intro);
   if (draft.screen === 'result') { showResult({ restored: true }); return true; }
   if (draft.screen === 'send' && state.liked.length) { showSend(); return true; }
@@ -233,8 +238,18 @@ function deckFinished() {
   if (state.mode === 'friend') { showResult(); return; }
   if (!state.liked.length) {
     // всё пролистал и ничего не отметил
-    $('#together-deck').innerHTML = '<p class="together__empty">Места закончились, а «хочу» пока нет. Начнём заново?</p>';
+    $('#together-deck').innerHTML = `
+      <div class="together__empty">
+        <p>Места закончились, а «хочу» пока нет.</p>
+        <button type="button" class="together__btn" id="together-again">Пролистать ещё раз</button>
+        <button type="button" class="together__btn together__btn--ghost" id="together-other">Выбрать другие места</button>
+      </div>`;
     $('#together-done').hidden = true;
+    $('#together-votes').hidden = true;
+    $('#together-hint').hidden = true;
+    // те же места в новом порядке — или назад к выбору «из чего листать»
+    on($('#together-again'), 'click', async () => startDeck(await ownDeck(state.pool.length ? state.pool : state.places), 'own'));
+    on($('#together-other'), 'click', restart);
     return;
   }
   showSend();
@@ -264,6 +279,7 @@ async function beginOwn(exclude = [], { source, from = state.from, liked = [] } 
   const skip = new Set([...exclude, ...liked]);
   const pool = (src === 'all' ? state.places : filterPlaces(state.places, resolveMoodFilters(state.places, src)))
     .filter((p) => !skip.has(p.id));
+  state.pool = pool;
   goal('together_start', { 'Выбрать вместе': { [from]: src } });
   startDeck(await ownDeck(pool), 'own', liked);
 }
@@ -407,6 +423,12 @@ function showIntro(text) {
   $('#together-intro').hidden = false;
 }
 
+/** Начать заново: черновик забываем, возвращаемся к выбору «из чего листать». */
+function restart() {
+  try { sessionStorage.removeItem(DRAFT_KEY); } catch { /* ничего */ }
+  window.location.href = new URL('vmeste/', document.baseURI).toString();
+}
+
 // --- запуск ---
 
 async function main() {
@@ -423,10 +445,7 @@ async function main() {
   on($('#together-no'), 'click', () => flyOut($('.together-card.is-top'), false));
   on($('#together-back'), 'click', () => backToDeck());
   // Начать заново: черновик забываем, возвращаемся к выбору «из чего листать»
-  on($('#together-restart'), 'click', () => {
-    try { sessionStorage.removeItem(DRAFT_KEY); } catch { /* ничего */ }
-    window.location.href = new URL('vmeste/', document.baseURI).toString();
-  });
+  on($('#together-restart'), 'click', restart);
   on($('#together-picked'), 'click', '.together-picked__remove', (e, btn) => {
     const id = Number(btn.closest('.together-picked').dataset.id);
     state.liked = state.liked.filter((x) => x !== id);

@@ -250,10 +250,17 @@
 .together-card__stamp--no { right: 18px; color: #fff; transform: rotate(12deg); opacity: var(--no, 0); }
 
 .together__empty {
-  padding: 48px 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  padding: 24px 8px;
   text-align: center;
   color: var(--text-light);
 }
+.together__empty p { margin: 0 0 4px; font-size: var(--fs-md); }
+.together__votes[hidden],
+.together__hint[hidden] { display: none; }
 
 .together__votes {
   display: flex;
