@@ -23,7 +23,7 @@ const serviceCardHtml = ({ href, iconName, title, link }) => `
     <span class="feed-suggest__link">${link}</span>
   </a>`;
 const SERVICE_CARDS = {
-  3: { href: 'vmeste/?from=feed', iconName: 'users', title: 'Выбираете вдвоём или компанией?', link: 'Выбрать вместе →' },
+  3: { href: 'vmeste/?from=feed', iconName: 'users', title: 'Выбираете, куда пойти вдвоём?', link: 'Выбрать вместе →' },
   7: { href: 'suggest/', iconName: 'heart', title: 'Знаешь место, которого здесь нет?', link: 'Расскажи о нём →' }
 };
 
