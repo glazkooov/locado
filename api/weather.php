@@ -4,6 +4,12 @@
 // и кладёт ответ в weather-cache.json рядом; посетители получают кэш.
 // IP посетителей никуда не уходит: к Open-Meteo ходит только наш сервер.
 
+// Без нового синтаксиса PHP 7+: на хостинге у сайта может стоять старая
+// версия PHP, и тогда файл падал бы с ошибкой 500
+function pick($arr, $key, $default = null) {
+  return (is_array($arr) && isset($arr[$key])) ? $arr[$key] : $default;
+}
+
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: public, max-age=600');
 
@@ -44,7 +50,7 @@ if ($check) {
     'cache_writable' => is_writable(__DIR__),
     'cache_age_min' => is_file($cache) ? round((time() - filemtime($cache)) / 60) : null,
     'open_meteo' => isset($data['current']) ? 'ok' : 'нет ответа',
-    'now' => $data['current'] ?? null
+    'now' => pick($data, 'current')
   ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
   exit;
 }
@@ -58,13 +64,13 @@ if (!isset($data['current']['temperature_2m'], $data['current']['weather_code'])
 
 // Прогноз на ближайшие часы — для «дождь закончится к 21:00»
 $next = [];
-$hourly = $data['hourly'] ?? [];
-foreach (($hourly['time'] ?? []) as $i => $time) {
+$hourly = pick($data, 'hourly', array());
+foreach (pick($hourly, 'time', array()) as $i => $time) {
   $next[] = [
     't' => substr($time, 11, 5),
-    'temp' => round($hourly['temperature_2m'][$i] ?? 0),
-    'code' => (int) ($hourly['weather_code'][$i] ?? 0),
-    'p' => (int) ($hourly['precipitation_probability'][$i] ?? 0)
+    'temp' => round(pick(pick($hourly, 'temperature_2m'), $i, 0)),
+    'code' => (int) pick(pick($hourly, 'weather_code'), $i, 0),
+    'p' => (int) pick(pick($hourly, 'precipitation_probability'), $i, 0)
   ];
 }
 
