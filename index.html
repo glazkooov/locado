@@ -121,12 +121,20 @@
       <div class="container">
         <div class="section-head">
           <p class="section-eyebrow" id="now-eyebrow"></p>
-          <!-- погода и закат: заполняет pages/home.js -->
-          <p class="now__live" id="now-live" hidden></p>
           <h2 class="section-title" id="now-title"></h2>
           <p class="section-lead" id="now-lead"></p>
         </div>
-        <div class="now__cards" id="now-cards"></div>
+        <div class="now__body">
+          <!-- «Сцена»: время, погода, прогноз и закат. Цвет и анимация — по
+               data-scene (дождь, золотой час, ночь…), заполняет pages/home.js -->
+          <div class="now-scene" id="now-scene">
+            <p class="now-scene__time" id="now-scene-time"></p>
+            <p class="now-scene__weather" id="now-scene-weather"></p>
+            <p class="now-scene__forecast" id="now-scene-forecast"></p>
+            <ul class="now-scene__facts" id="now-scene-facts"></ul>
+          </div>
+          <div class="now__cards" id="now-cards"></div>
+        </div>
       </div>
     </section>
 

@@ -88,9 +88,27 @@ function showLoadError() {
   if (feedContainer) feedContainer.innerHTML = message;
 }
 
+const SCENE_DAY = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
+
+/** Панель «сцены»: время, погода, прогноз, закат. Обновляется раз в минуту. */
+function renderNowScene(view) {
+  const now = new Date();
+  $('#now-section').dataset.scene = view.scene;
+  $('#now-scene-time').textContent = `${SCENE_DAY[now.getDay()]}, ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
+  const w = view.weather;
+  $('#now-scene-weather').innerHTML = w
+    ? `${icon(w.icon, 'now-scene__icon')}<b>${escapeHtml(w.temp)}</b><span>${escapeHtml(w.label)}</span>`
+    : '';
+  $('#now-scene-weather').hidden = !w;
+  $('#now-scene-forecast').textContent = view.forecast;
+  $('#now-scene-forecast').hidden = !view.forecast;
+  $('#now-scene-facts').innerHTML = view.facts.map((f) => `<li>${icon(f.icon)}${escapeHtml(f.text)}</li>`).join('');
+}
+
 /** «Сейчас»: сезонная подборка из data/now.json, подобранная под погоду,
  *  время суток и часы работы (core/now.js → pickNow). Под фото — причина
- *  («Под крышей», «Закат в 17:39») и «когда лучше» из story места.
+ *  («Под крышей», «Закат в 17:34»), под названием — фраза места под этот
+ *  момент (moments) или «Когда лучше».
  *  Возвращает показанные места (их не повторяем в начале ленты). */
 function renderNow(entry, places, weather) {
   const section = $('#now-section');
@@ -99,14 +117,15 @@ function renderNow(entry, places, weather) {
   if (!view.cards.length) return [];
   $('#now-eyebrow').textContent = view.eyebrow;
   $('#now-eyebrow').hidden = !view.eyebrow;
-  $('#now-live').innerHTML = view.live.map((x) => `<span>${icon(x.icon)}${escapeHtml(x.text)}</span>`).join('');
-  $('#now-live').hidden = !view.live.length;
   $('#now-title').textContent = view.title;
   $('#now-lead').textContent = view.lead;
   $('#now-lead').hidden = !view.lead;
-  $('#now-cards').innerHTML = view.cards.map(({ place: p, reason }) => {
+  renderNowScene(view);
+  // время, «до заката» и «открыто N мест» — живые, раз в минуту
+  setInterval(() => renderNowScene(pickNow(entry, places, { weather })), 60 * 1000);
+  $('#now-cards').innerHTML = view.cards.map(({ place: p, reason, note }) => {
     const when = p.story?.when;
-    const text = when ? `<b>Когда:</b> ${escapeHtml(when)}` : escapeHtml(p.description || '');
+    const text = note ? escapeHtml(note) : when ? `<b>Когда:</b> ${escapeHtml(when)}` : escapeHtml(p.description || '');
     return `
       <a class="now-card" href="${placeUrl(p.slug)}">
         <span class="now-card__media">

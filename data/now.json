@@ -104,19 +104,20 @@
     ],
     "pool": [
       "tretyakovskaya-galereya",
-      "pushkinskiy-muzey",
+      "depo",
       "muzey-russkogo-impressionizma",
+      "kinoteatr-hudozhestvenny",
+      "danilovsky-rynok",
       "ges-2",
       "vorobyovy-gory",
       "park-zaryadye",
       "krymskaya-naberezhnaya",
-      "neskuchny-sad",
-      "kinoteatr-hudozhestvenny"
+      "neskuchny-sad"
     ],
     "variants": {
       "rain": {
-        "title": "Дождь — повод сходить в музей",
-        "lead": "Осень никуда не денется. Пока льёт — туда, где тепло и есть на что посмотреть."
+        "title": "Дождь — значит, будет уютно",
+        "lead": "Кино, горячий ужин или час с картинами. Осень за окном подождёт."
       },
       "evening": {
         "title": "Осенний вечер",
@@ -125,6 +126,10 @@
       "night": {
         "title": "Ночная Москва",
         "lead": "Почти всё закрыто, но парки и набережные — нет. Тихо, пусто и очень красиво."
+      },
+      "golden": {
+        "title": "Успеть до заката",
+        "lead": "Солнце низко, усадьбы в золоте. Самое красивое время дня — и его осталось немного."
       }
     }
   },

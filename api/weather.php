@@ -16,7 +16,9 @@ if (is_file($cache) && time() - filemtime($cache) < $ttl) {
 }
 
 $url = 'https://api.open-meteo.com/v1/forecast?latitude=55.7558&longitude=37.6173'
-  . '&current=temperature_2m,weather_code&timezone=Europe%2FMoscow';
+  . '&current=temperature_2m,weather_code'
+  . '&hourly=temperature_2m,weather_code,precipitation_probability&forecast_hours=7'
+  . '&timezone=Europe%2FMoscow';
 $raw = @file_get_contents($url, false, stream_context_create(['http' => ['timeout' => 4]]));
 $data = $raw ? json_decode($raw, true) : null;
 
@@ -27,9 +29,22 @@ if (!isset($data['current']['temperature_2m'], $data['current']['weather_code'])
   exit;
 }
 
+// Прогноз на ближайшие часы — для «дождь закончится к 21:00»
+$next = [];
+$hourly = $data['hourly'] ?? [];
+foreach (($hourly['time'] ?? []) as $i => $time) {
+  $next[] = [
+    't' => substr($time, 11, 5),
+    'temp' => round($hourly['temperature_2m'][$i] ?? 0),
+    'code' => (int) ($hourly['weather_code'][$i] ?? 0),
+    'p' => (int) ($hourly['precipitation_probability'][$i] ?? 0)
+  ];
+}
+
 $out = json_encode([
   'temp' => round($data['current']['temperature_2m']),
   'code' => (int) $data['current']['weather_code'],
+  'next' => $next,
   'at' => time()
 ]);
 @file_put_contents($cache, $out, LOCK_EX);

@@ -8,13 +8,18 @@
 //
 // «Живой» блок (pickNow): из places и запаса pool выбираются четыре места
 // под погоду, время суток и часы работы, а заголовок — из variants
-// ({ "rain": {title, lead}, "evening": …, "night": …, "hot": …, "snow": … }),
+// ({ "rain": {title, lead}, "golden": …, "evening": …, "night": …,
+//    "morning": …, "hot": …, "snow": … }),
 // если для текущих условий вариант написан.
+//
+// Под фото — фраза места под этот момент: поле moments в places.json
+// ({ "rain": "…", "sunset": "…", "evening": "…", "night": "…" }), а если
+// для момента фразы нет — «Когда лучше» из story или описание.
 
 import { getOpenStatus } from './format.js';
 import { getDaypart } from './daypart.js';
 import { sunTimes, moscowTime } from './sun.js';
-import { weatherMode, tempLabel } from './weather.js';
+import { weatherMode, tempLabel, forecastPhrase } from './weather.js';
 
 const DATA_URL = 'data/now.json';
 
@@ -39,92 +44,121 @@ export async function loadNow(date = new Date()) {
 
 const SHOW = 4;
 const SOON_CLOSE = 60; // мин: закроется раньше — не зовём
-const SUNSET_AHEAD = 150; // мин до заката: «успеешь к закату»
+const GOLDEN = 120; // мин до заката: «золотой час», зовём на виды
 const VIEW_TAGS = ['панорама', 'высота', 'набережная'];
 
 const minutesUntil = (from, to) => (to - from) / 6e4;
 // Время закрытия — из расписания как есть («23:59» — это полночь)
 const closeTime = (status) => (status.hoursToday?.[1] === '23:59' ? 'полуночи' : status.hoursToday?.[1]);
+const tagged = (p, list) => (p.tags || []).some((t) => list.includes(t));
+// Где переждать непогоду: залы и места, где можно сесть и поесть
+const sheltered = (p) => Boolean(p.indoor) || tagged(p, ['еда']);
 
-/** Сколько минут до закрытия сегодня (null — круглосуточно или неизвестно). */
-function minutesToClose(status, now) {
-  if (!status.isOpen || status.roundTheClock || !status.nextChangeAt) return null;
-  return minutesUntil(now, status.nextChangeAt);
+/** «1 ч 29 мин», «40 мин». */
+export function durationLabel(minutes) {
+  const m = Math.max(0, Math.round(minutes));
+  const h = Math.floor(m / 60);
+  return h ? `${h} ч${m % 60 ? ` ${m % 60} мин` : ''}` : `${m} мин`;
 }
 
-/** Какой вариант заголовка подходит сейчас: погода важнее времени суток. */
-function variantKey(mode, weather, daypart) {
+/** Сцена — настроение блока: от неё цвет, анимация и какие места звать.
+ *  rain | snow | golden | evening | night | morning | day */
+export function sceneOf(now, weather) {
+  const mode = weatherMode(weather);
   if (mode === 'bad') return weather.kind === 'snow' ? 'snow' : 'rain';
-  if (mode === 'hot') return 'hot';
-  if (daypart === 'evening' || daypart === 'night' || daypart === 'morning') return daypart;
-  return null;
+  const { sunrise, sunset } = sunTimes(now);
+  const toSunset = minutesUntil(now, sunset);
+  if (toSunset > 0 && toSunset <= GOLDEN) return 'golden';
+  const daypart = getDaypart(now);
+  if (daypart === 'night' || now < sunrise) return 'night';
+  if (toSunset <= 0) return 'evening';
+  return daypart === 'morning' ? 'morning' : 'day';
 }
 
 /**
  * Что показать в «Сейчас» прямо сейчас.
  * ctx: { now, weather } — weather из core/weather.js или null.
- * Возвращает { title, lead, live, cards: [{ place, reason }] }.
  */
 export function pickNow(entry, places, { now = new Date(), weather = null } = {}) {
   const bySlug = new Map(places.map((p) => [p.slug, p]));
-  const slugs = [...new Set([...(entry.places || []), ...(entry.pool || [])])];
-  const pool = slugs.map((s) => bySlug.get(s)).filter(Boolean);
-  const daypart = getDaypart(now);
+  const main = entry.places || [];
+  const pool = [...new Set([...main, ...(entry.pool || [])])].map((s) => bySlug.get(s)).filter(Boolean);
   const mode = weatherMode(weather);
+  const scene = sceneOf(now, weather);
   const { sunrise, sunset } = sunTimes(now);
   const toSunset = minutesUntil(now, sunset);
-  const sunsetSoon = toSunset > 0 && toSunset <= SUNSET_AHEAD && mode !== 'bad';
-  const tagged = (p, list) => (p.tags || []).some((t) => list.includes(t));
+  const late = scene === 'evening' || scene === 'night';
 
   // К закату зовём в одно место, лучшее для вида: панорама > высота > набережная
-  const sunsetPlace = sunsetSoon && VIEW_TAGS.map((tag) => pool.find((p) => !p.indoor
+  const sunsetPlace = scene === 'golden' && VIEW_TAGS.map((tag) => pool.find((p) => !p.indoor
     && (p.tags || []).includes(tag) && getOpenStatus(p, now).isOpen)).find(Boolean);
+
   const scored = pool.map((place, i) => {
     const status = getOpenStatus(place, now);
     const toClose = minutesToClose(status, now);
     if (!status.isOpen || (toClose !== null && toClose < SOON_CLOSE)) return null;
-    // авторский порядок: основные места выше запаса
-    let score = ((entry.places || []).includes(place.slug) ? 10 : 7) - i * 0.1;
-    let reason = null;
-    if (mode === 'bad') score += place.indoor ? 8 : -8;
-    if (mode === 'good' && !place.indoor && (daypart === 'morning' || daypart === 'day')) score += 2;
+    let score = (main.includes(place.slug) ? 10 : 7) - i * 0.1; // авторский порядок
+    if (mode === 'bad') score += sheltered(place) ? 8 : -8;
+    if (mode === 'good' && !place.indoor && (scene === 'morning' || scene === 'day')) score += 2;
     if (mode === 'hot') score += tagged(place, ['вода', 'купаться', 'лес']) ? 5 : place.indoor ? 2 : -2;
-    if (daypart === 'evening' || daypart === 'night') score += tagged(place, ['вечер', 'ночь']) ? 4 : -4;
-    if (daypart === 'morning' && tagged(place, ['утро'])) score += 2;
-    if (place === sunsetPlace) {
-      score += 6;
-      reason = { icon: 'sunset', text: `Закат в ${moscowTime(sunset)} — успеешь` };
-    }
-    if (!reason && mode === 'bad' && place.indoor) {
-      reason = { icon: 'umbrella', text: toClose !== null ? `Под крышей · до ${closeTime(status)}` : 'Под крышей' };
-    }
-    if (!reason && toClose !== null && toClose < 4 * 60) {
-      reason = { icon: 'clock', text: `Открыто до ${closeTime(status)}` };
-    }
-    if (!reason && daypart === 'night' && status.roundTheClock) {
-      reason = { icon: 'moon', text: 'Открыто всю ночь' };
-    }
-    return { place, reason, score };
+    if (late) score += tagged(place, ['вечер', 'ночь']) ? 4 : -4;
+    if (scene === 'morning' && tagged(place, ['утро'])) score += 2;
+    if (place === sunsetPlace) score += 6;
+    if (place.moments?.[scene]) score += 1.5; // про этот момент у места есть что сказать
+    return { place, status, toClose, score };
   }).filter(Boolean).sort((a, b) => b.score - a.score);
 
-  // Если подходящих мало (ночь, всё закрыто) — авторская четвёрка как была
-  const cards = scored.length >= 2
-    ? scored.slice(0, SHOW).map(({ place, reason }) => ({ place, reason }))
-    : (entry.places || []).map((s) => bySlug.get(s)).filter(Boolean).map((place) => ({ place, reason: null }));
+  // Разнообразие: в дождь и вечером не четыре музея подряд, а музей, кафе,
+  // кино… Сначала по одному месту каждого типа из подходящих моменту, потом
+  // добираем подходящими, и только потом — любыми открытыми. Днём авторская
+  // подборка одного типа («время усадеб») остаётся как есть
+  const fits = mode === 'bad' ? sheltered : late ? (p) => tagged(p, ['вечер', 'ночь']) : null;
+  const picked = [];
+  const take = (item) => { if (picked.length < SHOW && !picked.includes(item)) picked.push(item); };
+  if (fits) {
+    const seen = new Set();
+    scored.filter((x) => fits(x.place)).forEach((x) => {
+      if (!seen.has(x.place.category)) { seen.add(x.place.category); take(x); }
+    });
+    scored.filter((x) => fits(x.place)).forEach(take);
+  }
+  scored.forEach(take);
 
-  const variant = entry.variants?.[variantKey(mode, weather, daypart)];
+  const momentKey = (place) => (place === sunsetPlace ? 'sunset' : scene);
+  const cards = picked.length >= 2
+    ? picked.map(({ place, status, toClose }) => {
+      let reason = null;
+      if (place === sunsetPlace) reason = { icon: 'sunset', text: `Закат в ${moscowTime(sunset)}` };
+      else if (mode === 'bad' && sheltered(place)) reason = { icon: 'umbrella', text: toClose !== null ? `Под крышей · до ${closeTime(status)}` : 'Под крышей' };
+      else if (toClose !== null && toClose < 3 * 60) reason = { icon: 'clock', text: `Открыто до ${closeTime(status)}` };
+      else if (scene === 'night' && status.roundTheClock) reason = { icon: 'moon', text: 'Открыто всю ночь' };
+      const note = place.moments?.[momentKey(place)] || place.moments?.[scene];
+      return { place, reason, note: note || null };
+    })
+    : main.map((s) => bySlug.get(s)).filter(Boolean).map((place) => ({ place, reason: null, note: null }));
 
-  // Строка над заголовком: погода и солнце
-  const live = [];
-  if (weather) live.push({ icon: weather.icon, text: `${tempLabel(weather.temp)}, ${weather.label}` });
-  if (toSunset > 0 && now > sunrise) live.push({ icon: 'sunset', text: `закат в ${moscowTime(sunset)}` });
-  else if (now < sunrise) live.push({ icon: 'sun', text: `рассвет в ${moscowTime(sunrise)}` });
+  const variant = entry.variants?.[scene] || (mode === 'hot' ? entry.variants?.hot : null);
+
+  // Живые факты для панели: закат или рассвет
+  const facts = [];
+  if (toSunset > 0 && now > sunrise) facts.push({ icon: 'sunset', text: `до заката ${durationLabel(toSunset)}` });
+  else if (now < sunrise) facts.push({ icon: 'sun', text: `рассвет в ${moscowTime(sunrise)}` });
+  else facts.push({ icon: 'moon', text: `стемнело в ${moscowTime(sunset)}` });
 
   return {
+    scene,
     eyebrow: entry.eyebrow || '',
     title: variant?.title || entry.title || '',
     lead: variant?.lead || entry.lead || '',
-    live,
+    weather: weather ? { icon: weather.icon, temp: tempLabel(weather.temp), label: weather.label } : null,
+    forecast: forecastPhrase(weather),
+    facts,
     cards
   };
+}
+
+/** Сколько минут до закрытия сегодня (null — круглосуточно или неизвестно). */
+function minutesToClose(status, now) {
+  if (!status.isOpen || status.roundTheClock || !status.nextChangeAt) return null;
+  return minutesUntil(now, status.nextChangeAt);
 }
