@@ -9,6 +9,7 @@
 # Пока секретов нет, заливка просто пропускается.
 #
 # Залить вручную любую ветку: вкладка Actions → «Тестовый сайт» → Run workflow.
+# Что сейчас на тесте — test.locado.ru/version.txt.
 
 name: Тестовый сайт
 
@@ -44,6 +45,18 @@ jobs:
           echo "::add-mask::$host"
           echo "FTP_HOST=$host" >> "$GITHUB_ENV"
           getent hosts "$host" > /dev/null || { echo "Сервер «$host» не находится. Проверь TEST_FTP_SERVER: нужно имя сервера из раздела FTP панели Бегета, без ftp:// и без папок"; exit 1; }
+
+      # Метка версии: test.locado.ru/version.txt — какая ветка и коммит сейчас
+      # на тесте и когда их залили. Создаётся только здесь, в репозитории её нет
+      - name: Метка версии
+        if: env.FTP_SERVER != ''
+        run: |
+          {
+            echo "Ветка:  ${GITHUB_REF_NAME}"
+            echo "Коммит: ${GITHUB_SHA::7} — $(git log -1 --format=%s)"
+            echo "Залито: $(TZ=Europe/Moscow date '+%d.%m.%Y %H:%M') по Москве"
+          } > version.txt
+          cat version.txt
 
       # Заливает только изменённые файлы: список уже залитых хранится на
       # сервере в .ftp-deploy-sync-state.json. Кэш погоды (api/weather-cache.json)
