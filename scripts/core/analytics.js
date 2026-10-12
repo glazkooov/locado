@@ -33,7 +33,12 @@ function start() {
   });
 }
 
+// Статистика — только с основного сайта: тестовый поддомен и локальный
+// сервер не должны портить отчёты
+const MAIN_HOST = 'locado.ru';
+
 export function initAnalytics() {
+  if (window.location.hostname !== MAIN_HOST) return;
   onAnalyticsConsent(start);
 }
 

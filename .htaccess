@@ -13,16 +13,26 @@ AddDefaultCharset utf-8
   # Проверяем оба признака, иначе перенаправление может зациклиться.
   # Если сайт всё же уходит в бесконечную переадресацию — закомментируй эти
   # три строки и включи «Перенаправлять на HTTPS» в панели Beget
+  # Адрес берём из запроса, а не пишем locado.ru: тот же файл работает и на
+  # тестовом поддомене (test.locado.ru), не уводя его на основной сайт
   RewriteCond %{HTTPS} !=on
   RewriteCond %{HTTP:X-Forwarded-Proto} !=https
-  RewriteRule ^ https://locado.ru%{REQUEST_URI} [R=301,L]
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 
-  RewriteCond %{HTTP_HOST} ^www\. [NC]
-  RewriteRule ^ https://locado.ru%{REQUEST_URI} [R=301,L]
+  RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+  RewriteRule ^ https://%1%{REQUEST_URI} [R=301,L]
 
   # Служебные файлы и папки проекта не отдаём, если их всё-таки загрузили
   RewriteRule (^|/)\.(?!well-known) - [F]
   RewriteRule ^(docs|tools)(/|$) - [F]
+</IfModule>
+
+# Тестовый поддомен и любые другие адреса, кроме основного, поисковики
+# не индексируют
+<IfModule mod_headers.c>
+  <If "%{HTTP_HOST} != 'locado.ru'">
+    Header set X-Robots-Tag "noindex, nofollow"
+  </If>
 </IfModule>
 
 # Своя страница «Такой страницы нет» вместо стандартной ошибки сервера
