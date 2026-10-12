@@ -9,62 +9,75 @@
 // photo — фото одного из наших мест (assets/images/places/sm/): у них
 // есть лицензия и подпись автора; сторонние картинки сюда не ставить.
 //
-// Теги сверены с базой из 61 места (сентябрь 2026). При изменении базы
-// проверьте, что у каждого настроения остаётся хотя бы MIN_RESULTS мест.
+// При изменении базы проверьте, что у каждого настроения остаётся хотя бы
+// MIN_RESULTS мест.
+
+import { getOpenStatus } from './format.js';
 
 export const MIN_RESULTS = 4;
 
+// Название — состояние, а не рубрика: «что хочется», глагол и то, что даёт
+// город. Пары противоположностей: тишина — город, новое — прошлое.
 export const MOODS = [
   {
-    id: 'quiet-nature',
-    label: 'Тихая прогулка на природе',
+    id: 'quiet',
+    label: 'Выдохнуть в тишине',
     icon: 'leaf',
     photo: 'assets/images/places/sm/vorontsovsky-park.jpg', // фото места — подпись на странице «Фото на сайте»
     bestAt: ['morning', 'day'],
-    any: ['природа', 'парк', 'лес', 'сад'],
+    any: ['природа', 'парк', 'лес', 'сад', 'скрыто'],
     all: ['тихо'],
     categories: ['nature']
   },
   {
-    id: 'romantic-evening',
-    label: 'Романтично вечером',
-    icon: 'building-2',
+    id: 'new',
+    label: 'Открыть новое',
+    icon: 'wand-sparkles',
+    photo: 'assets/images/places/sm/park-huamin.jpg', // фото места — подпись на странице «Фото на сайте»
+    bestAt: ['day'],
+    any: ['необычно', 'скрыто'],
+    categories: ['art', 'entertainment']
+  },
+  {
+    id: 'inspire',
+    label: 'Набраться вдохновения',
+    icon: 'palette',
+    photo: 'assets/images/places/sm/muzey-russkogo-impressionizma.jpg', // фото места — подпись на странице «Фото на сайте»
+    bestAt: ['day'],
+    any: ['вдохновляюще'],
+    categories: ['art']
+  },
+  {
+    id: 'love',
+    label: 'Влюбиться в вечер',
+    icon: 'heart',
     photo: 'assets/images/places/sm/krymskaya-naberezhnaya.jpg', // фото места — подпись на странице «Фото на сайте»
-    bestAt: ['evening'],
+    bestAt: ['evening', 'night'],
     any: ['вечер', 'ночь'],
     all: ['свидание'],
     categories: ['photo']
   },
   {
-    id: 'culture-art',
-    label: 'Культура и искусство',
-    icon: 'palette',
-    photo: 'assets/images/places/sm/muzey-russkogo-impressionizma.jpg', // фото места — подпись на странице «Фото на сайте»
-    bestAt: ['day'],
-    any: ['смотреть искусство', 'смотреть спектакль'],
-    categories: ['art']
+    id: 'past',
+    label: 'Шагнуть в прошлое',
+    icon: 'landmark',
+    photo: 'assets/images/places/sm/kuskovo.jpg', // фото места — подпись на странице «Фото на сайте»
+    bestAt: ['morning', 'day'],
+    any: ['исторично', 'старый город', 'усадьба'],
+    categories: ['nature', 'photo']
   },
   {
-    id: 'food',
-    label: 'Вкусно поесть',
-    icon: 'utensils',
-    photo: 'assets/images/places/sm/depo.jpg', // фото места — подпись на странице «Фото на сайте»
-    bestAt: ['morning', 'evening'],
-    any: ['есть', 'еда'],
-    categories: ['food']
-  },
-  {
-    id: 'friends',
-    label: 'С друзьями',
+    id: 'city',
+    label: 'Зарядиться городом',
     icon: 'users',
-    photo: 'assets/images/places/sm/vdnh.jpg', // фото места — подпись на странице «Фото на сайте»
+    photo: 'assets/images/places/sm/park-gorkogo.jpg', // фото места — подпись на странице «Фото на сайте»
     bestAt: ['evening', 'night'],
-    all: ['с друзьями'],
-    categories: ['entertainment']
+    any: ['оживлённо'],
+    categories: ['entertainment', 'food']
   }
 ];
 
-const matchesMood = (place, mood) => {
+export const matchesMood = (place, mood) => {
   const tags = place.tags || [];
   return (!mood.any || mood.any.some((t) => tags.includes(t)))
     && (!mood.all || mood.all.every((t) => tags.includes(t)));
@@ -89,4 +102,47 @@ export function resolveMoodFilters(places, moodId) {
 export function moodsFor(daypart) {
   const fits = (m) => m.bestAt.includes(daypart);
   return [...MOODS.filter(fits), ...MOODS.filter((m) => !fits(m))];
+}
+
+// --- живые карточки: сколько мест, что открыто, с чего начать ---
+
+const SOON_CLOSE = 60; // мин: закроется раньше — в «с чего начать» не зовём
+// Где переждать непогоду — как в блоке «Сейчас» (core/now.js)
+const sheltered = (p) => Boolean(p.indoor) || p.category === 'food';
+
+/** Места настроения (по тегам, а если мало — по категориям). */
+export function moodPlaces(places, mood) {
+  const byTags = places.filter((p) => matchesMood(p, mood));
+  return byTags.length >= MIN_RESULTS ? byTags : places.filter((p) => mood.categories.includes(p.category));
+}
+
+/** Открыто и не закрывается в ближайший час. */
+function openForAWhile(place, now) {
+  const s = getOpenStatus(place, now);
+  if (!s.isOpen) return false;
+  if (s.roundTheClock || !s.nextChangeAt) return true;
+  return (s.nextChangeAt - now) / 6e4 >= SOON_CLOSE;
+}
+
+/**
+ * Живые данные карточек: { [moodId]: { total, open, picks } } и порядок
+ * настроений. В непогоду «подходит сейчас» — то, что под крышей.
+ * daypart — 'morning' | 'day' | 'evening' | 'night', bad — непогода.
+ */
+export function moodsNow(places, { now = new Date(), daypart, bad = false } = {}) {
+  const info = {};
+  MOODS.forEach((mood) => {
+    const list = moodPlaces(places, mood);
+    const open = list.filter((p) => openForAWhile(p, now));
+    const fit = bad ? open.filter(sheltered) : open;
+    // С чего начать: подходящие сейчас, потом с тегом времени суток
+    const dayTag = { morning: 'утро', day: 'день', evening: 'вечер', night: 'ночь' }[daypart];
+    const ranked = [...fit].sort((a, b) => Number((b.tags || []).includes(dayTag)) - Number((a.tags || []).includes(dayTag)));
+    info[mood.id] = { total: list.length, open: open.length, fit: fit.length, picks: ranked.slice(0, 3) };
+  });
+  // Порядок: сначала то, что подходит времени суток и где сейчас больше
+  // подходящих мест; в дождь вперёд выходят настроения «под крышей»
+  const score = (m) => (m.bestAt.includes(daypart) ? 100 : 0) * (bad ? 0.2 : 1) + info[m.id].fit * (bad ? 10 : 1);
+  const order = [...MOODS].sort((a, b) => score(b) - score(a));
+  return { info, order };
 }

@@ -7,15 +7,15 @@ import { loadPlaces, sample, bySlug, placeUrl, CATEGORIES } from '../core/places
 import { bindCards } from '../components/card.js';
 import { initFeed } from '../components/feed.js';
 import { initRandomizer } from '../components/randomizer.js';
-import { initHeroMoods, renderHeroMoods } from '../components/hero-moods.js';
-import { heroGreeting } from '../core/daypart.js';
+import { initHeroMoods, renderHeroMoods, liveHeroMoods } from '../components/hero-moods.js';
+import { heroGreeting, getDaypart } from '../core/daypart.js';
 import { renderCategoryButtons } from '../components/category-buttons.js';
 import { initPlacesMap } from '../components/map.js';
 import { showToast } from '../components/toast.js';
 import { loadCollections } from '../core/collections.js';
 import { collectionCardHtml } from '../components/collection-card.js';
 import { loadNow, pickNow } from '../core/now.js';
-import { loadWeather } from '../core/weather.js';
+import { loadWeather, weatherMode } from '../core/weather.js';
 import { icon } from '../core/icons.js';
 
 // Скроллим к заголовку ленты, а не к карточкам: так видны вкладки и
@@ -189,7 +189,8 @@ async function main() {
     { seasonal: inSpotlight }
   );
   applyUrlFilter(feed);
-  initHeroMoods(feed, places, { onSelect: () => scrollToFeed() });
+  const live = liveHeroMoods(places, { daypart: getDaypart(), bad: weatherMode(await weather) === 'bad' });
+  initHeroMoods(feed, places, { onSelect: () => scrollToFeed(), live });
   initRandomizer(places);
   initPlacesMap(places);
 }
