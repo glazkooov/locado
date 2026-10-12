@@ -101,7 +101,32 @@
       "tsaritsyno",
       "kuskovo",
       "kuzminki"
-    ]
+    ],
+    "pool": [
+      "tretyakovskaya-galereya",
+      "pushkinskiy-muzey",
+      "muzey-russkogo-impressionizma",
+      "ges-2",
+      "vorobyovy-gory",
+      "park-zaryadye",
+      "krymskaya-naberezhnaya",
+      "neskuchny-sad",
+      "kinoteatr-hudozhestvenny"
+    ],
+    "variants": {
+      "rain": {
+        "title": "Дождь — повод сходить в музей",
+        "lead": "Осень никуда не денется. Пока льёт — туда, где тепло и есть на что посмотреть."
+      },
+      "evening": {
+        "title": "Осенний вечер",
+        "lead": "Темнеет рано: ловим закат с высоты, потом гуляем по набережным в огнях."
+      },
+      "night": {
+        "title": "Ночная Москва",
+        "lead": "Почти всё закрыто, но парки и набережные — нет. Тихо, пусто и очень красиво."
+      }
+    }
   },
   {
     "from": "11-01",
