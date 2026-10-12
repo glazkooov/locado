@@ -375,12 +375,42 @@
   gap: 20px;
 }
 
-.now-card {
-  display: block;
-  min-width: 0;
-  color: inherit;
-  text-decoration: none;
+.now__live {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin-top: 6px;
+  font-size: var(--fs-sm);
+  color: var(--text-light);
 }
+.now__live[hidden] { display: none; }
+.now__live span { display: inline-flex; align-items: center; gap: 6px; }
+.now__live .icon { font-size: 1.15em; color: var(--primary-text); }
+
+.now-card__media {
+  position: relative;
+  display: block;
+}
+
+/* Почему место показано именно сейчас: плашка на фото снизу */
+.now-card__reason {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: calc(100% - 20px);
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  font-size: var(--fs-caption, 0.8rem);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--ink);
+  box-shadow: 0 2px 8px rgba(40, 20, 10, 0.15);
+}
+.now-card__reason .icon { flex: none; color: var(--primary-text); }
 
 .now-card__photo {
   display: block;
@@ -417,7 +447,8 @@
    выделенное, а на телефоне :hover ещё и «залипал» после касания.
    Отклик на курсор — только фото чуть приподнимается */
 @media (hover: hover) {
-  .now-card:hover .now-card__photo { transform: translateY(-4px); }
+  .now-card:hover .now-card__media { transform: translateY(-4px); }
+  .now-card__media { transition: transform 0.3s ease; }
 }
 
 .suggested-places {

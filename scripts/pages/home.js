@@ -14,7 +14,9 @@ import { initPlacesMap } from '../components/map.js';
 import { showToast } from '../components/toast.js';
 import { loadCollections } from '../core/collections.js';
 import { collectionCardHtml } from '../components/collection-card.js';
-import { loadNow } from '../core/now.js';
+import { loadNow, pickNow } from '../core/now.js';
+import { loadWeather } from '../core/weather.js';
+import { icon } from '../core/icons.js';
 
 // Скроллим к заголовку ленты, а не к карточкам: так видны вкладки и
 // плашка выбранного настроения/подборки над ними.
@@ -86,31 +88,52 @@ function showLoadError() {
   if (feedContainer) feedContainer.innerHTML = message;
 }
 
-/** «Сейчас»: сезонная подборка из data/now.json. Под фото — «когда лучше»
- *  из story места, а если его ещё нет — короткое описание.
+/** Строка над заголовком: погода, прогноз, закат. Обновляется раз в минуту. */
+function renderNowLive(view) {
+  const items = [];
+  // «+7°, дождь, стихнет к 21:00» — прогноз в одной фразе с погодой
+  if (view.weather) {
+    items.push({ icon: view.weather.icon, text: [`${view.weather.temp}`, view.weather.label, view.forecast].filter(Boolean).join(', ') });
+  }
+  items.push(...view.facts);
+  $('#now-live').innerHTML = items.map((x) => `<span>${x.icon ? icon(x.icon) : ''}${escapeHtml(x.text)}</span>`).join('');
+  $('#now-live').hidden = !items.length;
+}
+
+/** «Сейчас»: сезонная подборка из data/now.json, подобранная под погоду,
+ *  время суток и часы работы (core/now.js → pickNow). Под фото — причина
+ *  («Под крышей», «Закат в 17:34»), под названием — фраза места под этот
+ *  момент (moments) или «Когда лучше».
  *  Возвращает показанные места (их не повторяем в начале ленты). */
-function renderNow(entry, places) {
+function renderNow(entry, places, weather) {
   const section = $('#now-section');
   if (!section || !entry) return [];
-  const picks = (entry.places || []).map((slug) => bySlug(places, slug)).filter(Boolean);
-  if (!picks.length) return [];
-  $('#now-eyebrow').textContent = entry.eyebrow || '';
-  $('#now-eyebrow').hidden = !entry.eyebrow;
-  $('#now-title').textContent = entry.title || '';
-  $('#now-lead').textContent = entry.lead || '';
-  $('#now-lead').hidden = !entry.lead;
-  $('#now-cards').innerHTML = picks.map((p) => {
+  const view = pickNow(entry, places, { weather });
+  if (!view.cards.length) return [];
+  $('#now-eyebrow').textContent = view.eyebrow;
+  $('#now-eyebrow').hidden = !view.eyebrow;
+  $('#now-title').textContent = view.title;
+  $('#now-lead').textContent = view.lead;
+  $('#now-lead').hidden = !view.lead;
+  renderNowLive(view);
+  // «до заката 1 ч 30 мин» — живое, раз в минуту
+  setInterval(() => renderNowLive(pickNow(entry, places, { weather })), 60 * 1000);
+  $('#now-cards').innerHTML = view.cards.map(({ place: p, reason, note }) => {
     const when = p.story?.when;
-    const text = when ? `<b>Когда:</b> ${escapeHtml(when)}` : escapeHtml(p.description || '');
+    const text = note ? escapeHtml(note) : when ? `<b>Когда:</b> ${escapeHtml(when)}` : escapeHtml(p.description || '');
     return `
       <a class="now-card" href="${placeUrl(p.slug)}">
-        <img class="now-card__photo" src="${escapeHtml(p.photoSm || p.photo || '')}" alt="${escapeHtml(p.name)}" loading="lazy">
+        <span class="now-card__media">
+          <img class="now-card__photo" src="${escapeHtml(p.photoSm || p.photo || '')}" alt="${escapeHtml(p.name)}" loading="lazy">
+          ${reason ? `<span class="now-card__reason">${icon(reason.icon)}${escapeHtml(reason.text)}</span>` : ''}
+        </span>
         <span class="now-card__name">${escapeHtml(p.name)}</span>
         <p class="now-card__text">${text}</p>
       </a>`;
   }).join('');
   section.hidden = false;
   // Цель: что из «Сейчас» открывают — работает ли сезонный блок
+  const picks = view.cards.map((c) => c.place);
   $$('.now-card', section).forEach((card, i) => on(card, 'click', () => {
     goal('now_open', { 'Сейчас': { [entry.title || '']: picks[i].name } });
   }));
@@ -138,6 +161,7 @@ async function main() {
   bindCards(document.body);
 
   const nowEntry = loadNow(); // параллельно с местами
+  const weather = loadWeather();
   const suggestedContainer = $('#suggested-grid');
   const feedContainer = $('#places-container');
   if (suggestedContainer) suggestedContainer.innerHTML = skeletonCards(2, 'suggested-card');
@@ -153,7 +177,7 @@ async function main() {
     return;
   }
 
-  const spotlight = renderNow(await nowEntry, places);
+  const spotlight = renderNow(await nowEntry, places, await weather);
 
   renderSuggested(places);
 
