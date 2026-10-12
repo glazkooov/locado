@@ -55,7 +55,7 @@ export function weatherMode(w) {
 
 export const tempLabel = (t) => `${t > 0 ? '+' : t < 0 ? '−' : ''}${Math.abs(t)}°`;
 
-/** Что будет в ближайшие часы — одной фразой, или ''.
+/** Что будет в ближайшие часы — коротко, для строки над заголовком, или ''.
  *  Первый час прогноза — текущий, его пропускаем. */
 export function forecastPhrase(w) {
   if (!w?.next?.length) return '';
@@ -64,15 +64,14 @@ export function forecastPhrase(w) {
   const isWet = (h) => WET.includes(h.kind) && h.p >= 50;
   if (wetNow) {
     const dry = ahead.find((h) => !WET.includes(h.kind));
-    const what = w.kind === 'snow' ? 'Снег' : 'Дождь';
-    return dry ? `${what} стихнет примерно к ${dry.t} — потом можно гулять` : `${what}, похоже, надолго — до ночи лучше под крышу`;
+    return dry ? `стихнет к ${dry.t}` : 'похоже, надолго';
   }
   const wet = ahead.find(isWet);
   if (wet) {
     const what = wet.kind === 'snow' ? 'снег' : 'дождь';
-    return `К ${wet.t} обещают ${what} — успей погулять до него`;
+    return `к ${wet.t} обещают ${what}`;
   }
   const temps = ahead.map((h) => h.temp);
-  if (temps.length && Math.min(...temps) <= w.temp - 4) return 'К вечеру заметно похолодает — возьми что-то тёплое';
+  if (temps.length && Math.min(...temps) <= w.temp - 4) return 'скоро похолодает';
   return '';
 }

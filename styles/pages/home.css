@@ -369,168 +369,23 @@
 
 .now[hidden] { display: none; }
 
-.now__body {
+.now__cards {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 20px;
 }
 
-.now__cards {
-  grid-column: span 3;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px;
-}
-/* на компьютере рядом со «сценой» помещаются три места, четвёртое — на телефоне */
-.now__cards .now-card:nth-child(n + 4) { display: none; }
-
-/* ----- «Сцена»: время, погода, прогноз. Цвет — по data-scene секции ----- */
-.now-scene {
-  --scene-bg: linear-gradient(165deg, #9CCBFF 0%, #FFD9B0 100%);
-  --scene-ink: var(--ink);
-  position: relative;
+.now__live {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-  aspect-ratio: 4 / 5;
-  padding: 22px;
-  overflow: hidden;
-  border-radius: var(--radius-card);
-  background: var(--scene-bg);
-  color: var(--scene-ink);
-  isolation: isolate;
-}
-.now-scene > * { position: relative; z-index: 1; margin: 0; }
-
-.now-scene__time {
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  opacity: 0.85;
-}
-
-.now-scene__weather {
-  display: flex;
-  align-items: center;
   flex-wrap: wrap;
-  gap: 4px 12px;
-}
-.now-scene__weather[hidden] { display: none; }
-.now-scene__icon { font-size: 2.6rem; stroke-width: 1.6; }
-.now-scene__weather b {
-  font-family: var(--font-heading);
-  font-size: 2.6rem;
-  line-height: 1;
-  letter-spacing: -0.03em;
-}
-.now-scene__weather span { flex-basis: 100%; font-size: var(--fs-md); font-weight: 600; }
-
-.now-scene__forecast {
-  font-size: var(--fs-md);
-  line-height: 1.4;
-  font-weight: 500;
-}
-.now-scene__forecast[hidden] { display: none; }
-
-.now-scene__facts {
-  display: grid;
-  gap: 6px;
-  margin-top: auto !important;
-  padding: 0;
-  list-style: none;
+  gap: 4px 16px;
+  margin-top: 6px;
   font-size: var(--fs-sm);
+  color: var(--text-light);
 }
-.now-scene__facts li { display: flex; align-items: center; gap: 8px; }
-.now-scene__facts .icon { flex: none; opacity: 0.85; }
-
-/* Частицы: дождь, снег, звёзды; солнце — свечение в углу */
-.now-scene::before,
-.now-scene::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-}
-
-.now[data-scene='morning'] .now-scene { --scene-bg: linear-gradient(165deg, #FFE7C7 0%, #FFC6A1 100%); }
-.now[data-scene='day'] .now-scene { --scene-bg: linear-gradient(165deg, #9CCBFF 0%, #FFE0B8 100%); }
-.now[data-scene='morning'] .now-scene::after,
-.now[data-scene='day'] .now-scene::after {
-  background: radial-gradient(circle at 85% 12%, rgba(255, 244, 200, 0.95) 0 34px, rgba(255, 220, 140, 0.35) 35px 90px, transparent 91px);
-}
-
-.now[data-scene='golden'] .now-scene {
-  --scene-bg: linear-gradient(170deg, #FFB14A 0%, #FF6A3D 55%, #C2386B 100%);
-  --scene-ink: #fff;
-}
-.now[data-scene='golden'] .now-scene::after {
-  background: radial-gradient(circle at 70% 108%, rgba(255, 236, 170, 0.95) 0 60px, rgba(255, 190, 110, 0.45) 61px 140px, transparent 141px);
-  animation: scene-sun 6s ease-in-out infinite alternate;
-}
-
-.now[data-scene='evening'] .now-scene {
-  --scene-bg: linear-gradient(170deg, #2D2A5A 0%, #6A3F73 60%, #D46A55 100%);
-  --scene-ink: #fff;
-}
-.now[data-scene='night'] .now-scene {
-  --scene-bg: linear-gradient(170deg, #0F1430 0%, #221D47 100%);
-  --scene-ink: #fff;
-}
-.now[data-scene='evening'] .now-scene::before,
-.now[data-scene='night'] .now-scene::before {
-  background-image:
-    radial-gradient(1.5px 1.5px at 20% 18%, #fff 50%, transparent 51%),
-    radial-gradient(1px 1px at 62% 10%, #fff 50%, transparent 51%),
-    radial-gradient(1.5px 1.5px at 82% 30%, #fff 50%, transparent 51%),
-    radial-gradient(1px 1px at 40% 36%, #fff 50%, transparent 51%),
-    radial-gradient(1px 1px at 12% 52%, #fff 50%, transparent 51%),
-    radial-gradient(1.5px 1.5px at 74% 58%, #fff 50%, transparent 51%),
-    radial-gradient(1px 1px at 90% 8%, #fff 50%, transparent 51%);
-  animation: scene-twinkle 4s ease-in-out infinite alternate;
-}
-.now[data-scene='evening'] .now-scene::before { opacity: 0.6; }
-
-.now[data-scene='rain'] .now-scene {
-  --scene-bg: linear-gradient(170deg, #5B6B7E 0%, #2E3A4A 100%);
-  --scene-ink: #fff;
-}
-.now[data-scene='rain'] .now-scene::before {
-  background-image: repeating-linear-gradient(105deg, transparent 0 14px, rgba(255, 255, 255, 0.22) 14px 15px, transparent 15px 31px);
-  background-size: 100% 60px;
-  animation: scene-rain 0.6s linear infinite;
-}
-
-.now[data-scene='snow'] .now-scene {
-  --scene-bg: linear-gradient(170deg, #9FB0C8 0%, #5F7090 100%);
-  --scene-ink: #fff;
-}
-.now[data-scene='snow'] .now-scene::before {
-  background-image:
-    radial-gradient(3px 3px at 10% 20%, #fff 50%, transparent 51%),
-    radial-gradient(2px 2px at 30% 60%, #fff 50%, transparent 51%),
-    radial-gradient(3px 3px at 55% 30%, #fff 50%, transparent 51%),
-    radial-gradient(2px 2px at 75% 75%, #fff 50%, transparent 51%),
-    radial-gradient(3px 3px at 88% 45%, #fff 50%, transparent 51%);
-  background-size: 160px 160px;
-  animation: scene-snow 8s linear infinite;
-}
-
-@keyframes scene-rain { to { background-position: -16px 60px; } }
-@keyframes scene-snow { to { background-position: 30px 160px; } }
-@keyframes scene-twinkle { from { opacity: 0.45; } to { opacity: 1; } }
-@keyframes scene-sun { from { transform: translateY(0); } to { transform: translateY(10px); } }
-
-@media (prefers-reduced-motion: reduce) {
-  .now-scene::before,
-  .now-scene::after { animation: none !important; }
-}
-
-.now-card {
-  display: block;
-  min-width: 0;
-  color: inherit;
-  text-decoration: none;
-}
+.now__live[hidden] { display: none; }
+.now__live span { display: inline-flex; align-items: center; gap: 6px; }
+.now__live .icon { font-size: 1.15em; color: var(--primary-text); }
 
 .now-card__media {
   position: relative;
@@ -1089,15 +944,6 @@
 /* «Сейчас» на телефоне — один ряд с прокруткой вбок, как карточки
    настроений в hero: край следующей карточки подсказывает, что их больше */
 @media (max-width: 767px) {
-  .now__body { display: block; }
-  .now-scene {
-    aspect-ratio: auto;
-    min-height: 0;
-    margin-bottom: 16px;
-    padding: 18px;
-  }
-  .now-scene__facts { margin-top: 6px !important; }
-  .now__cards .now-card:nth-child(n + 4) { display: block; }
   .now__cards {
     display: flex;
     gap: 12px;

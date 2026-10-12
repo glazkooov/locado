@@ -46,13 +46,14 @@ const SHOW = 4;
 const SOON_CLOSE = 60; // мин: закроется раньше — не зовём
 const GOLDEN = 120; // мин до заката: «золотой час», зовём на виды
 const VIEW_TAGS = ['панорама', 'высота', 'набережная'];
+const SEASON_TAGS = ['зима', 'зима', 'весна', 'весна', 'весна', 'лето', 'лето', 'лето', 'осень', 'осень', 'осень', 'зима'];
 
 const minutesUntil = (from, to) => (to - from) / 6e4;
 // Время закрытия — из расписания как есть («23:59» — это полночь)
 const closeTime = (status) => (status.hoursToday?.[1] === '23:59' ? 'полуночи' : status.hoursToday?.[1]);
 const tagged = (p, list) => (p.tags || []).some((t) => list.includes(t));
-// Где переждать непогоду: залы и места, где можно сесть и поесть
-const sheltered = (p) => Boolean(p.indoor) || tagged(p, ['еда']);
+// Где переждать непогоду: залы, кафе и рынки (indoor в places.json)
+const sheltered = (p) => Boolean(p.indoor) || p.category === 'food';
 
 /** «1 ч 29 мин», «40 мин». */
 export function durationLabel(minutes) {
@@ -82,7 +83,13 @@ export function sceneOf(now, weather) {
 export function pickNow(entry, places, { now = new Date(), weather = null } = {}) {
   const bySlug = new Map(places.map((p) => [p.slug, p]));
   const main = entry.places || [];
-  const pool = [...new Set([...main, ...(entry.pool || [])])].map((s) => bySlug.get(s)).filter(Boolean);
+  const editorial = [...new Set([...main, ...(entry.pool || [])])];
+  // Остальной каталог тоже участвует, но ниже авторских: места с тегом
+  // сезона или «круглый год» — так подборка растёт вместе с каталогом
+  const seasonTag = SEASON_TAGS[now.getMonth()];
+  const catalog = places.filter((p) => !editorial.includes(p.slug)
+    && tagged(p, [seasonTag, 'круглый год']));
+  const pool = [...editorial.map((s) => bySlug.get(s)).filter(Boolean), ...catalog];
   const mode = weatherMode(weather);
   const scene = sceneOf(now, weather);
   const { sunrise, sunset } = sunTimes(now);
@@ -97,7 +104,9 @@ export function pickNow(entry, places, { now = new Date(), weather = null } = {}
     const status = getOpenStatus(place, now);
     const toClose = minutesToClose(status, now);
     if (!status.isOpen || (toClose !== null && toClose < SOON_CLOSE)) return null;
-    let score = (main.includes(place.slug) ? 10 : 7) - i * 0.1; // авторский порядок
+    // авторские места выше каталога, основные выше запаса
+    let score = main.includes(place.slug) ? 10 - i * 0.1
+      : editorial.includes(place.slug) ? 7 - i * 0.1 : 4;
     if (mode === 'bad') score += sheltered(place) ? 8 : -8;
     if (mode === 'good' && !place.indoor && (scene === 'morning' || scene === 'day')) score += 2;
     if (mode === 'hot') score += tagged(place, ['вода', 'купаться', 'лес']) ? 5 : place.indoor ? 2 : -2;
@@ -141,9 +150,11 @@ export function pickNow(entry, places, { now = new Date(), weather = null } = {}
 
   // Живые факты для панели: закат или рассвет
   const facts = [];
-  if (toSunset > 0 && now > sunrise) facts.push({ icon: 'sunset', text: `до заката ${durationLabel(toSunset)}` });
-  else if (now < sunrise) facts.push({ icon: 'sun', text: `рассвет в ${moscowTime(sunrise)}` });
-  else facts.push({ icon: 'moon', text: `стемнело в ${moscowTime(sunset)}` });
+  if (toSunset > 0 && now > sunrise) {
+    facts.push({ icon: 'sunset', text: toSunset <= 3 * 60 ? `до заката ${durationLabel(toSunset)}` : `закат в ${moscowTime(sunset)}` });
+  } else if (now < sunrise) {
+    facts.push({ icon: 'sun', text: `рассвет в ${moscowTime(sunrise)}` });
+  } else facts.push({ icon: 'moon', text: `стемнело в ${moscowTime(sunset)}` });
 
   return {
     scene,

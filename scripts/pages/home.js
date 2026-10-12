@@ -88,21 +88,16 @@ function showLoadError() {
   if (feedContainer) feedContainer.innerHTML = message;
 }
 
-const SCENE_DAY = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
-
-/** Панель «сцены»: время, погода, прогноз, закат. Обновляется раз в минуту. */
-function renderNowScene(view) {
-  const now = new Date();
-  $('#now-section').dataset.scene = view.scene;
-  $('#now-scene-time').textContent = `${SCENE_DAY[now.getDay()]}, ${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
-  const w = view.weather;
-  $('#now-scene-weather').innerHTML = w
-    ? `${icon(w.icon, 'now-scene__icon')}<b>${escapeHtml(w.temp)}</b><span>${escapeHtml(w.label)}</span>`
-    : '';
-  $('#now-scene-weather').hidden = !w;
-  $('#now-scene-forecast').textContent = view.forecast;
-  $('#now-scene-forecast').hidden = !view.forecast;
-  $('#now-scene-facts').innerHTML = view.facts.map((f) => `<li>${icon(f.icon)}${escapeHtml(f.text)}</li>`).join('');
+/** Строка над заголовком: погода, прогноз, закат. Обновляется раз в минуту. */
+function renderNowLive(view) {
+  const items = [];
+  // «+7°, дождь, стихнет к 21:00» — прогноз в одной фразе с погодой
+  if (view.weather) {
+    items.push({ icon: view.weather.icon, text: [`${view.weather.temp}`, view.weather.label, view.forecast].filter(Boolean).join(', ') });
+  }
+  items.push(...view.facts);
+  $('#now-live').innerHTML = items.map((x) => `<span>${x.icon ? icon(x.icon) : ''}${escapeHtml(x.text)}</span>`).join('');
+  $('#now-live').hidden = !items.length;
 }
 
 /** «Сейчас»: сезонная подборка из data/now.json, подобранная под погоду,
@@ -120,9 +115,9 @@ function renderNow(entry, places, weather) {
   $('#now-title').textContent = view.title;
   $('#now-lead').textContent = view.lead;
   $('#now-lead').hidden = !view.lead;
-  renderNowScene(view);
-  // время, «до заката» и «открыто N мест» — живые, раз в минуту
-  setInterval(() => renderNowScene(pickNow(entry, places, { weather })), 60 * 1000);
+  renderNowLive(view);
+  // «до заката 1 ч 30 мин» — живое, раз в минуту
+  setInterval(() => renderNowLive(pickNow(entry, places, { weather })), 60 * 1000);
   $('#now-cards').innerHTML = view.cards.map(({ place: p, reason, note }) => {
     const when = p.story?.when;
     const text = note ? escapeHtml(note) : when ? `<b>Когда:</b> ${escapeHtml(when)}` : escapeHtml(p.description || '');
