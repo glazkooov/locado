@@ -1,0 +1,55 @@
+# Автозаливка на тестовый сайт (test.locado.ru): после каждого пуша в
+# рабочую ветку Claude GitHub сам заливает сайт по FTP в папку поддомена.
+# Основной сайт (locado.ru) не трогается — его по-прежнему заливают вручную.
+#
+# Нужны секреты репозитория (Settings → Secrets and variables → Actions):
+#   TEST_FTP_SERVER   — FTP-сервер Бегета (в панели: раздел FTP)
+#   TEST_FTP_USERNAME — отдельный FTP-доступ, у которого домашняя папка —
+#   TEST_FTP_PASSWORD   папка тестового поддомена (не всего аккаунта!)
+# Пока секретов нет, заливка просто пропускается.
+#
+# Залить вручную любую ветку: вкладка Actions → «Тестовый сайт» → Run workflow.
+
+name: Тестовый сайт
+
+on:
+  push:
+    branches: ['claude/**']
+  workflow_dispatch:
+
+# Две заливки подряд не мешают друг другу: новая ждёт, пока закончится старая
+concurrency:
+  group: deploy-test
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      FTP_SERVER: ${{ secrets.TEST_FTP_SERVER }}
+    steps:
+      - name: Нет FTP-доступа — пропускаем
+        if: env.FTP_SERVER == ''
+        run: echo "Секреты TEST_FTP_* не заданы — заливка на тест пропущена"
+
+      - uses: actions/checkout@v4
+        if: env.FTP_SERVER != ''
+
+      # Заливает только изменённые файлы: список уже залитых хранится на
+      # сервере в .ftp-deploy-sync-state.json. Кэш погоды (api/weather-cache.json)
+      # создаёт сам сервер — его не трогаем
+      - name: Залить на test.locado.ru
+        if: env.FTP_SERVER != ''
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.TEST_FTP_SERVER }}
+          username: ${{ secrets.TEST_FTP_USERNAME }}
+          password: ${{ secrets.TEST_FTP_PASSWORD }}
+          server-dir: ./
+          exclude: |
+            **/.git*
+            **/.git*/**
+            .github/**
+            docs/**
+            tools/**
+            api/weather-cache.json
