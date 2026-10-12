@@ -10,7 +10,11 @@ header('Cache-Control: public, max-age=600');
 $cache = __DIR__ . '/weather-cache.json';
 $ttl = 30 * 60;
 
-if (is_file($cache) && time() - filemtime($cache) < $ttl) {
+// Самопроверка: /api/weather.php?check — что умеет сервер и пришла ли
+// погода. Без кэша, ничего не записывает; посетителям не нужна
+$check = isset($_GET['check']);
+
+if (!$check && is_file($cache) && time() - filemtime($cache) < $ttl) {
   readfile($cache);
   exit;
 }
@@ -19,8 +23,31 @@ $url = 'https://api.open-meteo.com/v1/forecast?latitude=55.7558&longitude=37.617
   . '&current=temperature_2m,weather_code'
   . '&hourly=temperature_2m,weather_code,precipitation_probability&forecast_hours=7'
   . '&timezone=Europe%2FMoscow';
-$raw = @file_get_contents($url, false, stream_context_create(['http' => ['timeout' => 4]]));
+// На части хостингов file_get_contents не ходит по сети (allow_url_fopen
+// выключен) — тогда пробуем через curl
+$raw = ini_get('allow_url_fopen')
+  ? @file_get_contents($url, false, stream_context_create(['http' => ['timeout' => 4]]))
+  : false;
+if (!$raw && function_exists('curl_init')) {
+  $ch = curl_init($url);
+  curl_setopt_array($ch, [CURLOPT_RETURNTRANSFER => true, CURLOPT_TIMEOUT => 4, CURLOPT_CONNECTTIMEOUT => 3]);
+  $raw = curl_exec($ch);
+  curl_close($ch);
+}
 $data = $raw ? json_decode($raw, true) : null;
+
+if ($check) {
+  echo json_encode([
+    'php' => PHP_VERSION,
+    'allow_url_fopen' => (bool) ini_get('allow_url_fopen'),
+    'curl' => function_exists('curl_init'),
+    'cache_writable' => is_writable(__DIR__),
+    'cache_age_min' => is_file($cache) ? round((time() - filemtime($cache)) / 60) : null,
+    'open_meteo' => isset($data['current']) ? 'ok' : 'нет ответа',
+    'now' => $data['current'] ?? null
+  ], JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+  exit;
+}
 
 if (!isset($data['current']['temperature_2m'], $data['current']['weather_code'])) {
   // Open-Meteo не ответил — отдаём старый кэш (браузер сам отбросит
