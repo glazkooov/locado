@@ -5,7 +5,8 @@
 # Нужны секреты репозитория (Settings → Secrets and variables → Actions):
 #   TEST_FTP_SERVER   — FTP-сервер Бегета (в панели: раздел FTP)
 #   TEST_FTP_USERNAME — отдельный FTP-доступ, у которого домашняя папка —
-#   TEST_FTP_PASSWORD   папка тестового поддомена (не всего аккаунта!)
+#   TEST_FTP_PASSWORD   папка тестового поддомена (не всего аккаунта!).
+#                       Сам сайт лежит внутри неё в public_html
 # Пока секретов нет, заливка просто пропускается.
 #
 # Залить вручную любую ветку: вкладка Actions → «Тестовый сайт» → Run workflow.
@@ -68,7 +69,7 @@ jobs:
           server: ${{ env.FTP_HOST }}
           username: ${{ secrets.TEST_FTP_USERNAME }}
           password: ${{ secrets.TEST_FTP_PASSWORD }}
-          server-dir: ./
+          server-dir: ./public_html/
           exclude: |
             **/.git*
             **/.git*/**
