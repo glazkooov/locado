@@ -1,10 +1,11 @@
 // core/now.js — блок «Сейчас» на главной: что смотреть в это время года.
 // Данные — data/now.json, по записи на сезон:
-//   { "from": "09-15", "to": "10-31", "eyebrow": "Сейчас, осенью",
+//   { "from": "09-15", "to": "10-31",
 //     "title": "…", "lead": "…", "places": ["slug", …] }
 // from/to — месяц-день, включительно; период может переходить через Новый
 // год ("12-01" → "02-28"). Подходит первая запись, в которую попадает
-// сегодняшний день; нет такой — блока на главной нет.
+// сегодняшний день; нет такой — блока на главной нет. Подпись над
+// заголовком («Пока идёт дождь», «Этой осенью») — из кода, по моменту.
 //
 // «Живой» блок (pickNow): из places и запаса pool выбираются четыре места
 // под погоду, время суток и часы работы, а заголовок — из variants
@@ -46,6 +47,16 @@ const SHOW = 4;
 const SOON_CLOSE = 60; // мин: закроется раньше — не зовём
 const GOLDEN = 120; // мин до заката: «золотой час», зовём на виды
 const VIEW_TAGS = ['панорама', 'высота', 'набережная'];
+// Подпись над заголовком — по моменту: объясняет, почему здесь эти места
+const MOMENT_EYEBROWS = {
+  rain: 'Пока идёт дождь',
+  snow: 'Пока идёт снег',
+  golden: 'Пока не стемнело',
+  evening: 'Сегодня вечером',
+  night: 'Этой ночью',
+  morning: 'Сегодня утром'
+};
+const SEASON_EYEBROWS = { зима: 'Этой зимой', весна: 'Этой весной', лето: 'Этим летом', осень: 'Этой осенью' };
 const SEASON_TAGS = ['зима', 'зима', 'весна', 'весна', 'весна', 'лето', 'лето', 'лето', 'осень', 'осень', 'осень', 'зима'];
 
 const minutesUntil = (from, to) => (to - from) / 6e4;
@@ -158,7 +169,7 @@ export function pickNow(entry, places, { now = new Date(), weather = null } = {}
 
   return {
     scene,
-    eyebrow: entry.eyebrow || '',
+    eyebrow: MOMENT_EYEBROWS[scene] || (mode === 'hot' ? 'Пока жарко' : SEASON_EYEBROWS[seasonTag]),
     title: variant?.title || entry.title || '',
     lead: variant?.lead || entry.lead || '',
     weather: weather ? { icon: weather.icon, temp: tempLabel(weather.temp), label: weather.label } : null,

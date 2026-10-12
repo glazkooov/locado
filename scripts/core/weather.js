@@ -71,7 +71,7 @@ export function forecastPhrase(w) {
     const what = wet.kind === 'snow' ? 'снег' : 'дождь';
     return `к ${wet.t} обещают ${what}`;
   }
-  const temps = ahead.map((h) => h.temp);
-  if (temps.length && Math.min(...temps) <= w.temp - 4) return 'скоро похолодает';
+  const cooler = ahead.find((h) => h.temp <= w.temp - 4);
+  if (cooler) return w.temp >= 25 ? `жара спадёт к ${cooler.t}` : 'скоро похолодает';
   return '';
 }
