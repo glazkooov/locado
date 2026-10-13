@@ -1188,8 +1188,27 @@
 }
 .feed-toolbar .category-search-group { grid-area: search; max-width: none; margin: 0; }
 .feed-toolbar .feed-view { grid-area: view; }
+/* Вид «Карта»: строка ленты не нужна — остаётся только переключатель,
+   не закреплённый и без подложки; у карты свои категории и фильтры */
+.place-section .feed-toolbar--map {
+  position: static;
+  display: flex;
+  justify-content: flex-end;
+  background: none;
+  box-shadow: none;
+}
 .feed-toolbar--map .categories_scroll,
-.feed-toolbar--map .category-search-group { visibility: hidden; }
+.feed-toolbar--map .category-search-group { display: none; }
+
+/* Карта — почти весь экран под шапкой, но внутри страницы: листаешь
+   дальше — уходишь к подвалу, «Список» возвращает ленту */
+.feed-map .map-section {
+  height: calc(100svh - var(--header-h) - 96px);
+  min-height: 440px;
+  max-height: 820px;
+  margin-bottom: 0;
+}
+.feed-map .map-container { height: auto; flex: 3; min-height: 0; }
 
 .feed-view {
   display: inline-flex;
@@ -1356,9 +1375,13 @@
     padding: 4px 16px 8px;
   }
   .feed-view__btn { min-height: 36px; padding: 0 12px; }
+  /* В ленте на телефоне — одна кнопка «Карта»; на карте — оба вида */
   .feed-view__btn[data-view='list'] { display: none; }
   .feed-toolbar--map .feed-view__btn[data-view='list'] { display: inline-flex; }
-  .feed-toolbar--map .feed-view__btn[data-view='map'] { display: none; }
+  .place-section .feed-toolbar--map { justify-content: flex-start; padding-block: 0; }
+  .feed-map .map-section { gap: 10px; height: calc(100svh - var(--header-h) - 70px); min-height: 420px; }
+  .feed-map .map-container { flex: 1; }
+  .feed-map .map-panel { flex: none; }
   .hero__together { margin-top: -18px; }
   /* Первый экран: из-под героя должны выглядывать карточки — лид не влезает */
   .hero { padding-bottom: calc(14px + var(--hero-wave-h)); }

@@ -182,15 +182,16 @@ async function main() {
     return;
   }
 
-  // «Готовые планы» и «Сейчас» — полосы в ленте, после 3-го и 6-го ряда:
-  // подборки приоритетнее, поэтому первыми
+  // «Готовые планы» и «Сейчас» — полосы в ленте, после 3-го и 8-го ряда:
+  // подборки приоритетнее, поэтому первыми, а «Сейчас» — подальше, чтобы
+  // полосы не шли одна за другой
   const entry = await nowEntry;
   const spotlight = renderNow(entry, places, await weather);
   const collections = await collectionsShown;
   const showcases = {};
   if (collections.length) showcases[3] = $('#collections');
   else $('#collections')?.remove();
-  if (spotlight.length) showcases[6] = $('#now-section');
+  if (spotlight.length) showcases[8] = $('#now-section');
   const nowTitle = $('#now-title')?.textContent || '';
 
   // Места из «Сейчас» — в конец ленты: в полосе «Сейчас» они уже есть
@@ -225,9 +226,20 @@ function initFeedView(places) {
     $('.feed-toolbar')?.classList.toggle('feed-toolbar--map', isMap);
     if (isMap && !mapStarted) { mapStarted = true; initPlacesMap(places); }
   };
-  btns.forEach((b) => on(b, 'click', () => { setView(b.dataset.view); scrollToFeed(); }));
+  // После переключения — к переключателю: карта сразу во весь экран под ним,
+  // а лента — с начала
+  const toToolbar = (instant) => {
+    const bar = $('.feed-toolbar');
+    const header = $('.main-header');
+    if (!bar) return;
+    window.scrollTo({
+      top: bar.getBoundingClientRect().top + window.scrollY - (header ? header.offsetHeight : 0) - 8,
+      behavior: instant ? 'instant' : 'smooth'
+    });
+  };
+  btns.forEach((b) => on(b, 'click', () => { setView(b.dataset.view); toToolbar(); }));
   // Ссылки «Карта» из меню и подвала ведут на ./#map-section
-  const fromHash = () => { if (window.location.hash === '#map-section') { setView('map'); scrollToFeed({ instant: true }); } };
+  const fromHash = () => { if (window.location.hash === '#map-section') { setView('map'); toToolbar(true); } };
   window.addEventListener('hashchange', fromHash);
   fromHash();
   // «Удиви меня» в конце ленты открывает тот же рандомайзер, что в hero
