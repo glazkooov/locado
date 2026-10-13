@@ -28,6 +28,7 @@ export const serviceCardHtml = ({ href, iconName, title, link }) => `
 // вместе», «Предложить место» по кругу). Первая — после REMIND_FROM мест,
 // дальше — каждые REMIND_EVERY
 const REMIND_FROM = 40;
+const REMIND_FROM_FILTERED = 6;
 const REMIND_EVERY = 8;
 
 // Пропорции карточек (высота / ширина) — классы .place-card--r0…r4 в
@@ -71,13 +72,13 @@ const PRELOAD_MARGIN = 800;
 const AUTO_LOAD_LIMIT = 36;
 
 // seasonal — слаги мест из блока «Сейчас» (data/now.json). В полной ленте
-// они в конце (home.js): человек только что видел их наверху. А после
-// настроения или раздела он этот блок проскочил — там они идут первыми
-// и с плашкой «Сейчас в сезон».
+// они в конце (home.js): они есть в полосе «Сейчас». А после настроения
+// или раздела человек полосы не видел — там они идут первыми.
 //
 // showcases — полосы на всю ширину ленты («Сейчас», «Готовые планы»):
 // { 3: <section>, 8: <section> } — после 3-го и 8-го ряда карточек.
-// reminder(k) — k-я карточка-напоминание: { html, ratio } или null. Лента — это
+// reminder(k, { filtered, list }) — k-я карточка-напоминание: { html, ratio }
+// или null; list — места, которые сейчас в ленте (для уместных напоминаний). Лента — это
 // отрезки-сетки (.places-grid), витрина стоит между ними, а колонки перед
 // ней выравниваются по нижнему краю, чтобы не было пустот. В
 // отфильтрованной ленте витрин нет: там человек ищет своё.
@@ -154,11 +155,15 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE, seasonal = new Set()
     places.forEach((place, i) => {
       const ratio = ratioIndex(place.slug);
       const col = shortest();
-      columns[col].insertAdjacentHTML('beforeend', cardHtml(place, favorites.includes(place.slug), `place-card--r${ratio}`, { season: seasonal.has(place.slug) }));
+      columns[col].insertAdjacentHTML('beforeend', cardHtml(place, favorites.includes(place.slug), `place-card--r${ratio}`));
       heights[col] += cardRatios()[ratio];
       const n = start + i + 1;
-      if (reminder && isUnfiltered() && n >= REMIND_FROM && (n - REMIND_FROM) % REMIND_EVERY === 0) {
-        const card = reminder((n - REMIND_FROM) / REMIND_EVERY);
+      // В полной ленте напоминания — после полос (с REMIND_FROM), в
+      // категории и настроении — пораньше (с REMIND_FROM_FILTERED): туда
+      // часто проваливаются сразу и полос не видят. В поиске — никогда
+      const from = isUnfiltered() ? REMIND_FROM : REMIND_FROM_FILTERED;
+      if (reminder && !state.query && n >= from && (n - from) % REMIND_EVERY === 0) {
+        const card = reminder((n - from) / REMIND_EVERY, { filtered: !isUnfiltered(), list });
         if (card) {
           const c = shortest();
           columns[c].insertAdjacentHTML('beforeend', card.html);

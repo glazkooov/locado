@@ -1121,8 +1121,7 @@
 @media (max-width: 575px) {
   .places-grid .place-card__top { top: 10px; left: 10px; right: 10px; gap: 4px; }
   .places-grid .place-card__category,
-  .places-grid .badge-temporary,
-  .places-grid .badge-season { font-size: var(--fs-caption); padding: 3px 8px; }
+  .places-grid .badge-temporary { font-size: var(--fs-caption); padding: 3px 8px; }
   /* Длинный тип («Музей современного искусства») — в одну строку */
   .places-grid .place-card__category {
     max-width: 100%;
@@ -1379,8 +1378,10 @@
   .feed-view__btn[data-view='list'] { display: none; }
   .feed-toolbar--map .feed-view__btn[data-view='list'] { display: inline-flex; }
   .place-section .feed-toolbar--map { justify-content: flex-start; padding-block: 0; }
-  .feed-map .map-section { gap: 10px; height: calc(100svh - var(--header-h) - 70px); min-height: 420px; }
-  .feed-map .map-container { flex: 1; }
+  /* Высота — у самой карты, а не у блока: раскрытые «Фильтры» сдвигают
+     карту вниз, но не сжимают её */
+  .feed-map .map-section { gap: 10px; height: auto; min-height: 0; max-height: none; }
+  .feed-map .map-container { flex: none; height: calc(100svh - var(--header-h) - 130px); min-height: 380px; }
   .feed-map .map-panel { flex: none; }
   .hero__together { margin-top: -18px; }
   /* Первый экран: из-под героя должны выглядывать карточки — лид не влезает */

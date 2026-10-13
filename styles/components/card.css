@@ -209,8 +209,7 @@
   margin: 0;
 }
 
-.badge-temporary,
-.badge-season {
+.badge-temporary {
   padding: 4px 10px;
   font-size: var(--fs-caption);
   font-weight: 700;
