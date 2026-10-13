@@ -1217,7 +1217,11 @@
 .feed-stream > .now { background: var(--card-bg); box-shadow: var(--shadow-soft); }
 
 /* Конец ленты: следующие шаги вместо тупика */
-.feed-end { text-align: center; }
+.feed-end { max-width: none; text-align: center; }
+.feed-end .feed-next { width: 100%; max-width: 920px; margin-inline: auto; }
+.feed-end .feed-next__item { align-content: start; text-align: left; color: var(--text); text-decoration: none; }
+.feed-end .feed-next__item b { display: block; color: var(--ink); }
+.feed-end .feed-next__item span { display: block; margin: 0; }
 .feed-next {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -1268,4 +1272,18 @@
   .feed-toolbar--map .feed-view__btn[data-view='map'] { display: none; }
   .feed-stream > section { margin-inline: -8px; padding: 22px 16px 18px; border-radius: 20px; }
   .feed-next { grid-template-columns: 1fr 1fr; }
+  /* Готовые планы в ленте — ряд с прокруткой вбок, как «Сейчас»: три
+     высокие карточки одна под другой растягивали полосу на два экрана */
+  .feed-stream .collections-grid {
+    display: flex;
+    gap: 12px;
+    margin: 20px -16px 0;
+    padding: 0 16px 4px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 16px;
+    scrollbar-width: none;
+  }
+  .feed-stream .collections-grid::-webkit-scrollbar { display: none; }
+  .feed-stream .collections-grid > * { flex: 0 0 82%; scroll-snap-align: start; }
 }
