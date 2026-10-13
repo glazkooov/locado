@@ -13,18 +13,22 @@ import { setPressed } from './category-buttons.js';
 // 12 делится на 2, 3 и 4 колонки — страница заполняет ряды ровно
 const PAGE_SIZE = 12;
 
-// Служебные карточки в полной ленте без фильтров: после SERVICE_CARDS[n]
-// мест — своя карточка. «Знаешь место?» — в конце ленты (feed-end)
-const SUGGEST_RATIO = 1; // квадрат — высота для раскладки по колонкам
-const serviceCardHtml = ({ href, iconName, title, link }) => `
+// Служебная карточка-приглашение («Выбрать вместе», «Знаешь место?») —
+// пунктир, как «Удиви меня» в hero; ratio — высота для раскладки
+export const SERVICE_RATIO = 1;
+export const serviceCardHtml = ({ href, iconName, title, link }) => `
   <a class="feed-suggest" href="${href}">
     <svg class="icon feed-suggest__icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#${iconName}"></use></svg>
     <span class="feed-suggest__title">${title}</span>
     <span class="feed-suggest__link">${link}</span>
   </a>`;
-const SERVICE_CARDS = {
-  10: { href: 'vmeste/?from=feed', iconName: 'users', title: 'Не можете решить вдвоём?', link: 'Выбрать вместе →' }
-};
+
+// Напоминания: после полос-прерываний лента время от времени снова
+// показывает их — уже обычными карточками («Сейчас», подборка, «Выбрать
+// вместе», «Предложить место» по кругу). Первая — после REMIND_FROM мест,
+// дальше — каждые REMIND_EVERY
+const REMIND_FROM = 30;
+const REMIND_EVERY = 8;
 
 // Пропорции карточек (высота / ширина) — классы .place-card--r0…r4 в
 // card.css. По ним без замеров DOM знаем высоту каждой колонки.
@@ -72,11 +76,12 @@ const AUTO_LOAD_LIMIT = 36;
 // и с плашкой «Сейчас в сезон».
 //
 // showcases — полосы на всю ширину ленты («Сейчас», «Готовые планы»):
-// { 3: <section>, 6: <section> } — после 3-го и 6-го ряда карточек. Лента — это
+// { 3: <section>, 6: <section> } — после 3-го и 6-го ряда карточек.
+// reminder(k) — k-я карточка-напоминание: { html, ratio } или null. Лента — это
 // отрезки-сетки (.places-grid), витрина стоит между ними, а колонки перед
 // ней выравниваются по нижнему краю, чтобы не было пустот. В
 // отфильтрованной ленте витрин нет: там человек ищет своё.
-export function initFeed(allPlaces, { pageSize = PAGE_SIZE, seasonal = new Set(), showcases = {} } = {}) {
+export function initFeed(allPlaces, { pageSize = PAGE_SIZE, seasonal = new Set(), showcases = {}, reminder = null } = {}) {
   const container = $('#places-container');
   if (!container) return null; // не на этой странице
 
@@ -142,7 +147,7 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE, seasonal = new Set()
   const isUnfiltered = () => state.category === 'all' && !state.query && !state.tags && !state.tagsAll;
 
   // start — сколько карточек уже в ленте: по нему видно, где встать
-  // служебным карточкам (SERVICE_CARDS)
+  // напоминаниям и полосам
   const appendCards = (places, start = 0) => {
     const favorites = Storage.getFavorites();
     const shortest = () => heights.indexOf(Math.min(...heights));
@@ -151,11 +156,14 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE, seasonal = new Set()
       const col = shortest();
       columns[col].insertAdjacentHTML('beforeend', cardHtml(place, favorites.includes(place.slug), `place-card--r${ratio}`, { season: seasonal.has(place.slug) }));
       heights[col] += cardRatios()[ratio];
-      const service = SERVICE_CARDS[start + i + 1];
-      if (service && isUnfiltered()) {
-        const c = shortest();
-        columns[c].insertAdjacentHTML('beforeend', serviceCardHtml(service));
-        heights[c] += SUGGEST_RATIO;
+      const n = start + i + 1;
+      if (reminder && isUnfiltered() && n >= REMIND_FROM && (n - REMIND_FROM) % REMIND_EVERY === 0) {
+        const card = reminder((n - REMIND_FROM) / REMIND_EVERY);
+        if (card) {
+          const c = shortest();
+          columns[c].insertAdjacentHTML('beforeend', card.html);
+          heights[c] += card.ratio;
+        }
       }
       // Витрина после целого ряда: отрезок закрываем (колонки — вровень),
       // ставим витрину и начинаем новый отрезок

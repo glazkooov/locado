@@ -2,17 +2,17 @@
 
 import { goal, categoryGoal } from '../core/analytics.js';
 import { $, $$, on } from '../core/dom.js';
-import { escapeHtml } from '../core/format.js';
+import { escapeHtml, pluralize } from '../core/format.js';
 import { loadPlaces, placeUrl, CATEGORIES } from '../core/places.js';
 import { bindCards } from '../components/card.js';
-import { initFeed } from '../components/feed.js';
+import { initFeed, serviceCardHtml, SERVICE_RATIO } from '../components/feed.js';
 import { initRandomizer } from '../components/randomizer.js';
 import { initHeroMoods, renderHeroMoods, liveHeroMoods } from '../components/hero-moods.js';
 import { heroGreeting, getDaypart } from '../core/daypart.js';
 import { renderCategoryButtons } from '../components/category-buttons.js';
 import { initPlacesMap } from '../components/map.js';
 import { showToast } from '../components/toast.js';
-import { loadCollections } from '../core/collections.js';
+import { loadCollections, collectionUrl } from '../core/collections.js';
 import { collectionCardHtml } from '../components/collection-card.js';
 import { loadNow, pickNow } from '../core/now.js';
 import { loadWeather, weatherMode } from '../core/weather.js';
@@ -128,14 +128,37 @@ function renderNow(entry, places, weather) {
 /** Подборки — авторские статьи на отдельных страницах (collection.html). */
 async function renderCollections() {
   const grid = $('#collections-grid');
-  if (!grid) return;
+  if (!grid) return [];
   try {
     const collections = await loadCollections();
     grid.innerHTML = collections.slice(0, 3).map(collectionCardHtml).join('');
+    return collections;
   } catch (err) {
     console.error('[home] подборки:', err);
-    grid.closest('.cat-col-right')?.remove();
+    return [];
   }
+}
+
+/** Карточки-напоминания в ленте — по кругу: подборка (каждый раз
+ *  следующая), «Сейчас», «Выбрать вместе», «Предложить место». Полосы
+ *  наверху привлекли внимание, дальше лента просто напоминает о них. */
+function reminderCards({ spotlight, nowTitle, collections }) {
+  const photoCard = ({ href, photo, chip, title, link }) => `
+    <a class="feed-promo" href="${href}">
+      <img class="feed-promo__img" src="${escapeHtml(photo || '')}" alt="" loading="lazy">
+      <span class="feed-promo__chip">${escapeHtml(chip)}</span>
+      <span class="feed-promo__text"><b>${escapeHtml(title)}</b><small>${escapeHtml(link)}</small></span>
+    </a>`;
+  const kinds = [
+    (round) => {
+      const c = collections[round % collections.length];
+      return c && { ratio: 1.25, html: photoCard({ href: collectionUrl(c.slug), photo: c.coverSm || c.cover, chip: 'Готовый план', title: c.title, link: 'Открыть →' }) };
+    },
+    () => spotlight[0] && { ratio: 1.25, html: photoCard({ href: '#now-section', photo: spotlight[0].photoSm || spotlight[0].photo, chip: 'Сейчас', title: nowTitle, link: `${spotlight.length} ${pluralize(spotlight.length, ['место', 'места', 'мест'])} под момент →` }) },
+    () => ({ ratio: SERVICE_RATIO, html: serviceCardHtml({ href: 'vmeste/?from=feed', iconName: 'users', title: 'Не можете решить вдвоём?', link: 'Выбрать вместе →' }) }),
+    () => ({ ratio: SERVICE_RATIO, html: serviceCardHtml({ href: 'suggest/', iconName: 'heart', title: 'Знаешь место, которого здесь нет?', link: 'Расскажи о нём →' }) })
+  ];
+  return (k) => kinds[k % kinds.length](Math.floor(k / kinds.length)) || null;
 }
 
 async function main() {
@@ -159,19 +182,22 @@ async function main() {
     return;
   }
 
-  // «Сейчас» и «Готовые планы» — полосы в ленте, после 3-го и 6-го ряда
-  const spotlight = renderNow(await nowEntry, places, await weather);
-  await collectionsShown;
+  // «Готовые планы» и «Сейчас» — полосы в ленте, после 3-го и 6-го ряда:
+  // подборки приоритетнее, поэтому первыми
+  const entry = await nowEntry;
+  const spotlight = renderNow(entry, places, await weather);
+  const collections = await collectionsShown;
   const showcases = {};
-  if (spotlight.length) showcases[3] = $('#now-section');
-  if ($('#collections-grid')?.children.length) showcases[6] = $('#collections');
+  if (collections.length) showcases[3] = $('#collections');
   else $('#collections')?.remove();
+  if (spotlight.length) showcases[6] = $('#now-section');
+  const nowTitle = $('#now-title')?.textContent || '';
 
   // Места из «Сейчас» — в конец ленты: в полосе «Сейчас» они уже есть
   const inSpotlight = new Set(spotlight.map((p) => p.slug));
   const feed = initFeed(
     [...places.filter((p) => !inSpotlight.has(p.slug)), ...places.filter((p) => inSpotlight.has(p.slug))],
-    { seasonal: inSpotlight, showcases }
+    { seasonal: inSpotlight, showcases, reminder: reminderCards({ spotlight, nowTitle, collections }) }
   );
   applyUrlFilter(feed);
   liveHeroMoods(places, { daypart: getDaypart(), bad: weatherMode(await weather) === 'bad' });
