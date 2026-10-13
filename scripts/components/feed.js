@@ -71,11 +71,12 @@ const AUTO_LOAD_LIMIT = 36;
 // настроения или раздела он этот блок проскочил — там они идут первыми
 // и с плашкой «Сейчас в сезон».
 //
-// inserts — редакционные карточки в полной ленте, как промо-пины в Pinterest:
-// { 4: { html, ratio }, 13: { html, ratio } } — после 4-го и 13-го места.
-// Встают в колонку наравне с местами; ratio — высота/ширина для раскладки.
-// В отфильтрованной ленте их нет: там человек ищет своё.
-export function initFeed(allPlaces, { pageSize = PAGE_SIZE, seasonal = new Set(), inserts = {} } = {}) {
+// showcases — витрины на всю ширину ленты («Сейчас», «Готовые планы»):
+// { 3: html, 6: html } — после 3-го и 6-го ряда карточек. Лента — это
+// отрезки-сетки (.places-grid), витрина стоит между ними, а колонки перед
+// ней выравниваются по нижнему краю, чтобы не было пустот. В
+// отфильтрованной ленте витрин нет: там человек ищет своё.
+export function initFeed(allPlaces, { pageSize = PAGE_SIZE, seasonal = new Set(), showcases = {} } = {}) {
   const container = $('#places-container');
   if (!container) return null; // не на этой странице
 
@@ -107,14 +108,30 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE, seasonal = new Set()
   // колонок задаёт CSS (grid-template-columns у .places-grid).
   let columns = [];
   let heights = [];
-  const columnCount = () => getComputedStyle(container).gridTemplateColumns.split(' ').length || 1;
+  let segment = null; // текущий отрезок ленты — сетка с колонками
+  const columnCount = () => getComputedStyle(segment || container.firstElementChild || container).gridTemplateColumns.split(' ').length || 1;
+
+  // Витрина встаёт после целого ряда: ключ showcases — номер ряда, мест в
+  // ряду столько, сколько колонок (2 на телефоне, 4 на компьютере)
+  const showcaseAt = (n) => {
+    const cols = columns.length || 1;
+    return n % cols === 0 ? showcases[n / cols] : null;
+  };
 
   let phoneLayout = PHONE.matches; // по каким пропорциям разложены колонки
+  const newSegment = () => {
+    segment = document.createElement('div');
+    segment.className = 'places-grid';
+    container.append(segment);
+    segment.innerHTML = Array.from({ length: columnCount() }, () => '<div class="places-grid__col"></div>').join('');
+    columns = [...segment.children];
+    heights = columns.map(() => 0);
+  };
   const resetColumns = () => {
     phoneLayout = PHONE.matches;
-    container.innerHTML = Array.from({ length: columnCount() }, () => '<div class="places-grid__col"></div>').join('');
-    columns = [...container.children];
-    heights = columns.map(() => 0);
+    container.innerHTML = '';
+    segment = null;
+    newSegment();
   };
 
   const isUnfiltered = () => state.category === 'all' && !state.query && !state.tags && !state.tagsAll;
@@ -135,11 +152,13 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE, seasonal = new Set()
         columns[c].insertAdjacentHTML('beforeend', serviceCardHtml(service));
         heights[c] += SUGGEST_RATIO;
       }
-      const insert = inserts[start + i + 1];
-      if (insert && isUnfiltered()) {
-        const c = shortest();
-        columns[c].insertAdjacentHTML('beforeend', insert.html);
-        heights[c] += insert.ratio;
+      // Витрина после целого ряда: отрезок закрываем (колонки — вровень),
+      // ставим витрину и начинаем новый отрезок
+      const showcase = showcaseAt(start + i + 1);
+      if (showcase && isUnfiltered() && start + i + 1 < list.length) {
+        segment.classList.add('places-grid--flush');
+        container.insertAdjacentHTML('beforeend', showcase);
+        newSegment();
       }
     });
   };

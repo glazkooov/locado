@@ -1236,78 +1236,133 @@
 .hero__together .icon { color: var(--hero-accent); }
 .hero__together:hover { background: var(--hero-glass); }
 
-/* «Сейчас» и «Готовые планы» — карточки ленты того же размера, что места:
-   заголовок и три строки с миниатюрами */
-.feed-panel {
+/* Колонки перед витриной — вровень: последняя карточка в колонке
+   растягивается до общей нижней линии (фото обрезается по месту) */
+.places-grid--flush { align-items: stretch; }
+.places-grid--flush .places-grid__col > :last-child { flex-grow: 1; }
+.feed-stream > .places-grid:first-child { margin-top: 20px; }
+
+/* Витрина: обложка + три крупные карточки, высотой в один ряд ленты.
+   Тот же язык, что у карточек мест: фото во весь блок, скругления, тень */
+.showcase {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: 18px;
+  margin: 18px 0 0;
+}
+.showcase__cover {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 16px;
+  gap: 10px;
+  min-width: 0;
+  padding: 24px;
   border-radius: var(--radius-card);
-  background: var(--card-bg);
+  background:
+    radial-gradient(ellipse 90% 70% at 100% 0%, rgba(255, 170, 110, 0.45), transparent 70%),
+    linear-gradient(160deg, #FFF3E6 0%, #FBDCC4 100%);
   box-shadow: var(--shadow-soft);
 }
-.feed-panel--plans { background: var(--cream-deep); box-shadow: none; }
-.feed-panel__eyebrow {
+.showcase--plans .showcase__cover {
+  background:
+    radial-gradient(ellipse 80% 60% at 100% 0%, rgba(255, 206, 150, 0.4), transparent 70%),
+    var(--cream-deep);
+}
+.showcase__eyebrow {
   font-size: var(--fs-caption);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--primary-text);
 }
-.feed-panel__live {
+.showcase__live {
   display: flex;
   flex-wrap: wrap;
-  gap: 2px 10px;
-  font-size: var(--fs-caption);
+  gap: 2px 12px;
+  font-size: var(--fs-xs);
   color: var(--text-light);
 }
-.feed-panel__live span { display: inline-flex; align-items: center; gap: 4px; }
-.feed-panel__live .icon { color: var(--primary-text); }
-.feed-panel__title {
+.showcase__live span { display: inline-flex; align-items: center; gap: 5px; }
+.showcase__live .icon { color: var(--primary-text); }
+.showcase__title {
   font-family: var(--font-heading);
-  font-size: var(--fs-lg);
-  line-height: 1.2;
+  font-size: var(--fs-xl);
+  line-height: 1.15;
   letter-spacing: -0.02em;
   color: var(--ink);
 }
-.feed-panel__rows { display: grid; gap: 8px; margin-top: 4px; }
-.feed-panel__row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-  color: inherit;
-  text-decoration: none;
-}
-.feed-panel__thumb {
-  flex: none;
-  width: 52px;
-  height: 52px;
-  border-radius: 12px;
-  object-fit: cover;
-  background: var(--cream-deep);
-}
-.feed-panel__text { display: grid; gap: 2px; min-width: 0; }
-.feed-panel__text b { font-size: var(--fs-sm); line-height: 1.25; color: var(--ink); }
-.feed-panel__text small {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  overflow: hidden;
-  font-size: var(--fs-caption);
-  color: var(--text-light);
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.feed-panel__text small .icon { flex: none; color: var(--primary-text); }
-.feed-panel__row:hover b { color: var(--primary-text); }
-.feed-panel__more {
-  margin-top: 4px;
+.showcase__lead { font-size: var(--fs-sm); line-height: 1.5; color: var(--text); }
+.showcase__more {
+  margin-top: auto;
   font-size: var(--fs-sm);
   font-weight: 700;
   color: var(--primary-text);
   text-decoration: none;
+}
+
+.showcase__items {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  min-width: 0;
+}
+.showcase-item {
+  position: relative;
+  display: block;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--cream-deep);
+  box-shadow: var(--shadow-soft);
+  color: #fff;
+  text-decoration: none;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.showcase-item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--photo-fade);
+  pointer-events: none;
+}
+.showcase-item__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+.showcase-item__chip {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  max-width: calc(100% - 24px);
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  color: var(--ink);
+}
+.showcase-item__chip .icon { flex: none; color: var(--primary-text); }
+.showcase-item__text {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  z-index: 1;
+  display: grid;
+  gap: 2px;
+}
+.showcase-item__text b { font-size: var(--fs-md); line-height: 1.25; }
+.showcase-item__text small { font-size: var(--fs-xs); color: rgba(255, 255, 255, 0.82); }
+@media (hover: hover) {
+  .showcase-item:hover { transform: translateY(-4px); box-shadow: var(--shadow-soft-hover); }
+  .showcase-item:hover .showcase-item__img { transform: scale(1.04); }
 }
 
 /* Конец ленты: следующие шаги вместо тупика */
@@ -1359,11 +1414,29 @@
   .hero { padding-bottom: calc(14px + var(--hero-wave-h)); }
   .feed-head .section-title { font-size: var(--fs-lg); }
   .feed-head .section-lead { display: none; }
-  /* Узкая колонка: панели компактнее */
-  .feed-panel { padding: 12px; gap: 6px; border-radius: 16px; }
-  .feed-panel__title { font-size: var(--fs-md); }
-  .feed-panel__live { display: none; }
-  .feed-panel__thumb { width: 40px; height: 40px; border-radius: 10px; }
-  .feed-panel__text small .icon { display: none; }
+  /* Витрина на телефоне — ряд с прокруткой вбок: обложка и три карточки
+     одной высоты, край следующей подсказывает, что листается */
+  .showcase {
+    display: flex;
+    gap: 10px;
+    margin: 10px -16px 0;
+    padding: 4px 16px 8px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 16px;
+    scrollbar-width: none;
+  }
+  .showcase::-webkit-scrollbar { display: none; }
+  .showcase__items { display: contents; }
+  .showcase__cover,
+  .showcase-item {
+    flex: 0 0 72%;
+    height: 340px;
+    aspect-ratio: auto;
+    scroll-snap-align: start;
+    border-radius: 16px;
+  }
+  .showcase__cover { padding: 18px; }
+  .showcase__title { font-size: var(--fs-lg); }
   .feed-next { grid-template-columns: 1fr 1fr; }
 }

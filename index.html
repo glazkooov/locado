@@ -121,8 +121,8 @@
       </div>
     </section>
 
-    <!-- «Сейчас» и «Готовые планы» — не отдельные блоки, а карточки внутри
-         ленты (pages/home.js собирает их, components/feed.js ставит в колонки) -->
+    <!-- «Сейчас» и «Готовые планы» — не отдельные блоки, а витрины внутри
+         ленты (pages/home.js собирает их, components/feed.js ставит между рядами) -->
 
     <!-- 8. Лента всех мест -->
     <section class="place-section" id="all-places">
@@ -230,8 +230,8 @@
         </div>
         </div>
 
-        <!-- Лента: колонки карточек; «Сейчас» и «Готовые планы» — карточки внутри неё (feed.js) -->
-        <div class="places-grid" id="places-container" aria-live="polite"></div>
+        <!-- Лента: отрезки-сетки с карточками и витрины «Сейчас» / «Готовые планы» между ними (feed.js) -->
+        <div class="feed-stream" id="places-container" aria-live="polite"></div>
         <div class="feed-empty" id="feed-empty" hidden>
           <p id="feed-empty-text">Ничего не нашлось — попробуй другое слово или сбрось фильтр</p>
           <!-- Поиск был внутри вкладки — предлагаем искать везде -->

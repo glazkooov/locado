@@ -71,46 +71,66 @@ function showLoadError() {
   if (feedContainer) feedContainer.innerHTML = message;
 }
 
-/** «Сейчас» — карточка в ленте: момент, погода, заголовок и три места с
- *  причиной («Под крышей», «Закат в 17:34»). Подбор — core/now.js (pickNow). */
-function nowCardHtml(view) {
+// Витрины в ленте — «Сейчас» и «Готовые планы»: слева обложка (что это и
+// почему сейчас), справа три крупные карточки. Место для платной подборки:
+// туда же встанет подпись партнёра и пометка «Реклама» (38-ФЗ, erid).
+
+function showcaseItemHtml({ href, photo, name, note, chip, data = '' }) {
+  return `
+    <a class="showcase-item" href="${href}"${data}>
+      <img class="showcase-item__img" src="${escapeHtml(photo || '')}" alt="" loading="lazy">
+      ${chip ? `<span class="showcase-item__chip">${chip}</span>` : ''}
+      <span class="showcase-item__text">
+        <b>${escapeHtml(name)}</b>
+        ${note ? `<small>${escapeHtml(note)}</small>` : ''}
+      </span>
+    </a>`;
+}
+
+/** «Сейчас»: момент, погода, заголовок сезона и три места с причиной. */
+function nowShowcaseHtml(view) {
   const live = [
     view.weather && `${icon(view.weather.icon)}${escapeHtml([view.weather.temp, view.weather.label, view.forecast].filter(Boolean).join(', '))}`,
     ...view.facts.map((f) => `${icon(f.icon)}${escapeHtml(f.text)}`)
   ].filter(Boolean);
-  const rows = view.cards.slice(0, 3).map(({ place: p, reason }) => `
-    <a class="feed-panel__row" href="${placeUrl(p.slug)}" data-now="${escapeHtml(p.name)}">
-      <img class="feed-panel__thumb" src="${escapeHtml(p.photoSm || p.photo || '')}" alt="" loading="lazy">
-      <span class="feed-panel__text">
-        <b>${escapeHtml(p.name)}</b>
-        <small>${reason ? `${icon(reason.icon)}${escapeHtml(reason.text)}` : escapeHtml(p.type || '')}</small>
-      </span>
-    </a>`).join('');
+  const items = view.cards.slice(0, 3).map(({ place: p, reason }) => showcaseItemHtml({
+    href: placeUrl(p.slug),
+    photo: p.photoSm || p.photo,
+    name: p.name,
+    note: p.type,
+    chip: reason ? `${icon(reason.icon)}${escapeHtml(reason.text)}` : '',
+    data: ` data-now="${escapeHtml(p.name)}"`
+  })).join('');
   return `
-    <section class="feed-panel feed-panel--now" aria-label="Сейчас">
-      <p class="feed-panel__eyebrow">${escapeHtml(view.eyebrow)}</p>
-      ${live.length ? `<p class="feed-panel__live">${live.map((x) => `<span>${x}</span>`).join('')}</p>` : ''}
-      <h3 class="feed-panel__title">${escapeHtml(view.title)}</h3>
-      <div class="feed-panel__rows">${rows}</div>
+    <section class="showcase showcase--now" aria-label="Сейчас">
+      <div class="showcase__cover">
+        <p class="showcase__eyebrow">${escapeHtml(view.eyebrow)}</p>
+        ${live.length ? `<p class="showcase__live">${live.map((x) => `<span>${x}</span>`).join('')}</p>` : ''}
+        <h3 class="showcase__title">${escapeHtml(view.title)}</h3>
+        ${view.lead ? `<p class="showcase__lead">${escapeHtml(view.lead)}</p>` : ''}
+      </div>
+      <div class="showcase__items">${items}</div>
     </section>`;
 }
 
-/** «Готовые планы» — карточка в ленте: три подборки строками. */
-function plansCardHtml(collections) {
-  const rows = collections.slice(0, 3).map((c) => `
-    <a class="feed-panel__row" href="${collectionUrl(c.slug)}">
-      <img class="feed-panel__thumb" src="${escapeHtml(c.coverSm || c.cover || '')}" alt="" loading="lazy">
-      <span class="feed-panel__text">
-        <b>${escapeHtml(c.title)}</b>
-        <small>${escapeHtml([COLLECTION_TYPES[c.type], c.meta?.duration].filter(Boolean).join(' · '))}</small>
-      </span>
-    </a>`).join('');
+/** «Готовые планы»: подборки крупными карточками. */
+function plansShowcaseHtml(collections) {
+  const items = collections.slice(0, 3).map((c) => showcaseItemHtml({
+    href: collectionUrl(c.slug),
+    photo: c.coverSm || c.cover,
+    name: c.title,
+    note: c.meta?.duration,
+    chip: escapeHtml(COLLECTION_TYPES[c.type] || '')
+  })).join('');
   return `
-    <section class="feed-panel feed-panel--plans" aria-label="Готовые планы">
-      <p class="feed-panel__eyebrow">Не хочешь думать</p>
-      <h3 class="feed-panel__title">Готовые планы на день</h3>
-      <div class="feed-panel__rows">${rows}</div>
-      <a class="feed-panel__more" href="collections/">Все подборки →</a>
+    <section class="showcase showcase--plans" aria-label="Готовые планы">
+      <div class="showcase__cover">
+        <p class="showcase__eyebrow">Не хочешь думать</p>
+        <h3 class="showcase__title">Готовые планы на день</h3>
+        <p class="showcase__lead">Маршрут целиком: где начать, где поесть, сколько времени и денег.</p>
+        <a class="showcase__more" href="collections/">Все подборки →</a>
+      </div>
+      <div class="showcase__items">${items}</div>
     </section>`;
 }
 
@@ -123,7 +143,7 @@ async function main() {
   const nowEntry = loadNow(); // параллельно с местами
   const weather = loadWeather();
   const feedContainer = $('#places-container');
-  if (feedContainer) feedContainer.innerHTML = skeletonCards(8, 'place-card');
+  if (feedContainer) feedContainer.innerHTML = `<div class="places-grid">${skeletonCards(8, 'place-card')}</div>`;
 
   let places;
   try {
@@ -135,24 +155,23 @@ async function main() {
     return;
   }
 
-  // «Сейчас» и «Готовые планы» — карточки внутри ленты, после 4-го и 13-го
-  // места. Высота (ratio) — для раскладки по колонкам, примерно по содержимому
+  // «Сейчас» и «Готовые планы» — витрины в ленте, после 3-го и 6-го ряда
   const entry = await nowEntry;
   const view = entry ? pickNow(entry, places, { weather: await weather }) : null;
   const collections = await collectionsReady;
-  const inserts = {};
-  if (view?.cards.length) inserts[4] = { html: nowCardHtml(view), ratio: 1.55 };
-  if (collections.length) inserts[13] = { html: plansCardHtml(collections), ratio: 1.3 };
+  const showcases = {};
+  if (view?.cards.length) showcases[3] = nowShowcaseHtml(view);
+  if (collections.length) showcases[6] = plansShowcaseHtml(collections);
   const spotlight = view ? view.cards.slice(0, 3).map((c) => c.place) : [];
 
-  // Места из «Сейчас» — в конец ленты: в карточке «Сейчас» они уже есть
+  // Места из «Сейчас» — в конец ленты: в витрине «Сейчас» они уже есть
   const inSpotlight = new Set(spotlight.map((p) => p.slug));
   const feed = initFeed(
     [...places.filter((p) => !inSpotlight.has(p.slug)), ...places.filter((p) => inSpotlight.has(p.slug))],
-    { seasonal: inSpotlight, inserts }
+    { seasonal: inSpotlight, showcases }
   );
   // Цель: что из «Сейчас» открывают — работает ли блок
-  on(document, 'click', '.feed-panel--now [data-now]', (e, row) => {
+  on(document, 'click', '.showcase--now [data-now]', (e, row) => {
     goal('now_open', { 'Сейчас': { [entry?.title || '']: row.dataset.now } });
   });
   applyUrlFilter(feed);
