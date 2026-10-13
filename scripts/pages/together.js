@@ -465,6 +465,7 @@ async function main() {
 
   const params = new URLSearchParams(window.location.search);
   if (params.get('from') === 'feed') state.from = 'Карточка в ленте';
+  if (params.get('from') === 'hero') state.from = 'Первый экран';
   state.toRate = parseIds(params.get('p'));
   state.matches = parseIds(params.get('m'));
 

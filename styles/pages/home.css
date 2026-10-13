@@ -1152,31 +1152,46 @@
   }
 }
 
-/* ===== Главная-лента: лента сразу под героем, редакционные блоки —
-   полосами внутри неё (feed.js, bands), карта — второй вид ленты ===== */
+/* ===== Главная-лента: лента сразу под героем, «Сейчас» и «Готовые
+   планы» — карточки внутри неё (feed.js, inserts), карта — второй вид ===== */
 .place-section { margin-top: 40px; }
+/* Лента сразу под героем: герой по содержимому, а не на 86% экрана —
+   на компьютере из-под него должен выглядывать заголовок ленты */
+.hero { min-height: 0; padding-bottom: calc(40px + var(--hero-wave-h)); }
 .feed-head .section-lead { max-width: 560px; }
 
-/* Закреплённая строка над лентой: категории · поиск · «Список / Карта» */
+/* Закреплённая строка над лентой: категории отдельным рядом (во всю ширину,
+   край растворяется), под ними поиск и «Список / Карта» */
 .place-section .feed-toolbar {
   position: sticky;
   top: var(--header-h);
   z-index: 50;
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 420px) 1fr auto;
+  grid-template-areas: 'cats cats cats' 'search . view';
   align-items: center;
-  gap: 12px;
-  margin: 16px -16px 0;
-  padding: 8px 16px;
+  gap: 4px 12px;
+  margin: 12px -16px 0;
+  padding: 6px 16px 10px;
   background: var(--bg);
   box-shadow: 0 8px 12px -12px rgba(40, 20, 10, 0.35);
 }
-.feed-toolbar .categories_scroll { flex: 1 1 auto; min-width: 0; padding: 6px 0; }
-.feed-toolbar .category-search-group { flex: 0 1 300px; }
+.feed-toolbar .categories_scroll {
+  grid-area: cats;
+  position: static;
+  margin: 0;
+  padding: 6px 0;
+  box-shadow: none;
+  /* последняя кнопка не обрезается ножом, а уходит в прозрачность */
+  -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent);
+  mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent);
+}
+.feed-toolbar .category-search-group { grid-area: search; max-width: none; margin: 0; }
+.feed-toolbar .feed-view { grid-area: view; }
 .feed-toolbar--map .categories_scroll,
 .feed-toolbar--map .category-search-group { visibility: hidden; }
 
 .feed-view {
-  flex: none;
   display: inline-flex;
   padding: 3px;
   border: 1px solid var(--line);
@@ -1204,86 +1219,151 @@
 .feed-map { margin-top: 20px; }
 .feed-map[hidden] { display: none; }
 
-/* Полосы внутри ленты: свой фон, на всю ширину ленты */
-.feed-stream > .places-grid:first-child { margin-top: 20px; }
-.feed-stream > section {
-  margin: 28px 0 8px;
-  padding: 28px 24px 24px;
-  border-radius: 24px;
+/* «Выбрать вместе» на первом экране — строкой под карточками настроений */
+.hero__together {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: -12px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: var(--fs-sm);
+  color: var(--hero-muted);
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+.hero__together b { color: var(--hero-accent); font-weight: 700; }
+.hero__together .icon { color: var(--hero-accent); }
+.hero__together:hover { background: var(--hero-glass); }
+
+/* «Сейчас» и «Готовые планы» — карточки ленты того же размера, что места:
+   заголовок и три строки с миниатюрами */
+.feed-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  border-radius: var(--radius-card);
+  background: var(--card-bg);
+  box-shadow: var(--shadow-soft);
+}
+.feed-panel--plans { background: var(--cream-deep); box-shadow: none; }
+.feed-panel__eyebrow {
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--primary-text);
+}
+.feed-panel__live {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 10px;
+  font-size: var(--fs-caption);
+  color: var(--text-light);
+}
+.feed-panel__live span { display: inline-flex; align-items: center; gap: 4px; }
+.feed-panel__live .icon { color: var(--primary-text); }
+.feed-panel__title {
+  font-family: var(--font-heading);
+  font-size: var(--fs-lg);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.feed-panel__rows { display: grid; gap: 8px; margin-top: 4px; }
+.feed-panel__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
+}
+.feed-panel__thumb {
+  flex: none;
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  object-fit: cover;
   background: var(--cream-deep);
 }
-.feed-stream > section > .container { padding: 0; max-width: none; }
-.feed-stream > .categories-collections { margin-top: 28px; }
-.feed-stream > .now { background: var(--card-bg); box-shadow: var(--shadow-soft); }
+.feed-panel__text { display: grid; gap: 2px; min-width: 0; }
+.feed-panel__text b { font-size: var(--fs-sm); line-height: 1.25; color: var(--ink); }
+.feed-panel__text small {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  overflow: hidden;
+  font-size: var(--fs-caption);
+  color: var(--text-light);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.feed-panel__text small .icon { flex: none; color: var(--primary-text); }
+.feed-panel__row:hover b { color: var(--primary-text); }
+.feed-panel__more {
+  margin-top: 4px;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--primary-text);
+  text-decoration: none;
+}
 
 /* Конец ленты: следующие шаги вместо тупика */
 .feed-end { max-width: none; text-align: center; }
-.feed-end .feed-next { width: 100%; max-width: 920px; margin-inline: auto; }
-.feed-end .feed-next__item { align-content: start; text-align: left; color: var(--text); text-decoration: none; }
-.feed-end .feed-next__item b { display: block; color: var(--ink); }
-.feed-end .feed-next__item span { display: block; margin: 0; }
 .feed-next {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
-  margin-top: 16px;
+  width: 100%;
+  max-width: 920px;
+  margin: 16px auto 0;
   text-align: left;
 }
-.feed-next__item {
+.feed-end .feed-next__item {
   display: grid;
+  align-content: start;
   gap: 4px;
   padding: 16px;
   border: 1px solid var(--line);
   border-radius: 18px;
   background: var(--card-bg);
   font: inherit;
+  text-align: left;
   color: var(--text);
   text-decoration: none;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-.feed-next__item:hover { transform: translateY(-2px); box-shadow: var(--shadow-soft); }
+.feed-end .feed-next__item:hover { transform: translateY(-2px); box-shadow: var(--shadow-soft); }
 .feed-next__item .icon { font-size: 1.4rem; color: var(--primary-text); }
-.feed-next__item b { font-size: var(--fs-md); }
-.feed-next__item span { font-size: var(--fs-sm); color: var(--text-light); }
+.feed-end .feed-next__item b { display: block; font-size: var(--fs-md); color: var(--ink); }
+.feed-end .feed-next__item span { display: block; margin: 0; font-size: var(--fs-sm); color: var(--text-light); }
 
 @media (max-width: 767px) {
-  .place-section { margin-top: 24px; }
+  .place-section { margin-top: 16px; }
   .place-section .feed-toolbar {
-    display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-areas: 'cats view' 'search search';
-    align-items: center;
-    gap: 4px 8px;
-    margin-top: 8px;
+    grid-template-areas: 'cats cats' 'search view';
+    gap: 2px 8px;
+    margin-top: 6px;
     padding: 4px 16px 8px;
   }
-  .feed-toolbar .categories_scroll { grid-area: cats; position: static; margin: 0; padding: 4px 0; box-shadow: none; }
-  .feed-toolbar .category-search-group { grid-area: search; max-width: none; margin: 0; }
-  .feed-toolbar .feed-view { grid-area: view; }
-  /* Первый экран: из-под героя должна выглядывать первая карточка */
-  .feed-head .section-title { font-size: var(--fs-xl); }
-  /* на телефоне лид не помещается в первый экран — суть передаёт заголовок */
-  .feed-head .section-lead { display: none; }
-  .place-section { margin-top: 12px; }
-  .feed-view__btn { min-height: 32px; padding: 0 10px; }
+  .feed-view__btn { min-height: 36px; padding: 0 12px; }
   .feed-view__btn[data-view='list'] { display: none; }
   .feed-toolbar--map .feed-view__btn[data-view='list'] { display: inline-flex; }
   .feed-toolbar--map .feed-view__btn[data-view='map'] { display: none; }
-  .feed-stream > section { margin-inline: -8px; padding: 22px 16px 18px; border-radius: 20px; }
+  .hero__together { margin-top: -18px; }
+  /* Первый экран: из-под героя должны выглядывать карточки — лид не влезает */
+  .hero { padding-bottom: calc(14px + var(--hero-wave-h)); }
+  .feed-head .section-title { font-size: var(--fs-lg); }
+  .feed-head .section-lead { display: none; }
+  /* Узкая колонка: панели компактнее */
+  .feed-panel { padding: 12px; gap: 6px; border-radius: 16px; }
+  .feed-panel__title { font-size: var(--fs-md); }
+  .feed-panel__live { display: none; }
+  .feed-panel__thumb { width: 40px; height: 40px; border-radius: 10px; }
+  .feed-panel__text small .icon { display: none; }
   .feed-next { grid-template-columns: 1fr 1fr; }
-  /* Готовые планы в ленте — ряд с прокруткой вбок, как «Сейчас»: три
-     высокие карточки одна под другой растягивали полосу на два экрана */
-  .feed-stream .collections-grid {
-    display: flex;
-    gap: 12px;
-    margin: 20px -16px 0;
-    padding: 0 16px 4px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-padding-inline: 16px;
-    scrollbar-width: none;
-  }
-  .feed-stream .collections-grid::-webkit-scrollbar { display: none; }
-  .feed-stream .collections-grid > * { flex: 0 0 82%; scroll-snap-align: start; }
 }

@@ -2,8 +2,8 @@
 
 import { goal, categoryGoal } from '../core/analytics.js';
 import { $, $$, on } from '../core/dom.js';
-import { escapeHtml, cssUrl } from '../core/format.js';
-import { loadPlaces, sample, bySlug, placeUrl, CATEGORIES } from '../core/places.js';
+import { escapeHtml } from '../core/format.js';
+import { loadPlaces, placeUrl, CATEGORIES } from '../core/places.js';
 import { bindCards } from '../components/card.js';
 import { initFeed } from '../components/feed.js';
 import { initRandomizer } from '../components/randomizer.js';
@@ -12,8 +12,7 @@ import { heroGreeting, getDaypart } from '../core/daypart.js';
 import { renderCategoryButtons } from '../components/category-buttons.js';
 import { initPlacesMap } from '../components/map.js';
 import { showToast } from '../components/toast.js';
-import { loadCollections } from '../core/collections.js';
-import { collectionCardHtml } from '../components/collection-card.js';
+import { loadCollections, collectionUrl, COLLECTION_TYPES } from '../core/collections.js';
 import { loadNow, pickNow } from '../core/now.js';
 import { loadWeather, weatherMode } from '../core/weather.js';
 import { icon } from '../core/icons.js';
@@ -51,20 +50,6 @@ function applyUrlFilter(feed) {
   requestAnimationFrame(() => scrollToFeed({ instant: true }));
 }
 
-function renderSuggested(places) {
-  const container = $('#suggested-grid');
-  if (!container) return;
-  const picks = sample(places.filter((p) => p.description), 2);
-  if (!picks.length) { container.closest('.suggested-places')?.remove(); return; }
-  container.innerHTML = picks.map((p) => `
-    <a href="place/?slug=${encodeURIComponent(p.slug)}" class="suggested-card">
-      <div class="suggested-img" style='background-image: ${cssUrl(p.photo)}'></div>
-      <div class="suggested-content">
-        <h3>${escapeHtml(p.name)}</h3>
-        <p>${escapeHtml(p.description)}</p>
-      </div>
-    </a>`).join('');
-}
 
 /** «Пятница, вечер» + вопрос под время суток; возвращает daypart для порядка настроений. */
 function renderHeroGreeting() {
@@ -82,90 +67,63 @@ function skeletonCards(n, cardClass) {
 
 function showLoadError() {
   const message = '<p class="feed-load-error">Не получилось загрузить места. Обнови страницу — обычно помогает.</p>';
-  const suggestedContainer = $('#suggested-grid');
   const feedContainer = $('#places-container');
-  if (suggestedContainer) suggestedContainer.closest('.suggested-places')?.remove();
   if (feedContainer) feedContainer.innerHTML = message;
 }
 
-/** Строка над заголовком: погода, прогноз, закат. Обновляется раз в минуту. */
-function renderNowLive(view) {
-  const items = [];
-  // «+7°, дождь, стихнет к 21:00» — прогноз в одной фразе с погодой
-  if (view.weather) {
-    items.push({ icon: view.weather.icon, text: [`${view.weather.temp}`, view.weather.label, view.forecast].filter(Boolean).join(', ') });
-  }
-  items.push(...view.facts);
-  $('#now-live').innerHTML = items.map((x) => `<span>${x.icon ? icon(x.icon) : ''}${escapeHtml(x.text)}</span>`).join('');
-  $('#now-live').hidden = !items.length;
+/** «Сейчас» — карточка в ленте: момент, погода, заголовок и три места с
+ *  причиной («Под крышей», «Закат в 17:34»). Подбор — core/now.js (pickNow). */
+function nowCardHtml(view) {
+  const live = [
+    view.weather && `${icon(view.weather.icon)}${escapeHtml([view.weather.temp, view.weather.label, view.forecast].filter(Boolean).join(', '))}`,
+    ...view.facts.map((f) => `${icon(f.icon)}${escapeHtml(f.text)}`)
+  ].filter(Boolean);
+  const rows = view.cards.slice(0, 3).map(({ place: p, reason }) => `
+    <a class="feed-panel__row" href="${placeUrl(p.slug)}" data-now="${escapeHtml(p.name)}">
+      <img class="feed-panel__thumb" src="${escapeHtml(p.photoSm || p.photo || '')}" alt="" loading="lazy">
+      <span class="feed-panel__text">
+        <b>${escapeHtml(p.name)}</b>
+        <small>${reason ? `${icon(reason.icon)}${escapeHtml(reason.text)}` : escapeHtml(p.type || '')}</small>
+      </span>
+    </a>`).join('');
+  return `
+    <section class="feed-panel feed-panel--now" aria-label="Сейчас">
+      <p class="feed-panel__eyebrow">${escapeHtml(view.eyebrow)}</p>
+      ${live.length ? `<p class="feed-panel__live">${live.map((x) => `<span>${x}</span>`).join('')}</p>` : ''}
+      <h3 class="feed-panel__title">${escapeHtml(view.title)}</h3>
+      <div class="feed-panel__rows">${rows}</div>
+    </section>`;
 }
 
-/** «Сейчас»: сезонная подборка из data/now.json, подобранная под погоду,
- *  время суток и часы работы (core/now.js → pickNow). Под фото — причина
- *  («Под крышей», «Закат в 17:34»), под названием — фраза места под этот
- *  момент (moments) или «Когда лучше».
- *  Возвращает показанные места (их не повторяем в начале ленты). */
-function renderNow(entry, places, weather) {
-  const section = $('#now-section');
-  if (!section || !entry) return [];
-  const view = pickNow(entry, places, { weather });
-  if (!view.cards.length) return [];
-  $('#now-eyebrow').textContent = view.eyebrow;
-  $('#now-eyebrow').hidden = !view.eyebrow;
-  $('#now-title').textContent = view.title;
-  $('#now-lead').textContent = view.lead;
-  $('#now-lead').hidden = !view.lead;
-  renderNowLive(view);
-  // «до заката 1 ч 30 мин» — живое, раз в минуту
-  setInterval(() => renderNowLive(pickNow(entry, places, { weather })), 60 * 1000);
-  $('#now-cards').innerHTML = view.cards.map(({ place: p, reason, note }) => {
-    const when = p.story?.when;
-    const text = note ? escapeHtml(note) : when ? `<b>Когда:</b> ${escapeHtml(when)}` : escapeHtml(p.description || '');
-    return `
-      <a class="now-card" href="${placeUrl(p.slug)}">
-        <span class="now-card__media">
-          <img class="now-card__photo" src="${escapeHtml(p.photoSm || p.photo || '')}" alt="${escapeHtml(p.name)}" loading="lazy">
-          ${reason ? `<span class="now-card__reason">${icon(reason.icon)}${escapeHtml(reason.text)}</span>` : ''}
-        </span>
-        <span class="now-card__name">${escapeHtml(p.name)}</span>
-        <p class="now-card__text">${text}</p>
-      </a>`;
-  }).join('');
-  section.hidden = false;
-  // Цель: что из «Сейчас» открывают — работает ли сезонный блок
-  const picks = view.cards.map((c) => c.place);
-  $$('.now-card', section).forEach((card, i) => on(card, 'click', () => {
-    goal('now_open', { 'Сейчас': { [entry.title || '']: picks[i].name } });
-  }));
-  return picks;
-}
-
-
-/** Подборки — авторские статьи на отдельных страницах (collection.html). */
-async function renderCollections() {
-  const grid = $('#collections-grid');
-  if (!grid) return;
-  try {
-    const collections = await loadCollections();
-    grid.innerHTML = collections.slice(0, 3).map(collectionCardHtml).join('');
-  } catch (err) {
-    console.error('[home] подборки:', err);
-    grid.closest('.cat-col-right')?.remove();
-  }
+/** «Готовые планы» — карточка в ленте: три подборки строками. */
+function plansCardHtml(collections) {
+  const rows = collections.slice(0, 3).map((c) => `
+    <a class="feed-panel__row" href="${collectionUrl(c.slug)}">
+      <img class="feed-panel__thumb" src="${escapeHtml(c.coverSm || c.cover || '')}" alt="" loading="lazy">
+      <span class="feed-panel__text">
+        <b>${escapeHtml(c.title)}</b>
+        <small>${escapeHtml([COLLECTION_TYPES[c.type], c.meta?.duration].filter(Boolean).join(' · '))}</small>
+      </span>
+    </a>`).join('');
+  return `
+    <section class="feed-panel feed-panel--plans" aria-label="Готовые планы">
+      <p class="feed-panel__eyebrow">Не хочешь думать</p>
+      <h3 class="feed-panel__title">Готовые планы на день</h3>
+      <div class="feed-panel__rows">${rows}</div>
+      <a class="feed-panel__more" href="collections/">Все подборки →</a>
+    </section>`;
 }
 
 async function main() {
-  renderCollections();
+  const collectionsReady = loadCollections().catch((err) => { console.error('[home] подборки:', err); return []; });
   renderHeroMoods(renderHeroGreeting());
   renderCategoryButtons();
   bindCards(document.body);
 
   const nowEntry = loadNow(); // параллельно с местами
   const weather = loadWeather();
-  const suggestedContainer = $('#suggested-grid');
   const feedContainer = $('#places-container');
-  if (suggestedContainer) suggestedContainer.innerHTML = skeletonCards(2, 'suggested-card');
-  if (feedContainer) feedContainer.innerHTML = `<div class="places-grid">${skeletonCards(8, 'place-card')}</div>`;
+  if (feedContainer) feedContainer.innerHTML = skeletonCards(8, 'place-card');
 
   let places;
   try {
@@ -177,23 +135,29 @@ async function main() {
     return;
   }
 
-  const spotlight = renderNow(await nowEntry, places, await weather);
+  // «Сейчас» и «Готовые планы» — карточки внутри ленты, после 4-го и 13-го
+  // места. Высота (ratio) — для раскладки по колонкам, примерно по содержимому
+  const entry = await nowEntry;
+  const view = entry ? pickNow(entry, places, { weather: await weather }) : null;
+  const collections = await collectionsReady;
+  const inserts = {};
+  if (view?.cards.length) inserts[4] = { html: nowCardHtml(view), ratio: 1.55 };
+  if (collections.length) inserts[13] = { html: plansCardHtml(collections), ratio: 1.3 };
+  const spotlight = view ? view.cards.slice(0, 3).map((c) => c.place) : [];
 
-  renderSuggested(places);
-
-  // Места из «Сейчас» — в конец ленты: иначе первый ряд ленты повторял
-  // блок, который человек только что пролистал
+  // Места из «Сейчас» — в конец ленты: в карточке «Сейчас» они уже есть
   const inSpotlight = new Set(spotlight.map((p) => p.slug));
   const feed = initFeed(
     [...places.filter((p) => !inSpotlight.has(p.slug)), ...places.filter((p) => inSpotlight.has(p.slug))],
-    // «Сейчас» и «Готовые планы» — полосы внутри ленты
-    { seasonal: inSpotlight, bands: { 3: $('#now-section'), 6: $('#collections') } }
+    { seasonal: inSpotlight, inserts }
   );
+  // Цель: что из «Сейчас» открывают — работает ли блок
+  on(document, 'click', '.feed-panel--now [data-now]', (e, row) => {
+    goal('now_open', { 'Сейчас': { [entry?.title || '']: row.dataset.now } });
+  });
   applyUrlFilter(feed);
-  const live = liveHeroMoods(places, { daypart: getDaypart(), bad: weatherMode(await weather) === 'bad' });
-  // Лента сразу под героем: настроение фильтрует её на месте, а подборка
-  // «с чего начать» под карточками не нужна — её роль играет сама лента
-  void live;
+  liveHeroMoods(places, { daypart: getDaypart(), bad: weatherMode(await weather) === 'bad' });
+  // Лента сразу под героем: настроение фильтрует её на месте
   initHeroMoods(feed, places, { onSelect: () => scrollToFeed() });
   initRandomizer(places);
   initFeedView(places);

@@ -106,8 +106,12 @@
           </button>
         </div>
 
-        <!-- «С чего начать»: три места выбранного настроения (hero-moods.js) -->
-        <div class="mood-picks" id="mood-picks" hidden aria-live="polite"></div>
+        <!-- «Выбрать вместе» — на первом экране: кто пришёл ради этой функции,
+             не должен искать её в ленте -->
+        <a class="hero__together" href="vmeste/?from=hero">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#users"></use></svg>
+          Идёшь не один? <b>Выбрать вместе →</b>
+        </a>
 
         <!--
           Hero-поиск отключён для MVP (25.09.2026) — сохранён целиком и
@@ -117,64 +121,16 @@
       </div>
     </section>
 
-    <!-- Полосы ленты: «Сейчас» и «Готовые планы» стоят здесь только до запуска
-         скриптов — feed.js переносит их внутрь ленты (после 6-й и 12-й карточки).
-         3. «Сейчас»: что смотреть в это время года. Заголовок и места —
-         data/now.json (core/now.js), карточки рендерит pages/home.js.
-         Нет записи на сегодня — секция остаётся скрытой -->
-    <section class="now" id="now-section" hidden>
-      <div class="container">
-        <div class="section-head">
-          <p class="section-eyebrow" id="now-eyebrow"></p>
-          <!-- погода, прогноз и закат: заполняет pages/home.js -->
-          <p class="now__live" id="now-live" hidden></p>
-          <h2 class="section-title" id="now-title"></h2>
-          <p class="section-lead" id="now-lead"></p>
-        </div>
-        <div class="now__cards" id="now-cards"></div>
-      </div>
-    </section>
-
-    <!-- 4. «Советуем заглянуть» — убран, пока нет редакционных или партнёрских
-         мест: показывал случайные места из той же ленты. home.js пропускает
-         его, если разметки нет. Вернуть — раскомментировать; платное место
-         подписывать «Реклама» (38-ФЗ).
-    <section class="suggested-places">
-      <div class="container">
-        <div class="section-head">
-          <h2 class="section-title">Советуем заглянуть</h2>
-        </div>
-        <div class="suggested-grid" id="suggested-grid"></div>
-      </div>
-    </section>
-    -->
-
-    <!-- 5. Готовые планы на день — подборки. Плитки категорий убраны:
-         те же разделы есть вкладками над лентой и в меню -->
-    <section class="categories-collections" id="collections">
-      <div class="container">
-        <div class="section-head section-head--row">
-          <div>
-            <p class="section-eyebrow">Не хочешь думать</p>
-            <h2 class="section-title">Готовые планы на день</h2>
-            <p class="section-lead">Маршрут целиком: где начать, где поесть, сколько времени и денег.</p>
-          </div>
-          <a class="section-link" href="collections/">Все подборки →</a>
-        </div>
-
-        <!-- Карточки рендерит pages/home.js из data/collections.json и ведут
-             на страницу подборки collection/ -->
-        <div class="collections-grid" id="collections-grid"></div>
-      </div>
-    </section>
-
+    <!-- «Сейчас» и «Готовые планы» — не отдельные блоки, а карточки внутри
+         ленты (pages/home.js собирает их, components/feed.js ставит в колонки) -->
 
     <!-- 8. Лента всех мест -->
     <section class="place-section" id="all-places">
       <div class="container">
         <div class="section-head feed-head">
-          <h2 class="section-title">Места, которые мы выбрали сами</h2>
-          <p class="section-lead">Не сотни вариантов, а проверенные места — у каждого история, фото и как добраться. Листай вниз.</p>
+          <!-- Ответ на вопрос героя «Куда выберемся?» -->
+          <h2 class="section-title">Вот куда можно выбраться</h2>
+          <p class="section-lead">Каждое место мы выбрали сами — с историей, фото и тем, как добраться.</p>
         </div>
 
         <!-- Закреплённая строка над лентой: категории, поиск, «Список / Карта» -->
@@ -274,8 +230,8 @@
         </div>
         </div>
 
-        <!-- Лента: отрезки-сетки с карточками и полосы между ними (feed.js) -->
-        <div class="feed-stream" id="places-container" aria-live="polite"></div>
+        <!-- Лента: колонки карточек; «Сейчас» и «Готовые планы» — карточки внутри неё (feed.js) -->
+        <div class="places-grid" id="places-container" aria-live="polite"></div>
         <div class="feed-empty" id="feed-empty" hidden>
           <p id="feed-empty-text">Ничего не нашлось — попробуй другое слово или сбрось фильтр</p>
           <!-- Поиск был внутри вкладки — предлагаем искать везде -->
