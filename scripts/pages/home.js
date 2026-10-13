@@ -165,7 +165,7 @@ async function main() {
   const suggestedContainer = $('#suggested-grid');
   const feedContainer = $('#places-container');
   if (suggestedContainer) suggestedContainer.innerHTML = skeletonCards(2, 'suggested-card');
-  if (feedContainer) feedContainer.innerHTML = skeletonCards(8, 'place-card');
+  if (feedContainer) feedContainer.innerHTML = `<div class="places-grid">${skeletonCards(8, 'place-card')}</div>`;
 
   let places;
   try {
@@ -186,13 +186,44 @@ async function main() {
   const inSpotlight = new Set(spotlight.map((p) => p.slug));
   const feed = initFeed(
     [...places.filter((p) => !inSpotlight.has(p.slug)), ...places.filter((p) => inSpotlight.has(p.slug))],
-    { seasonal: inSpotlight }
+    // «Сейчас» и «Готовые планы» — полосы внутри ленты
+    { seasonal: inSpotlight, bands: { 3: $('#now-section'), 6: $('#collections') } }
   );
   applyUrlFilter(feed);
   const live = liveHeroMoods(places, { daypart: getDaypart(), bad: weatherMode(await weather) === 'bad' });
-  initHeroMoods(feed, places, { onSelect: () => scrollToFeed(), live });
+  // Лента сразу под героем: настроение фильтрует её на месте, а подборка
+  // «с чего начать» под карточками не нужна — её роль играет сама лента
+  void live;
+  initHeroMoods(feed, places, { onSelect: () => scrollToFeed() });
   initRandomizer(places);
-  initPlacesMap(places);
+  initFeedView(places);
+}
+
+/** «Список / Карта» над лентой. Карта создаётся при первом показе: пока её
+ *  не открыли, Яндекс Карты не грузятся вовсе. */
+function initFeedView(places) {
+  const mapBox = $('#map-section');
+  const stream = $('#places-container');
+  const listOnly = ['#places-container', '#show-more-btn', '.feed-end', '#feed-active', '#feed-note'].map((s) => $(s)).filter(Boolean);
+  const btns = $$('.feed-view__btn');
+  if (!mapBox || !stream || !btns.length) return;
+  let mapStarted = false;
+  const setView = (view) => {
+    const isMap = view === 'map';
+    btns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.view === view)));
+    mapBox.hidden = !isMap;
+    listOnly.forEach((el) => el.classList.toggle('is-off', isMap));
+    // строка поиска и категорий ленты к карте не относится — у карты свои фильтры
+    $('.feed-toolbar')?.classList.toggle('feed-toolbar--map', isMap);
+    if (isMap && !mapStarted) { mapStarted = true; initPlacesMap(places); }
+  };
+  btns.forEach((b) => on(b, 'click', () => { setView(b.dataset.view); scrollToFeed(); }));
+  // Ссылки «Карта» из меню и подвала ведут на ./#map-section
+  const fromHash = () => { if (window.location.hash === '#map-section') { setView('map'); scrollToFeed({ instant: true }); } };
+  window.addEventListener('hashchange', fromHash);
+  fromHash();
+  // «Удиви меня» в конце ленты открывает тот же рандомайзер, что в hero
+  $$('[data-random]').forEach((b) => on(b, 'click', () => $('#hero-random-icon')?.click()));
 }
 
 main();

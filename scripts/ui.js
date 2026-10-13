@@ -145,9 +145,9 @@ const initHeaderOverlay = () => {
 
 /** Плавное появление крупных секций при скролле (косметика). */
 const initScrollReveal = () => {
-  // .now не прячем: её начало должно выглядывать из-под hero с первого
-  // экрана — это подсказка, что страница продолжается
-  const targets = $$('.main-content > section:not(.now), .suggested-grid, .places-grid');
+  // Ленту (#all-places) и .now не прячем: начало ленты должно выглядывать
+  // из-под hero с первого экрана — подсказка, что листать нужно вниз
+  const targets = $$('.main-content > section:not(.now):not(#all-places), .suggested-grid');
   if (!targets.length) return;
 
   if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {

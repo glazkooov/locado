@@ -14,7 +14,7 @@ import { setPressed } from './category-buttons.js';
 const PAGE_SIZE = 12;
 
 // Служебные карточки в полной ленте без фильтров: после SERVICE_CARDS[n]
-// мест — своя карточка. «Выбрать вместе» — пораньше, «Знаешь место?» — дальше
+// мест — своя карточка. «Знаешь место?» — в конце ленты (feed-end)
 const SUGGEST_RATIO = 1; // квадрат — высота для раскладки по колонкам
 const serviceCardHtml = ({ href, iconName, title, link }) => `
   <a class="feed-suggest" href="${href}">
@@ -23,8 +23,7 @@ const serviceCardHtml = ({ href, iconName, title, link }) => `
     <span class="feed-suggest__link">${link}</span>
   </a>`;
 const SERVICE_CARDS = {
-  3: { href: 'vmeste/?from=feed', iconName: 'users', title: 'Выбираете, куда пойти вдвоём?', link: 'Выбрать вместе →' },
-  7: { href: 'suggest/', iconName: 'heart', title: 'Знаешь место, которого здесь нет?', link: 'Расскажи о нём →' }
+  16: { href: 'vmeste/?from=feed', iconName: 'users', title: 'Не можете решить вдвоём?', link: 'Выбрать вместе →' }
 };
 
 // Пропорции карточек (высота / ширина) — классы .place-card--r0…r4 в
@@ -71,7 +70,12 @@ const AUTO_LOAD_LIMIT = 36;
 // они в конце (home.js): человек только что видел их наверху. А после
 // настроения или раздела он этот блок проскочил — там они идут первыми
 // и с плашкой «Сейчас в сезон».
-export function initFeed(allPlaces, { pageSize = PAGE_SIZE, seasonal = new Set() } = {}) {
+//
+// bands — редакционные полосы на всю ширину между карточками полной ленты:
+// { 2: <section «Сейчас»>, 5: <section «Готовые планы»> } — после 2-го и
+// 5-го ряда карточек. Лента — это отрезки-сетки (.places-grid), а полосы стоят
+// между ними. В отфильтрованной ленте полос нет: там человек ищет своё.
+export function initFeed(allPlaces, { pageSize = PAGE_SIZE, seasonal = new Set(), bands = {} } = {}) {
   const container = $('#places-container');
   if (!container) return null; // не на этой странице
 
@@ -103,14 +107,35 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE, seasonal = new Set()
   // колонок задаёт CSS (grid-template-columns у .places-grid).
   let columns = [];
   let heights = [];
-  const columnCount = () => getComputedStyle(container).gridTemplateColumns.split(' ').length || 1;
+  let segment = null; // текущий отрезок ленты — сетка с колонками
+  const columnCount = () => getComputedStyle(segment || container).gridTemplateColumns.split(' ').length || 1;
+
+  // Полосы живут в ленте, только пока она не отфильтрована
+  const bandNodes = Object.values(bands).filter(Boolean);
+  // Полоса встаёт после целых рядов: ключ bands — номер ряда (2 — после
+  // второго ряда), а мест в ряду столько, сколько колонок (2 на телефоне,
+  // 4 на компьютере). Иначе полоса резала бы ряд посередине
+  const bandAt = (n) => {
+    const cols = columns.length || 1;
+    return n % cols === 0 ? bands[n / cols] : null;
+  };
+  bandNodes.forEach((node) => node.remove());
 
   let phoneLayout = PHONE.matches; // по каким пропорциям разложены колонки
+  const newSegment = () => {
+    segment = document.createElement('div');
+    segment.className = 'places-grid';
+    container.append(segment);
+    segment.innerHTML = Array.from({ length: columnCount() }, () => '<div class="places-grid__col"></div>').join('');
+    columns = [...segment.children];
+    heights = columns.map(() => 0);
+  };
   const resetColumns = () => {
     phoneLayout = PHONE.matches;
-    container.innerHTML = Array.from({ length: columnCount() }, () => '<div class="places-grid__col"></div>').join('');
-    columns = [...container.children];
-    heights = columns.map(() => 0);
+    bandNodes.forEach((node) => node.remove());
+    container.innerHTML = '';
+    segment = null;
+    newSegment();
   };
 
   const isUnfiltered = () => state.category === 'all' && !state.query && !state.tags && !state.tagsAll;
@@ -130,6 +155,13 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE, seasonal = new Set()
         const c = shortest();
         columns[c].insertAdjacentHTML('beforeend', serviceCardHtml(service));
         heights[c] += SUGGEST_RATIO;
+      }
+      // Полоса после n-й карточки: закрываем отрезок, ставим полосу, дальше —
+      // новый отрезок (если карточки ещё будут)
+      const band = bandAt(start + i + 1);
+      if (band && isUnfiltered() && start + i + 1 < list.length) {
+        container.append(band);
+        newSegment();
       }
     });
   };

@@ -117,7 +117,9 @@
       </div>
     </section>
 
-    <!-- 3. «Сейчас»: что смотреть в это время года. Заголовок и места —
+    <!-- Полосы ленты: «Сейчас» и «Готовые планы» стоят здесь только до запуска
+         скриптов — feed.js переносит их внутрь ленты (после 6-й и 12-й карточки).
+         3. «Сейчас»: что смотреть в это время года. Заголовок и места —
          data/now.json (core/now.js), карточки рендерит pages/home.js.
          Нет записи на сегодня — секция остаётся скрытой -->
     <section class="now" id="now-section" hidden>
@@ -166,12 +168,51 @@
       </div>
     </section>
 
-    <!-- 6. Карта -->
-    <section class="map" id="map-section">
+
+    <!-- 8. Лента всех мест -->
+    <section class="place-section" id="all-places">
       <div class="container">
-        <div class="section-head">
-          <h2 class="section-title">Карта</h2>
+        <div class="section-head feed-head">
+          <h2 class="section-title">Места, которые мы выбрали сами</h2>
+          <p class="section-lead">Не сотни вариантов, а проверенные места — у каждого история, фото и как добраться. Листай вниз.</p>
         </div>
+
+        <!-- Закреплённая строка над лентой: категории, поиск, «Список / Карта» -->
+        <div class="categories_menu feed-toolbar">
+          <div class="categories_scroll" id="categories-scroll" role="group" aria-label="Категории ленты"></div>
+
+          <!-- Поиск в ленте: отдельная строка, не участвует в горизонтальном скролле -->
+          <div class="category-search-group">
+            <svg class="icon category-search-icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#search"></use></svg>
+            <label class="visually-hidden" for="categories-search-input">Поиск по местам</label>
+            <input type="text" class="category-search-input" id="categories-search-input" placeholder="Парк, поесть, с детьми, бесплатно…" autocomplete="off">
+            <button class="category-search-clear search-clear" id="categories-clear-btn" aria-label="Очистить поиск" hidden>
+              <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#x"></use></svg>
+            </button>
+          </div>
+          <div class="feed-view" role="group" aria-label="Вид">
+            <button type="button" class="feed-view__btn" data-view="list" aria-pressed="true">Список</button>
+            <button type="button" class="feed-view__btn" data-view="map" aria-pressed="false"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#map-pin"></use></svg> Карта</button>
+          </div>
+        </div>
+
+        <!-- Что сейчас выбрано вне ленты (настроение, подборка) — заполняет feed.js -->
+        <div class="feed-active" id="feed-active" hidden>
+          <span class="feed-active__label" id="feed-active-label" aria-live="polite"></span>
+          <!-- «Выбрать вместе» из мест этого настроения (feed.js показывает только для настроений) -->
+          <a class="feed-active__together" id="feed-active-together" href="vmeste/" hidden>
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#users"></use></svg> Выбрать <span class="feed-active__wide">из них </span>вместе
+          </a>
+          <button type="button" class="feed-active__reset" id="feed-active-reset">
+            Сбросить <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#x"></use></svg>
+          </button>
+        </div>
+
+        <!-- Подсказка к поиску: «кафе у нас пока нет…», исправленная раскладка -->
+        <p class="feed-note" id="feed-note" aria-live="polite" hidden></p>
+
+        <!-- Карта — второй вид ленты (переключатель «Список / Карта») -->
+        <div class="feed-map" id="map-section" hidden>
         <div class="map-section">
           <div class="map-container" id="map" aria-label="Карта мест"></div>
           <div class="map-panel">
@@ -231,50 +272,10 @@
             </aside>
           </div>
         </div>
-      </div>
-    </section>
-
-    <!-- 8. Лента всех мест -->
-    <section class="place-section" id="all-places">
-      <div class="container">
-        <div class="section-head section-head--row">
-          <div>
-            <h2 class="section-title">Посмотрим все места?</h2>
-          </div>
-          <a class="section-link" href="suggest/">Предложить место →</a>
         </div>
 
-        <div class="categories_menu">
-          <div class="categories_scroll" id="categories-scroll" role="group" aria-label="Категории ленты"></div>
-
-          <!-- Поиск в ленте: отдельная строка, не участвует в горизонтальном скролле -->
-          <div class="category-search-group">
-            <svg class="icon category-search-icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#search"></use></svg>
-            <label class="visually-hidden" for="categories-search-input">Поиск по местам</label>
-            <input type="text" class="category-search-input" id="categories-search-input" placeholder="Парк, поесть, с детьми, бесплатно…" autocomplete="off">
-            <button class="category-search-clear search-clear" id="categories-clear-btn" aria-label="Очистить поиск" hidden>
-              <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#x"></use></svg>
-            </button>
-          </div>
-        </div>
-
-        <!-- Что сейчас выбрано вне ленты (настроение, подборка) — заполняет feed.js -->
-        <div class="feed-active" id="feed-active" hidden>
-          <span class="feed-active__label" id="feed-active-label" aria-live="polite"></span>
-          <!-- «Выбрать вместе» из мест этого настроения (feed.js показывает только для настроений) -->
-          <a class="feed-active__together" id="feed-active-together" href="vmeste/" hidden>
-            <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#users"></use></svg> Выбрать <span class="feed-active__wide">из них </span>вместе
-          </a>
-          <button type="button" class="feed-active__reset" id="feed-active-reset">
-            Сбросить <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#x"></use></svg>
-          </button>
-        </div>
-
-        <!-- Подсказка к поиску: «кафе у нас пока нет…», исправленная раскладка -->
-        <p class="feed-note" id="feed-note" aria-live="polite" hidden></p>
-
-        <!-- Контейнер для карточек мест -->
-        <div class="places-grid" id="places-container" aria-live="polite"></div>
+        <!-- Лента: отрезки-сетки с карточками и полосы между ними (feed.js) -->
+        <div class="feed-stream" id="places-container" aria-live="polite"></div>
         <div class="feed-empty" id="feed-empty" hidden>
           <p id="feed-empty-text">Ничего не нашлось — попробуй другое слово или сбрось фильтр</p>
           <!-- Поиск был внутри вкладки — предлагаем искать везде -->
@@ -286,9 +287,27 @@
           <a class="feed-empty__suggest" href="suggest/">Знаешь такое место? Предложи его</a>
         </div>
         <button type="button" class="btn btn-secondary" id="show-more-btn">Показать ещё</button>
+        <!-- Конец ленты — не тупик, а следующий шаг -->
         <div class="feed-end" aria-live="polite">
-          <p>Это все места на сегодня</p>
-          <span>Мы добавляем новые места — загляни ещё или <a href="suggest/">расскажи о своём</a></span>
+          <p>Это все места на сегодня. Что дальше?</p>
+          <div class="feed-next">
+            <a class="feed-next__item" href="collections/">
+              <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#route"></use></svg>
+              <b>Готовые маршруты</b><span>Прогулка целиком: где начать и где поесть</span>
+            </a>
+            <button type="button" class="feed-next__item" data-random>
+              <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#dices"></use></svg>
+              <b>Удиви меня</b><span>Одно случайное место — без выбора</span>
+            </button>
+            <a class="feed-next__item" href="vmeste/?from=feed">
+              <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#users"></use></svg>
+              <b>Выбрать вместе</b><span>Отметьте места — увидите совпадения</span>
+            </a>
+            <a class="feed-next__item" href="suggest/">
+              <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#heart"></use></svg>
+              <b>Предложить место</b><span>Знаешь место, которого здесь нет?</span>
+            </a>
+          </div>
         </div>
       </div>
     </section>
