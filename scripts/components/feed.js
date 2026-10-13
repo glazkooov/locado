@@ -71,8 +71,8 @@ const AUTO_LOAD_LIMIT = 36;
 // настроения или раздела он этот блок проскочил — там они идут первыми
 // и с плашкой «Сейчас в сезон».
 //
-// showcases — витрины на всю ширину ленты («Сейчас», «Готовые планы»):
-// { 3: html, 6: html } — после 3-го и 6-го ряда карточек. Лента — это
+// showcases — полосы на всю ширину ленты («Сейчас», «Готовые планы»):
+// { 3: <section>, 6: <section> } — после 3-го и 6-го ряда карточек. Лента — это
 // отрезки-сетки (.places-grid), витрина стоит между ними, а колонки перед
 // ней выравниваются по нижнему краю, чтобы не было пустот. В
 // отфильтрованной ленте витрин нет: там человек ищет своё.
@@ -118,6 +118,10 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE, seasonal = new Set()
     return n % cols === 0 ? showcases[n / cols] : null;
   };
 
+  // Полосы живут в ленте, только пока она не отфильтрована
+  const showcaseNodes = Object.values(showcases).filter(Boolean);
+  showcaseNodes.forEach((node) => node.remove());
+
   let phoneLayout = PHONE.matches; // по каким пропорциям разложены колонки
   const newSegment = () => {
     segment = document.createElement('div');
@@ -129,6 +133,7 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE, seasonal = new Set()
   };
   const resetColumns = () => {
     phoneLayout = PHONE.matches;
+    showcaseNodes.forEach((node) => node.remove());
     container.innerHTML = '';
     segment = null;
     newSegment();
@@ -157,7 +162,7 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE, seasonal = new Set()
       const showcase = showcaseAt(start + i + 1);
       if (showcase && isUnfiltered() && start + i + 1 < list.length) {
         segment.classList.add('places-grid--flush');
-        container.insertAdjacentHTML('beforeend', showcase);
+        container.append(showcase);
         newSegment();
       }
     });

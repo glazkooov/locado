@@ -12,7 +12,8 @@ import { heroGreeting, getDaypart } from '../core/daypart.js';
 import { renderCategoryButtons } from '../components/category-buttons.js';
 import { initPlacesMap } from '../components/map.js';
 import { showToast } from '../components/toast.js';
-import { loadCollections, collectionUrl, COLLECTION_TYPES } from '../core/collections.js';
+import { loadCollections } from '../core/collections.js';
+import { collectionCardHtml } from '../components/collection-card.js';
 import { loadNow, pickNow } from '../core/now.js';
 import { loadWeather, weatherMode } from '../core/weather.js';
 import { icon } from '../core/icons.js';
@@ -71,71 +72,74 @@ function showLoadError() {
   if (feedContainer) feedContainer.innerHTML = message;
 }
 
-// Витрины в ленте — «Сейчас» и «Готовые планы»: слева обложка (что это и
-// почему сейчас), справа три крупные карточки. Место для платной подборки:
-// туда же встанет подпись партнёра и пометка «Реклама» (38-ФЗ, erid).
-
-function showcaseItemHtml({ href, photo, name, note, chip, data = '' }) {
-  return `
-    <a class="showcase-item" href="${href}"${data}>
-      <img class="showcase-item__img" src="${escapeHtml(photo || '')}" alt="" loading="lazy">
-      ${chip ? `<span class="showcase-item__chip">${chip}</span>` : ''}
-      <span class="showcase-item__text">
-        <b>${escapeHtml(name)}</b>
-        ${note ? `<small>${escapeHtml(note)}</small>` : ''}
-      </span>
-    </a>`;
+/** Строка над заголовком: погода, прогноз, закат. Обновляется раз в минуту. */
+function renderNowLive(view) {
+  const items = [];
+  // «+7°, дождь, стихнет к 21:00» — прогноз в одной фразе с погодой
+  if (view.weather) {
+    items.push({ icon: view.weather.icon, text: [`${view.weather.temp}`, view.weather.label, view.forecast].filter(Boolean).join(', ') });
+  }
+  items.push(...view.facts);
+  $('#now-live').innerHTML = items.map((x) => `<span>${x.icon ? icon(x.icon) : ''}${escapeHtml(x.text)}</span>`).join('');
+  $('#now-live').hidden = !items.length;
 }
 
-/** «Сейчас»: момент, погода, заголовок сезона и три места с причиной. */
-function nowShowcaseHtml(view) {
-  const live = [
-    view.weather && `${icon(view.weather.icon)}${escapeHtml([view.weather.temp, view.weather.label, view.forecast].filter(Boolean).join(', '))}`,
-    ...view.facts.map((f) => `${icon(f.icon)}${escapeHtml(f.text)}`)
-  ].filter(Boolean);
-  const items = view.cards.slice(0, 3).map(({ place: p, reason }) => showcaseItemHtml({
-    href: placeUrl(p.slug),
-    photo: p.photoSm || p.photo,
-    name: p.name,
-    note: p.type,
-    chip: reason ? `${icon(reason.icon)}${escapeHtml(reason.text)}` : '',
-    data: ` data-now="${escapeHtml(p.name)}"`
-  })).join('');
-  return `
-    <section class="showcase showcase--now" aria-label="Сейчас">
-      <div class="showcase__cover">
-        <p class="showcase__eyebrow">${escapeHtml(view.eyebrow)}</p>
-        ${live.length ? `<p class="showcase__live">${live.map((x) => `<span>${x}</span>`).join('')}</p>` : ''}
-        <h3 class="showcase__title">${escapeHtml(view.title)}</h3>
-        ${view.lead ? `<p class="showcase__lead">${escapeHtml(view.lead)}</p>` : ''}
-      </div>
-      <div class="showcase__items">${items}</div>
-    </section>`;
+/** «Сейчас»: сезонная подборка из data/now.json, подобранная под погоду,
+ *  время суток и часы работы (core/now.js → pickNow). Под фото — причина
+ *  («Под крышей», «Закат в 17:34»), под названием — фраза места под этот
+ *  момент (moments) или «Когда лучше».
+ *  Возвращает показанные места (их не повторяем в начале ленты). */
+function renderNow(entry, places, weather) {
+  const section = $('#now-section');
+  if (!section || !entry) return [];
+  const view = pickNow(entry, places, { weather });
+  if (!view.cards.length) return [];
+  $('#now-eyebrow').textContent = view.eyebrow;
+  $('#now-eyebrow').hidden = !view.eyebrow;
+  $('#now-title').textContent = view.title;
+  $('#now-lead').textContent = view.lead;
+  $('#now-lead').hidden = !view.lead;
+  renderNowLive(view);
+  // «до заката 1 ч 30 мин» — живое, раз в минуту
+  setInterval(() => renderNowLive(pickNow(entry, places, { weather })), 60 * 1000);
+  $('#now-cards').innerHTML = view.cards.map(({ place: p, reason, note }) => {
+    const when = p.story?.when;
+    const text = note ? escapeHtml(note) : when ? `<b>Когда:</b> ${escapeHtml(when)}` : escapeHtml(p.description || '');
+    return `
+      <a class="now-card" href="${placeUrl(p.slug)}">
+        <span class="now-card__media">
+          <img class="now-card__photo" src="${escapeHtml(p.photoSm || p.photo || '')}" alt="${escapeHtml(p.name)}" loading="lazy">
+          ${reason ? `<span class="now-card__reason">${icon(reason.icon)}${escapeHtml(reason.text)}</span>` : ''}
+        </span>
+        <span class="now-card__name">${escapeHtml(p.name)}</span>
+        <p class="now-card__text">${text}</p>
+      </a>`;
+  }).join('');
+  section.hidden = false;
+  // Цель: что из «Сейчас» открывают — работает ли сезонный блок
+  const picks = view.cards.map((c) => c.place);
+  $$('.now-card', section).forEach((card, i) => on(card, 'click', () => {
+    goal('now_open', { 'Сейчас': { [entry.title || '']: picks[i].name } });
+  }));
+  return picks;
 }
 
-/** «Готовые планы»: подборки крупными карточками. */
-function plansShowcaseHtml(collections) {
-  const items = collections.slice(0, 3).map((c) => showcaseItemHtml({
-    href: collectionUrl(c.slug),
-    photo: c.coverSm || c.cover,
-    name: c.title,
-    note: c.meta?.duration,
-    chip: escapeHtml(COLLECTION_TYPES[c.type] || '')
-  })).join('');
-  return `
-    <section class="showcase showcase--plans" aria-label="Готовые планы">
-      <div class="showcase__cover">
-        <p class="showcase__eyebrow">Не хочешь думать</p>
-        <h3 class="showcase__title">Готовые планы на день</h3>
-        <p class="showcase__lead">Маршрут целиком: где начать, где поесть, сколько времени и денег.</p>
-        <a class="showcase__more" href="collections/">Все подборки →</a>
-      </div>
-      <div class="showcase__items">${items}</div>
-    </section>`;
+
+/** Подборки — авторские статьи на отдельных страницах (collection.html). */
+async function renderCollections() {
+  const grid = $('#collections-grid');
+  if (!grid) return;
+  try {
+    const collections = await loadCollections();
+    grid.innerHTML = collections.slice(0, 3).map(collectionCardHtml).join('');
+  } catch (err) {
+    console.error('[home] подборки:', err);
+    grid.closest('.cat-col-right')?.remove();
+  }
 }
 
 async function main() {
-  const collectionsReady = loadCollections().catch((err) => { console.error('[home] подборки:', err); return []; });
+  const collectionsShown = renderCollections();
   renderHeroMoods(renderHeroGreeting());
   renderCategoryButtons();
   bindCards(document.body);
@@ -155,25 +159,20 @@ async function main() {
     return;
   }
 
-  // «Сейчас» и «Готовые планы» — витрины в ленте, после 3-го и 6-го ряда
-  const entry = await nowEntry;
-  const view = entry ? pickNow(entry, places, { weather: await weather }) : null;
-  const collections = await collectionsReady;
+  // «Сейчас» и «Готовые планы» — полосы в ленте, после 3-го и 6-го ряда
+  const spotlight = renderNow(await nowEntry, places, await weather);
+  await collectionsShown;
   const showcases = {};
-  if (view?.cards.length) showcases[3] = nowShowcaseHtml(view);
-  if (collections.length) showcases[6] = plansShowcaseHtml(collections);
-  const spotlight = view ? view.cards.slice(0, 3).map((c) => c.place) : [];
+  if (spotlight.length) showcases[3] = $('#now-section');
+  if ($('#collections-grid')?.children.length) showcases[6] = $('#collections');
+  else $('#collections')?.remove();
 
-  // Места из «Сейчас» — в конец ленты: в витрине «Сейчас» они уже есть
+  // Места из «Сейчас» — в конец ленты: в полосе «Сейчас» они уже есть
   const inSpotlight = new Set(spotlight.map((p) => p.slug));
   const feed = initFeed(
     [...places.filter((p) => !inSpotlight.has(p.slug)), ...places.filter((p) => inSpotlight.has(p.slug))],
     { seasonal: inSpotlight, showcases }
   );
-  // Цель: что из «Сейчас» открывают — работает ли блок
-  on(document, 'click', '.showcase--now [data-now]', (e, row) => {
-    goal('now_open', { 'Сейчас': { [entry?.title || '']: row.dataset.now } });
-  });
   applyUrlFilter(feed);
   liveHeroMoods(places, { daypart: getDaypart(), bad: weatherMode(await weather) === 'bad' });
   // Лента сразу под героем: настроение фильтрует её на месте

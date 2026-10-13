@@ -147,7 +147,7 @@ const initHeaderOverlay = () => {
 const initScrollReveal = () => {
   // Ленту (#all-places) и .now не прячем: начало ленты должно выглядывать
   // из-под hero с первого экрана — подсказка, что листать нужно вниз
-  const targets = $$('.main-content > section:not(.now):not(#all-places), .suggested-grid');
+  const targets = $$('.main-content > section:not(.now):not(#all-places):not(#collections), .suggested-grid');
   if (!targets.length) return;
 
   if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
