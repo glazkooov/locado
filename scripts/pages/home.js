@@ -82,12 +82,15 @@ function withNowPlaces(places, picks) {
 }
 
 /** Подборки — авторские статьи на отдельных страницах (collection.html). */
+// Столько подборок в полосе «Готовые планы»; остальные — в напоминаниях
+const PLANS_IN_BAND = 3;
+
 async function renderCollections() {
   const grid = $('#collections-grid');
   if (!grid) return [];
   try {
     const collections = await loadCollections();
-    grid.innerHTML = collections.slice(0, 3).map(collectionCardHtml).join('');
+    grid.innerHTML = collections.slice(0, PLANS_IN_BAND).map(collectionCardHtml).join('');
     return collections;
   } catch (err) {
     console.error('[home] подборки:', err);
@@ -96,10 +99,10 @@ async function renderCollections() {
 }
 
 /** Карточки-напоминания в ленте — по кругу: подборка, «Выбрать вместе»,
- *  «Предложить место». Полоса «Готовые планы» привлекла внимание, дальше
- *  лента напоминает о ней — каждый раз следующей подборкой (сначала те,
- *  которых не было в полосе). В категории или настроении — только подборки,
- *  где есть места из этой ленты. */
+ *  подборка, «Предложить место». Подборок будет много, поэтому они — через
+ *  раз. В полной ленте — только те, которых не было в полосе «Готовые планы»
+ *  (пока других нет, их место пропускается). В категории или настроении
+ *  полосы нет — там любые подборки, где есть места из этой ленты. */
 function reminderCards({ collections }) {
   const photoCard = ({ href, photo, chip, title, link }) => `
     <a class="feed-promo" href="${href}">
@@ -107,21 +110,25 @@ function reminderCards({ collections }) {
       <span class="feed-promo__chip">${escapeHtml(chip)}</span>
       <span class="feed-promo__text"><b>${escapeHtml(title)}</b><small>${escapeHtml(link)}</small></span>
     </a>`;
-  const shownPlans = 3; // столько подборок в полосе «Готовые планы»
-  const plans = [...collections.slice(shownPlans), ...collections.slice(0, shownPlans)];
-  const pick = (list, round) => (list.length ? list[round % list.length] : null);
+  const notInBand = collections.slice(PLANS_IN_BAND);
+  const plans = [...notInBand, ...collections.slice(0, PLANS_IN_BAND)];
 
-  const kinds = [
-    (round, { filtered, list }) => {
+  const plan = (round, { filtered, list }) => {
+    let pool = notInBand;
+    if (filtered) {
       const inList = new Set(list.map((p) => p.slug));
-      const pool = filtered ? plans.filter((c) => collectionPlaceSlugs(c).some((s) => inList.has(s))) : plans;
-      const c = pick(pool, round);
-      return c && { ratio: 1.25, html: photoCard({ href: collectionUrl(c.slug), photo: c.coverSm || c.cover, chip: 'Готовый план', title: c.title, link: 'Открыть →' }) };
-    },
-    () => ({ ratio: SERVICE_RATIO, html: serviceCardHtml({ href: 'vmeste/?from=feed', iconName: 'users', title: 'Не можете решить вдвоём?', link: 'Выбрать вместе →' }) }),
-    () => ({ ratio: SERVICE_RATIO, html: serviceCardHtml({ href: 'suggest/', iconName: 'heart', title: 'Знаешь место, которого здесь нет?', link: 'Расскажи о нём →' }) })
-  ];
-  return (k, ctx) => kinds[k % kinds.length](Math.floor(k / kinds.length), ctx) || null;
+      pool = plans.filter((c) => collectionPlaceSlugs(c).some((s) => inList.has(s)));
+    }
+    if (!pool.length) return null;
+    const c = pool[round % pool.length];
+    return { ratio: SERVICE_RATIO, html: photoCard({ href: collectionUrl(c.slug), photo: c.coverSm || c.cover, chip: 'Готовый план', title: c.title, link: 'Открыть →' }) };
+  };
+  const together = () => ({ ratio: SERVICE_RATIO, html: serviceCardHtml({ href: 'vmeste/?from=feed', iconName: 'users', title: 'Не можете решить вдвоём?', link: 'Выбрать вместе →' }) });
+  const suggest = () => ({ ratio: SERVICE_RATIO, html: serviceCardHtml({ href: 'suggest/', iconName: 'heart', title: 'Знаешь место, которого здесь нет?', link: 'Расскажи о нём →' }) });
+
+  // k-е напоминание: чётные — подборки (k / 2 — какая по счёту), нечётные —
+  // по очереди «Выбрать вместе» и «Предложить место»
+  return (k, ctx) => (k % 2 === 0 ? plan(k / 2, ctx) : (k % 4 === 1 ? together() : suggest()));
 }
 
 async function main() {

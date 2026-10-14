@@ -251,13 +251,13 @@
   .mobile-menu-toggle .icon { transition: none; }
 }
 
-/* Нижняя часть мобильного меню (ui.js) — на компьютере не нужна */
-.nav-extra,
+/* Пункты только для мобильного меню (ui.js) — на компьютере не нужны */
+.nav-narrow,
 .nav-contact { display: none; }
 
 @media (max-width: 768px) {
-  /* Меню во весь экран: разделы крупно, ниже — поиск, категории,
-     «Предложить место», внизу — установка и почта */
+  /* Меню во весь экран: разделы крупно, внизу — установка и почта.
+     Категории, поиск и карта — в ленте на главной, в меню их нет */
   .nav {
     position: fixed;
     /* top/height, а не bottom: шапка с backdrop-filter — контейнер
@@ -310,63 +310,8 @@
   }
   .nav-list li:last-child { border-bottom: 0; }
 
-  .nav-extra {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }
-
-  .nav-search {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    min-height: 48px;
-    padding: 0 16px;
-    border: 1px solid var(--line-strong);
-    border-radius: var(--radius-pill);
-    background: #fff;
-    color: var(--text-light);
-    font-size: var(--fs-md);
-    text-decoration: none;
-  }
-
-  .nav-search .icon { color: var(--text); }
-
-  .nav-cats {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .nav-cats a {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    min-height: 40px;
-    padding: 0 14px;
-    border: 1px solid var(--line);
-    border-radius: var(--radius-pill);
-    background: rgba(255, 255, 255, 0.7);
-    color: var(--text);
-    font-size: var(--fs-sm);
-    font-weight: 500;
-    text-decoration: none;
-  }
-
-  .nav-cats .icon { color: var(--primary); }
-
-  .nav-suggest {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    min-height: 44px;
-    color: var(--primary-text);
-    font-weight: 600;
-    text-decoration: none;
-  }
+  .nav-narrow { display: list-item; }
+  .nav-wide { display: none; }
 
   .nav-contact {
     display: block;

@@ -23,11 +23,11 @@ export const serviceCardHtml = ({ href, iconName, title, link }) => `
     <span class="feed-suggest__link">${link}</span>
   </a>`;
 
-// Напоминания: после полос-прерываний лента время от времени снова
-// показывает их — уже обычными карточками («Сейчас», подборка, «Выбрать
-// вместе», «Предложить место» по кругу). Первая — после REMIND_FROM мест,
+// Напоминания: после полосы «Готовые планы» лента время от времени снова
+// показывает подборки и сервисы — уже обычными карточками (что именно —
+// решает reminder). Первая — после REMIND_FROM мест (вскоре после полосы),
 // дальше — каждые REMIND_EVERY
-const REMIND_FROM = 40;
+const REMIND_FROM = 16;
 const REMIND_FROM_FILTERED = 6;
 const REMIND_EVERY = 8;
 

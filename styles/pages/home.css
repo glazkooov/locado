@@ -1003,19 +1003,6 @@
     overflow: hidden;
   }
 
-  /* Категории ленты закреплены под шапкой, пока листаешь ленту: чтобы
-     сменить фильтр, не нужно возвращаться наверх. Поиск остаётся на месте */
-  .place-section .categories_menu { display: contents; }
-  .place-section .categories_scroll {
-    position: sticky;
-    top: var(--header-h);
-    z-index: 50;
-    margin-inline: -16px;
-    padding: 10px 16px;
-    background: var(--bg);
-    box-shadow: 0 8px 12px -12px rgba(40, 20, 10, 0.35);
-  }
-  .place-section .category-search-group { margin-top: 6px; }
 }
 
 @media (max-width: 575px) {
