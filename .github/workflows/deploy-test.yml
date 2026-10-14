@@ -63,13 +63,42 @@ jobs:
       # сервере в .ftp-deploy-sync-state.json. Кэш погоды (api/weather-cache.json)
       # создаёт сам сервер — его не трогаем
       - name: Залить на test.locado.ru
+        id: deploy
         if: env.FTP_SERVER != ''
+        continue-on-error: true
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ env.FTP_HOST }}
           username: ${{ secrets.TEST_FTP_USERNAME }}
           password: ${{ secrets.TEST_FTP_PASSWORD }}
           server-dir: ./public_html/
+          # По умолчанию ждёт ответа сервера 30 секунд — Бегет иногда
+          # отвечает дольше, и заливка падала с «Timeout (control socket)»
+          timeout: 120000
+          exclude: |
+            **/.git*
+            **/.git*/**
+            .github/**
+            docs/**
+            tools/**
+            api/weather-cache.json
+
+      # FTP Бегета иногда не отвечает — через минуту пробуем ещё раз
+      - name: Повторная попытка
+        if: env.FTP_SERVER != '' && steps.deploy.outcome == 'failure'
+        run: sleep 60
+
+      - name: Залить на test.locado.ru (повтор)
+        if: env.FTP_SERVER != '' && steps.deploy.outcome == 'failure'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ env.FTP_HOST }}
+          username: ${{ secrets.TEST_FTP_USERNAME }}
+          password: ${{ secrets.TEST_FTP_PASSWORD }}
+          server-dir: ./public_html/
+          # По умолчанию ждёт ответа сервера 30 секунд — Бегет иногда
+          # отвечает дольше, и заливка падала с «Timeout (control socket)»
+          timeout: 120000
           exclude: |
             **/.git*
             **/.git*/**
