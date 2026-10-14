@@ -17,15 +17,41 @@ export function renderHeroMoods(daypart) {
   if (!container) return;
   container.innerHTML = moodsFor(daypart).map((mood, i) => {
     const fitsNow = i === 0 && mood.bestAt.includes(daypart);
+    // Глагол — вертикально во всю высоту карточки, остальное — внизу
+    const [verb, ...tail] = mood.label.split(' ');
     return `
-      <button type="button" class="mood-card" data-mood="${mood.id}" aria-pressed="false">
+      <button type="button" class="mood-card" data-mood="${mood.id}" aria-pressed="false" aria-label="${escapeHtml(mood.label)}" style="--mood: ${mood.color}">
         <img src="${escapeHtml(mood.photo)}" alt="" class="mood-card__img" width="360" height="480" decoding="async">
         ${fitsNow ? '<span class="mood-card__badge">Сейчас в тему</span>' : ''}
-        <span class="mood-card__text">
-          <span class="mood-card__label">${escapeHtml(mood.label)}</span>
-        </span>
+        <span class="mood-card__verb" aria-hidden="true">${escapeHtml(verb)}</span>
+        <span class="mood-card__tail" aria-hidden="true">${escapeHtml(tail.join(' '))}</span>
       </button>`;
   }).join('');
+  fitMoodText(container);
+}
+
+/** Подгоняет кегль под карточку: глагол — во всю её высоту, хвост — во всю
+ *  оставшуюся ширину и чуть вытянут вверх. Ширина карточек зависит от
+ *  экрана, поэтому пересчёт — после загрузки шрифта и при каждом ресайзе. */
+const TAIL_STRETCH = 1.15;
+function fitMoodText(container) {
+  const fit = () => $$('.mood-card[data-mood]', container).forEach((card) => {
+    const verb = $('.mood-card__verb', card);
+    const tail = $('.mood-card__tail', card);
+    if (!verb || !tail || !card.clientWidth) return;
+    const pad = parseFloat(getComputedStyle(verb).bottom) || 10;
+    verb.style.fontSize = '100px';
+    verb.style.fontSize = `${(100 * (card.clientHeight - 2 * pad)) / verb.scrollHeight}px`;
+    const room = card.clientWidth - verb.offsetWidth - 3 * pad;
+    card.style.setProperty('--verb-w', `${verb.offsetWidth}px`); // плашка «Сейчас в тему» — правее глагола
+    tail.style.fontSize = '100px';
+    const size = Math.min((100 * room) / tail.scrollWidth, parseFloat(verb.style.fontSize) * 1.6);
+    tail.style.fontSize = `${size}px`;
+    tail.style.transform = `scaleY(${TAIL_STRETCH})`;
+  });
+  document.fonts?.ready.then(fit);
+  fit();
+  if ('ResizeObserver' in window) new ResizeObserver(fit).observe(container);
 }
 
 /** Порядок карточек с учётом времени суток и погоды и «Сейчас в тему»

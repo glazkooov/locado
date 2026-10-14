@@ -22,6 +22,7 @@ export const MOODS = [
   {
     id: 'quiet',
     label: 'Выдохнуть в тишине',
+    color: '#2F6B57', // цвет дуотона карточки
     icon: 'leaf',
     photo: 'assets/images/places/sm/vorontsovsky-park.jpg', // фото места — подпись на странице «Фото на сайте»
     bestAt: ['morning', 'day'],
@@ -32,6 +33,7 @@ export const MOODS = [
   {
     id: 'new',
     label: 'Открыть новое',
+    color: '#5A3DB0', // цвет дуотона карточки
     icon: 'wand-sparkles',
     photo: 'assets/images/places/sm/park-huamin.jpg', // фото места — подпись на странице «Фото на сайте»
     bestAt: ['day'],
@@ -41,6 +43,7 @@ export const MOODS = [
   {
     id: 'love',
     label: 'Влюбиться в вечер',
+    color: '#A8304F', // цвет дуотона карточки
     icon: 'heart',
     photo: 'assets/images/places/sm/krymskaya-naberezhnaya.jpg', // фото места — подпись на странице «Фото на сайте»
     bestAt: ['evening', 'night'],
@@ -51,6 +54,7 @@ export const MOODS = [
   {
     id: 'photo',
     label: 'Поймать кадр',
+    color: '#C9741C', // цвет дуотона карточки
     icon: 'camera',
     photo: 'assets/images/places/sm/vorobyovy-gory.jpg', // фото места — подпись на странице «Фото на сайте»
     bestAt: ['day', 'evening'],
@@ -61,6 +65,7 @@ export const MOODS = [
   {
     id: 'city',
     label: 'Зарядиться городом',
+    color: '#D9480F', // цвет дуотона карточки
     icon: 'users',
     photo: 'assets/images/places/sm/park-gorkogo.jpg', // фото места — подпись на странице «Фото на сайте»
     bestAt: ['evening', 'night'],
