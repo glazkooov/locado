@@ -170,7 +170,9 @@ async function main() {
   const badge = (c) => (SPECIAL.includes(c.reason?.icon) ? { icon: c.reason.icon, text: c.reason.text } : { text: 'Сейчас в тему' });
   const nowBadges = new Map(picks.map((c) => [c.place.slug, badge(c)]));
   const feed = initFeed(withNowPlaces(places, picks.map((c) => c.place)), {
-    nowBadges, showcases, reminder: reminderCards({ collections })
+    nowBadges, showcases, reminder: reminderCards({ collections }),
+    // «Выбрать вместе» — первой карточкой-напоминанием, в первых рядах
+    lead: { ratio: SERVICE_RATIO, html: serviceCardHtml({ href: 'vmeste/?from=feed-top', iconName: 'users', title: 'Идёшь не один?', link: 'Выбрать вместе →' }) }
   });
   applyUrlFilter(feed);
   liveHeroMoods(places, { daypart: getDaypart(), bad: weatherMode(w) === 'bad' });

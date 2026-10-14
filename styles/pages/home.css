@@ -212,14 +212,6 @@
   transform: rotate(180deg);
   line-height: 0.8;
 }
-/* Плашка не наезжает на глагол: встаёт справа от него и, если карточка
-   узкая, переносится в две строки */
-.mood-card[data-mood] .mood-card__badge {
-  left: calc(var(--verb-w, 0px) + 14px);
-  right: auto;
-  max-width: calc(100% - var(--verb-w, 0px) - 22px);
-  line-height: 1.2;
-}
 .mood-card__tail {
   bottom: 10px;
   white-space: normal;
@@ -246,19 +238,6 @@
   font-weight: 600;
   line-height: 1.25;
   color: #fff;
-}
-
-.mood-card__badge {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 3;
-  padding: 3px 8px;
-  border-radius: var(--radius-card);
-  background: rgba(255, 255, 255, 0.92);
-  font-size: var(--fs-caption);
-  font-weight: 700;
-  color: var(--ink);
 }
 
 .mood-card:hover {
@@ -1195,23 +1174,6 @@ body.feed-toolbar-stuck .main-header { box-shadow: none; }
 .feed-map { margin-top: 20px; }
 .feed-map[hidden] { display: none; }
 
-/* «Выбрать вместе» на первом экране — строкой под карточками настроений */
-.hero__together {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: -12px;
-  padding: 8px 14px;
-  border-radius: 999px;
-  font-size: var(--fs-sm);
-  color: var(--hero-muted);
-  text-decoration: none;
-  transition: background 0.2s ease;
-}
-.hero__together b { color: var(--hero-accent); font-weight: 700; }
-.hero__together .icon { color: var(--hero-accent); }
-.hero__together:hover { background: var(--hero-glass); }
-
 /* Колонки перед витриной — вровень: последняя карточка в колонке
    растягивается до общей нижней линии (фото обрезается по месту) */
 .places-grid--flush { align-items: stretch; }
@@ -1331,7 +1293,6 @@ body.feed-toolbar-stuck .main-header { box-shadow: none; }
   .feed-map .map-section { gap: 10px; height: auto; min-height: 0; max-height: none; }
   .feed-map .map-container { flex: none; height: calc(100svh - var(--header-h) - 130px); min-height: 380px; }
   .feed-map .map-panel { flex: none; }
-  .hero__together { margin-top: -18px; }
   /* Первый экран: из-под героя должны выглядывать карточки — лид не влезает */
   .hero { padding-bottom: calc(14px + var(--hero-wave-h)); }
   .feed-head .section-title { font-size: var(--fs-lg); }
