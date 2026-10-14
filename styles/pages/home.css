@@ -1153,7 +1153,10 @@ body.feed-toolbar-stuck .main-header { box-shadow: none; }
 /* Колонки перед витриной — вровень: последняя карточка в колонке
    растягивается до общей нижней линии (фото обрезается по месту) */
 .places-grid--flush { align-items: stretch; }
-.places-grid--flush .places-grid__col > :last-child { flex-grow: 1; }
+.places-grid--flush .places-grid__col { container-type: inline-size; }
+/* Растягивается не больше, чем до пропорции 4:7 — дальше фото
+   выглядело бы мутным, а карточка — во весь экран */
+.places-grid--flush .places-grid__col > :last-child { flex-grow: 1; max-height: 175cqi; }
 .feed-stream > .places-grid:first-child { margin-top: 20px; }
 
 /* Полосы-прерывания ленты: «Сейчас» и «Готовые планы» — наши персональные

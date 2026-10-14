@@ -30,6 +30,9 @@ export const serviceCardHtml = ({ href, iconName, title, link }) => `
 const REMIND_FROM = 16;
 const REMIND_FROM_FILTERED = 6;
 const REMIND_EVERY = 8;
+// Колонки «почти вровень» перед витриной: разница высот — не больше
+// трети ширины карточки (высоты считаем в ширинах, как CARD_RATIOS)
+const BALANCED = 0.35;
 
 // Пропорции карточек (высота / ширина) — классы .place-card--r0…r4 в
 // card.css. По ним без замеров DOM знаем высоту каждой колонки.
@@ -142,8 +145,11 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE, nowBadges = new Map(
     columns = [...segment.children];
     heights = columns.map(() => 0);
   };
+  // Витрина, которая ждёт, пока колонки выровняются (см. appendCards)
+  let pending = null;
   const resetColumns = () => {
     phoneLayout = PHONE.matches;
+    pending = null;
     showcaseNodes.forEach((node) => node.remove());
     container.innerHTML = '';
     segment = null;
@@ -180,13 +186,23 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE, nowBadges = new Map(
           heights[c] += card.ratio;
         }
       }
-      // Витрина после целого ряда: отрезок закрываем (колонки — вровень),
-      // ставим витрину и начинаем новый отрезок
-      const showcase = showcaseAt(start + i + 1);
-      if (showcase && isUnfiltered() && start + i + 1 < list.length) {
-        segment.classList.add('places-grid--flush');
-        container.append(showcase);
-        newSegment();
+      // Витрина — после своего ряда, но не сразу: сначала колонки должны
+      // почти сравняться по высоте. Иначе перед ней последнюю карточку в
+      // короткой колонке пришлось бы растягивать на пол-экрана. Ждём не
+      // дольше двух рядов
+      const showcase = showcaseAt(n);
+      if (showcase && isUnfiltered()) pending = { node: showcase, at: n };
+      if (pending && n < list.length) {
+        const uneven = Math.max(...heights) - Math.min(...heights);
+        // Если порция кончилась раньше — витрина придёт со следующей
+        // (она подгружается сама при прокрутке). Отрезок закрываем
+        // (колонки — вровень), ставим витрину и начинаем новый отрезок
+        if (uneven <= BALANCED || n - pending.at >= 2 * columns.length) {
+          segment.classList.add('places-grid--flush');
+          container.append(pending.node);
+          pending = null;
+          newSegment();
+        }
       }
     });
   };
