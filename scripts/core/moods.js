@@ -17,7 +17,7 @@ import { getOpenStatus } from './format.js';
 export const MIN_RESULTS = 4;
 
 // Название — состояние, а не рубрика: «что хочется», глагол и то, что даёт
-// город. Пары противоположностей: тишина — город, новое — прошлое.
+// город.
 export const MOODS = [
   {
     id: 'quiet',
@@ -58,13 +58,14 @@ export const MOODS = [
     categories: ['photo']
   },
   {
-    id: 'past',
-    label: 'Шагнуть в прошлое',
-    icon: 'landmark',
-    photo: 'assets/images/places/sm/kuskovo.jpg', // фото места — подпись на странице «Фото на сайте»
-    bestAt: ['morning', 'day'],
-    any: ['исторично', 'старый город', 'усадьба'],
-    categories: ['nature', 'photo']
+    id: 'photo',
+    label: 'Поймать кадр',
+    icon: 'camera',
+    photo: 'assets/images/places/sm/vorobyovy-gory.jpg', // фото места — подпись на странице «Фото на сайте»
+    bestAt: ['day', 'evening'],
+    any: ['красиво', 'эстетично', 'панорама', 'высота'],
+    all: ['фотографировать'],
+    categories: ['photo']
   },
   {
     id: 'city',
