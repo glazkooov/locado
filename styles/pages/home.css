@@ -1072,9 +1072,26 @@
   gap: 4px 12px;
   margin: 12px -16px 0;
   padding: 6px 16px 10px;
-  background: var(--bg);
-  box-shadow: 0 8px 12px -12px rgba(40, 20, 10, 0.35);
+  isolation: isolate;
 }
+/* Подложка строки — во всю ширину экрана и только когда строка прилипла:
+   тогда она сливается с шапкой в одну белую панель (тот же цвет и размытие),
+   а в покое строки как отдельного прямоугольника не видно */
+.place-section .feed-toolbar::before {
+  content: '';
+  position: absolute;
+  inset: 0 calc(50% - 50vw);
+  z-index: -1;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+.place-section .feed-toolbar.is-stuck::before {
+  background: rgba(255, 255, 255, 0.92);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-bar);
+}
+/* Шапка над прилипшей строкой — без своей тени: шов не виден */
+body.feed-toolbar-stuck .main-header { box-shadow: none; }
 .feed-toolbar .categories_scroll {
   grid-area: cats;
   position: static;

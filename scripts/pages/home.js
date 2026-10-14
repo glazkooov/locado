@@ -15,7 +15,7 @@ import { showToast } from '../components/toast.js';
 import { loadCollections, collectionUrl, collectionPlaceSlugs } from '../core/collections.js';
 import { collectionCardHtml } from '../components/collection-card.js';
 import { loadNow, pickNow } from '../core/now.js';
-import { loadWeather, weatherMode, tempLabel } from '../core/weather.js';
+import { loadWeather, weatherMode } from '../core/weather.js';
 
 // Скроллим к заголовку ленты, а не к карточкам: так видны вкладки и
 // плашка выбранного настроения/подборки над ними.
@@ -69,14 +69,6 @@ function showLoadError() {
   const message = '<p class="feed-load-error">Не получилось загрузить места. Обнови страницу — обычно помогает.</p>';
   const feedContainer = $('#places-container');
   if (feedContainer) feedContainer.innerHTML = message;
-}
-
-/** Погода — одним словом в строке над вопросом героя:
- *  «Суббота, вечер · Москва · +7°, дождь». */
-function renderHeroWeather(weather) {
-  const when = $('#hero-when');
-  if (!when || !weather) return;
-  when.textContent += ` · ${tempLabel(weather.temp)}, ${weather.label}`;
 }
 
 /** Места «под момент» (core/now.js) встают в первые ряды ленты — через
@@ -163,11 +155,12 @@ async function main() {
   // первые ряды ленты с короткой плашкой «почему сейчас»
   const entry = await nowEntry;
   const w = await weather;
-  renderHeroWeather(w);
   const view = entry ? pickNow(entry, places, { weather: w }) : null;
   const picks = view ? view.cards : [];
-  // Плашка — коротко: «Под крышей», без «· до 21:00» (часы — на странице места)
-  const badge = (c) => (c.reason ? { icon: c.reason.icon, text: c.reason.text.split(' · ')[0] } : { text: 'Сейчас в тему' });
+  // Плашка — только когда причина особенная: закат или «всю ночь». «Под
+  // крышей» и часы работы — не повод выделять место, таких много
+  const SPECIAL = ['sunset', 'moon'];
+  const badge = (c) => (SPECIAL.includes(c.reason?.icon) ? { icon: c.reason.icon, text: c.reason.text } : { text: 'Сейчас в тему' });
   const nowBadges = new Map(picks.map((c) => [c.place.slug, badge(c)]));
   const feed = initFeed(withNowPlaces(places, picks.map((c) => c.place)), {
     nowBadges, showcases, reminder: reminderCards({ collections })
@@ -214,6 +207,19 @@ function initFeedView(places) {
   const fromHash = () => { if (window.location.hash === '#map-section') { setView('map'); toToolbar(true); } };
   window.addEventListener('hashchange', fromHash);
   fromHash();
+  // Строка над лентой прилипла к шапке — подложка во всю ширину и без шва
+  const toolbar = $('.feed-toolbar');
+  if (toolbar) {
+    const syncStuck = () => {
+      const header = $('.main-header');
+      const stuck = toolbar.getBoundingClientRect().top <= (header ? header.offsetHeight : 0) + 1
+        && !toolbar.classList.contains('feed-toolbar--map');
+      toolbar.classList.toggle('is-stuck', stuck);
+      document.body.classList.toggle('feed-toolbar-stuck', stuck);
+    };
+    window.addEventListener('scroll', syncStuck, { passive: true });
+    syncStuck();
+  }
   // «Удиви меня» в конце ленты открывает тот же рандомайзер, что в hero
   $$('[data-random]').forEach((b) => on(b, 'click', () => $('#hero-random-icon')?.click()));
 }
