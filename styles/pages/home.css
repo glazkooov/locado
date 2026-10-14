@@ -12,7 +12,7 @@
   position: relative;
   /* шапка на главной лежит поверх hero (.main-header--overlay);
      снизу + высота волны, чтобы она не подрезала карточки настроений */
-  padding: calc(var(--header-h) + 40px) 0 calc(60px + var(--hero-wave-h));
+  padding: calc(var(--header-h) + 56px) 0 calc(60px + var(--hero-wave-h));
 }
 
 /* Волнистый нижний край: прямоугольник без нижней полосы + волна */
@@ -68,7 +68,7 @@
     justify-content: center;
     align-items: flex-start;
     gap: 12px;
-    margin-top: 28px;
+    margin-top: 36px;
   }
 }
 
@@ -101,6 +101,9 @@
 }
 
 .hero__pick + .hero__choices { margin-top: 0; }
+@media (min-width: 768px) {
+  .hero__pick { margin-bottom: -10px; }
+}
 
 .hero__tagline span {
   color: var(--hero-accent);
@@ -1054,7 +1057,7 @@
 .place-section { margin-top: 40px; }
 /* Лента сразу под героем: герой по содержимому, а не на 86% экрана —
    на компьютере из-под него должен выглядывать заголовок ленты */
-.hero { min-height: 0; padding-bottom: calc(40px + var(--hero-wave-h)); }
+.hero { min-height: 0; padding-bottom: calc(72px + var(--hero-wave-h)); }
 .feed-head .section-lead { max-width: 560px; }
 
 /* Закреплённая строка над лентой: категории отдельным рядом (во всю ширину,
@@ -1255,7 +1258,7 @@ body.feed-toolbar-stuck .main-header { box-shadow: none; }
 .feed-end .feed-next__item span { display: block; margin: 0; font-size: var(--fs-sm); color: var(--text-light); }
 
 @media (max-width: 767px) {
-  .place-section { margin-top: 16px; }
+  .place-section { margin-top: 24px; }
   .place-section .feed-toolbar {
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas: 'cats cats' 'search view';
@@ -1273,8 +1276,9 @@ body.feed-toolbar-stuck .main-header { box-shadow: none; }
   .feed-map .map-section { gap: 10px; height: auto; min-height: 0; max-height: none; }
   .feed-map .map-container { flex: none; height: calc(100svh - var(--header-h) - 130px); min-height: 380px; }
   .feed-map .map-panel { flex: none; }
-  /* Первый экран: из-под героя должны выглядывать карточки — лид не влезает */
-  .hero { padding-bottom: calc(14px + var(--hero-wave-h)); }
+  /* Воздух вокруг «Удиви меня»: от карточек настроений и до волны */
+  .hero { padding-bottom: calc(40px + var(--hero-wave-h)); }
+  .hero__choices { gap: 28px; }
   .feed-head .section-title { font-size: var(--fs-lg); }
   .feed-head .section-lead { display: none; }
   /* Полосы на телефоне: целиком в экран. Заголовок крупный, лид в две
