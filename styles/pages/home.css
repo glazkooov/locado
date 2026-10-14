@@ -187,16 +187,6 @@
   gap: 4px;
 }
 
-.mood-card__meta {
-  font-size: var(--fs-caption);
-  font-weight: 600;
-  line-height: 1.2;
-  color: rgba(255, 255, 255, 0.82);
-}
-.mood-card__meta[hidden] { display: none; }
-@media (max-width: 767px) {
-  .mood-card__total { display: none; }
-}
 
 .mood-card__label {
   display: block;
@@ -256,97 +246,7 @@
 
 .mood-card--random .mood-card__label { position: static; }
 
-/* «С чего начать»: три места выбранного настроения прямо под карточками */
-.mood-picks {
-  width: 100%;
-  max-width: 980px;
-  margin: 4px auto 0;
-  padding: 16px;
-  border: 1px solid var(--hero-card-line);
-  border-radius: var(--radius-card);
-  background: var(--hero-glass);
-  backdrop-filter: blur(10px);
-  color: var(--hero-fg);
-  text-align: left;
-  animation: mood-picks-in 0.25s ease;
-}
-.mood-picks[hidden] { display: none; }
 
-.mood-picks__head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-.mood-picks__title { font-weight: 700; font-size: var(--fs-md); }
-.mood-picks__close {
-  display: inline-flex;
-  padding: 6px;
-  border: none;
-  border-radius: 50%;
-  background: none;
-  color: var(--hero-muted);
-  cursor: pointer;
-}
-.mood-picks__close:hover { background: var(--hero-glass-hover); color: var(--hero-fg); }
-
-.mood-picks__list {
-  display: grid;
-  gap: 10px;
-  margin-top: 12px;
-}
-@media (min-width: 768px) {
-  .mood-picks__list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-}
-
-.mood-pick {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
-  padding: 8px;
-  border-radius: 14px;
-  background: var(--hero-glass);
-  color: inherit;
-  text-decoration: none;
-  transition: background 0.2s ease;
-}
-.mood-pick:hover { background: var(--hero-glass-hover); }
-.mood-pick__img {
-  flex: none;
-  width: 56px;
-  height: 56px;
-  border-radius: 10px;
-  object-fit: cover;
-}
-.mood-pick__text { display: grid; gap: 2px; min-width: 0; }
-.mood-pick__text b { font-size: var(--fs-sm); line-height: 1.25; }
-.mood-pick__text small {
-  overflow: hidden;
-  font-size: var(--fs-caption);
-  color: var(--hero-muted);
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.mood-picks__empty { font-size: var(--fs-sm); color: var(--hero-muted); }
-
-.mood-picks__all {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  margin-top: 12px;
-  padding: 0;
-  border: none;
-  background: none;
-  font: inherit;
-  font-size: var(--fs-sm);
-  font-weight: 700;
-  color: var(--hero-accent);
-  cursor: pointer;
-}
-
-@keyframes mood-picks-in { from { opacity: 0; transform: translateY(-6px); } }
-@media (prefers-reduced-motion: reduce) { .mood-picks { animation: none; } }
 
 .mood-card__dice {
   flex: none;
@@ -1271,8 +1171,6 @@
   box-shadow: var(--shadow-soft);
 }
 .feed-stream > section > .container { padding: 0; max-width: none; }
-/* Переход к полосе из карточки-напоминания — не под закреплённую строку */
-.feed-stream > section { scroll-margin-top: calc(var(--header-h) + 130px); }
 
 /* Карточка-напоминание (подборка, «Сейчас») — как карточка места, но с
    плашкой раздела и призывом внизу */
@@ -1323,14 +1221,6 @@
 .feed-stream .section-head { margin-bottom: 16px; }
 .feed-stream .section-title { font-size: var(--fs-xl); }
 .feed-stream .section-lead { max-width: 640px; }
-.feed-stream .now-card__photo { aspect-ratio: 4 / 3; }
-.feed-stream .now-card__name { margin-top: 10px; font-size: var(--fs-md); }
-.feed-stream .now-card__text {
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
 .feed-stream .collections-grid { margin-top: 0; }
 
 /* Конец ленты: следующие шаги вместо тупика */
@@ -1405,9 +1295,6 @@
     overflow: hidden;
     font-size: var(--fs-sm);
   }
-  .feed-stream .now__cards { margin-inline: -16px; width: calc(100% + 32px); padding-bottom: 6px; }
-  .feed-stream .now-card { flex-basis: 64%; }
-  .feed-stream .now-card__text { -webkit-line-clamp: 2; }
   .feed-stream .collections-grid {
     display: flex;
     gap: 12px;

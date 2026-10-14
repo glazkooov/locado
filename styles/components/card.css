@@ -209,7 +209,8 @@
   margin: 0;
 }
 
-.badge-temporary {
+.badge-temporary,
+.badge-now {
   padding: 4px 10px;
   font-size: var(--fs-caption);
   font-weight: 700;
@@ -326,3 +327,8 @@
   color: var(--text-light);
   padding: 24px 16px;
 }
+
+/* «Почему сейчас» — место подходит моменту (погода, время, сезон):
+   «Под крышей», «Закат в 17:34». Иконка — в цвет текста плашки */
+.badge-now { display: inline-flex; align-items: center; gap: 5px; }
+.badge-now .icon { flex: none; }

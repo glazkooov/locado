@@ -3,7 +3,7 @@
 import { goal, categoryGoal } from '../core/analytics.js';
 import { $, $$, on } from '../core/dom.js';
 import { escapeHtml } from '../core/format.js';
-import { loadPlaces, placeUrl, CATEGORIES } from '../core/places.js';
+import { loadPlaces, CATEGORIES } from '../core/places.js';
 import { bindCards } from '../components/card.js';
 import { initFeed, serviceCardHtml, SERVICE_RATIO } from '../components/feed.js';
 import { initRandomizer } from '../components/randomizer.js';
@@ -15,8 +15,7 @@ import { showToast } from '../components/toast.js';
 import { loadCollections, collectionUrl, collectionPlaceSlugs } from '../core/collections.js';
 import { collectionCardHtml } from '../components/collection-card.js';
 import { loadNow, pickNow } from '../core/now.js';
-import { loadWeather, weatherMode } from '../core/weather.js';
-import { icon } from '../core/icons.js';
+import { loadWeather, weatherMode, tempLabel } from '../core/weather.js';
 
 // Скроллим к заголовку ленты, а не к карточкам: так видны вкладки и
 // плашка выбранного настроения/подборки над ними.
@@ -72,58 +71,23 @@ function showLoadError() {
   if (feedContainer) feedContainer.innerHTML = message;
 }
 
-/** Строка над заголовком: погода, прогноз, закат. Обновляется раз в минуту. */
-function renderNowLive(view) {
-  const items = [];
-  // «+7°, дождь, стихнет к 21:00» — прогноз в одной фразе с погодой
-  if (view.weather) {
-    items.push({ icon: view.weather.icon, text: [`${view.weather.temp}`, view.weather.label, view.forecast].filter(Boolean).join(', ') });
-  }
-  items.push(...view.facts);
-  $('#now-live').innerHTML = items.map((x) => `<span>${x.icon ? icon(x.icon) : ''}${escapeHtml(x.text)}</span>`).join('');
-  $('#now-live').hidden = !items.length;
+/** Погода — одним словом в строке над вопросом героя:
+ *  «Суббота, вечер · Москва · +7°, дождь». */
+function renderHeroWeather(weather) {
+  const when = $('#hero-when');
+  if (!when || !weather) return;
+  when.textContent += ` · ${tempLabel(weather.temp)}, ${weather.label}`;
 }
 
-/** «Сейчас»: сезонная подборка из data/now.json, подобранная под погоду,
- *  время суток и часы работы (core/now.js → pickNow). Под фото — причина
- *  («Под крышей», «Закат в 17:34»), под названием — фраза места под этот
- *  момент (moments) или «Когда лучше».
- *  Возвращает view из pickNow (или null): показанные места и запас (more). */
-function renderNow(entry, places, weather) {
-  const section = $('#now-section');
-  if (!section || !entry) return null;
-  const view = pickNow(entry, places, { weather });
-  if (!view.cards.length) return null;
-  $('#now-eyebrow').textContent = view.eyebrow;
-  $('#now-eyebrow').hidden = !view.eyebrow;
-  $('#now-title').textContent = view.title;
-  $('#now-lead').textContent = view.lead;
-  $('#now-lead').hidden = !view.lead;
-  renderNowLive(view);
-  // «до заката 1 ч 30 мин» — живое, раз в минуту
-  setInterval(() => renderNowLive(pickNow(entry, places, { weather })), 60 * 1000);
-  $('#now-cards').innerHTML = view.cards.map(({ place: p, reason, note }) => {
-    const when = p.story?.when;
-    const text = note ? escapeHtml(note) : when ? `<b>Когда:</b> ${escapeHtml(when)}` : escapeHtml(p.description || '');
-    return `
-      <a class="now-card" href="${placeUrl(p.slug)}">
-        <span class="now-card__media">
-          <img class="now-card__photo" src="${escapeHtml(p.photoSm || p.photo || '')}" alt="${escapeHtml(p.name)}" loading="lazy">
-          ${reason ? `<span class="now-card__reason">${icon(reason.icon)}${escapeHtml(reason.text)}</span>` : ''}
-        </span>
-        <span class="now-card__name">${escapeHtml(p.name)}</span>
-        <p class="now-card__text">${text}</p>
-      </a>`;
-  }).join('');
-  section.hidden = false;
-  // Цель: что из «Сейчас» открывают — работает ли сезонный блок
-  const picks = view.cards.map((c) => c.place);
-  $$('.now-card', section).forEach((card, i) => on(card, 'click', () => {
-    goal('now_open', { 'Сейчас': { [entry.title || '']: picks[i].name } });
-  }));
-  return view;
+/** Места «под момент» (core/now.js) встают в первые ряды ленты — через
+ *  несколько карточек, а не стеной: 2-я, 5-я, 9-я, 14-я позиция. */
+const NOW_SLOTS = [1, 4, 8, 13];
+function withNowPlaces(places, picks) {
+  const slugs = new Set(picks.map((p) => p.slug));
+  const rest = places.filter((p) => !slugs.has(p.slug));
+  picks.forEach((p, i) => rest.splice(Math.min(NOW_SLOTS[i] ?? rest.length, rest.length), 0, p));
+  return rest;
 }
-
 
 /** Подборки — авторские статьи на отдельных страницах (collection.html). */
 async function renderCollections() {
@@ -139,14 +103,12 @@ async function renderCollections() {
   }
 }
 
-/** Карточки-напоминания в ленте — по кругу: подборка, «Сейчас», «Выбрать
- *  вместе», «Предложить место». Полосы наверху привлекли внимание, дальше
- *  лента напоминает о них — и каждый раз показывает другое: следующую
- *  подборку, следующее место «под момент». Сначала то, чего не было в
- *  полосах, потом — что было.
- *  В категории или настроении — только уместное: подборки, где есть места
- *  из этой ленты, и места «Сейчас» из неё же. */
-function reminderCards({ view, collections }) {
+/** Карточки-напоминания в ленте — по кругу: подборка, «Выбрать вместе»,
+ *  «Предложить место». Полоса «Готовые планы» привлекла внимание, дальше
+ *  лента напоминает о ней — каждый раз следующей подборкой (сначала те,
+ *  которых не было в полосе). В категории или настроении — только подборки,
+ *  где есть места из этой ленты. */
+function reminderCards({ collections }) {
   const photoCard = ({ href, photo, chip, title, link }) => `
     <a class="feed-promo" href="${href}">
       <img class="feed-promo__img" src="${escapeHtml(photo || '')}" alt="" loading="lazy">
@@ -155,7 +117,6 @@ function reminderCards({ view, collections }) {
     </a>`;
   const shownPlans = 3; // столько подборок в полосе «Готовые планы»
   const plans = [...collections.slice(shownPlans), ...collections.slice(0, shownPlans)];
-  const nowPicks = view ? [...view.more, ...view.cards] : [];
   const pick = (list, round) => (list.length ? list[round % list.length] : null);
 
   const kinds = [
@@ -164,18 +125,6 @@ function reminderCards({ view, collections }) {
       const pool = filtered ? plans.filter((c) => collectionPlaceSlugs(c).some((s) => inList.has(s))) : plans;
       const c = pick(pool, round);
       return c && { ratio: 1.25, html: photoCard({ href: collectionUrl(c.slug), photo: c.coverSm || c.cover, chip: 'Готовый план', title: c.title, link: 'Открыть →' }) };
-    },
-    (round, { filtered, list }) => {
-      const inList = new Set(list.map((p) => p.slug));
-      const pool = filtered ? nowPicks.filter((c) => inList.has(c.place.slug)) : nowPicks;
-      const c = pick(pool, round);
-      return c && { ratio: 1.25, html: photoCard({
-        href: placeUrl(c.place.slug),
-        photo: c.place.photoSm || c.place.photo,
-        chip: view.eyebrow || 'Сейчас',
-        title: c.place.name,
-        link: c.reason ? `${c.reason.text} →` : `${view.title} →`
-      }) };
     },
     () => ({ ratio: SERVICE_RATIO, html: serviceCardHtml({ href: 'vmeste/?from=feed', iconName: 'users', title: 'Не можете решить вдвоём?', link: 'Выбрать вместе →' }) }),
     () => ({ ratio: SERVICE_RATIO, html: serviceCardHtml({ href: 'suggest/', iconName: 'heart', title: 'Знаешь место, которого здесь нет?', link: 'Расскажи о нём →' }) })
@@ -204,26 +153,27 @@ async function main() {
     return;
   }
 
-  // «Готовые планы» и «Сейчас» — полосы в ленте, после 3-го и 8-го ряда:
-  // подборки приоритетнее, поэтому первыми, а «Сейчас» — подальше, чтобы
-  // полосы не шли одна за другой
-  const entry = await nowEntry;
-  const view = renderNow(entry, places, await weather);
-  const spotlight = view ? view.cards.map((c) => c.place) : [];
+  // «Готовые планы» — полоса в ленте после 3-го ряда
   const collections = await collectionsShown;
   const showcases = {};
   if (collections.length) showcases[3] = $('#collections');
   else $('#collections')?.remove();
-  if (spotlight.length) showcases[8] = $('#now-section');
 
-  // Места из «Сейчас» — в конец ленты: в полосе «Сейчас» они уже есть
-  const inSpotlight = new Set(spotlight.map((p) => p.slug));
-  const feed = initFeed(
-    [...places.filter((p) => !inSpotlight.has(p.slug)), ...places.filter((p) => inSpotlight.has(p.slug))],
-    { seasonal: inSpotlight, showcases, reminder: reminderCards({ view, collections }) }
-  );
+  // «Сейчас» — не отдельный блок: места под погоду, время и сезон встают в
+  // первые ряды ленты с короткой плашкой «почему сейчас»
+  const entry = await nowEntry;
+  const w = await weather;
+  renderHeroWeather(w);
+  const view = entry ? pickNow(entry, places, { weather: w }) : null;
+  const picks = view ? view.cards : [];
+  // Плашка — коротко: «Под крышей», без «· до 21:00» (часы — на странице места)
+  const badge = (c) => (c.reason ? { icon: c.reason.icon, text: c.reason.text.split(' · ')[0] } : { text: 'Сейчас в тему' });
+  const nowBadges = new Map(picks.map((c) => [c.place.slug, badge(c)]));
+  const feed = initFeed(withNowPlaces(places, picks.map((c) => c.place)), {
+    nowBadges, showcases, reminder: reminderCards({ collections })
+  });
   applyUrlFilter(feed);
-  liveHeroMoods(places, { daypart: getDaypart(), bad: weatherMode(await weather) === 'bad' });
+  liveHeroMoods(places, { daypart: getDaypart(), bad: weatherMode(w) === 'bad' });
   // Лента сразу под героем: настроение фильтрует её на месте
   initHeroMoods(feed, places, { onSelect: () => scrollToFeed() });
   initRandomizer(places);

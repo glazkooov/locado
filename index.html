@@ -121,23 +121,10 @@
       </div>
     </section>
 
-    <!-- «Сейчас» и «Готовые планы» — полосы-прерывания ленты, наши
-         персональные предложения: здесь они только до запуска скриптов,
-         feed.js переносит их в ленту (после 3-го и 6-го ряда карточек).
-         «Сейчас»: заголовок и места — data/now.json (core/now.js), подбор
-         под погоду и время — pages/home.js. Нет записи — секция скрыта -->
-    <section class="now" id="now-section" hidden>
-      <div class="container">
-        <div class="section-head">
-          <p class="section-eyebrow" id="now-eyebrow"></p>
-          <!-- погода, прогноз и закат: заполняет pages/home.js -->
-          <p class="now__live" id="now-live" hidden></p>
-          <h2 class="section-title" id="now-title"></h2>
-          <p class="section-lead" id="now-lead"></p>
-        </div>
-        <div class="now__cards" id="now-cards"></div>
-      </div>
-    </section>
+    <!-- «Готовые планы» — полоса-прерывание ленты, наше персональное
+         предложение: здесь она только до запуска скриптов, feed.js переносит
+         её в ленту (после 3-го ряда карточек). «Сейчас» отдельным блоком
+         больше нет: места под погоду и время — плашками в самой ленте -->
 
     <!-- Готовые планы на день — подборки (data/collections.json) -->
     <section class="categories-collections" id="collections">

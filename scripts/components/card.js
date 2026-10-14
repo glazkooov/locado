@@ -20,8 +20,11 @@ function favButtonHtml(place, isFavorite) {
         </button>`;
 }
 
-export function cardHtml(place, isFavorite, extraClass = '') {
-  const badge = place.temporary ? '<div class="badge-temporary">Успей посетить</div>' : '';
+/** now — место подходит моменту (core/now.js): короткая плашка «почему
+ *  сейчас» — { icon, text }: «Под крышей», «Закат в 17:34». */
+export function cardHtml(place, isFavorite, extraClass = '', { now = null } = {}) {
+  const badge = (place.temporary ? '<div class="badge-temporary">Успей посетить</div>' : '')
+    + (now ? `<div class="badge-now">${now.icon ? icon(now.icon) : ''}${escapeHtml(now.text)}</div>` : '');
   return `
     <div class="place-card${extraClass ? ` ${extraClass}` : ''}" data-category="${escapeHtml(place.category)}" data-slug="${escapeHtml(place.slug)}">
       <div class="place-card__top">

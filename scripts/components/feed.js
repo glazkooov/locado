@@ -71,18 +71,20 @@ const PRELOAD_MARGIN = 800;
 // базы — при 100 и при 500 местах он тот же.
 const AUTO_LOAD_LIMIT = 36;
 
-// seasonal — слаги мест из блока «Сейчас» (data/now.json). В полной ленте
-// они в конце (home.js): они есть в полосе «Сейчас». А после настроения
-// или раздела человек полосы не видел — там они идут первыми.
+// nowBadges — места, которые подходят моменту (погода, время, сезон —
+// core/now.js): Map slug → { icon, text } для плашки «почему сейчас». В
+// категории или настроении они идут первыми; порядок полной ленты задаёт
+// home.js.
 //
 // showcases — полосы на всю ширину ленты («Сейчас», «Готовые планы»):
-// { 3: <section>, 8: <section> } — после 3-го и 8-го ряда карточек.
+// { 3: <section> } — после 3-го ряда карточек.
 // reminder(k, { filtered, list }) — k-я карточка-напоминание: { html, ratio }
 // или null; list — места, которые сейчас в ленте (для уместных напоминаний). Лента — это
 // отрезки-сетки (.places-grid), витрина стоит между ними, а колонки перед
 // ней выравниваются по нижнему краю, чтобы не было пустот. В
 // отфильтрованной ленте витрин нет: там человек ищет своё.
-export function initFeed(allPlaces, { pageSize = PAGE_SIZE, seasonal = new Set(), showcases = {}, reminder = null } = {}) {
+export function initFeed(allPlaces, { pageSize = PAGE_SIZE, nowBadges = new Map(), showcases = {}, reminder = null } = {}) {
+  const seasonal = new Set(nowBadges.keys());
   const container = $('#places-container');
   if (!container) return null; // не на этой странице
 
@@ -155,7 +157,7 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE, seasonal = new Set()
     places.forEach((place, i) => {
       const ratio = ratioIndex(place.slug);
       const col = shortest();
-      columns[col].insertAdjacentHTML('beforeend', cardHtml(place, favorites.includes(place.slug), `place-card--r${ratio}`));
+      columns[col].insertAdjacentHTML('beforeend', cardHtml(place, favorites.includes(place.slug), `place-card--r${ratio}`, { now: nowBadges.get(place.slug) }));
       heights[col] += cardRatios()[ratio];
       const n = start + i + 1;
       // В полной ленте напоминания — после полос (с REMIND_FROM), в
