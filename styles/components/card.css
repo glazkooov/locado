@@ -37,9 +37,9 @@
 /* Пропорции карточек ленты — синхронно с CARD_RATIOS в feed.js */
 .place-card--r0 { aspect-ratio: 4 / 5; }
 .places-grid .place-card--r1 { aspect-ratio: 3 / 4; }
-.places-grid .place-card--r2 { aspect-ratio: 1 / 1; }
-.places-grid .place-card--r3 { aspect-ratio: 4 / 5.6; }
-.places-grid .place-card--r4 { aspect-ratio: 5 / 4; }
+.places-grid .place-card--r2 { aspect-ratio: 2 / 3; }
+.places-grid .place-card--r3 { aspect-ratio: 5 / 7; }
+.places-grid .place-card--r4 { aspect-ratio: 10 / 13; }
 
 /* Телефон: как в Пинтересте — узкие поля, карточки вытянуты вверх.
    Пропорции — синхронно с PHONE_RATIOS в feed.js */
@@ -50,9 +50,9 @@
   .places-grid .feed-suggest { border-radius: 16px; }
   .places-grid .place-card--r0 { aspect-ratio: 2 / 3; }
   .places-grid .place-card--r1 { aspect-ratio: 3 / 4; }
-  .places-grid .place-card--r2 { aspect-ratio: 4 / 5; }
+  .places-grid .place-card--r2 { aspect-ratio: 20 / 29; }
   .places-grid .place-card--r3 { aspect-ratio: 3 / 5; }
-  .places-grid .place-card--r4 { aspect-ratio: 1 / 1; }
+  .places-grid .place-card--r4 { aspect-ratio: 5 / 7; }
 }
 
 /* «Знаешь место, которого здесь нет?» среди карточек ленты — пунктир,
@@ -62,7 +62,7 @@
   flex-direction: column;
   justify-content: flex-end;
   gap: 8px;
-  aspect-ratio: 1 / 1;
+  aspect-ratio: 4 / 5;
   padding: 18px;
   border: 1.5px dashed rgba(185, 60, 5, 0.35);
   border-radius: var(--radius-card);
@@ -210,7 +210,7 @@
 }
 
 .badge-temporary,
-.badge-season {
+.badge-now {
   padding: 4px 10px;
   font-size: var(--fs-caption);
   font-weight: 700;
@@ -327,3 +327,8 @@
   color: var(--text-light);
   padding: 24px 16px;
 }
+
+/* «Почему сейчас» — место подходит моменту (погода, время, сезон):
+   «Под крышей», «Закат в 17:34». Иконка — в цвет текста плашки */
+.badge-now { display: inline-flex; align-items: center; gap: 5px; }
+.badge-now .icon { flex: none; }

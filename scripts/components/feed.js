@@ -13,27 +13,36 @@ import { setPressed } from './category-buttons.js';
 // 12 делится на 2, 3 и 4 колонки — страница заполняет ряды ровно
 const PAGE_SIZE = 12;
 
-// Служебные карточки в полной ленте без фильтров: после SERVICE_CARDS[n]
-// мест — своя карточка. «Выбрать вместе» — пораньше, «Знаешь место?» — дальше
-const SUGGEST_RATIO = 1; // квадрат — высота для раскладки по колонкам
-const serviceCardHtml = ({ href, iconName, title, link }) => `
+// Служебная карточка-приглашение («Выбрать вместе», «Знаешь место?») —
+// пунктир, как «Удиви меня» в hero; ratio — высота для раскладки
+export const SERVICE_RATIO = 5 / 4;
+export const serviceCardHtml = ({ href, iconName, title, link }) => `
   <a class="feed-suggest" href="${href}">
     <svg class="icon feed-suggest__icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#${iconName}"></use></svg>
     <span class="feed-suggest__title">${title}</span>
     <span class="feed-suggest__link">${link}</span>
   </a>`;
-const SERVICE_CARDS = {
-  3: { href: 'vmeste/?from=feed', iconName: 'users', title: 'Выбираете, куда пойти вдвоём?', link: 'Выбрать вместе →' },
-  7: { href: 'suggest/', iconName: 'heart', title: 'Знаешь место, которого здесь нет?', link: 'Расскажи о нём →' }
-};
+
+// Напоминания: после полосы «Готовые планы» лента время от времени снова
+// показывает подборки и сервисы — уже обычными карточками (что именно —
+// решает reminder). Первая — после REMIND_FROM мест (вскоре после полосы),
+// дальше — каждые REMIND_EVERY
+const REMIND_FROM = 16;
+const REMIND_FROM_FILTERED = 6;
+const REMIND_EVERY = 8;
+// Колонки «почти вровень» перед витриной: разница высот — не больше
+// трети ширины карточки (высоты считаем в ширинах, как CARD_RATIOS)
+const BALANCED = 0.35;
 
 // Пропорции карточек (высота / ширина) — классы .place-card--r0…r4 в
 // card.css. По ним без замеров DOM знаем высоту каждой колонки.
-const CARD_RATIOS = [5 / 4, 4 / 3, 1, 1.4, 4 / 5];
+// Все карточки вертикальные, как в Pinterest: место крупно видно, а лента
+// не пролистывается за секунды. Квадратных и горизонтальных нет
+const CARD_RATIOS = [5 / 4, 4 / 3, 3 / 2, 1.4, 1.3];
 // На телефоне карточки вытянуты вверх, как в Пинтересте: фото крупнее,
 // а узкие поля не съедают ширину. Брейкпоинт — как в card.css
 const PHONE = window.matchMedia('(max-width: 767px)');
-const PHONE_RATIOS = [3 / 2, 4 / 3, 5 / 4, 5 / 3, 1];
+const PHONE_RATIOS = [3 / 2, 4 / 3, 1.45, 5 / 3, 1.4];
 const cardRatios = () => (PHONE.matches ? PHONE_RATIOS : CARD_RATIOS);
 
 /** Пропорция карточки зависит от самого места (простой хеш slug): у места
@@ -67,11 +76,21 @@ const PRELOAD_MARGIN = 800;
 // базы — при 100 и при 500 местах он тот же.
 const AUTO_LOAD_LIMIT = 36;
 
-// seasonal — слаги мест из блока «Сейчас» (data/now.json). В полной ленте
-// они в конце (home.js): человек только что видел их наверху. А после
-// настроения или раздела он этот блок проскочил — там они идут первыми
-// и с плашкой «Сейчас в сезон».
-export function initFeed(allPlaces, { pageSize = PAGE_SIZE, seasonal = new Set() } = {}) {
+// nowBadges — места, которые подходят моменту (погода, время, сезон —
+// core/now.js): Map slug → { icon, text } для плашки «почему сейчас». В
+// категории или настроении они идут первыми; порядок полной ленты задаёт
+// home.js.
+//
+// showcases — полосы на всю ширину ленты («Сейчас», «Готовые планы»):
+// { 3: <section> } — после 3-го ряда карточек.
+// lead — { html, ratio }: самая первая карточка ленты (кроме поиска).
+// reminder(k, { filtered, list, band }) — k-я карточка-напоминание: { html, ratio }
+// или null; list — места, которые сейчас в ленте (для уместных напоминаний). Лента — это
+// отрезки-сетки (.places-grid), витрина стоит между ними, а колонки перед
+// ней выравниваются по нижнему краю, чтобы не было пустот. В поиске
+// витрин нет: там человек ищет своё.
+export function initFeed(allPlaces, { pageSize = PAGE_SIZE, nowBadges = new Map(), showcases = {}, reminder = null, lead = null } = {}) {
+  const seasonal = new Set(nowBadges.keys());
   const container = $('#places-container');
   if (!container) return null; // не на этой странице
 
@@ -103,33 +122,98 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE, seasonal = new Set()
   // колонок задаёт CSS (grid-template-columns у .places-grid).
   let columns = [];
   let heights = [];
-  const columnCount = () => getComputedStyle(container).gridTemplateColumns.split(' ').length || 1;
+  let segment = null; // текущий отрезок ленты — сетка с колонками
+  const columnCount = () => getComputedStyle(segment || container.firstElementChild || container).gridTemplateColumns.split(' ').length || 1;
+
+  // Витрина встаёт после целого ряда: ключ showcases — номер ряда, мест в
+  // ряду столько, сколько колонок (2 на телефоне, 4 на компьютере)
+  // В категории или настроении мест бывает мало: полоса встаёт пораньше,
+  // но не раньше 2-го ряда и так, чтобы после неё оставался ещё ряд
+  const showcaseAt = (n) => {
+    const cols = columns.length || 1;
+    if (n % cols) return null;
+    const row = n / cols;
+    if (isUnfiltered()) return showcases[row];
+    return Object.entries(showcases).find(([r]) => row === Math.max(2, Math.min(+r, Math.floor(list.length / cols) - 1)))?.[1] || null;
+  };
+
+  // Полосы снимаются при каждой перерисовке и встают заново
+  const showcaseNodes = Object.values(showcases).filter(Boolean);
+  showcaseNodes.forEach((node) => node.remove());
 
   let phoneLayout = PHONE.matches; // по каким пропорциям разложены колонки
+  const newSegment = () => {
+    segment = document.createElement('div');
+    segment.className = 'places-grid';
+    container.append(segment);
+    segment.innerHTML = Array.from({ length: columnCount() }, () => '<div class="places-grid__col"></div>').join('');
+    columns = [...segment.children];
+    heights = columns.map(() => 0);
+  };
+  // Витрина, которая ждёт, пока колонки выровняются (см. appendCards)
+  let pending = null;
   const resetColumns = () => {
     phoneLayout = PHONE.matches;
-    container.innerHTML = Array.from({ length: columnCount() }, () => '<div class="places-grid__col"></div>').join('');
-    columns = [...container.children];
-    heights = columns.map(() => 0);
+    pending = null;
+    showcaseNodes.forEach((node) => node.remove());
+    container.innerHTML = '';
+    segment = null;
+    newSegment();
   };
 
   const isUnfiltered = () => state.category === 'all' && !state.query && !state.tags && !state.tagsAll;
 
   // start — сколько карточек уже в ленте: по нему видно, где встать
-  // служебным карточкам (SERVICE_CARDS)
+  // напоминаниям и полосам
   const appendCards = (places, start = 0) => {
     const favorites = Storage.getFavorites();
     const shortest = () => heights.indexOf(Math.min(...heights));
+    // Самая первая карточка ленты — lead («Выбрать вместе»): её видят сразу
+    if (start === 0 && lead && !state.query && places.length) {
+      columns[0].insertAdjacentHTML('beforeend', lead.html);
+      heights[0] += lead.ratio;
+    }
     places.forEach((place, i) => {
       const ratio = ratioIndex(place.slug);
       const col = shortest();
-      columns[col].insertAdjacentHTML('beforeend', cardHtml(place, favorites.includes(place.slug), `place-card--r${ratio}`, { season: seasonal.has(place.slug) }));
+      columns[col].insertAdjacentHTML('beforeend', cardHtml(place, favorites.includes(place.slug), `place-card--r${ratio}`, { now: nowBadges.get(place.slug) }));
       heights[col] += cardRatios()[ratio];
-      const service = SERVICE_CARDS[start + i + 1];
-      if (service && isUnfiltered()) {
-        const c = shortest();
-        columns[c].insertAdjacentHTML('beforeend', serviceCardHtml(service));
-        heights[c] += SUGGEST_RATIO;
+      const n = start + i + 1;
+      // В полной ленте напоминания — после полос (с REMIND_FROM), в
+      // категории и настроении — пораньше (с REMIND_FROM_FILTERED): туда
+      // часто проваливаются сразу и полос не видят. В поиске — никогда
+      const from = isUnfiltered() ? REMIND_FROM : REMIND_FROM_FILTERED;
+      if (reminder && !state.query && n >= from && (n - from) % REMIND_EVERY === 0) {
+        // band — будет ли в этой ленте полоса «Готовые планы» (тогда её
+        // подборки в напоминаниях не повторяем)
+        const band = Object.keys(showcases).length > 0 && list.length >= 3 * columns.length;
+        const card = reminder((n - from) / REMIND_EVERY, { filtered: !isUnfiltered(), list, band });
+        if (card) {
+          const c = shortest();
+          columns[c].insertAdjacentHTML('beforeend', card.html);
+          heights[c] += card.ratio;
+        }
+      }
+      // Витрина — после своего ряда, но не сразу: сначала колонки должны
+      // почти сравняться по высоте. Иначе перед ней последнюю карточку в
+      // короткой колонке пришлось бы растягивать на пол-экрана. Ждём не
+      // дольше двух рядов
+      const showcase = showcaseAt(n);
+      // В категории и настроении — тоже, если мест хватает, чтобы закрыть
+      // полосу и сверху, и снизу (хотя бы ряд после неё). В поиске — нет
+      if (showcase && !state.query) pending = { node: showcase, at: n };
+      if (pending && list.length - n >= columns.length) {
+        const uneven = Math.max(...heights) - Math.min(...heights);
+        // Если порция кончилась раньше — витрина придёт со следующей
+        // (она подгружается сама при прокрутке). Отрезок закрываем
+        // (колонки — вровень), ставим витрину и начинаем новый отрезок
+        const lastChance = list.length - n - 1 < columns.length; // дальше ряда после неё уже не хватит
+        if (uneven <= BALANCED || n - pending.at >= 2 * columns.length || lastChance) {
+          segment.classList.add('places-grid--flush');
+          container.append(pending.node);
+          pending = null;
+          newSegment();
+        }
       }
     });
   };

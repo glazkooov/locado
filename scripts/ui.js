@@ -7,8 +7,6 @@
 
 import { $, $$, on } from './core/dom.js';
 import { initInstall } from './components/install.js';
-import { icon } from './core/icons.js';
-import { CATEGORIES } from './core/places.js';
 import { initConsent } from './components/consent.js';
 import { initAnalytics, goal } from './core/analytics.js';
 
@@ -18,19 +16,13 @@ const syncHeaderHeight = () => {
   document.documentElement.style.setProperty('--header-h', `${header.offsetHeight}px`);
 };
 
-// Нижняя часть мобильного меню: поиск, разделы, «Предложить место»,
-// почта. Одна разметка на все страницы — вставляется здесь, на компьютере
-// скрыта (header.css)
-const menuExtraHtml = () => `
-  <div class="nav-extra">
-    <a href="./#search" class="nav-search" data-search>${icon('search')} Найти место</a>
-    <ul class="nav-cats" aria-label="Разделы">
-      ${Object.entries(CATEGORIES).map(([key, c]) =>
-        `<li><a href="./?category=${key}">${icon(c.icon)} ${c.label}</a></li>`).join('')}
-    </ul>
-    <a href="vmeste/" class="nav-suggest">${icon('users')} Выбрать вместе с другом</a>
-    <a href="suggest/" class="nav-suggest">${icon('heart')} Предложить место</a>
-  </div>`;
+// Мобильное меню — короткое: лента с категориями, поиском и картой и так
+// всегда на главной (логотип ведёт туда), в меню — только то, чего в ленте
+// нет. Пункты дописываются в общий список разделов; на компьютере скрыты
+// (header.css), а «Карта» (.nav-wide) — наоборот, только на компьютере
+const menuMoreHtml = `
+  <li class="nav-narrow"><a href="vmeste/" class="nav-item">Выбрать вместе</a></li>
+  <li class="nav-narrow"><a href="suggest/" class="nav-item">Предложить место</a></li>`;
 const menuContactHtml = '<p class="nav-contact">Пиши нам: <a href="mailto:hello@locado.ru">hello@locado.ru</a></p>';
 
 // Прокрутка под открытым меню: overflow: hidden у body Safari на iPhone
@@ -64,9 +56,7 @@ const initMobileMenu = () => {
   const nav = document.getElementById('main-nav');
   if (!toggle || !nav) return;
   const header = toggle.closest('header');
-  const install = nav.querySelector('.install-link--nav');
-  if (install) install.insertAdjacentHTML('beforebegin', menuExtraHtml());
-  else nav.insertAdjacentHTML('beforeend', menuExtraHtml());
+  nav.querySelector('.nav-list')?.insertAdjacentHTML('beforeend', menuMoreHtml);
   nav.insertAdjacentHTML('beforeend', menuContactHtml);
 
   const isOpen = () => nav.classList.contains('open');
@@ -145,9 +135,9 @@ const initHeaderOverlay = () => {
 
 /** Плавное появление крупных секций при скролле (косметика). */
 const initScrollReveal = () => {
-  // .now не прячем: её начало должно выглядывать из-под hero с первого
-  // экрана — это подсказка, что страница продолжается
-  const targets = $$('.main-content > section:not(.now), .suggested-grid, .places-grid');
+  // Ленту (#all-places) и .now не прячем: начало ленты должно выглядывать
+  // из-под hero с первого экрана — подсказка, что листать нужно вниз
+  const targets = $$('.main-content > section:not(.now):not(#all-places):not(#collections), .suggested-grid');
   if (!targets.length) return;
 
   if (!('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {

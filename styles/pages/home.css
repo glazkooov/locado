@@ -12,7 +12,7 @@
   position: relative;
   /* шапка на главной лежит поверх hero (.main-header--overlay);
      снизу + высота волны, чтобы она не подрезала карточки настроений */
-  padding: calc(var(--header-h) + 40px) 0 calc(60px + var(--hero-wave-h));
+  padding: calc(var(--header-h) + 28px) 0 calc(60px + var(--hero-wave-h));
 }
 
 /* Волнистый нижний край: прямоугольник без нижней полосы + волна */
@@ -101,6 +101,9 @@
 }
 
 .hero__pick + .hero__choices { margin-top: 0; }
+@media (min-width: 768px) {
+  .hero__pick { margin-bottom: -10px; }
+}
 
 .hero__tagline span {
   color: var(--hero-accent);
@@ -135,7 +138,7 @@
 
 .mood-card {
   position: relative;
-  flex: 0 0 128px;
+  flex: 0 0 148px;
   aspect-ratio: 3 / 4;
   padding: 0;
   border: 2px solid var(--hero-card-line);
@@ -175,7 +178,7 @@
   background: linear-gradient(180deg, rgba(0, 0, 0, 0) 35%, rgba(0, 0, 0, 0.78) 100%);
 }
 
-/* Подпись и живая строка «17 мест · 12 открыто» — внизу карточки */
+/* Название настроения — внизу карточки */
 .mood-card__text {
   position: absolute;
   left: 12px;
@@ -187,16 +190,6 @@
   gap: 4px;
 }
 
-.mood-card__meta {
-  font-size: var(--fs-caption);
-  font-weight: 600;
-  line-height: 1.2;
-  color: rgba(255, 255, 255, 0.82);
-}
-.mood-card__meta[hidden] { display: none; }
-@media (max-width: 767px) {
-  .mood-card__total { display: none; }
-}
 
 .mood-card__label {
   display: block;
@@ -204,19 +197,6 @@
   font-weight: 600;
   line-height: 1.25;
   color: #fff;
-}
-
-.mood-card__badge {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 1;
-  padding: 3px 8px;
-  border-radius: var(--radius-card);
-  background: rgba(255, 255, 255, 0.92);
-  font-size: var(--fs-caption);
-  font-weight: 700;
-  color: var(--ink);
 }
 
 .mood-card:hover {
@@ -227,6 +207,18 @@
 .mood-card:hover .mood-card__img { transform: scale(1.05); }
 
 .mood-card.active { border-color: var(--primary); }
+
+/* Название настроения — жирным основным шрифтом и крупнее подписи
+   рандомайзера. Шрифт заголовков на первом экране — только у вопроса и
+   заголовка ленты: иначе экран выглядит тяжёлым */
+.mood-card[data-mood] .mood-card__label {
+  font-size: var(--fs-md);
+  font-weight: 700;
+  line-height: 1.2;
+}
+@media (min-width: 1200px) {
+  .mood-card[data-mood] .mood-card__label { font-size: 1.0625rem; }
+}
 
 /* Рандомайзер: тот же язык, что у карточек, но без фото — «стекло»,
    пунктир и кубик. На телефоне — полоса во всю ширину под лентой
@@ -252,101 +244,16 @@
 
 .mood-card--random::after { display: none; }
 
-.mood-card--random .mood-card__label { color: var(--hero-fg); }
+.mood-card--random .mood-card__label {
+  color: var(--hero-fg);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
 
 .mood-card--random .mood-card__label { position: static; }
 
-/* «С чего начать»: три места выбранного настроения прямо под карточками */
-.mood-picks {
-  width: 100%;
-  max-width: 980px;
-  margin: 4px auto 0;
-  padding: 16px;
-  border: 1px solid var(--hero-card-line);
-  border-radius: var(--radius-card);
-  background: var(--hero-glass);
-  backdrop-filter: blur(10px);
-  color: var(--hero-fg);
-  text-align: left;
-  animation: mood-picks-in 0.25s ease;
-}
-.mood-picks[hidden] { display: none; }
 
-.mood-picks__head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-.mood-picks__title { font-weight: 700; font-size: var(--fs-md); }
-.mood-picks__close {
-  display: inline-flex;
-  padding: 6px;
-  border: none;
-  border-radius: 50%;
-  background: none;
-  color: var(--hero-muted);
-  cursor: pointer;
-}
-.mood-picks__close:hover { background: var(--hero-glass-hover); color: var(--hero-fg); }
-
-.mood-picks__list {
-  display: grid;
-  gap: 10px;
-  margin-top: 12px;
-}
-@media (min-width: 768px) {
-  .mood-picks__list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-}
-
-.mood-pick {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
-  padding: 8px;
-  border-radius: 14px;
-  background: var(--hero-glass);
-  color: inherit;
-  text-decoration: none;
-  transition: background 0.2s ease;
-}
-.mood-pick:hover { background: var(--hero-glass-hover); }
-.mood-pick__img {
-  flex: none;
-  width: 56px;
-  height: 56px;
-  border-radius: 10px;
-  object-fit: cover;
-}
-.mood-pick__text { display: grid; gap: 2px; min-width: 0; }
-.mood-pick__text b { font-size: var(--fs-sm); line-height: 1.25; }
-.mood-pick__text small {
-  overflow: hidden;
-  font-size: var(--fs-caption);
-  color: var(--hero-muted);
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.mood-picks__empty { font-size: var(--fs-sm); color: var(--hero-muted); }
-
-.mood-picks__all {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  margin-top: 12px;
-  padding: 0;
-  border: none;
-  background: none;
-  font: inherit;
-  font-size: var(--fs-sm);
-  font-weight: 700;
-  color: var(--hero-accent);
-  cursor: pointer;
-}
-
-@keyframes mood-picks-in { from { opacity: 0; transform: translateY(-6px); } }
-@media (prefers-reduced-motion: reduce) { .mood-picks { animation: none; } }
 
 .mood-card__dice {
   flex: none;
@@ -1103,26 +1010,12 @@
     overflow: hidden;
   }
 
-  /* Категории ленты закреплены под шапкой, пока листаешь ленту: чтобы
-     сменить фильтр, не нужно возвращаться наверх. Поиск остаётся на месте */
-  .place-section .categories_menu { display: contents; }
-  .place-section .categories_scroll {
-    position: sticky;
-    top: var(--header-h);
-    z-index: 50;
-    margin-inline: -16px;
-    padding: 10px 16px;
-    background: var(--bg);
-    box-shadow: 0 8px 12px -12px rgba(40, 20, 10, 0.35);
-  }
-  .place-section .category-search-group { margin-top: 6px; }
 }
 
 @media (max-width: 575px) {
   .places-grid .place-card__top { top: 10px; left: 10px; right: 10px; gap: 4px; }
   .places-grid .place-card__category,
-  .places-grid .badge-temporary,
-  .places-grid .badge-season { font-size: var(--fs-caption); padding: 3px 8px; }
+  .places-grid .badge-temporary { font-size: var(--fs-caption); padding: 3px 8px; }
   /* Длинный тип («Музей современного искусства») — в одну строку */
   .places-grid .place-card__category {
     max-width: 100%;
@@ -1143,11 +1036,287 @@
 
 .collection-card { cursor: pointer; }
 
-/* С 768px шесть настроений и рандомайзер — семь карточек в ряд: ширина
-   делится поровну, но не больше 180px, иначе ряд вылезал за край экрана */
+/* С 768px пять настроений и рандомайзер — шесть карточек в ряд: ширина
+   делится поровну, но не больше 200px, иначе ряд вылезал за край экрана */
 @media (min-width: 768px) {
   .hero__choices .mood-card,
   .hero__choices .mood-card--random {
-    flex-basis: min(180px, calc((min(100vw, 1240px) - 64px - 6 * 12px) / 7));
+    flex-basis: min(200px, calc((min(100vw, 1240px) - 64px - 5 * 12px) / 6));
   }
+}
+
+/* ===== Главная-лента: лента сразу под героем, «Сейчас» и «Готовые
+   планы» — карточки внутри неё (feed.js, inserts), карта — второй вид ===== */
+.place-section { margin-top: 40px; }
+/* Лента сразу под героем: герой по содержимому, а не на 86% экрана —
+   на компьютере из-под него должен выглядывать заголовок ленты */
+.hero { min-height: 0; padding-bottom: calc(44px + var(--hero-wave-h)); }
+/* Компьютер: первый экран почти во всю высоту окна — простор вокруг
+   вопроса и настроений, из-под волны выглядывает только заголовок ленты */
+@media (min-width: 768px) {
+  .hero { min-height: calc(100svh - 100px); }
+}
+.feed-head .section-lead { max-width: 560px; }
+
+/* Закреплённая строка над лентой: категории отдельным рядом (во всю ширину,
+   край растворяется), под ними поиск и «Список / Карта» */
+.place-section .feed-toolbar {
+  position: sticky;
+  /* на 1px под шапку: иначе при дробной высоте шапки между ними
+     просвечивала пиксельная полоса */
+  top: calc(var(--header-h) - 1px);
+  z-index: 50;
+  display: grid;
+  grid-template-columns: minmax(0, 420px) 1fr auto;
+  grid-template-areas: 'cats cats cats' 'search . view';
+  align-items: center;
+  gap: 4px 12px;
+  margin: 12px -16px 0;
+  padding: 6px 16px 10px;
+  isolation: isolate;
+}
+/* Подложка строки — во всю ширину экрана и только когда строка прилипла:
+   тогда она сливается с шапкой в одну белую панель (тот же цвет и размытие),
+   а в покое строки как отдельного прямоугольника не видно */
+.place-section .feed-toolbar::before {
+  content: '';
+  position: absolute;
+  inset: -1px calc(50% - 50vw) 0;
+  z-index: -1;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+.place-section .feed-toolbar.is-stuck::before {
+  background: rgba(255, 255, 255, 0.92);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  box-shadow: var(--shadow-bar);
+}
+/* Шапка над прилипшей строкой — без своей тени: шов не виден */
+body.feed-toolbar-stuck .main-header { box-shadow: none; }
+.feed-toolbar .categories_scroll {
+  grid-area: cats;
+  position: static;
+  margin: 0;
+  padding: 6px 0;
+  box-shadow: none;
+  /* последняя кнопка не обрезается ножом, а уходит в прозрачность */
+  -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent);
+  mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent);
+}
+.feed-toolbar .category-search-group { grid-area: search; max-width: none; margin: 0; }
+.feed-toolbar .feed-view { grid-area: view; }
+/* Вид «Карта»: строка ленты не нужна — остаётся только переключатель,
+   не закреплённый и без подложки; у карты свои категории и фильтры */
+.place-section .feed-toolbar--map {
+  position: static;
+  display: flex;
+  justify-content: flex-end;
+  background: none;
+  box-shadow: none;
+}
+.feed-toolbar--map .categories_scroll,
+.feed-toolbar--map .category-search-group { display: none; }
+
+/* Карта — почти весь экран под шапкой, но внутри страницы: листаешь
+   дальше — уходишь к подвалу, «Список» возвращает ленту */
+.feed-map .map-section {
+  height: calc(100svh - var(--header-h) - 96px);
+  min-height: 440px;
+  max-height: 820px;
+  margin-bottom: 0;
+}
+.feed-map .map-container { height: auto; flex: 3; min-height: 0; }
+
+.feed-view {
+  display: inline-flex;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--card-bg);
+}
+.feed-view__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  font: inherit;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+}
+.feed-view__btn[aria-pressed='true'] { background: var(--ink); color: #fff; }
+
+.is-off { display: none !important; }
+.feed-map { margin-top: 20px; }
+.feed-map[hidden] { display: none; }
+
+/* Колонки перед витриной — вровень: последняя карточка в колонке
+   растягивается до общей нижней линии (фото обрезается по месту) */
+.places-grid--flush { align-items: stretch; }
+.places-grid--flush .places-grid__col { container-type: inline-size; }
+/* Растягивается не больше, чем до пропорции 4:7 — дальше фото
+   выглядело бы мутным, а карточка — во весь экран */
+.places-grid--flush .places-grid__col > :last-child { flex-grow: 1; max-height: 175cqi; }
+.feed-stream > .places-grid:first-child { margin-top: 20px; }
+
+/* Полосы-прерывания ленты: «Сейчас» и «Готовые планы» — наши персональные
+   предложения. Крупнее карточки и со своим фоном, но целиком помещаются в
+   экран: фото ниже, тексты короче */
+.feed-stream > section {
+  margin: 22px 0 4px;
+  padding: 24px 24px 20px;
+  border-radius: 24px;
+  background: var(--card-bg);
+  box-shadow: var(--shadow-soft);
+}
+.feed-stream > section > .container { padding: 0; max-width: none; }
+
+/* Карточка-напоминание (подборка, «Сейчас») — как карточка места, но с
+   плашкой раздела и призывом внизу */
+.feed-promo {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--cream-deep);
+  box-shadow: var(--shadow-soft);
+  color: #fff;
+  text-decoration: none;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.feed-promo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--photo-fade);
+  pointer-events: none;
+}
+.feed-promo__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.feed-promo__chip {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 1;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--primary-strong);
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  color: #fff;
+}
+.feed-promo__text { position: absolute; left: 14px; right: 14px; bottom: 14px; z-index: 1; display: grid; gap: 4px; }
+.feed-promo__text b { font-family: var(--font-heading); font-size: var(--fs-md); line-height: 1.2; }
+.feed-promo__text small { font-size: var(--fs-sm); font-weight: 600; color: rgba(255, 255, 255, 0.9); }
+@media (hover: hover) {
+  .feed-promo:hover { transform: translateY(-4px); box-shadow: var(--shadow-soft-hover); }
+}
+.feed-stream > .categories-collections {
+  background:
+    radial-gradient(ellipse 50% 60% at 100% 0%, rgba(255, 206, 150, 0.35), transparent 70%),
+    var(--cream-deep);
+  box-shadow: none;
+}
+.feed-stream .section-head { margin-bottom: 16px; }
+.feed-stream .section-title { font-size: var(--fs-xl); }
+.feed-stream .section-lead { max-width: 640px; }
+.feed-stream .collections-grid { margin-top: 0; }
+
+/* Конец ленты: следующие шаги вместо тупика */
+.feed-end { max-width: none; text-align: center; }
+.feed-next {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
+  max-width: 920px;
+  margin: 16px auto 0;
+  text-align: left;
+}
+.feed-end .feed-next__item {
+  display: grid;
+  align-content: start;
+  gap: 4px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--card-bg);
+  font: inherit;
+  text-align: left;
+  color: var(--text);
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.feed-end .feed-next__item:hover { transform: translateY(-2px); box-shadow: var(--shadow-soft); }
+.feed-next__item .icon { font-size: 1.4rem; color: var(--primary-text); }
+.feed-end .feed-next__item b { display: block; font-size: var(--fs-md); color: var(--ink); }
+.feed-end .feed-next__item span { display: block; margin: 0; font-size: var(--fs-sm); color: var(--text-light); }
+
+@media (max-width: 767px) {
+  .place-section { margin-top: 12px; }
+  .place-section .feed-toolbar {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: 'cats cats' 'search view';
+    gap: 2px 8px;
+    margin-top: 6px;
+    padding: 4px 16px 8px;
+  }
+  .feed-view__btn { min-height: 36px; padding: 0 12px; }
+  /* В ленте на телефоне — одна кнопка «Карта»; на карте — оба вида */
+  .feed-view__btn[data-view='list'] { display: none; }
+  .feed-toolbar--map .feed-view__btn[data-view='list'] { display: inline-flex; }
+  .place-section .feed-toolbar--map { justify-content: flex-start; padding-block: 0; }
+  /* Высота — у самой карты, а не у блока: раскрытые «Фильтры» сдвигают
+     карту вниз, но не сжимают её */
+  .feed-map .map-section { gap: 10px; height: auto; min-height: 0; max-height: none; }
+  .feed-map .map-container { flex: none; height: calc(100svh - var(--header-h) - 130px); min-height: 380px; }
+  .feed-map .map-panel { flex: none; }
+  /* Воздух вокруг «Удиви меня»; из-под героя выглядывает заголовок
+     ленты, а категории — уже за первым экраном. Вопрос чуть меньше,
+     карточки чуть уже */
+  .hero { padding-bottom: calc(60px + var(--hero-wave-h)); }
+  .hero__choices { gap: 24px; }
+  .hero__content { gap: 22px; }
+  .hero__title { font-size: 1.75rem; }
+  .hero__pick { margin-bottom: -10px; }
+  .mood-card[data-mood] { flex-basis: 136px; }
+  .feed-head .section-title { font-size: min(1.1875rem, 5vw); } /* крупнее «Удиви меня», но в одну строку */
+  .feed-head .section-lead { display: none; }
+  /* Полосы на телефоне: целиком в экран. Заголовок крупный, лид в две
+     строки, карточки — рядом с прокруткой вбок и с невысоким фото */
+  .feed-stream > section {
+    margin: 16px -8px 4px;
+    padding: 18px 16px 14px;
+    border-radius: 20px;
+  }
+  .feed-stream .section-head { margin-bottom: 12px; }
+  .feed-stream .section-head--row { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .feed-stream .section-title { font-size: var(--fs-lg); }
+  .feed-stream .section-lead {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: var(--fs-sm);
+  }
+  .feed-stream .collections-grid {
+    display: flex;
+    gap: 12px;
+    margin: 0 -16px;
+    padding: 0 16px 6px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 16px;
+    scrollbar-width: none;
+  }
+  .feed-stream .collections-grid::-webkit-scrollbar { display: none; }
+  .feed-stream .collections-grid > * { flex: 0 0 78%; scroll-snap-align: start; }
+  .feed-stream .collection-desc { display: none; }
+  .feed-next { grid-template-columns: 1fr 1fr; }
 }

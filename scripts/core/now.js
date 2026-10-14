@@ -44,6 +44,7 @@ export async function loadNow(date = new Date()) {
 }
 
 const SHOW = 4;
+const MORE = 12; // запас мест «под момент» для напоминаний в ленте
 const SOON_CLOSE = 60; // мин: закроется раньше — не зовём
 const GOLDEN = 120; // мин до заката: «золотой час», зовём на виды
 const VIEW_TAGS = ['панорама', 'высота', 'набережная'];
@@ -145,17 +146,25 @@ export function pickNow(entry, places, { now = new Date(), weather = null } = {}
   scored.forEach(take);
 
   const momentKey = (place) => (place === sunsetPlace ? 'sunset' : scene);
+  const toCard = ({ place, status, toClose }) => {
+    let reason = null;
+    if (place === sunsetPlace) reason = { icon: 'sunset', text: `Закат в ${moscowTime(sunset)}` };
+    else if (mode === 'bad' && sheltered(place)) reason = { icon: 'umbrella', text: toClose !== null ? `Под крышей · до ${closeTime(status)}` : 'Под крышей' };
+    else if (toClose !== null && toClose < 3 * 60) reason = { icon: 'clock', text: `Открыто до ${closeTime(status)}` };
+    else if (scene === 'night' && status.roundTheClock) reason = { icon: 'moon', text: 'Открыто всю ночь' };
+    const note = place.moments?.[momentKey(place)] || place.moments?.[scene];
+    return { place, reason, note: note || null };
+  };
   const cards = picked.length >= 2
-    ? picked.map(({ place, status, toClose }) => {
-      let reason = null;
-      if (place === sunsetPlace) reason = { icon: 'sunset', text: `Закат в ${moscowTime(sunset)}` };
-      else if (mode === 'bad' && sheltered(place)) reason = { icon: 'umbrella', text: toClose !== null ? `Под крышей · до ${closeTime(status)}` : 'Под крышей' };
-      else if (toClose !== null && toClose < 3 * 60) reason = { icon: 'clock', text: `Открыто до ${closeTime(status)}` };
-      else if (scene === 'night' && status.roundTheClock) reason = { icon: 'moon', text: 'Открыто всю ночь' };
-      const note = place.moments?.[momentKey(place)] || place.moments?.[scene];
-      return { place, reason, note: note || null };
-    })
+    ? picked.map(toCard)
     : main.map((s) => bySlug.get(s)).filter(Boolean).map((place) => ({ place, reason: null, note: null }));
+
+  // Запас: следующие подходящие моменту места — для напоминаний в ленте,
+  // чтобы там мелькали не только те четыре, что в блоке
+  const shown = new Set(cards.map((c) => c.place.slug));
+  const rest = scored.filter((x) => !shown.has(x.place.slug));
+  const more = (fits ? [...rest.filter((x) => fits(x.place)), ...rest.filter((x) => !fits(x.place))] : rest)
+    .slice(0, MORE).map(toCard);
 
   const variant = entry.variants?.[scene] || (mode === 'hot' ? entry.variants?.hot : null);
 
@@ -175,7 +184,8 @@ export function pickNow(entry, places, { now = new Date(), weather = null } = {}
     weather: weather ? { icon: weather.icon, temp: tempLabel(weather.temp), label: weather.label } : null,
     forecast: forecastPhrase(weather),
     facts,
-    cards
+    cards,
+    more
   };
 }
 

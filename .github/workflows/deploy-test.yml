@@ -5,10 +5,12 @@
 # Нужны секреты репозитория (Settings → Secrets and variables → Actions):
 #   TEST_FTP_SERVER   — FTP-сервер Бегета (в панели: раздел FTP)
 #   TEST_FTP_USERNAME — отдельный FTP-доступ, у которого домашняя папка —
-#   TEST_FTP_PASSWORD   папка тестового поддомена (не всего аккаунта!)
+#   TEST_FTP_PASSWORD   папка тестового поддомена (не всего аккаунта!).
+#                       Сам сайт лежит внутри неё в public_html
 # Пока секретов нет, заливка просто пропускается.
 #
 # Залить вручную любую ветку: вкладка Actions → «Тестовый сайт» → Run workflow.
+# Что сейчас на тесте — test.locado.ru/version.txt.
 
 name: Тестовый сайт
 
@@ -45,17 +47,58 @@ jobs:
           echo "FTP_HOST=$host" >> "$GITHUB_ENV"
           getent hosts "$host" > /dev/null || { echo "Сервер «$host» не находится. Проверь TEST_FTP_SERVER: нужно имя сервера из раздела FTP панели Бегета, без ftp:// и без папок"; exit 1; }
 
+      # Метка версии: test.locado.ru/version.txt — какая ветка и коммит сейчас
+      # на тесте и когда их залили. Создаётся только здесь, в репозитории её нет
+      - name: Метка версии
+        if: env.FTP_SERVER != ''
+        run: |
+          {
+            echo "Ветка:  ${GITHUB_REF_NAME}"
+            echo "Коммит: ${GITHUB_SHA::7} — $(git log -1 --format=%s)"
+            echo "Залито: $(TZ=Europe/Moscow date '+%d.%m.%Y %H:%M') по Москве"
+          } > version.txt
+          cat version.txt
+
       # Заливает только изменённые файлы: список уже залитых хранится на
       # сервере в .ftp-deploy-sync-state.json. Кэш погоды (api/weather-cache.json)
       # создаёт сам сервер — его не трогаем
       - name: Залить на test.locado.ru
+        id: deploy
         if: env.FTP_SERVER != ''
+        continue-on-error: true
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ env.FTP_HOST }}
           username: ${{ secrets.TEST_FTP_USERNAME }}
           password: ${{ secrets.TEST_FTP_PASSWORD }}
-          server-dir: ./
+          server-dir: ./public_html/
+          # По умолчанию ждёт ответа сервера 30 секунд — Бегет иногда
+          # отвечает дольше, и заливка падала с «Timeout (control socket)»
+          timeout: 120000
+          exclude: |
+            **/.git*
+            **/.git*/**
+            .github/**
+            docs/**
+            tools/**
+            api/weather-cache.json
+
+      # FTP Бегета иногда не отвечает — через минуту пробуем ещё раз
+      - name: Повторная попытка
+        if: env.FTP_SERVER != '' && steps.deploy.outcome == 'failure'
+        run: sleep 60
+
+      - name: Залить на test.locado.ru (повтор)
+        if: env.FTP_SERVER != '' && steps.deploy.outcome == 'failure'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ env.FTP_HOST }}
+          username: ${{ secrets.TEST_FTP_USERNAME }}
+          password: ${{ secrets.TEST_FTP_PASSWORD }}
+          server-dir: ./public_html/
+          # По умолчанию ждёт ответа сервера 30 секунд — Бегет иногда
+          # отвечает дольше, и заливка падала с «Timeout (control socket)»
+          timeout: 120000
           exclude: |
             **/.git*
             **/.git*/**
