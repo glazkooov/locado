@@ -12,7 +12,7 @@
   position: relative;
   /* шапка на главной лежит поверх hero (.main-header--overlay);
      снизу + высота волны, чтобы она не подрезала карточки настроений */
-  padding: calc(var(--header-h) + 56px) 0 calc(60px + var(--hero-wave-h));
+  padding: calc(var(--header-h) + 28px) 0 calc(60px + var(--hero-wave-h));
 }
 
 /* Волнистый нижний край: прямоугольник без нижней полосы + волна */
@@ -68,7 +68,7 @@
     justify-content: center;
     align-items: flex-start;
     gap: 12px;
-    margin-top: 36px;
+    margin-top: 28px;
   }
 }
 
@@ -208,17 +208,16 @@
 
 .mood-card.active { border-color: var(--primary); }
 
-/* Название настроения — шрифтом заголовков и крупнее подписи
-   рандомайзера: карточку читают с первого взгляда. Кегль — от ширины
-   карточки (cqi), чтобы самое длинное слово («Зарядиться») влезало в
-   строку и на узких карточках планшета; не больше 18px */
-.mood-card[data-mood] { container-type: inline-size; }
+/* Название настроения — жирным основным шрифтом и крупнее подписи
+   рандомайзера. Шрифт заголовков на первом экране — только у вопроса и
+   заголовка ленты: иначе экран выглядит тяжёлым */
 .mood-card[data-mood] .mood-card__label {
-  font-family: var(--font-heading);
-  font-size: min(18px, calc((100cqi - 24px) / 8));
+  font-size: var(--fs-md);
   font-weight: 700;
-  line-height: 1.15;
-  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+@media (min-width: 1200px) {
+  .mood-card[data-mood] .mood-card__label { font-size: 1.0625rem; }
 }
 
 /* Рандомайзер: тот же язык, что у карточек, но без фото — «стекло»,
@@ -247,21 +246,14 @@
 
 .mood-card--random .mood-card__label {
   color: var(--hero-fg);
-  font-family: var(--font-heading);
-  font-size: 1.125rem;
+  font-size: 0.9375rem;
   font-weight: 700;
-  line-height: 1.15;
-  letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 /* Телефон: кнопка по размеру надписи, а не во всю ширину, и надпись
    мельче заголовка ленты под ней */
 @media (max-width: 767px) {
   .mood-card--random { width: auto; padding: 12px 24px; }
-  .mood-card--random .mood-card__label { font-size: var(--fs-md); }
-}
-/* На планшете карточки узкие — как у названий настроений */
-@media (min-width: 768px) and (max-width: 1199px) {
-  .mood-card--random .mood-card__label { font-size: var(--fs-sm); }
 }
 
 .mood-card--random .mood-card__label { position: static; }
@@ -1063,7 +1055,7 @@
 .place-section { margin-top: 40px; }
 /* Лента сразу под героем: герой по содержимому, а не на 86% экрана —
    на компьютере из-под него должен выглядывать заголовок ленты */
-.hero { min-height: 0; padding-bottom: calc(72px + var(--hero-wave-h)); }
+.hero { min-height: 0; padding-bottom: calc(44px + var(--hero-wave-h)); }
 .feed-head .section-lead { max-width: 560px; }
 
 /* Закреплённая строка над лентой: категории отдельным рядом (во всю ширину,
@@ -1264,7 +1256,7 @@ body.feed-toolbar-stuck .main-header { box-shadow: none; }
 .feed-end .feed-next__item span { display: block; margin: 0; font-size: var(--fs-sm); color: var(--text-light); }
 
 @media (max-width: 767px) {
-  .place-section { margin-top: 24px; }
+  .place-section { margin-top: 12px; }
   .place-section .feed-toolbar {
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas: 'cats cats' 'search view';
@@ -1282,9 +1274,14 @@ body.feed-toolbar-stuck .main-header { box-shadow: none; }
   .feed-map .map-section { gap: 10px; height: auto; min-height: 0; max-height: none; }
   .feed-map .map-container { flex: none; height: calc(100svh - var(--header-h) - 130px); min-height: 380px; }
   .feed-map .map-panel { flex: none; }
-  /* Воздух вокруг «Удиви меня»: от карточек настроений и до волны */
-  .hero { padding-bottom: calc(40px + var(--hero-wave-h)); }
-  .hero__choices { gap: 28px; }
+  /* Воздух вокруг «Удиви меня», но так, чтобы из-под героя выглядывал
+     заголовок ленты: вопрос чуть меньше, карточки чуть уже */
+  .hero { padding-bottom: calc(22px + var(--hero-wave-h)); }
+  .hero__choices { gap: 18px; }
+  .hero__content { gap: 22px; }
+  .hero__title { font-size: 1.75rem; }
+  .hero__pick { margin-bottom: -10px; }
+  .mood-card[data-mood] { flex-basis: 136px; }
   .feed-head .section-title { font-size: min(1.1875rem, 5vw); } /* крупнее «Удиви меня», но в одну строку */
   .feed-head .section-lead { display: none; }
   /* Полосы на телефоне: целиком в экран. Заголовок крупный, лид в две
