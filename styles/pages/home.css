@@ -253,6 +253,12 @@
   line-height: 1.15;
   letter-spacing: -0.02em;
 }
+/* Телефон: кнопка по размеру надписи, а не во всю ширину, и надпись
+   мельче заголовка ленты под ней */
+@media (max-width: 767px) {
+  .mood-card--random { width: auto; padding: 12px 24px; }
+  .mood-card--random .mood-card__label { font-size: var(--fs-md); }
+}
 /* На планшете карточки узкие — как у названий настроений */
 @media (min-width: 768px) and (max-width: 1199px) {
   .mood-card--random .mood-card__label { font-size: var(--fs-sm); }
@@ -1279,7 +1285,7 @@ body.feed-toolbar-stuck .main-header { box-shadow: none; }
   /* Воздух вокруг «Удиви меня»: от карточек настроений и до волны */
   .hero { padding-bottom: calc(40px + var(--hero-wave-h)); }
   .hero__choices { gap: 28px; }
-  .feed-head .section-title { font-size: var(--fs-lg); }
+  .feed-head .section-title { font-size: min(1.1875rem, 5vw); } /* крупнее «Удиви меня», но в одну строку */
   .feed-head .section-lead { display: none; }
   /* Полосы на телефоне: целиком в экран. Заголовок крупный, лид в две
      строки, карточки — рядом с прокруткой вбок и с невысоким фото */
