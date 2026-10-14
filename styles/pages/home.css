@@ -1029,12 +1029,12 @@
 
 .collection-card { cursor: pointer; }
 
-/* С 768px шесть настроений и рандомайзер — семь карточек в ряд: ширина
-   делится поровну, но не больше 180px, иначе ряд вылезал за край экрана */
+/* С 768px пять настроений и рандомайзер — шесть карточек в ряд: ширина
+   делится поровну, но не больше 200px, иначе ряд вылезал за край экрана */
 @media (min-width: 768px) {
   .hero__choices .mood-card,
   .hero__choices .mood-card--random {
-    flex-basis: min(180px, calc((min(100vw, 1240px) - 64px - 6 * 12px) / 7));
+    flex-basis: min(200px, calc((min(100vw, 1240px) - 64px - 5 * 12px) / 6));
   }
 }
 

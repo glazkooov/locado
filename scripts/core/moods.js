@@ -39,15 +39,6 @@ export const MOODS = [
     categories: ['art', 'entertainment']
   },
   {
-    id: 'inspire',
-    label: 'Набраться вдохновения',
-    icon: 'palette',
-    photo: 'assets/images/places/sm/muzey-russkogo-impressionizma.jpg', // фото места — подпись на странице «Фото на сайте»
-    bestAt: ['day'],
-    any: ['вдохновляюще'],
-    categories: ['art']
-  },
-  {
     id: 'love',
     label: 'Влюбиться в вечер',
     icon: 'heart',
