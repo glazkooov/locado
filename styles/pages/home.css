@@ -205,18 +205,17 @@
 
 .mood-card.active { border-color: var(--primary); }
 
-/* Название настроения — крупнее подписи рандомайзера: карточку читают
-   с первого взгляда. На планшете карточки узкие — кегль меньше */
+/* Название настроения — шрифтом заголовков и крупнее подписи
+   рандомайзера: карточку читают с первого взгляда. Кегль — от ширины
+   карточки (cqi), чтобы самое длинное слово («Зарядиться») влезало в
+   строку и на узких карточках планшета; не больше 18px */
+.mood-card[data-mood] { container-type: inline-size; }
 .mood-card[data-mood] .mood-card__label {
-  font-size: 1.0625rem;
+  font-family: var(--font-heading);
+  font-size: min(18px, calc((100cqi - 24px) / 8));
   font-weight: 700;
-  line-height: 1.2;
-}
-@media (min-width: 768px) and (max-width: 1199px) {
-  .mood-card[data-mood] .mood-card__label { font-size: var(--fs-md); }
-}
-@media (min-width: 1200px) {
-  .mood-card[data-mood] .mood-card__label { font-size: 1.25rem; }
+  line-height: 1.15;
+  letter-spacing: -0.02em;
 }
 
 /* Рандомайзер: тот же язык, что у карточек, но без фото — «стекло»,
