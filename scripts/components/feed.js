@@ -87,8 +87,8 @@ const AUTO_LOAD_LIMIT = 36;
 // reminder(k, { filtered, list }) — k-я карточка-напоминание: { html, ratio }
 // или null; list — места, которые сейчас в ленте (для уместных напоминаний). Лента — это
 // отрезки-сетки (.places-grid), витрина стоит между ними, а колонки перед
-// ней выравниваются по нижнему краю, чтобы не было пустот. В
-// отфильтрованной ленте витрин нет: там человек ищет своё.
+// ней выравниваются по нижнему краю, чтобы не было пустот. В поиске
+// витрин нет: там человек ищет своё.
 export function initFeed(allPlaces, { pageSize = PAGE_SIZE, nowBadges = new Map(), showcases = {}, reminder = null, lead = null } = {}) {
   const seasonal = new Set(nowBadges.keys());
   const container = $('#places-container');
@@ -127,12 +127,17 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE, nowBadges = new Map(
 
   // Витрина встаёт после целого ряда: ключ showcases — номер ряда, мест в
   // ряду столько, сколько колонок (2 на телефоне, 4 на компьютере)
+  // В категории или настроении мест бывает мало: полоса встаёт пораньше,
+  // но не раньше 2-го ряда и так, чтобы после неё оставался ещё ряд
   const showcaseAt = (n) => {
     const cols = columns.length || 1;
-    return n % cols === 0 ? showcases[n / cols] : null;
+    if (n % cols) return null;
+    const row = n / cols;
+    if (isUnfiltered()) return showcases[row];
+    return Object.entries(showcases).find(([r]) => row === Math.max(2, Math.min(+r, Math.floor(list.length / cols) - 1)))?.[1] || null;
   };
 
-  // Полосы живут в ленте, только пока она не отфильтрована
+  // Полосы снимаются при каждой перерисовке и встают заново
   const showcaseNodes = Object.values(showcases).filter(Boolean);
   showcaseNodes.forEach((node) => node.remove());
 
@@ -191,13 +196,16 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE, nowBadges = new Map(
       // короткой колонке пришлось бы растягивать на пол-экрана. Ждём не
       // дольше двух рядов
       const showcase = showcaseAt(n);
-      if (showcase && isUnfiltered()) pending = { node: showcase, at: n };
-      if (pending && n < list.length) {
+      // В категории и настроении — тоже, если мест хватает, чтобы закрыть
+      // полосу и сверху, и снизу (хотя бы ряд после неё). В поиске — нет
+      if (showcase && !state.query) pending = { node: showcase, at: n };
+      if (pending && list.length - n >= columns.length) {
         const uneven = Math.max(...heights) - Math.min(...heights);
         // Если порция кончилась раньше — витрина придёт со следующей
         // (она подгружается сама при прокрутке). Отрезок закрываем
         // (колонки — вровень), ставим витрину и начинаем новый отрезок
-        if (uneven <= BALANCED || n - pending.at >= 2 * columns.length) {
+        const lastChance = list.length - n - 1 < columns.length; // дальше ряда после неё уже не хватит
+        if (uneven <= BALANCED || n - pending.at >= 2 * columns.length || lastChance) {
           segment.classList.add('places-grid--flush');
           container.append(pending.node);
           pending = null;
