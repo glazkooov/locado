@@ -242,7 +242,18 @@
 
 .mood-card--random::after { display: none; }
 
-.mood-card--random .mood-card__label { color: var(--hero-fg); }
+.mood-card--random .mood-card__label {
+  color: var(--hero-fg);
+  font-family: var(--font-heading);
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+/* На планшете карточки узкие — как у названий настроений */
+@media (min-width: 768px) and (max-width: 1199px) {
+  .mood-card--random .mood-card__label { font-size: var(--fs-sm); }
+}
 
 .mood-card--random .mood-card__label { position: static; }
 
