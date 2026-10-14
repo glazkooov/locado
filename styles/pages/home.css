@@ -157,8 +157,6 @@
 @media (min-width: 1200px) {
   .mood-card__label { font-size: var(--fs-md); }
   .mood-card__text { left: 14px; right: 14px; bottom: 14px; }
-  .mood-card__verb { left: 10px; bottom: 12px; }
-  .mood-card__tail { right: 12px; bottom: 12px; }
 }
 
 .mood-card__img {
@@ -170,10 +168,11 @@
   transition: transform 0.5s ease;
 }
 
-/* Дуотон: фото в оттенках цвета настроения (--mood из core/moods.js) —
-   первым видно слово и цвет, а не конкретное место */
+/* Мягкий дуотон: фото наполовину обесцвечено и подкрашено цветом
+   настроения (--mood из core/moods.js) на 70% — карточки разные по цвету,
+   но не спорят с тёплым фоном героя. Сила — --duo-gray и --duo-strength */
 .mood-card[data-mood] { background: var(--mood, var(--ink)); }
-.mood-card[data-mood] .mood-card__img { filter: grayscale(1) contrast(1.15); }
+.mood-card[data-mood] .mood-card__img { filter: grayscale(var(--duo-gray, 0.5)) contrast(1.1); }
 .mood-card[data-mood]::before {
   content: '';
   position: absolute;
@@ -181,6 +180,7 @@
   z-index: 1;
   background: var(--mood, var(--ink));
   mix-blend-mode: multiply;
+  opacity: var(--duo-strength, 0.7);
   pointer-events: none;
 }
 .mood-card[data-mood]::after {
@@ -188,7 +188,7 @@
   position: absolute;
   inset: 0;
   z-index: 1;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 45%, rgba(0, 0, 0, 0.3) 100%);
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.38) 100%);
 }
 
 /* Название — шрифтом заголовков: глагол вертикально во всю высоту по
@@ -206,7 +206,7 @@
   color: #fff;
 }
 .mood-card__verb {
-  left: 8px;
+  left: 10px;
   bottom: 10px;
   writing-mode: vertical-rl;
   transform: rotate(180deg);
@@ -221,11 +221,11 @@
   line-height: 1.2;
 }
 .mood-card__tail {
-  right: 10px;
   bottom: 10px;
-  line-height: 0.86;
-  transform-origin: bottom right;
+  white-space: normal;
+  line-height: 0.95;
 }
+.mood-card__tail span { white-space: nowrap; }
 
 /* Подпись рандомайзера */
 .mood-card__text {
