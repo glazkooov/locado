@@ -16,47 +16,13 @@ import { MOODS, moodsFor, moodsNow, resolveMoodFilters } from '../core/moods.js'
 export function renderHeroMoods(daypart) {
   const container = $('#hero-moods');
   if (!container) return;
-  container.innerHTML = moodsFor(daypart).map((mood) => {
-    // Глагол — вертикально во всю высоту карточки, остальное — внизу
-    const [verb, ...tail] = mood.label.split(' ');
-    return `
-      <button type="button" class="mood-card" data-mood="${mood.id}" aria-pressed="false" aria-label="${escapeHtml(mood.label)}" style="--mood: ${mood.color}">
+  container.innerHTML = moodsFor(daypart).map((mood) => `
+      <button type="button" class="mood-card" data-mood="${mood.id}" aria-pressed="false">
         <img src="${escapeHtml(mood.photo)}" alt="" class="mood-card__img" width="360" height="480" decoding="async">
-        <span class="mood-card__verb" aria-hidden="true">${escapeHtml(verb)}</span>
-        <span class="mood-card__tail" aria-hidden="true">${tail.map((w) => `<span>${escapeHtml(w)}</span>`).join(' ')}</span>
-      </button>`;
-  }).join('');
-  fitMoodText(container);
-}
-
-/** Подгоняет кегль. Глагол стоит вертикально по левому краю и всегда
- *  занимает всю высоту карточки. Остальное — вплотную справа от глагола,
- *  внизу, того же размера; если не влезает по ширине — мельче (и
- *  переносится по словам).
- *  Ширина карточек зависит от экрана, поэтому пересчёт — после загрузки
- *  шрифта и при каждом ресайзе. */
-const PAD = 10;
-const GAP = 0.18; // зазор между глаголом и остальным — в долях кегля
-function fitMoodText(container) {
-  const fit = () => {
-    const cards = $$('.mood-card[data-mood]', container).filter((c) => c.clientWidth);
-    if (!cards.length) return;
-    const parts = cards.map((card) => ({ card, verb: $('.mood-card__verb', card), tail: $('.mood-card__tail', card) }));
-    parts.forEach(({ verb, tail }) => { verb.style.fontSize = tail.style.fontSize = '100px'; });
-    parts.forEach(({ card, verb, tail }) => {
-      const verbSize = (100 * (card.clientHeight - 2 * PAD)) / verb.scrollHeight;
-      const widest = Math.max(...$$('span', tail).map((w) => w.offsetWidth)) / 100;
-      verb.style.fontSize = `${verbSize}px`;
-      const left = PAD + verb.offsetWidth + GAP * verbSize;
-      const room = card.clientWidth - left - PAD;
-      tail.style.fontSize = `${Math.min(verbSize, room / widest)}px`;
-      tail.style.left = `${left}px`;
-      tail.style.maxWidth = `${room + 2}px`;
-    });
-  };
-  document.fonts?.ready.then(fit);
-  fit();
-  if ('ResizeObserver' in window) new ResizeObserver(fit).observe(container);
+        <span class="mood-card__text">
+          <span class="mood-card__label">${escapeHtml(mood.label)}</span>
+        </span>
+      </button>`).join('');
 }
 
 /** Порядок карточек с учётом времени суток и погоды. */
