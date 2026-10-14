@@ -30,9 +30,6 @@ export const serviceCardHtml = ({ href, iconName, title, link }) => `
 const REMIND_FROM = 16;
 const REMIND_FROM_FILTERED = 6;
 const REMIND_EVERY = 8;
-// Первая карточка-напоминание — «Выбрать вместе» (lead) — сразу в первых
-// рядах ленты: на первом экране для неё места нет
-const LEAD_AT = 3;
 
 // Пропорции карточек (высота / ширина) — классы .place-card--r0…r4 в
 // card.css. По ним без замеров DOM знаем высоту каждой колонки.
@@ -83,7 +80,7 @@ const AUTO_LOAD_LIMIT = 36;
 //
 // showcases — полосы на всю ширину ленты («Сейчас», «Готовые планы»):
 // { 3: <section> } — после 3-го ряда карточек.
-// lead — { html, ratio }: карточка после LEAD_AT-го места (кроме поиска).
+// lead — { html, ratio }: самая первая карточка ленты (кроме поиска).
 // reminder(k, { filtered, list }) — k-я карточка-напоминание: { html, ratio }
 // или null; list — места, которые сейчас в ленте (для уместных напоминаний). Лента — это
 // отрезки-сетки (.places-grid), витрина стоит между ними, а колонки перед
@@ -160,17 +157,17 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE, nowBadges = new Map(
   const appendCards = (places, start = 0) => {
     const favorites = Storage.getFavorites();
     const shortest = () => heights.indexOf(Math.min(...heights));
+    // Самая первая карточка ленты — lead («Выбрать вместе»): её видят сразу
+    if (start === 0 && lead && !state.query && places.length) {
+      columns[0].insertAdjacentHTML('beforeend', lead.html);
+      heights[0] += lead.ratio;
+    }
     places.forEach((place, i) => {
       const ratio = ratioIndex(place.slug);
       const col = shortest();
       columns[col].insertAdjacentHTML('beforeend', cardHtml(place, favorites.includes(place.slug), `place-card--r${ratio}`, { now: nowBadges.get(place.slug) }));
       heights[col] += cardRatios()[ratio];
       const n = start + i + 1;
-      if (lead && !state.query && n === LEAD_AT) {
-        const c = shortest();
-        columns[c].insertAdjacentHTML('beforeend', lead.html);
-        heights[c] += lead.ratio;
-      }
       // В полной ленте напоминания — после полос (с REMIND_FROM), в
       // категории и настроении — пораньше (с REMIND_FROM_FILTERED): туда
       // часто проваливаются сразу и полос не видят. В поиске — никогда

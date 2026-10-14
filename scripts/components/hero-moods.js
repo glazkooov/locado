@@ -29,10 +29,10 @@ export function renderHeroMoods(daypart) {
   fitMoodText(container);
 }
 
-/** Подгоняет кегль. Глагол стоит вертикально по левому краю, и у всех
- *  карточек он одного размера — по самому длинному глаголу, во всю высоту
- *  карточки. Остальное — вплотную справа от глагола, внизу, того же
- *  размера; если не влезает по ширине — мельче (и переносится по словам).
+/** Подгоняет кегль. Глагол стоит вертикально по левому краю и всегда
+ *  занимает всю высоту карточки. Остальное — вплотную справа от глагола,
+ *  внизу, того же размера; если не влезает по ширине — мельче (и
+ *  переносится по словам).
  *  Ширина карточек зависит от экрана, поэтому пересчёт — после загрузки
  *  шрифта и при каждом ресайзе. */
 const PAD = 10;
@@ -43,8 +43,8 @@ function fitMoodText(container) {
     if (!cards.length) return;
     const parts = cards.map((card) => ({ card, verb: $('.mood-card__verb', card), tail: $('.mood-card__tail', card) }));
     parts.forEach(({ verb, tail }) => { verb.style.fontSize = tail.style.fontSize = '100px'; });
-    const verbSize = Math.min(...parts.map(({ card, verb }) => (100 * (card.clientHeight - 2 * PAD)) / verb.scrollHeight));
     parts.forEach(({ card, verb, tail }) => {
+      const verbSize = (100 * (card.clientHeight - 2 * PAD)) / verb.scrollHeight;
       const widest = Math.max(...$$('span', tail).map((w) => w.offsetWidth)) / 100;
       verb.style.fontSize = `${verbSize}px`;
       const left = PAD + verb.offsetWidth + GAP * verbSize;
