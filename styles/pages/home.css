@@ -1063,7 +1063,9 @@
    край растворяется), под ними поиск и «Список / Карта» */
 .place-section .feed-toolbar {
   position: sticky;
-  top: var(--header-h);
+  /* на 1px под шапку: иначе при дробной высоте шапки между ними
+     просвечивала пиксельная полоса */
+  top: calc(var(--header-h) - 1px);
   z-index: 50;
   display: grid;
   grid-template-columns: minmax(0, 420px) 1fr auto;
@@ -1080,7 +1082,7 @@
 .place-section .feed-toolbar::before {
   content: '';
   position: absolute;
-  inset: 0 calc(50% - 50vw);
+  inset: -1px calc(50% - 50vw) 0;
   z-index: -1;
   transition: background 0.2s ease, box-shadow 0.2s ease;
 }

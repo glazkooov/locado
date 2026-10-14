@@ -15,7 +15,7 @@ const PAGE_SIZE = 12;
 
 // Служебная карточка-приглашение («Выбрать вместе», «Знаешь место?») —
 // пунктир, как «Удиви меня» в hero; ratio — высота для раскладки
-export const SERVICE_RATIO = 1;
+export const SERVICE_RATIO = 5 / 4;
 export const serviceCardHtml = ({ href, iconName, title, link }) => `
   <a class="feed-suggest" href="${href}">
     <svg class="icon feed-suggest__icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#${iconName}"></use></svg>
@@ -33,11 +33,13 @@ const REMIND_EVERY = 8;
 
 // Пропорции карточек (высота / ширина) — классы .place-card--r0…r4 в
 // card.css. По ним без замеров DOM знаем высоту каждой колонки.
-const CARD_RATIOS = [5 / 4, 4 / 3, 1, 1.4, 4 / 5];
+// Все карточки вертикальные, как в Pinterest: место крупно видно, а лента
+// не пролистывается за секунды. Квадратных и горизонтальных нет
+const CARD_RATIOS = [5 / 4, 4 / 3, 3 / 2, 1.4, 1.3];
 // На телефоне карточки вытянуты вверх, как в Пинтересте: фото крупнее,
 // а узкие поля не съедают ширину. Брейкпоинт — как в card.css
 const PHONE = window.matchMedia('(max-width: 767px)');
-const PHONE_RATIOS = [3 / 2, 4 / 3, 5 / 4, 5 / 3, 1];
+const PHONE_RATIOS = [3 / 2, 4 / 3, 1.45, 5 / 3, 1.4];
 const cardRatios = () => (PHONE.matches ? PHONE_RATIOS : CARD_RATIOS);
 
 /** Пропорция карточки зависит от самого места (простой хеш slug): у места
