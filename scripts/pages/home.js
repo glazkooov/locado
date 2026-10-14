@@ -100,9 +100,9 @@ async function renderCollections() {
 
 /** Карточки-напоминания в ленте — по кругу: подборка, «Выбрать вместе»,
  *  подборка, «Предложить место». Подборок будет много, поэтому они — через
- *  раз. В полной ленте — только те, которых не было в полосе «Готовые планы»
- *  (пока других нет, их место пропускается). В категории или настроении
- *  полосы нет — там любые подборки, где есть места из этой ленты. */
+ *  раз. Если в ленте есть полоса «Готовые планы» — только те, которых в ней
+ *  не было (пока других нет, их место пропускается). В категории или
+ *  настроении — только подборки, где есть места из этой ленты. */
 function reminderCards({ collections }) {
   const photoCard = ({ href, photo, chip, title, link }) => `
     <a class="feed-promo" href="${href}">
@@ -113,11 +113,11 @@ function reminderCards({ collections }) {
   const notInBand = collections.slice(PLANS_IN_BAND);
   const plans = [...notInBand, ...collections.slice(0, PLANS_IN_BAND)];
 
-  const plan = (round, { filtered, list }) => {
-    let pool = notInBand;
+  const plan = (round, { filtered, list, band }) => {
+    let pool = band ? notInBand : plans;
     if (filtered) {
       const inList = new Set(list.map((p) => p.slug));
-      pool = plans.filter((c) => collectionPlaceSlugs(c).some((s) => inList.has(s)));
+      pool = pool.filter((c) => collectionPlaceSlugs(c).some((s) => inList.has(s)));
     }
     if (!pool.length) return null;
     const c = pool[round % pool.length];

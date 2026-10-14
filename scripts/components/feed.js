@@ -84,7 +84,7 @@ const AUTO_LOAD_LIMIT = 36;
 // showcases — полосы на всю ширину ленты («Сейчас», «Готовые планы»):
 // { 3: <section> } — после 3-го ряда карточек.
 // lead — { html, ratio }: самая первая карточка ленты (кроме поиска).
-// reminder(k, { filtered, list }) — k-я карточка-напоминание: { html, ratio }
+// reminder(k, { filtered, list, band }) — k-я карточка-напоминание: { html, ratio }
 // или null; list — места, которые сейчас в ленте (для уместных напоминаний). Лента — это
 // отрезки-сетки (.places-grid), витрина стоит между ними, а колонки перед
 // ней выравниваются по нижнему краю, чтобы не было пустот. В поиске
@@ -184,7 +184,10 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE, nowBadges = new Map(
       // часто проваливаются сразу и полос не видят. В поиске — никогда
       const from = isUnfiltered() ? REMIND_FROM : REMIND_FROM_FILTERED;
       if (reminder && !state.query && n >= from && (n - from) % REMIND_EVERY === 0) {
-        const card = reminder((n - from) / REMIND_EVERY, { filtered: !isUnfiltered(), list });
+        // band — будет ли в этой ленте полоса «Готовые планы» (тогда её
+        // подборки в напоминаниях не повторяем)
+        const band = Object.keys(showcases).length > 0 && list.length >= 3 * columns.length;
+        const card = reminder((n - from) / REMIND_EVERY, { filtered: !isUnfiltered(), list, band });
         if (card) {
           const c = shortest();
           columns[c].insertAdjacentHTML('beforeend', card.html);
