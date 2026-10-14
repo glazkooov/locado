@@ -250,11 +250,6 @@
   font-weight: 700;
   line-height: 1.2;
 }
-/* Телефон: кнопка по размеру надписи, а не во всю ширину, и надпись
-   мельче заголовка ленты под ней */
-@media (max-width: 767px) {
-  .mood-card--random { width: auto; padding: 12px 24px; }
-}
 
 .mood-card--random .mood-card__label { position: static; }
 
@@ -1274,10 +1269,11 @@ body.feed-toolbar-stuck .main-header { box-shadow: none; }
   .feed-map .map-section { gap: 10px; height: auto; min-height: 0; max-height: none; }
   .feed-map .map-container { flex: none; height: calc(100svh - var(--header-h) - 130px); min-height: 380px; }
   .feed-map .map-panel { flex: none; }
-  /* Воздух вокруг «Удиви меня», но так, чтобы из-под героя выглядывал
-     заголовок ленты: вопрос чуть меньше, карточки чуть уже */
-  .hero { padding-bottom: calc(22px + var(--hero-wave-h)); }
-  .hero__choices { gap: 18px; }
+  /* Воздух вокруг «Удиви меня»; из-под героя выглядывает заголовок
+     ленты, а категории — уже за первым экраном. Вопрос чуть меньше,
+     карточки чуть уже */
+  .hero { padding-bottom: calc(60px + var(--hero-wave-h)); }
+  .hero__choices { gap: 24px; }
   .hero__content { gap: 22px; }
   .hero__title { font-size: 1.75rem; }
   .hero__pick { margin-bottom: -10px; }
