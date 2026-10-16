@@ -12,13 +12,13 @@ const DATA_URL = new URL('../../data/places.json', import.meta.url);
 export const CATEGORIES = {
   food: { label: 'Еда', emoji: '🍕', icon: 'utensils' },
   nature: { label: 'Природа', emoji: '🌳', icon: 'trees' },
-  art: { label: 'Музеи и выставки', emoji: '🎨', icon: 'landmark' },
+  art: { label: 'Искусство', emoji: '🎨', icon: 'landmark' },
   // Театры убраны, пока мест нет (Большой театр — слишком очевидный).
   // Вернуть: theater: { label: 'Театры', emoji: '🎭', icon: 'drama' },
   photo: { label: 'Фотолокации', emoji: '📸', icon: 'camera' },
   entertainment: { label: 'Развлечения', emoji: '🎉', icon: 'ticket' },
-  // Книжные и места, где можно посидеть с ноутбуком: тихо, красиво, с кофе
-  read: { label: 'Почитать и поработать', emoji: '📚', icon: 'book-open' }
+  // Книжные, барахолки, винтаж, маркеты (временные — с плашкой «временно»)
+  shops: { label: 'Магазины', emoji: '🛍️', icon: 'shopping-bag' }
 };
 
 export function categoryLabel(category, { emoji = false } = {}) {
