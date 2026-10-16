@@ -1227,6 +1227,19 @@ body.feed-toolbar-stuck .main-header { box-shadow: none; }
 /* В полосе ленты карточка подборки — без тизера: название, тип и пара
    фактов, остальное — на странице подборки */
 .feed-stream .collection-desc { display: none; }
+/* Шапка «Готовых планов»: вопрос — тихой строкой над заголовком,
+   акцент — «готовый план» цветом бренда и крупнее обычного заголовка */
+#collections .plans-title { font-size: 1.875rem; line-height: 1.1; }
+#collections .plans-title em { font-style: normal; color: var(--primary); }
+.plans-title__q {
+  display: block;
+  margin-bottom: 6px;
+  font-family: var(--font-body);
+  font-size: var(--fs-md);
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--text-light);
+}
 .feed-stream .section-lead { max-width: 640px; }
 .feed-stream .collections-grid { margin-top: 0; }
 
@@ -1301,6 +1314,7 @@ body.feed-toolbar-stuck .main-header { box-shadow: none; }
   .feed-stream .section-head { margin-bottom: 12px; }
   .feed-stream .section-head--row { flex-direction: column; align-items: flex-start; gap: 6px; }
   .feed-stream .section-title { font-size: var(--fs-lg); }
+  #collections .plans-title { font-size: 1.625rem; }
   .feed-stream .section-lead {
     display: -webkit-box;
     -webkit-line-clamp: 2;

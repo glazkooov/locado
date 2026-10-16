@@ -124,7 +124,7 @@ async function renderCollections() {
     // Свежие — в полосе «Готовые планы», те, что постарше, — в напоминаниях ленты
     const collections = [...await loadCollections()]
       .sort((a, b) => String(b.published || '').localeCompare(String(a.published || '')));
-    grid.innerHTML = collections.slice(0, PLANS_IN_BAND).map((c) => collectionCardHtml(c, { compact: true })).join('');
+    grid.innerHTML = collections.slice(0, PLANS_IN_BAND).map(collectionCardHtml).join('');
     return collections;
   } catch (err) {
     console.error('[home] подборки:', err);

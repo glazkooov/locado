@@ -21,15 +21,6 @@ function metaChips(collection) {
   ].filter(Boolean).join('');
 }
 
-/** Компактная карточка (полоса на главной) — один главный факт: у маршрута
- *  время, у подборки «под повод» — когда идти. Остальное — на странице. */
-function keyFact(collection) {
-  const { duration, when } = collection.meta || {};
-  if (collection.type === 'route' && duration) return `<span>${icon('clock')} ${escapeHtml(duration)}</span>`;
-  if (when) return `<span>${icon('calendar')} ${escapeHtml(when)}</span>`;
-  return duration ? `<span>${icon('clock')} ${escapeHtml(duration)}</span>` : '';
-}
-
 /** Последнее слово названия — вместе со стрелкой, чтобы «→» не уезжала
  *  на отдельную строку (inline-block неразрывный пробел не держит). */
 function titleHtml(title = '') {
@@ -38,7 +29,7 @@ function titleHtml(title = '') {
   return `${escapeHtml(title.slice(0, i + 1))}<span class="collection-title__end">${escapeHtml(title.slice(i + 1))}&nbsp;${arrow}</span>`;
 }
 
-export function collectionCardHtml(collection, { compact = false } = {}) {
+export function collectionCardHtml(collection) {
   const type = COLLECTION_TYPES[collection.type] || '';
   return `
     <a class="collection-card" href="${collectionUrl(collection.slug)}" data-title="${escapeHtml(collection.title)}">
@@ -48,7 +39,7 @@ export function collectionCardHtml(collection, { compact = false } = {}) {
           <span class="collection-card__type">${escapeHtml(type)}</span>
           <span class="collection-title">${titleHtml(collection.title)}</span>
           <span class="collection-desc">${escapeHtml(collection.teaser || collection.lead || '')}</span>
-          <span class="collection-card__meta">${compact ? keyFact(collection) : metaChips(collection)}</span>
+          <span class="collection-card__meta">${metaChips(collection)}</span>
         </span>
       </span>
     </a>`;
