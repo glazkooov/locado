@@ -1224,6 +1224,9 @@ body.feed-toolbar-stuck .main-header { box-shadow: none; }
 }
 .feed-stream .section-head { margin-bottom: 16px; }
 .feed-stream .section-title { font-size: var(--fs-xl); }
+/* В полосе ленты карточка подборки — без тизера: название, тип и пара
+   фактов, остальное — на странице подборки */
+.feed-stream .collection-desc { display: none; }
 .feed-stream .section-lead { max-width: 640px; }
 .feed-stream .collections-grid { margin-top: 0; }
 
