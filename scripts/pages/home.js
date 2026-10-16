@@ -81,6 +81,38 @@ function withNowPlaces(places, picks) {
   return rest;
 }
 
+/** Лента перемешивается при каждом заходе: кто открывает сайт часто, не
+ *  должен листать одно и то же. Соседние карточки по возможности из разных
+ *  категорий — без стены из пяти парков подряд. Порядок запоминается на
+ *  вкладку: «Назад» со страницы места возвращает ту же ленту (feed.js
+ *  восстанавливает число карточек и прокрутку, порядок должен совпасть). */
+const ORDER_KEY = 'locado:feed-order';
+function shuffledFeed(places) {
+  const back = performance.getEntriesByType?.('navigation')[0]?.type === 'back_forward';
+  if (back) {
+    try {
+      const saved = JSON.parse(sessionStorage.getItem(ORDER_KEY) || 'null');
+      if (Array.isArray(saved)) {
+        const pos = new Map(saved.map((slug, i) => [slug, i]));
+        return [...places].sort((a, b) => (pos.get(a.slug) ?? 1e9) - (pos.get(b.slug) ?? 1e9));
+      }
+    } catch { /* нет сохранённого порядка — перемешаем заново */ }
+  }
+  const list = [...places];
+  for (let i = list.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [list[i], list[j]] = [list[j], list[i]];
+  }
+  // Разводим соседей одной категории: ищем дальше первую карточку другой
+  for (let i = 1; i < list.length; i++) {
+    if (list[i].category !== list[i - 1].category) continue;
+    const k = list.findIndex((p, idx) => idx > i && p.category !== list[i - 1].category);
+    if (k > 0) [list[i], list[k]] = [list[k], list[i]];
+  }
+  try { sessionStorage.setItem(ORDER_KEY, JSON.stringify(list.map((p) => p.slug))); } catch { /* приватный режим */ }
+  return list;
+}
+
 /** Подборки — авторские статьи на отдельных страницах (collection.html). */
 // Столько подборок в полосе «Готовые планы»; остальные — в напоминаниях
 const PLANS_IN_BAND = 3;
@@ -169,7 +201,7 @@ async function main() {
   const SPECIAL = ['sunset', 'moon'];
   const badge = (c) => (SPECIAL.includes(c.reason?.icon) ? { icon: c.reason.icon, text: c.reason.text } : { text: 'Сейчас в тему' });
   const nowBadges = new Map(picks.map((c) => [c.place.slug, badge(c)]));
-  const feed = initFeed(withNowPlaces(places, picks.map((c) => c.place)), {
+  const feed = initFeed(withNowPlaces(shuffledFeed(places), picks.map((c) => c.place)), {
     nowBadges, showcases, reminder: reminderCards({ collections }),
     // «Выбрать вместе» — самой первой карточкой ленты
     lead: { ratio: SERVICE_RATIO, html: serviceCardHtml({ href: 'vmeste/?from=feed-top', iconName: 'users', title: 'Идёшь не один?', link: 'Выбрать вместе →' }) }
