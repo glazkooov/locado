@@ -7,15 +7,15 @@ import { loadPlaces, CATEGORIES } from '../core/places.js';
 import { bindCards } from '../components/card.js';
 import { initFeed, serviceCardHtml, SERVICE_RATIO } from '../components/feed.js';
 import { initRandomizer } from '../components/randomizer.js';
-import { initHeroMoods, renderHeroMoods, liveHeroMoods } from '../components/hero-moods.js';
-import { heroGreeting, getDaypart } from '../core/daypart.js';
+import { initHeroMoods, renderHeroMoods } from '../components/hero-moods.js';
+import { heroGreeting } from '../core/daypart.js';
 import { renderCategoryButtons } from '../components/category-buttons.js';
 import { initPlacesMap } from '../components/map.js';
 import { showToast } from '../components/toast.js';
 import { loadCollections, collectionUrl, collectionPlaceSlugs } from '../core/collections.js';
 import { collectionCardHtml } from '../components/collection-card.js';
 import { loadNow, pickNow } from '../core/now.js';
-import { loadWeather, weatherMode } from '../core/weather.js';
+import { loadWeather } from '../core/weather.js';
 
 // Скроллим к заголовку ленты, а не к карточкам: так видны вкладки и
 // плашка выбранного настроения/подборки над ними.
@@ -121,7 +121,9 @@ async function renderCollections() {
   const grid = $('#collections-grid');
   if (!grid) return [];
   try {
-    const collections = await loadCollections();
+    // Свежие — в полосе «Готовые планы», те, что постарше, — в напоминаниях ленты
+    const collections = [...await loadCollections()]
+      .sort((a, b) => String(b.published || '').localeCompare(String(a.published || '')));
     grid.innerHTML = collections.slice(0, PLANS_IN_BAND).map(collectionCardHtml).join('');
     return collections;
   } catch (err) {
@@ -207,7 +209,6 @@ async function main() {
     lead: { ratio: SERVICE_RATIO, html: serviceCardHtml({ href: 'vmeste/?from=feed-top', iconName: 'users', title: 'Идёшь не один?', link: 'Выбрать вместе →' }) }
   });
   applyUrlFilter(feed);
-  liveHeroMoods(places, { daypart: getDaypart(), bad: weatherMode(w) === 'bad' });
   // Лента сразу под героем: настроение фильтрует её на месте
   initHeroMoods(feed, places, { onSelect: () => scrollToFeed() });
   initRandomizer(places);
