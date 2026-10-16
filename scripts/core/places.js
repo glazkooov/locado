@@ -16,7 +16,9 @@ export const CATEGORIES = {
   // Театры убраны, пока мест нет (Большой театр — слишком очевидный).
   // Вернуть: theater: { label: 'Театры', emoji: '🎭', icon: 'drama' },
   photo: { label: 'Фотолокации', emoji: '📸', icon: 'camera' },
-  entertainment: { label: 'Развлечения', emoji: '🎉', icon: 'ticket' }
+  entertainment: { label: 'Развлечения', emoji: '🎉', icon: 'ticket' },
+  // Книжные и места, где можно посидеть с ноутбуком: тихо, красиво, с кофе
+  read: { label: 'Почитать и поработать', emoji: '📚', icon: 'book-open' }
 };
 
 export function categoryLabel(category, { emoji = false } = {}) {
