@@ -1337,12 +1337,3 @@ body.feed-toolbar-stuck .main-header { box-shadow: none; }
   .feed-stream .collection-desc { display: none; }
   .feed-next { grid-template-columns: 1fr 1fr; }
 }
-
-/* Телефоны: прилипшая строка ленты без размытия — см. шапку (header.css) */
-@media (hover: none) {
-  .place-section .feed-toolbar.is-stuck::before {
-    background: #fff;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
-}

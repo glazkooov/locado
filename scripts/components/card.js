@@ -31,7 +31,7 @@ export function cardHtml(place, isFavorite, extraClass = '', { now = null } = {}
         <div class="place-card__category">${escapeHtml(place.type || categoryLabel(place.category))}</div>${favButtonHtml(place, isFavorite)}
         ${badge}
       </div>
-      <img src="${escapeHtml(place.photoSm || place.photo || '')}" alt="${escapeHtml(place.name)}" class="place-card__img" loading="lazy" decoding="async">
+      <img src="${escapeHtml(place.photoSm || place.photo || '')}" alt="${escapeHtml(place.name)}" class="place-card__img" loading="lazy">
       <div class="place-card__info"><h3>${escapeHtml(place.name)}</h3></div>
     </div>`;
 }
