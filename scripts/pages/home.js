@@ -140,7 +140,7 @@ async function renderCollections() {
 function reminderCards({ collections }) {
   const photoCard = ({ href, photo, chip, title, link }) => `
     <a class="feed-promo" href="${href}">
-      <img class="feed-promo__img" src="${escapeHtml(photo || '')}" alt="" loading="lazy">
+      <img class="feed-promo__img" src="${escapeHtml(photo || '')}" alt="" loading="lazy" decoding="async">
       <span class="feed-promo__chip">${escapeHtml(chip)}</span>
       <span class="feed-promo__text"><b>${escapeHtml(title)}</b><small>${escapeHtml(link)}</small></span>
     </a>`;

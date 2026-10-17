@@ -197,3 +197,12 @@
 }
 
 .site-footer__bottom a:hover { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+
+/* Телефоны: без размытия — см. шапку (header.css) */
+@media (hover: none) {
+  .back-to-top {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}

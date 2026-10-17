@@ -370,3 +370,21 @@ body:not(.nav-open) .main-header--overlay:not(.is-scrolled) .header-search {
   .main-header--overlay:not(.is-scrolled) .header-search { color: var(--hero-fg); border-color: var(--hero-line); }
   .main-header--overlay:not(.is-scrolled) .header-search:hover { color: var(--hero-accent); }
 }
+
+/* Телефоны: без размытия под шапкой. Safari на iPhone перерисовывает его
+   на каждом кадре прокрутки поверх фото ленты и при быстром пролистывании
+   выгружает вкладку (страница «перезагружается»). Вместо стекла —
+   просто белая подложка */
+@media (hover: none) {
+  .main-header,
+  .main-header--overlay.is-scrolled,
+  body.nav-open .main-header--overlay {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .main-header:not(.main-header--overlay),
+  .main-header--overlay.is-scrolled,
+  body.nav-open .main-header--overlay {
+    background: #fff;
+  }
+}

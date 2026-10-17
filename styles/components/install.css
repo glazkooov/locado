@@ -158,3 +158,11 @@ body.has-install-banner .back-to-top { bottom: 96px; }
 @media (prefers-reduced-motion: reduce) {
   .install-banner { animation: none; }
 }
+
+/* Телефоны: без размытия — см. шапку (header.css) */
+@media (hover: none) {
+  .install-banner {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
