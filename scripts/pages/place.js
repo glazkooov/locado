@@ -5,10 +5,10 @@ import { goal } from '../core/analytics.js';
 import { $, $$, on } from '../core/dom.js';
 import {
   escapeHtml, safeUrl, cssUrl, getOpenStatus, describeStatusTimer, scheduleHtml, telHref, displayHost,
-  openStatusLabel, isAlwaysOpen
+  openStatusLabel, isAlwaysOpen, pluralize
 } from '../core/format.js';
 import {
-  loadPlaces, bySlug, similar, nearby, toggleFavoritePlace, markVisited, placeUrl, metroList, categoryLabel
+  loadPlaces, bySlug, similar, nearby, placeIntent, walkMinutes, toggleFavoritePlace, markVisited, placeUrl, metroList, categoryLabel
 } from '../core/places.js';
 import * as Storage from '../core/storage.js';
 import { similarCardHtml, bindImageFallback } from '../components/card.js';
@@ -315,17 +315,131 @@ async function renderMap(place) {
   on(routeLink, 'click', () => goal('route_click', { place: place.slug }));
 }
 
-/** «А что рядом?»: соседи до ~10 минут пешком — по координатам, а не по тегам. */
+/* «А что рядом?» — то, что просили в интервью: «сходил в одно место — хочется
+   рядом поесть или догулять». Соседи до ~15 минут пешком разложены по тому,
+   зачем туда идти, а кнопка собирает из них готовое продолжение дня. */
+const NEARBY_ICON = { eat: 'utensils', walk: 'trees', see: 'landmark' };
+const NEARBY_GROUP = { eat: 'Поесть', walk: 'Догулять', see: 'Заглянуть ещё' };
+const NEARBY_STEP = { eat: 'Поесть', walk: 'Догулять', see: 'Заглянуть' };
+// После прогулки или музея первым делом хочется есть, после кафе — гулять
+const NEARBY_ORDER = { eat: ['walk', 'see', 'eat'], walk: ['eat', 'see', 'walk'], see: ['eat', 'walk', 'see'] };
+const NEARBY_PER_GROUP = 3;
+
+function nearbySummaryHtml(counts, order, filter) {
+  const words = {
+    eat: (n) => `${n} ${pluralize(n, ['место', 'места', 'мест'])}, где поесть`,
+    walk: (n) => `${n} ${pluralize(n, ['место', 'места', 'мест'])}, где погулять`,
+    see: (n) => `${n} ${pluralize(n, ['музей или пространство', 'музея или пространства', 'музеев и пространств'])}`
+  };
+  const parts = order.filter((k) => counts[k]).map((k) =>
+    `<button type="button" class="nearby-pill nearby-pill--${k}" data-intent="${k}" aria-pressed="${filter === k}">${words[k](counts[k])}</button>`);
+  const last = parts.pop();
+  // «…, где поесть, и …» — придаточное перед «и» закрывается запятой
+  const before = parts.length && /где /.test(parts[parts.length - 1]) ? ', и ' : ' и ';
+  return `Рядом есть ${parts.length ? `${parts.join(', ')}${before}` : ''}${last}.`;
+}
+
+function nearbyRowHtml({ place: p, minutes }, intent) {
+  return `
+    <a class="nearby-row" href="${placeUrl(p.slug)}">
+      <span class="nearby-row__thumb nearby-row__thumb--${intent}">
+        ${icon(NEARBY_ICON[intent])}
+        <img class="nearby-row__img" src="${escapeHtml(p.photoSm || p.photo || '')}" alt="" loading="lazy">
+      </span>
+      <span class="nearby-row__text">
+        <span class="nearby-row__name">${escapeHtml(p.name)}</span>
+        <span class="nearby-row__type">${escapeHtml(p.type || categoryLabel(p.category))}</span>
+      </span>
+      <span class="nearby-row__time">${minutes} мин</span>
+    </a>`;
+}
+
+/** Варианты продолжения: шаг 1 — чего хочется после этого места,
+ *  шаг 2 — ближайшее к шагу 1 место другого рода. */
+function nearbyChains(place, list) {
+  const [first, second] = NEARBY_ORDER[placeIntent(place)];
+  return list.filter((x) => x.intent === first).slice(0, 3).map((s1) => {
+    let pool = list.filter((x) => x.intent === second);
+    if (!pool.length) pool = list.filter((x) => x.intent !== first);
+    const s2 = pool
+      .map((x) => ({ ...x, minutes: walkMinutes(s1.place.coords, x.place.coords) }))
+      .sort((a, b) => a.minutes - b.minutes)[0] || null;
+    return { s1, s2 };
+  });
+}
+
+function nearbyChainHtml(place, chain, hasMore) {
+  const { s1, s2 } = chain;
+  const step = (intent, kicker, p, link = true) => `
+    <div class="nearby-step">
+      <span class="nearby-step__icon nearby-step__icon--${intent}">${icon(NEARBY_ICON[intent])}</span>
+      <span class="nearby-step__text">
+        <span class="nearby-step__kicker">${kicker}</span>
+        ${link ? `<a class="nearby-step__name" href="${placeUrl(p.slug)}">${escapeHtml(p.name)}</a>` : `<span class="nearby-step__name">${escapeHtml(p.name)}</span>`}
+      </span>
+    </div>`;
+  const walk = (m) => `<p class="nearby-walk">${m} мин пешком</p>`;
+  const points = [place, s1.place].concat(s2 ? [s2.place] : []).filter((p) => p.coords);
+  const yandex = `https://yandex.ru/maps/?rtext=${points.map((p) => p.coords.join(',')).join('~')}&rtt=pd`;
+  const total = s1.minutes + (s2 ? s2.minutes : 0);
+  return `
+    ${step(placeIntent(place), 'Сейчас', place, false)}
+    ${walk(s1.minutes)}
+    ${step(s1.intent, NEARBY_STEP[s1.intent], s1.place)}
+    ${s2 ? walk(s2.minutes) + step(s2.intent, `Потом — ${NEARBY_STEP[s2.intent].toLowerCase()}`, s2.place) : ''}
+    <p class="nearby-chain__total">Около ${total} ${pluralize(total, ['минуты', 'минут', 'минут'])} пешком между точками</p>
+    <div class="nearby-chain__actions">
+      ${hasMore ? '<button type="button" class="nearby-chain__btn" id="nearby-alt">Другой вариант</button>' : ''}
+      <a class="nearby-chain__btn nearby-chain__btn--primary" href="${escapeHtml(yandex)}" target="_blank" rel="noopener">Пешком в Яндекс Картах</a>
+    </div>`;
+}
+
 function renderNearby(place, allPlaces) {
   const section = $('#place-nearby');
-  const container = $('#nearby-places-container');
-  if (!section || !container) return;
-  const list = nearby(allPlaces, place);
+  if (!section) return;
+  const list = nearby(allPlaces, place, { maxMinutes: 15, count: 40 })
+    .map((x) => ({ ...x, intent: placeIntent(x.place) }));
   if (!list.length) return;
-  container.innerHTML = list.map(({ place: p }) => similarCardHtml(p)).join('');
-  bindImageFallback(container);
+  const order = NEARBY_ORDER[placeIntent(place)];
+  const counts = { eat: 0, walk: 0, see: 0 };
+  list.forEach((x) => { counts[x.intent] += 1; });
+  let filter = null;
+
+  const draw = () => {
+    $('#nearby-summary').innerHTML = nearbySummaryHtml(counts, order, filter);
+    $('#nearby-groups').innerHTML = order
+      .filter((k) => counts[k] && (!filter || filter === k))
+      .map((k) => `
+        <div class="nearby-group">
+          <h3 class="nearby-group__title">${NEARBY_GROUP[k]}</h3>
+          ${list.filter((x) => x.intent === k).slice(0, filter ? 6 : NEARBY_PER_GROUP).map((x) => nearbyRowHtml(x, k)).join('')}
+        </div>`).join('');
+  };
+  draw();
+  on($('#nearby-summary'), 'click', '.nearby-pill', (e, btn) => {
+    filter = filter === btn.dataset.intent ? null : btn.dataset.intent;
+    draw();
+  });
+
+  // Продолжение дня — только если есть хотя бы первый шаг
+  const chains = nearbyChains(place, list);
+  const box = $('#nearby-next');
+  if (!chains.length) { box.hidden = true; } else {
+    const btn = $('#nearby-build');
+    const chainEl = $('#nearby-chain');
+    let alt = 0;
+    const show = () => { chainEl.innerHTML = nearbyChainHtml(place, chains[alt % chains.length], chains.length > 1); };
+    on(btn, 'click', () => {
+      const open = chainEl.hidden;
+      chainEl.hidden = !open;
+      btn.setAttribute('aria-expanded', String(open));
+      btn.textContent = open ? 'Свернуть' : 'Собрать продолжение дня';
+      if (open) { show(); goal('nearby_chain', { place: place.slug }); }
+    });
+    on(chainEl, 'click', '#nearby-alt', () => { alt += 1; show(); });
+  }
+  bindImageFallback(section);
   section.hidden = false;
-  initSimilarNav(container, $('#nearby-prev'), $('#nearby-next'));
 }
 
 function renderSimilar(place, allPlaces) {

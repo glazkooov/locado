@@ -187,6 +187,16 @@ export function walkMinutes(a, b) {
   return Math.max(1, Math.round((Math.hypot(dLat, dLon) * 1.3 / 4.8) * 60));
 }
 
+/** Зачем идти в место после другого: поесть, догулять или заглянуть
+ *  (музей, книжный, пространство). Коворкинги и библиотеки из «Фотолокаций» —
+ *  это «заглянуть», а не прогулка. */
+export function placeIntent(place) {
+  if (place.category === 'food') return 'eat';
+  if (place.category === 'nature') return 'walk';
+  if (place.category === 'photo') return /библиотек|пространств|квартал|городок/i.test(place.type || '') ? 'see' : 'walk';
+  return 'see';
+}
+
 /** Места в пешей доступности: [{ place, minutes }] от ближних к дальним. */
 export function nearby(places, place, { maxMinutes = 10, count = 8 } = {}) {
   return places
