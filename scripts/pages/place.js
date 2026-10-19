@@ -5,10 +5,10 @@ import { goal } from '../core/analytics.js';
 import { $, $$, on } from '../core/dom.js';
 import {
   escapeHtml, safeUrl, cssUrl, getOpenStatus, describeStatusTimer, scheduleHtml, telHref, displayHost,
-  openStatusLabel, isAlwaysOpen
+  openStatusLabel, isAlwaysOpen, pluralize
 } from '../core/format.js';
 import {
-  loadPlaces, bySlug, similar, toggleFavoritePlace, markVisited, placeUrl, metroList, categoryLabel
+  loadPlaces, bySlug, similar, nearby, placeLabels, toggleFavoritePlace, markVisited, placeUrl, metroList, categoryLabel
 } from '../core/places.js';
 import * as Storage from '../core/storage.js';
 import { similarCardHtml, bindImageFallback } from '../components/card.js';
@@ -65,7 +65,13 @@ function renderHero(place) {
   $('#place-category').textContent = place.type || categoryLabel(place.category);
   $('#place-name').textContent = place.name;
   // Краткое описание вместо шаблонного «… в центре Москвы» (не у всех мест правда)
-  $('#place-subtitle').textContent = place.subtitle || place.description || '';
+  // Есть крючок — он и встаёт на место краткого описания: обычно они
+  // говорят одно и то же, а крючок короче и ярче
+  const subtitle = $('#place-subtitle');
+  subtitle.textContent = place.hook ? '' : (place.subtitle || place.description || '');
+  subtitle.hidden = Boolean(place.hook);
+  const hook = $('#place-hook');
+  if (hook) { hook.textContent = place.hook || ''; hook.hidden = !place.hook; }
   renderFacts(place);
 
   updateFavButtonUI(Storage.isFavorite(place.slug));
@@ -109,12 +115,16 @@ function renderFacts(place) {
   if (metro) facts.push({ icon: 'train-front', text: `м. ${metro}` });
   const status = openStatusLabel(place);
   if (status) facts.push({ icon: 'clock', text: status.text, mod: status.isOpen ? 'open' : 'closed' });
-  if (place.price) {
+  const labels = placeLabels(place);
+  // «Бесплатно» уже есть меткой — строку цены с тем же смыслом не повторяем
+  const freeLabel = labels.some((l) => l.text === 'Бесплатно');
+  if (place.price && !(freeLabel && /бесплатн/i.test(place.price))) {
     // «Билеты — на сайте музея» без ссылки заставляет искать сайт самому
     const website = safeUrl(place.website, '');
     const href = website && /на сайте/i.test(place.price) ? website : '';
     facts.push({ icon: 'ticket', text: place.price, href, external: true });
   }
+  labels.forEach((l) => facts.push({ ...l, mod: 'label' }));
   list.innerHTML = facts.map(heroFactHtml).join('');
 }
 
@@ -315,6 +325,20 @@ async function renderMap(place) {
   on(routeLink, 'click', () => goal('route_click', { place: place.slug }));
 }
 
+/** «Рядом, до 10 минут пешком»: соседи по координатам, а не по тегам. */
+function renderNearby(place, allPlaces) {
+  const section = $('#place-nearby');
+  const container = $('#nearby-places-container');
+  if (!section || !container) return;
+  const list = nearby(allPlaces, place);
+  if (!list.length) return;
+  container.innerHTML = list.map(({ place: p, minutes }) =>
+    similarCardHtml(p, { note: `${minutes} ${pluralize(minutes, ['минута', 'минуты', 'минут'])} пешком` })).join('');
+  bindImageFallback(container);
+  section.hidden = false;
+  initSimilarNav(container, $('#nearby-prev'), $('#nearby-next'));
+}
+
 function renderSimilar(place, allPlaces) {
   const container = $('#similar-places-container');
   const list = similar(allPlaces, place, 6);
@@ -326,14 +350,12 @@ function renderSimilar(place, allPlaces) {
     </a>`;
   container.innerHTML = list.map(similarCardHtml).join('') + moreCard;
   bindImageFallback(container);
-  initSimilarNav(container);
+  initSimilarNav(container, $('#similar-prev'), $('#similar-next'));
 }
 
 /** Стрелки «назад / дальше» у ряда похожих мест: листают на ширину видимой
  *  части и гаснут на краях. */
-function initSimilarNav(scroller) {
-  const prev = $('#similar-prev');
-  const next = $('#similar-next');
+function initSimilarNav(scroller, prev, next) {
   if (!prev || !next) return;
   const sync = () => {
     const max = scroller.scrollWidth - scroller.clientWidth - 2;
@@ -517,6 +539,7 @@ async function main() {
   renderAmenities(place);
   renderGallery(place);
   renderDirections(place);
+  renderNearby(place, places);
   renderSimilar(place, places);
   renderCollections(place);
   renderReviews(place.slug);

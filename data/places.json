@@ -686,6 +686,7 @@
     "id": 13,
     "slug": "tsaritsyno",
     "name": "Царицыно",
+    "hook": "Недостроенный дворец Екатерины II",
     "category": "nature",
     "type": "Музей-заповедник",
     "coords": [
@@ -979,6 +980,7 @@
     "id": 17,
     "slug": "ges-2",
     "name": "ГЭС-2",
+    "hook": "Электростанция, ставшая домом культуры",
     "category": "art",
     "type": "Дом культуры",
     "coords": [
@@ -1348,6 +1350,7 @@
     "id": 43,
     "slug": "chayny-dom-perlova",
     "name": "Чайный дом Перлова",
+    "hook": "Китайская пагода посреди Мясницкой",
     "category": "photo",
     "type": "Архитектура",
     "coords": [
@@ -1635,6 +1638,7 @@
     "id": 59,
     "slug": "danilovsky-rynok",
     "name": "Даниловский рынок",
+    "hook": "Рынок под бетонным «цветком»",
     "category": "food",
     "type": "Рынок",
     "coords": [
@@ -1707,6 +1711,7 @@
     "id": 62,
     "slug": "severnoe-tushino",
     "name": "Парк «Северное Тушино»",
+    "hook": "Настоящая подводная лодка на берегу",
     "category": "nature",
     "type": "Парк",
     "coords": [
@@ -2003,6 +2008,7 @@
     "id": 99,
     "slug": "yaponsky-sad",
     "name": "Японский сад",
+    "hook": "Сакура весной, алые клёны осенью",
     "category": "nature",
     "type": "Сад внутри ботсада",
     "coords": [
@@ -2076,6 +2082,7 @@
     "id": 66,
     "slug": "park-huamin",
     "name": "Китайский парк «Хуамин»",
+    "hook": "Горбатые мостики и пруд с карпами",
     "category": "nature",
     "type": "Китайский сад",
     "coords": [
@@ -2372,6 +2379,7 @@
     "id": 70,
     "slug": "soldatenkovsky-park",
     "name": "Солдатёнковский парк",
+    "hook": "Деревья, похожие на огромную брокколи",
     "category": "nature",
     "type": "Парк у пруда",
     "coords": [
@@ -2742,6 +2750,7 @@
     "id": 76,
     "slug": "kuzminki",
     "name": "Усадьба «Кузьминки»",
+    "hook": "Чугунные львы у воды и кони Клодта",
     "category": "nature",
     "type": "Парк-усадьба",
     "coords": [
@@ -3106,6 +3115,7 @@
     "id": 85,
     "slug": "artplay",
     "name": "Центр дизайна «Артплей»",
+    "hook": "Давид, слон и русалка во дворах",
     "category": "art",
     "type": "Центр дизайна",
     "coords": [
@@ -3754,6 +3764,7 @@
     "id": 96,
     "slug": "tyufeleva-roshcha",
     "name": "Парк «Тюфелева роща»",
+    "hook": "Пергола повторяет конвейерную цепь ЗИЛа",
     "category": "nature",
     "type": "Парк",
     "coords": [
@@ -3902,6 +3913,7 @@
     "id": 98,
     "slug": "moskvarium",
     "name": "Москвариум",
+    "hook": "Подводный тоннель с акулами",
     "category": "entertainment",
     "type": "Океанариум",
     "coords": [
@@ -3971,6 +3983,7 @@
     "id": 100,
     "slug": "solntse-moskvy",
     "name": "Колесо обозрения «Солнце Москвы»",
+    "hook": "Кабинки со стеклянным полом",
     "category": "entertainment",
     "type": "Колесо обозрения",
     "coords": [
@@ -4157,6 +4170,7 @@
     "id": 103,
     "slug": "angar-44",
     "name": "«Ангар 44»",
+    "hook": "Камин зимой, понтон на пруду летом",
     "category": "food",
     "type": "Гриль-бар",
     "coords": [
@@ -4271,6 +4285,7 @@
     "id": 105,
     "slug": "muzey-kriptografii",
     "name": "Музей криптографии",
+    "hook": "«Энигма» в бывшей секретной лаборатории",
     "category": "entertainment",
     "type": "Музей",
     "coords": [
@@ -4415,6 +4430,7 @@
     "id": 107,
     "slug": "odeon",
     "name": "Театр «ОДЕОН»",
+    "hook": "Мюзикл, ужин и вечеринка за один вечер",
     "category": "entertainment",
     "type": "Гастрономическое шоу",
     "coords": [
@@ -4531,6 +4547,7 @@
     "id": 109,
     "slug": "hodynskoe-pole",
     "name": "Парк «Ходынское поле»",
+    "hook": "Панорамные качели на месте аэродрома",
     "category": "nature",
     "type": "Парк",
     "coords": [
@@ -4605,6 +4622,7 @@
     "id": 110,
     "slug": "shodnenskiy-kovsh",
     "name": "Экотропа «Сходненский ковш»",
+    "hook": "Чаша, в которую трудно поверить в Москве",
     "category": "nature",
     "type": "Природный памятник",
     "coords": [
@@ -4689,6 +4707,7 @@
     "id": 112,
     "slug": "rostokinskiy-akveduk",
     "name": "Ростокинский акведук",
+    "hook": "Самый длинный мост старой Москвы",
     "category": "photo",
     "type": "Памятник инженерного искусства",
     "coords": [
@@ -4765,6 +4784,7 @@
     "id": 114,
     "slug": "dom-melnikova",
     "name": "Дом Мельникова",
+    "hook": "Дом из двух цилиндров и шестигранных окон",
     "category": "art",
     "type": "Дом-музей архитектуры",
     "coords": [
@@ -4956,6 +4976,7 @@
     "id": 119,
     "slug": "muzey-sovetskih-igrovyh-avtomatov",
     "name": "Музей советских игровых автоматов",
+    "hook": "Морской бой и газировка за три копейки",
     "category": "entertainment",
     "type": "Музей-игротека",
     "coords": [
@@ -5065,6 +5086,7 @@
     "id": 121,
     "slug": "pokrovskiy-bereg",
     "name": "Зона отдыха «Покровский берег»",
+    "hook": "Пляж, мимо которого идут большие корабли",
     "category": "nature",
     "type": "Пляж и набережная",
     "coords": [
@@ -5243,6 +5265,7 @@
     "id": 125,
     "slug": "eksperimentanium",
     "name": "Экспериментаниум",
+    "hook": "Можно оказаться внутри мыльного пузыря",
     "category": "entertainment",
     "type": "Интерактивный музей науки",
     "coords": [
@@ -5279,6 +5302,7 @@
     "id": 126,
     "slug": "kinoteatr-illyuzion",
     "name": "Кинотеатр «Иллюзион»",
+    "hook": "Немое кино под живое пианино",
     "category": "entertainment",
     "type": "Кинотеатр",
     "coords": [
@@ -5317,6 +5341,7 @@
     "id": 127,
     "slug": "mosfilm",
     "name": "Киноконцерн «Мосфильм»",
+    "hook": "Машины из знаменитых фильмов",
     "category": "entertainment",
     "type": "Киностудия",
     "coords": [
@@ -5352,6 +5377,7 @@
     "id": 128,
     "slug": "poselok-hudozhnikov",
     "name": "Посёлок художников «Сокол»",
+    "hook": "Деревня с улицами Левитана и Сурикова",
     "category": "photo",
     "type": "Исторический посёлок",
     "coords": [
@@ -5431,6 +5457,7 @@
     "id": 130,
     "slug": "ramen-land",
     "name": "Ra’Men Land",
+    "hook": "Три этажа рамена и аниме",
     "category": "food",
     "type": "Раменная",
     "coords": [
@@ -5467,6 +5494,7 @@
     "id": 131,
     "slug": "muzey-transporta-moskvy",
     "name": "Музей транспорта Москвы",
+    "hook": "Трамваи в гараже Мельникова",
     "category": "entertainment",
     "type": "Музей",
     "coords": [
@@ -5571,6 +5599,7 @@
     "id": 133,
     "slug": "dom-centrosoyuza",
     "name": "Дом Центросоюза и памятник Ле Корбюзье",
+    "hook": "Единственное здание Ле Корбюзье в Москве",
     "category": "photo",
     "type": "Памятник архитектуры",
     "coords": [
@@ -5787,6 +5816,7 @@
     "id": 138,
     "slug": "knizhnaya-lavka-pisateley",
     "name": "«Книжная лавка писателей»",
+    "hook": "Книги здесь продают с 1893 года",
     "category": "shops",
     "type": "Книжный магазин",
     "coords": [
@@ -5927,6 +5957,7 @@
     "id": 140,
     "slug": "podpisnye-v-muzee",
     "name": "«Подписные в музее»",
+    "hook": "Петербургские «Подписные» внутри музея",
     "category": "shops",
     "type": "Книжный и кафе",
     "coords": [
@@ -5967,6 +5998,7 @@
     "id": 141,
     "slug": "ciolkovskiy",
     "name": "Книжный «Циолковский»",
+    "hook": "Книжный с выходом на крышу",
     "category": "shops",
     "type": "Книжный магазин",
     "coords": [
@@ -6190,6 +6222,7 @@
     "id": 147,
     "slug": "osobnyak-ryabushinskogo",
     "name": "Особняк Рябушинского",
+    "hook": "Лестница-волна и ни одного прямого угла",
     "category": "art",
     "type": "Дом-музей",
     "coords": [
@@ -6344,6 +6377,7 @@
     "id": 151,
     "slug": "osobnyak-turgeneva",
     "name": "Дом Тургенева",
+    "hook": "Тот самый дом из «Муму»",
     "category": "art",
     "type": "Дом-музей",
     "coords": [
@@ -6424,6 +6458,7 @@
     "id": 153,
     "slug": "osobnyak-staheeva",
     "name": "Особняк Стахеева",
+    "hook": "Мавританская курительная и греческий холл",
     "category": "photo",
     "type": "Особняк",
     "coords": [
@@ -6460,6 +6495,7 @@
     "id": 154,
     "slug": "dom-pashkova",
     "name": "Дом Пашкова",
+    "hook": "Белый дворец на холме напротив Кремля",
     "category": "photo",
     "type": "Памятник архитектуры",
     "coords": [
@@ -6615,6 +6651,7 @@
     "id": 158,
     "slug": "dom-vasnecova",
     "name": "Дом-музей Васнецова",
+    "hook": "Терем, который Васнецов построил для себя",
     "category": "art",
     "type": "Дом-музей",
     "coords": [
@@ -6695,6 +6732,7 @@
     "id": 160,
     "slug": "slezy-berezy",
     "name": "«Слёзы берёзы»",
+    "hook": "Бар как русская народная сказка",
     "category": "food",
     "type": "Бар",
     "coords": [
@@ -6800,6 +6838,7 @@
     "id": 162,
     "slug": "dom-v-kotorom",
     "name": "Паб «Дом, в котором»",
+    "hook": "Дерево растёт прямо посреди зала",
     "category": "food",
     "type": "Паб",
     "coords": [
@@ -6838,6 +6877,7 @@
     "id": 163,
     "slug": "lesnaya-chaynaya",
     "name": "«Лесная чайная»",
+    "hook": "Чай из самовара посреди леса",
     "category": "food",
     "type": "Кафе",
     "coords": [
@@ -7342,6 +7382,7 @@
     "id": 172,
     "slug": "mamonov-ovrag",
     "name": "Мамонов овраг",
+    "hook": "Горки, как в «Джентльменах удачи»",
     "category": "nature",
     "type": "Овраг и склоны",
     "coords": [
@@ -7413,6 +7454,7 @@
     "id": 174,
     "slug": "manul",
     "name": "Manul",
+    "hook": "Нельма, муксун и кедровая каша",
     "category": "food",
     "type": "Ресторан сибирской кухни",
     "coords": [
@@ -7554,6 +7596,7 @@
     "id": 177,
     "slug": "kanatnaya-doroga-luzhniki",
     "name": "Канатная дорога «Воробьёвы горы — Лужники»",
+    "hook": "Над Москвой-рекой за несколько минут",
     "category": "entertainment",
     "type": "Канатная дорога",
     "coords": [
@@ -7797,6 +7840,7 @@
     "id": 182,
     "slug": "sanduny",
     "name": "Сандуновские бани",
+    "hook": "Баня с готическими залами и витражами",
     "category": "entertainment",
     "type": "Баня",
     "coords": [
@@ -7873,6 +7917,7 @@
     "id": 184,
     "slug": "ciferblat-kuznetskiy-most",
     "name": "Антикафе «Циферблат»",
+    "hook": "Платишь только за минуты",
     "category": "entertainment",
     "type": "Антикафе",
     "coords": [
@@ -7908,6 +7953,7 @@
     "id": 185,
     "slug": "flow-moscow",
     "name": "Аэротруба Flow Moscow",
+    "hook": "Свободное падение без самолёта",
     "category": "entertainment",
     "type": "Аэротруба",
     "coords": [
@@ -8072,6 +8118,7 @@
     "id": 188,
     "slug": "basseyn-chayka",
     "name": "Бассейн «Чайка»",
+    "hook": "Плавать под открытым небом в снег",
     "category": "entertainment",
     "type": "Открытый бассейн",
     "coords": [
@@ -8183,6 +8230,7 @@
     "id": 192,
     "slug": "paleontologicheskiy-muzey",
     "name": "Палеонтологический музей им. Орлова",
+    "hook": "Скелеты динозавров в кирпичной крепости",
     "category": "entertainment",
     "type": "Музей",
     "coords": [
@@ -8219,6 +8267,7 @@
     "id": 193,
     "slug": "panorama-360",
     "name": "Смотровая площадка PANORAMA360",
+    "hook": "Москва за стеклом с высоты 327 метров",
     "category": "entertainment",
     "type": "Смотровая площадка",
     "coords": [
@@ -8405,6 +8454,7 @@
     "id": 198,
     "slug": "teburasika",
     "name": "«Тебурасика»",
+    "hook": "Японская рюмочная, которую сложно найти",
     "category": "food",
     "type": "Японская рюмочная",
     "coords": [
@@ -8480,6 +8530,7 @@
     "id": 200,
     "slug": "motishnaya",
     "name": "«Мотишная»",
+    "hook": "Моти с дорблю и грушей — и ещё 25 вкусов",
     "category": "food",
     "type": "Кондитерская",
     "coords": [
@@ -8626,6 +8677,7 @@
     "id": 204,
     "slug": "the-mob",
     "name": "The Mob",
+    "hook": "Интерьер из фильмов про мафию 70-х",
     "category": "food",
     "type": "Гастробистро",
     "coords": [
@@ -8668,6 +8720,7 @@
     "id": 205,
     "slug": "zoe-bakery",
     "name": "Пекарня Zoe",
+    "hook": "Пекарня, спрятанная во дворе",
     "category": "food",
     "type": "Пекарня",
     "coords": [
@@ -8959,6 +9012,7 @@
     "id": 211,
     "slug": "lestnica-u-shatra",
     "name": "Лестница у «Шатра» на Чистых прудах",
+    "hook": "Ступени прямо к воде Чистого пруда",
     "category": "photo",
     "type": "Фотолокация",
     "coords": [
@@ -9098,6 +9152,7 @@
     "id": 214,
     "slug": "mariya-santa",
     "name": "«Мария Санта»",
+    "hook": "Подоконник, где фотографируются все",
     "category": "food",
     "type": "Итальянское кафе",
     "coords": [
@@ -9180,6 +9235,7 @@
     "id": 216,
     "slug": "perezvon-pyatnitskaya",
     "name": "«Перезвон» на Пятницкой",
+    "hook": "Кофе прямо в колокольне храма",
     "category": "food",
     "type": "Кофейня",
     "coords": [
@@ -9218,6 +9274,7 @@
     "id": 217,
     "slug": "found-record-store",
     "name": "Found Record Store & Pizzeria",
+    "hook": "Пицца среди виниловых пластинок",
     "category": "food",
     "type": "Пиццерия и магазин пластинок",
     "coords": [
@@ -9334,6 +9391,7 @@
     "id": 220,
     "slug": "usadba-tolstogo",
     "name": "Музей-усадьба Льва Толстого в Хамовниках",
+    "hook": "Велосипед, на котором учился Толстой",
     "category": "art",
     "type": "Музей-усадьба",
     "coords": [
@@ -9374,6 +9432,7 @@
     "id": 221,
     "slug": "kanal-tushinskiy-shlyuz",
     "name": "Канал имени Москвы у Тушинского шлюза",
+    "hook": "Корабли плывут над шоссе",
     "category": "entertainment",
     "type": "Смотровая точка",
     "coords": [
@@ -9411,6 +9470,7 @@
     "id": 222,
     "slug": "dom-muzey-chukovskogo",
     "name": "Дом-музей Корнея Чуковского",
+    "hook": "«Чудо-дерево» с ботинками вместо листьев",
     "category": "art",
     "type": "Дом-музей",
     "coords": [
@@ -9475,6 +9535,7 @@
     "id": 223,
     "slug": "pavilon-kosmos",
     "name": "Павильон «Космос» на ВДНХ",
+    "hook": "Ракеты в натуральную величину под куполом",
     "category": "entertainment",
     "type": "Музейный центр",
     "coords": [
@@ -9577,6 +9638,7 @@
     "id": 225,
     "slug": "dk-zil",
     "name": "ДК ЗИЛ",
+    "hook": "Дворец 1930-х, который всё ещё работает",
     "category": "art",
     "type": "Культурный центр",
     "coords": [
@@ -9655,6 +9717,7 @@
     "id": 227,
     "slug": "hram-vseh-svyatyh-sokol",
     "name": "Храм Всех Святых на Соколе",
+    "hook": "Всё, что осталось от села Всехсвятского",
     "category": "photo",
     "type": "Храм",
     "coords": [

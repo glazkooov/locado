@@ -92,6 +92,8 @@
         <!-- Тип места — подписью над заголовком, а не третьим видом плашки -->
         <p class="hero-category" id="place-category"></p>
         <h1 class="hero-title" id="place-name">Загружаем…</h1>
+        <!-- Крючок — одна фраза, ради которой стоит прийти (поле hook) -->
+        <p class="hero-hook" id="place-hook" hidden></p>
         <p class="hero-subtitle" id="place-subtitle"></p>
 
         <!-- Быстрые факты (метро, открыто ли сейчас, цена — заполняет place.js)
@@ -293,6 +295,20 @@
         <h2 class="section-title">Есть в подборках</h2>
       </div>
       <div class="collection-more__grid" id="place-collections-grid"></div>
+    </section>
+
+    <!-- Рядом, до 10 минут пешком — заполняет place.js; нет соседей — секции нет -->
+    <section class="place-similar place-nearby" id="place-nearby" hidden>
+      <div class="container similar-head">
+        <div class="section-head">
+          <h2 class="section-title">Рядом, до 10 минут пешком</h2>
+        </div>
+        <div class="similar-nav">
+          <button type="button" class="similar-nav__btn" id="nearby-prev" aria-label="Назад" disabled><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#chevron-left"></use></svg></button>
+          <button type="button" class="similar-nav__btn" id="nearby-next" aria-label="Дальше"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#chevron-right"></use></svg></button>
+        </div>
+      </div>
+      <div class="similar-scroll" id="nearby-places-container"></div>
     </section>
 
     <!-- Похожие -->

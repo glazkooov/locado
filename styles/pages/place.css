@@ -131,6 +131,20 @@
   hyphens: auto;
 }
 
+/* Крючок над кратким описанием — тёплым акцентом, как подсветка */
+.hero-hook {
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  line-height: 1.35;
+  color: #FFC29B;
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.45);
+  margin: -4px 0 20px;
+  max-width: 640px;
+}
+
+.hero-hook[hidden],
+.hero-subtitle[hidden] { display: none; }
+
 .hero-subtitle {
   font-size: var(--fs-md);
   line-height: 1.5;
@@ -165,6 +179,9 @@
 }
 
 .hero-fact .icon { color: #FF8A4C; }
+
+/* Практичные метки (бесплатно, под крышей, с детьми) — светлее фактов */
+.hero-fact--label { background: rgba(255, 255, 255, 0.18); }
 
 .hero-fact__link {
   color: inherit;

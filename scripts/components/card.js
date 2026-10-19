@@ -32,17 +32,18 @@ export function cardHtml(place, isFavorite, extraClass = '', { now = null } = {}
         ${badge}
       </div>
       <img src="${escapeHtml(place.photoSm || place.photo || '')}" alt="${escapeHtml(place.name)}" class="place-card__img" loading="lazy">
-      <div class="place-card__info"><h3>${escapeHtml(place.name)}</h3></div>
+      <div class="place-card__info"><h3>${escapeHtml(place.name)}</h3>${place.hook ? `<p class="place-card__hook">${escapeHtml(place.hook)}</p>` : ''}</div>
     </div>`;
 }
 
-export function similarCardHtml(place) {
+/** note — подпись вместо типа места: «5 минут пешком» в блоке «Рядом» */
+export function similarCardHtml(place, { note = '' } = {}) {
   return `
     <a href="${placeUrl(place.slug)}" class="similar-card">
       <img src="${escapeHtml(place.photoSm || place.photo || '')}" alt="${escapeHtml(place.name)}" loading="lazy">
       <div class="info">
         <h4>${escapeHtml(place.name)}</h4>
-        <p>${escapeHtml(place.type || categoryLabel(place.category))}</p>
+        <p>${escapeHtml(note || place.type || categoryLabel(place.category))}</p>
       </div>
     </a>`;
 }

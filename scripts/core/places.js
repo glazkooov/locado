@@ -178,6 +178,34 @@ export function popular(places, count = 4) {
  *  «исторично» есть почти у всех мест и мало что говорят, а «скрыто» или
  *  «набережная» — много; та же категория даёт бонус; при равенстве — ближе
  *  по координатам. */
+/** Минуты пешком между точками: расстояние по прямой × 1,3 (улицы не
+ *  прямые) при 4,8 км/ч. Для подсказки «рядом», не для навигации. */
+export function walkMinutes(a, b) {
+  if (!a || !b) return Infinity;
+  const dLat = (b[0] - a[0]) * 111;
+  const dLon = (b[1] - a[1]) * 111 * Math.cos((a[0] * Math.PI) / 180);
+  return Math.max(1, Math.round((Math.hypot(dLat, dLon) * 1.3 / 4.8) * 60));
+}
+
+/** Места в пешей доступности: [{ place, minutes }] от ближних к дальним. */
+export function nearby(places, place, { maxMinutes = 10, count = 8 } = {}) {
+  return places
+    .filter((p) => p.slug !== place.slug)
+    .map((p) => ({ place: p, minutes: walkMinutes(place.coords, p.coords) }))
+    .filter((x) => x.minutes <= maxMinutes)
+    .sort((a, b) => a.minutes - b.minutes)
+    .slice(0, count);
+}
+
+/** Практичные метки из уже заполненных полей: бесплатно, под крышей, с детьми. */
+export function placeLabels(place) {
+  const labels = [];
+  if (place.price_level === 'free') labels.push({ icon: 'tag', text: 'Бесплатно' });
+  if (place.indoor === true) labels.push({ icon: 'umbrella', text: 'Под крышей' });
+  if ((place.tags || []).includes('с детьми')) labels.push({ icon: 'baby', text: 'Можно с детьми' });
+  return labels;
+}
+
 export function similar(places, place, count = 6) {
   const tags = new Set(place.tags || []);
   const tagCount = {};
