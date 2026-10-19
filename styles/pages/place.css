@@ -23,6 +23,9 @@
 
 @media (max-width: 768px) {
   .place-hero { --hero-wave-h: 24px; }
+  /* Название и подзаголовок — у нижнего края фото, над волной */
+  .place-hero:not(.place-hero--no-photo) { padding-bottom: calc(28px + var(--hero-wave-h)); }
+  .place-hero .hero-subtitle { margin-bottom: 0; }
 }
 
 
@@ -261,15 +264,13 @@
   margin-bottom: 72px;
 }
 
+/* Описание — главный текст страницы: крупно и тёмным, чтобы не терялось
+   среди справки и карточек */
 .description-text {
   font-size: var(--fs-lg);
-  line-height: 1.7;
-  color: var(--text);
+  line-height: 1.65;
+  color: var(--ink);
   margin-bottom: 18px;
-}
-
-@media (max-width: 480px) {
-  .description-text { font-size: var(--fs-md); }
 }
 
 /* «Это место нам подсказали» — место от читателей */
@@ -866,13 +867,15 @@ a.plan-stop__name:hover { color: var(--primary-text); }
 @media (min-width: 900px) {
   .place-main { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 56px; align-items: start; }
   /* Правая колонка начинается вровень с текстом, а не с заголовком */
-  .place-aside { margin-top: calc(var(--fs-xl) * 1.2 + 14px); }
+  .place-aside { margin-top: calc(var(--place-title-size) * 1.2 + 14px); }
 }
 
-/* Отступ между блоками страницы — один на всех: на телефоне 40px, шире — 72px */
-.place-page { --place-gap: 72px; }
+/* Отступ между блоками страницы — один на всех: на телефоне 56px, шире — 72px.
+   Заголовок «О месте» — 24px на телефоне, 28px шире */
+.place-page { --place-gap: 72px; --place-title-size: var(--fs-2xl); }
 @media (max-width: 768px) {
-  .place-page { --place-gap: 40px; }
+  .place-page { --place-gap: 56px; --place-title-size: 1.5rem; }
+  .place-facts { margin-top: 28px; }
   .place-collections,
   .place-gallery-section,
   .place-similar { margin-bottom: var(--place-gap); }
@@ -889,56 +892,13 @@ a.plan-stop__name:hover { color: var(--primary-text); }
   /* Высота строки задана явно: от неё считается отступ правой колонки */
   line-height: 1.2;
   font-family: var(--font-heading);
-  font-size: var(--fs-xl);
+  font-size: var(--place-title-size);
   font-weight: 700;
   letter-spacing: -0.03em;
   color: var(--ink);
 }
 
-/* О месте: «почему стоит пойти» — крупным вступлением */
-.place-about__lead {
-  margin-bottom: 14px;
-  font-family: var(--font-heading);
-  font-size: var(--fs-lg);
-  font-weight: 500;
-  line-height: 1.45;
-  letter-spacing: -0.01em;
-  color: var(--ink);
-}
-
-.place-about__lead[hidden],
-.place-tips[hidden],
 .description-text[hidden] { display: none; }
-
-@media (min-width: 768px) {
-  .place-about__lead { font-size: var(--fs-xl); }
-}
-
-/* «Когда лучше» и «Не пропусти» — акцентами с иконкой */
-.place-tips { display: grid; gap: 14px; margin-bottom: 18px; }
-
-.place-tip { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 12px; align-items: start; }
-
-.place-tip__icon {
-  display: grid;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: var(--accent-soft);
-  color: var(--primary);
-}
-
-.place-tip__icon .icon { width: 17px; height: 17px; }
-
-.place-tip p { font-size: var(--fs-md); line-height: 1.55; color: var(--text); }
-
-.place-tip b {
-  display: block;
-  margin-bottom: 2px;
-  font-size: var(--fs-sm);
-  color: var(--primary-text);
-}
 
 /* Строки справки: иконка в кружке, значение, подпись */
 .fact-row {

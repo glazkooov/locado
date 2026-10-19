@@ -183,24 +183,6 @@ function refreshOpenStatus(place) {
   timerSpan.classList.toggle('closing-timer--open', status.isOpen);
 }
 
-// Ответы редакции «когда лучше» и «что заметить» — короткими акцентами под
-// описанием; «почему стоит пойти» — крупным вступлением к нему
-const STORY_TIPS = [
-  { key: 'when', title: 'Когда лучше', icon: 'clock' },
-  { key: 'notice', title: 'Не пропусти', icon: 'star' }
-];
-
-function renderStory(place) {
-  const story = place.story || {};
-  setLine($('#place-lead'), story.why ? escapeHtml(story.why) : '');
-  const tips = STORY_TIPS.filter((t) => story[t.key]);
-  setLine($('#place-tips'), tips.map((t) => `
-      <div class="place-tip">
-        <span class="place-tip__icon">${icon(t.icon)}</span>
-        <p><b>${t.title}</b>${escapeHtml(story[t.key])}</p>
-      </div>`).join(''));
-}
-
 /** «Позвать друга»: окно с выбором вместе (vmeste/ — это место уже в
  *  выборе) и обычной ссылкой. Открывают карточка «Идёшь не один?», кнопка в
  *  hero и кнопка в нижней панели. */
@@ -609,7 +591,6 @@ async function main() {
   setMetaTags(place);
 
   renderHero(place);
-  renderStory(place);
   renderInfo(place);
   renderDescription(place);
   renderAmenities(place);
