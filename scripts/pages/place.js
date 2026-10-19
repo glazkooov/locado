@@ -315,7 +315,7 @@ async function renderMap(place) {
   on(routeLink, 'click', () => goal('route_click', { place: place.slug }));
 }
 
-/** «В двух шагах»: соседи до ~10 минут пешком — по координатам, а не по тегам. */
+/** «А что рядом?»: соседи до ~10 минут пешком — по координатам, а не по тегам. */
 function renderNearby(place, allPlaces) {
   const section = $('#place-nearby');
   const container = $('#nearby-places-container');

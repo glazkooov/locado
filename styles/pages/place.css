@@ -750,6 +750,9 @@
   .similar-nav { display: none; }
 }
 
+/* «А что рядом?» — акцентное слово, как в заголовке подборок на главной */
+.place-nearby .section-title em { font-style: normal; color: var(--primary); }
+
 .similar-scroll {
   --edge: 16px;
   display: flex;
