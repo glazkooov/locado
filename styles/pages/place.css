@@ -28,7 +28,6 @@
   .place-hero .hero-subtitle { margin-bottom: 0; }
 }
 
-
 .hero-bg {
   position: absolute;
   inset: 0;
@@ -168,17 +167,6 @@
 }
 
 .hero-fact .icon { color: #FF8A4C; }
-
-.hero-fact__link {
-  color: inherit;
-  text-decoration: underline;
-  text-decoration-color: rgba(255, 255, 255, 0.45);
-  text-underline-offset: 3px;
-}
-
-.hero-fact__link:hover { text-decoration-color: #fff; }
-
-.hero-fact--open .icon { color: #7EE2A0; }
 
 @media (min-width: 992px) {
   .hero-title { font-size: 2.75rem; }
@@ -741,7 +729,6 @@ a.plan-stop__name:hover { color: var(--primary-text); }
   margin-bottom: 24px;
 }
 
-
 /* Заглушка hero до загрузки данных: вместо тёмного экрана с «Загружаем…» —
    мерцающий фон и плашки на месте заголовка и описания */
 .place-hero.is-loading .hero-bg {
@@ -1105,8 +1092,10 @@ a.plan-stop__name:hover { color: var(--primary-text); }
   padding: 18px 16px 16px;
   border: 0;
   border-radius: var(--radius-card);
-  background: linear-gradient(135deg, #FF6A1F 0%, #E2470A 100%);
-  box-shadow: 0 12px 28px -12px rgba(226, 71, 10, 0.6);
+  /* Не светлее #D24406: на более ярком оранжевом белый мелкий текст
+     читался плохо (контраст ниже 4,5) */
+  background: linear-gradient(135deg, var(--primary-strong) 0%, #B33A04 100%);
+  box-shadow: 0 12px 28px -12px rgba(210, 68, 6, 0.6);
   font-family: inherit;
   color: #fff;
   text-align: left;
@@ -1149,7 +1138,7 @@ a.plan-stop__name:hover { color: var(--primary-text); }
 
 .invite-card__title { display: block; font-size: var(--fs-lg); font-weight: 700; line-height: 1.2; }
 
-.invite-card__text { display: block; margin-top: 3px; font-size: var(--fs-sm); line-height: 1.4; opacity: 0.92; }
+.invite-card__text { display: block; margin-top: 3px; font-size: var(--fs-sm); line-height: 1.4; }
 
 .invite-card__btn {
   position: relative;
@@ -1166,8 +1155,6 @@ a.plan-stop__name:hover { color: var(--primary-text); }
 }
 
 .invite-card:hover .invite-card__btn { background: var(--cream); }
-
-
 
 /* Окно «Позвать друга»: на телефоне выезжает снизу */
 .invite-options { display: grid; gap: 10px; }

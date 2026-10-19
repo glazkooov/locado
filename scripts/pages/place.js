@@ -44,6 +44,7 @@ function setMetaTags(place) {
   $('meta[property="og:title"]')?.setAttribute('content', place.name);
   if (place.photo) $('meta[property="og:image"]')?.setAttribute('content', new URL(place.photo, document.baseURI).href);
   $('meta[property="og:description"]')?.setAttribute('content', place.description || '');
+  if (place.description) $('meta[name="description"]')?.setAttribute('content', place.description);
 }
 
 function updateFavButtonUI(isFav) {

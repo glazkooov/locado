@@ -424,7 +424,7 @@
   margin-left: auto;
   padding: 0 14px;
   border-radius: var(--radius-pill);
-  background: var(--primary);
+  background: var(--primary-strong);
   color: #fff;
   font-size: var(--fs-sm);
   font-weight: 700;
