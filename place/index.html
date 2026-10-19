@@ -145,9 +145,16 @@
       </div>
       <!-- Карта — по нажатию: открывают её редко, скрипт Яндекса грузится
            только при первом открытии -->
-      <button type="button" class="fact-line fact-map-toggle" id="map-toggle" aria-expanded="false" aria-controls="place-map">
-        <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#map-pin"></use></svg><span id="map-toggle-label">Показать на карте</span><svg class="icon fact-line__chevron" aria-hidden="true" focusable="false"><use href="assets/icons.svg#chevron-down"></use></svg>
-      </button>
+      <!-- Если кроме маршрута кнопок нет (ни телефона, ни сайта), плиток не
+           показываем: «Маршрут» встаёт справа в эту строку -->
+      <div class="fact-maprow" id="map-row">
+        <button type="button" class="fact-line fact-map-toggle" id="map-toggle" aria-expanded="false" aria-controls="place-map">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#map-pin"></use></svg><span id="map-toggle-label">Показать на карте</span><svg class="icon fact-line__chevron" aria-hidden="true" focusable="false"><use href="assets/icons.svg#chevron-down"></use></svg>
+        </button>
+        <a class="fact-maprow__route" id="route-inline" href="https://yandex.ru/maps/" target="_blank" rel="noopener" hidden>
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#navigation"></use></svg> Маршрут
+        </a>
+      </div>
       <div class="fact-map" id="place-map" hidden>
         <div class="map-container" id="place-map-container" aria-label="Карта места"></div>
       </div>

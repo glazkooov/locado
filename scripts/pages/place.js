@@ -154,8 +154,12 @@ function renderInfo(place) {
   }
   siteBtn.hidden = !website;
   if (website) siteBtn.href = website;
+  // Только маршрут — одна плитка на всю ширину выглядела пустой кнопкой:
+  // вместо плиток «Маршрут» встаёт в строку «Показать на карте»
+  const routeOnly = !place.phone && !website;
   $('#route-link').hidden = !place.coords;
-  $('#place-acts').hidden = !place.phone && !website && !place.coords;
+  $('#route-inline').hidden = !place.coords || !routeOnly;
+  $('#place-acts').hidden = routeOnly;
 
   if (!place.phone) $('#action-call')?.style.setProperty('display', 'none');
 }
@@ -232,15 +236,17 @@ function renderGallery(place) {
  *  «Как добраться» и так ведёт в Яндекс.Карты. Скрипт Яндекса грузится
  *  только при первом открытии. Без координат — ни карты, ни маршрута. */
 function initMap(place) {
-  const routeLink = $('#route-link');
+  const routeLinks = [$('#route-link'), $('#route-inline')];
   const toggle = $('#map-toggle');
   const box = $('#place-map');
   if (!place.coords) {
-    toggle.hidden = true;
+    $('#map-row').hidden = true;
     return;
   }
-  routeLink.href = routeUrl(place);
-  on(routeLink, 'click', () => goal('route_click', { place: place.slug }));
+  routeLinks.forEach((link) => {
+    link.href = routeUrl(place);
+    on(link, 'click', () => goal('route_click', { place: place.slug }));
+  });
   let created = false;
   on(toggle, 'click', () => {
     const show = box.hidden;

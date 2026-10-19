@@ -1003,6 +1003,34 @@ a.plan-stop__name:hover { color: var(--primary-text); }
 
 .fact-line[hidden] { display: none; }
 
+/* Строка карты: слева «Показать на карте», справа (только когда нет
+   плиток) — «Маршрут» */
+.fact-maprow { display: flex; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid var(--line); }
+
+.fact-maprow[hidden] { display: none; }
+
+.fact-maprow .fact-line { flex: 1; width: auto; border-top: 0; }
+
+.fact-maprow__route {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 48px;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--primary-text);
+  text-decoration: none;
+}
+
+.fact-maprow__route[hidden] { display: none; }
+
+.fact-maprow__route .icon { color: var(--primary); }
+
+.fact-maprow__route:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+/* Есть «Маршрут» справа — стрелка раскрытия карты рядом с текстом */
+.fact-maprow:has(.fact-maprow__route:not([hidden])) .fact-line__chevron { margin-left: 4px; }
+
 .fact-map-toggle { font-weight: 700; color: var(--ink); }
 
 .fact-map-toggle .icon { color: var(--primary); }
@@ -1059,7 +1087,7 @@ a.plan-stop__name:hover { color: var(--primary-text); }
   #address-row { grid-area: addr; }
   #price-row { grid-area: price; padding-top: 0; border-top: 0; }
   .fact-acts { grid-area: acts; align-self: start; padding: 12px 0 14px; border-top: 1px solid var(--line); }
-  .fact-map-toggle { grid-area: map-t; }
+  .fact-maprow { grid-area: map-t; }
   .fact-map { grid-area: map; }
   .fact-fix { grid-area: fix; }
   .fact-map .map-container { height: 320px; }
