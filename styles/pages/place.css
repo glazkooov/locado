@@ -750,35 +750,51 @@
   .similar-nav { display: none; }
 }
 
-/* «А что рядом?» — тот же ряд карточек, что «Похожие места»: вкладки
-   по намерению (как фильтры ленты) и одна строка готового плана */
+/* «Куда пойдём дальше?» — тот же ряд карточек, что «Похожие места»:
+   вкладки по намерению (как фильтры ленты), первая карточка — готовый план */
 .place-nearby .section-title em { font-style: normal; color: var(--primary); }
 
 .nearby-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
 .nearby-tabs__count { font-weight: 500; opacity: 0.6; }
 
-.nearby-plan {
-  margin-top: 8px;
-  font-size: var(--fs-sm);
-  line-height: 1.7;
-  color: var(--text-light);
+/* Карточка плана — тёмная, чтобы отличалась от мест в ряду; два фото
+   встык, как две остановки */
+.plan-card { position: relative; background: var(--ink); border-color: var(--ink); color: #fff; }
+.plan-card__photos { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 2px; height: 160px; background: var(--ink); }
+.similar-card.plan-card .plan-card__photos img { width: 100%; height: 160px; }
+.plan-card__chip {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--primary-strong);
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  color: #fff;
 }
-.nearby-plan a { color: var(--text); font-weight: 600; text-decoration: underline; text-decoration-color: var(--line-strong); text-underline-offset: 3px; }
-.nearby-plan a:hover { color: var(--primary-text); }
-.nearby-plan__label { color: var(--text); font-weight: 600; }
-.nearby-plan .nearby-plan__route { color: var(--primary-text); text-decoration-color: currentColor; margin-left: 4px; white-space: nowrap; }
-.nearby-plan__more {
+.plan-card__shuffle {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
   border: 0;
-  padding: 0;
-  margin-left: 10px;
-  background: none;
-  color: var(--text-light);
-  font: inherit;
-  text-decoration: underline;
-  text-decoration-color: var(--line-strong);
-  text-underline-offset: 3px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--ink);
   cursor: pointer;
 }
+.plan-card__shuffle:hover { background: #fff; }
+.plan-card .info h4 { color: #fff; -webkit-line-clamp: 3; }
+/* Вся карточка ведёт по ссылке «Проложить путь», кубик — поверх */
+.plan-card__link { margin-top: auto; font-size: var(--fs-sm); font-weight: 700; color: #FF9A66; text-decoration: none; }
+.plan-card__link::after { content: ''; position: absolute; inset: 0; z-index: 1; }
+.plan-card__link:focus-visible { outline: none; }
+.plan-card:has(.plan-card__link:focus-visible) { box-shadow: var(--focus-ring); }
 
 .similar-scroll {
   --edge: 16px;

@@ -36,14 +36,13 @@ export function cardHtml(place, isFavorite, extraClass = '', { now = null } = {}
     </div>`;
 }
 
-/** note — подпись вместо типа места («Пекарня · 5 мин» в «А что рядом?») */
-export function similarCardHtml(place, { note = '' } = {}) {
+export function similarCardHtml(place) {
   return `
     <a href="${placeUrl(place.slug)}" class="similar-card">
       <img src="${escapeHtml(place.photoSm || place.photo || '')}" alt="${escapeHtml(place.name)}" loading="lazy">
       <div class="info">
         <h4>${escapeHtml(place.name)}</h4>
-        <p>${escapeHtml(note || place.type || categoryLabel(place.category))}</p>
+        <p>${escapeHtml(place.type || categoryLabel(place.category))}</p>
       </div>
     </a>`;
 }

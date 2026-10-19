@@ -296,13 +296,13 @@
     </section>
 
     <!-- «А что рядом?»: места до ~10 минут пешком — заполняет place.js; нет соседей — секции нет -->
-    <!-- «А что рядом?»: соседи до ~15 минут пешком по намерению (поесть,
-         догулять, заглянуть) — тем же рядом карточек, что «Похожие места»,
-         и одной строкой готовый план. Заполняет place.js; соседей нет — секции нет -->
+    <!-- «Куда пойдём дальше?»: соседи до ~15 минут пешком по намерению (поесть,
+         догулять, заглянуть) тем же рядом карточек, что «Похожие места»; первая
+         карточка — готовый план из двух мест. Заполняет place.js; соседей нет — секции нет -->
     <section class="place-similar place-nearby" id="place-nearby" hidden>
       <div class="container similar-head">
         <div class="section-head">
-          <h2 class="section-title">А что <em>рядом</em>?</h2>
+          <h2 class="section-title">Куда пойдём <em>дальше</em>?</h2>
         </div>
         <div class="similar-nav">
           <button type="button" class="similar-nav__btn" id="nearby-prev" aria-label="Назад" disabled><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#chevron-left"></use></svg></button>
@@ -311,7 +311,6 @@
       </div>
       <div class="container nearby-tabs" id="nearby-tabs" role="group" aria-label="Что искать рядом"></div>
       <div class="similar-scroll" id="nearby-places-container"></div>
-      <p class="container nearby-plan" id="nearby-plan" hidden></p>
     </section>
 
     <!-- Похожие -->

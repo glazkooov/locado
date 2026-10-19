@@ -5,7 +5,7 @@ import { goal } from '../core/analytics.js';
 import { $, $$, on } from '../core/dom.js';
 import {
   escapeHtml, safeUrl, cssUrl, getOpenStatus, describeStatusTimer, scheduleHtml, telHref, displayHost,
-  openStatusLabel, isAlwaysOpen, pluralize
+  openStatusLabel, isAlwaysOpen
 } from '../core/format.js';
 import {
   loadPlaces, bySlug, similar, nearby, placeIntent, walkMinutes, toggleFavoritePlace, markVisited, placeUrl, metroList, categoryLabel
@@ -315,15 +315,16 @@ async function renderMap(place) {
   on(routeLink, 'click', () => goal('route_click', { place: place.slug }));
 }
 
-/* «А что рядом?» — то, что просили в интервью: «сходил в одно место — хочется
-   рядом поесть или догулять». Соседи до ~15 минут пешком разложены по тому,
-   зачем туда идти; одной строкой ниже — готовый план из двух остановок. */
+/* «Куда пойдём дальше?» — то, что просили в интервью: «сходил в одно место —
+   хочется рядом поесть или догулять». Соседи до ~15 минут пешком разложены
+   по тому, зачем туда идти; первая карточка ряда — готовый план из двух мест. */
 const NEARBY_TAB = { eat: 'Поесть', walk: 'Догулять', see: 'Заглянуть' };
 // После прогулки или музея первым делом хочется есть, после кафе — гулять
 const NEARBY_ORDER = { eat: ['walk', 'see', 'eat'], walk: ['eat', 'see', 'walk'], see: ['eat', 'walk', 'see'] };
 
 /** Готовые планы: шаг 1 — чего хочется после этого места, шаг 2 — ближайшее
- *  к шагу 1 место другого рода. */
+ *  к шагу 1 место другого рода. План из одного места не нужен — это просто
+ *  первая карточка ряда. */
 function nearbyPlans(place, list) {
   const [first, second] = NEARBY_ORDER[placeIntent(place)];
   return list.filter((x) => x.intent === first).slice(0, 3).map((s1) => {
@@ -333,18 +334,26 @@ function nearbyPlans(place, list) {
       .map((x) => ({ ...x, minutes: walkMinutes(s1.place.coords, x.place.coords) }))
       .sort((a, b) => a.minutes - b.minutes)[0] || null;
     return { s1, s2 };
-  });
+  }).filter((x) => x.s2);
 }
 
-function nearbyPlanHtml(place, { s1, s2 }, hasMore) {
-  const link = (p) => `<a href="${placeUrl(p.slug)}">${escapeHtml(p.name)}</a>`;
+/** Карточка плана: два фото рядом, «А → Б» и вся карточка ведёт в Яндекс
+ *  Карты с пешим маршрутом. Кубик — другой план. */
+function nearbyPlanCardHtml(place, { s1, s2 }, hasMore) {
   const points = [place, s1.place, s2.place].filter((p) => p.coords);
   const yandex = `https://yandex.ru/maps/?rtext=${points.map((p) => p.coords.join(',')).join('~')}&rtt=pd`;
-  const total = s1.minutes + s2.minutes;
-  return `<span class="nearby-plan__label">Если не хочется выбирать:</span>
-    ${link(s1.place)} → ${link(s2.place)},
-    около ${total} ${pluralize(total, ['минуты', 'минут', 'минут'])} пешком.
-    <a class="nearby-plan__route" href="${escapeHtml(yandex)}" target="_blank" rel="noopener">Проложить путь</a>${hasMore ? ' <button type="button" class="nearby-plan__more" id="nearby-alt">Другой план</button>' : ''}`;
+  const photo = (p) => `<img src="${escapeHtml(p.photoSm || p.photo || '')}" alt="" loading="lazy">`;
+  return `
+    <div class="similar-card plan-card">
+      <div class="plan-card__photos">${photo(s1.place)}${photo(s2.place)}
+        <span class="plan-card__chip">Готовый план</span>
+        ${hasMore ? `<button type="button" class="plan-card__shuffle" id="nearby-alt" aria-label="Другой план">${icon('dices')}</button>` : ''}
+      </div>
+      <div class="info">
+        <h4>${escapeHtml(s1.place.name)} → ${escapeHtml(s2.place.name)}</h4>
+        <a class="plan-card__link" href="${escapeHtml(yandex)}" target="_blank" rel="noopener">Проложить путь →</a>
+      </div>
+    </div>`;
 }
 
 function renderNearby(place, allPlaces) {
@@ -355,7 +364,9 @@ function renderNearby(place, allPlaces) {
     .map((x) => ({ ...x, intent: placeIntent(x.place) }));
   if (!list.length) return;
   const intents = NEARBY_ORDER[placeIntent(place)].filter((k) => list.some((x) => x.intent === k));
+  const plans = nearbyPlans(place, list);
   let active = intents[0];
+  let alt = 0;
 
   const tabs = $('#nearby-tabs');
   const draw = () => {
@@ -363,25 +374,15 @@ function renderNearby(place, allPlaces) {
       const n = list.filter((x) => x.intent === k).length;
       return `<button type="button" class="category-btn${k === active ? ' active' : ''}" data-intent="${k}" aria-pressed="${k === active}">${NEARBY_TAB[k]} <span class="nearby-tabs__count">${n}</span></button>`;
     }).join('');
-    container.innerHTML = list.filter((x) => x.intent === active).slice(0, 8)
-      .map(({ place: p, minutes }) => similarCardHtml(p, { note: `${p.type || categoryLabel(p.category)} · ${minutes} мин` })).join('');
+    const plan = plans.length ? nearbyPlanCardHtml(place, plans[alt % plans.length], plans.length > 1) : '';
+    container.innerHTML = plan + list.filter((x) => x.intent === active).slice(0, 8)
+      .map(({ place: p }) => similarCardHtml(p)).join('');
     bindImageFallback(container);
-    container.scrollLeft = 0;
   };
   draw();
-  on(tabs, 'click', '.category-btn', (e, btn) => { active = btn.dataset.intent; draw(); });
-
-  // План из одной остановки ничем не лучше первой карточки — только из двух
-  const plans = nearbyPlans(place, list).filter((x) => x.s2);
-  const planEl = $('#nearby-plan');
-  if (plans.length) {
-    let alt = 0;
-    const show = () => { planEl.innerHTML = nearbyPlanHtml(place, plans[alt % plans.length], plans.length > 1); };
-    show();
-    planEl.hidden = false;
-    on(planEl, 'click', '#nearby-alt', () => { alt += 1; show(); });
-    on(planEl, 'click', '.nearby-plan__route', () => goal('nearby_plan', { place: place.slug }));
-  }
+  on(tabs, 'click', '.category-btn', (e, btn) => { active = btn.dataset.intent; draw(); container.scrollLeft = 0; });
+  on(container, 'click', '#nearby-alt', () => { alt += 1; draw(); });
+  on(container, 'click', '.plan-card__link', () => goal('nearby_plan', { place: place.slug }));
   section.hidden = false;
   initSimilarNav(container, $('#nearby-prev'), $('#nearby-next'));
 }
