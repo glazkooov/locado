@@ -337,23 +337,32 @@ function nearbyPlans(place, list) {
   }).filter((x) => x.s2);
 }
 
-/** Карточка плана: два фото рядом, «А → Б» и вся карточка ведёт в Яндекс
- *  Карты с пешим маршрутом. Кубик — другой план. */
-function nearbyPlanCardHtml(place, { s1, s2 }, hasMore) {
-  const points = [place, s1.place, s2.place].filter((p) => p.coords);
-  const yandex = `https://yandex.ru/maps/?rtext=${points.map((p) => p.coords.join(',')).join('~')}&rtt=pd`;
+/** Карточка плана в ряду: два фото встык и коротко — «Маршрут отсюда».
+ *  Подробности (остановки, путь, другой вариант) — в окне по нажатию. */
+function nearbyPlanCardHtml({ s1, s2 }) {
   const photo = (p) => `<img src="${escapeHtml(p.photoSm || p.photo || '')}" alt="" loading="lazy">`;
   return `
-    <div class="similar-card plan-card">
-      <div class="plan-card__photos">${photo(s1.place)}${photo(s2.place)}
+    <button type="button" class="similar-card plan-card" id="nearby-plan-open" aria-haspopup="dialog">
+      <span class="plan-card__photos">${photo(s1.place)}${photo(s2.place)}
         <span class="plan-card__chip">Готовый план</span>
-        ${hasMore ? `<button type="button" class="plan-card__shuffle" id="nearby-alt" aria-label="Другой план">${icon('dices')}</button>` : ''}
-      </div>
-      <div class="info">
-        <h4>${escapeHtml(s1.place.name)} → ${escapeHtml(s2.place.name)}</h4>
-        <a class="plan-card__link" href="${escapeHtml(yandex)}" target="_blank" rel="noopener">Проложить путь →</a>
-      </div>
-    </div>`;
+      </span>
+      <span class="info">
+        <span class="plan-card__title">Маршрут отсюда</span>
+        <span class="plan-card__sub">Ещё 2 места рядом</span>
+      </span>
+    </button>`;
+}
+
+function planStopHtml(p, kicker) {
+  return `
+    <li class="plan-stop">
+      <img class="plan-stop__img" src="${escapeHtml(p.photoSm || p.photo || '')}" alt="" loading="lazy">
+      <span class="plan-stop__text">
+        <span class="plan-stop__kicker">${kicker}</span>
+        ${kicker === 'Ты здесь' ? `<span class="plan-stop__name">${escapeHtml(p.name)}</span>` : `<a class="plan-stop__name" href="${placeUrl(p.slug)}">${escapeHtml(p.name)}</a>`}
+        <span class="plan-stop__desc">${escapeHtml(p.description || p.type || '')}</span>
+      </span>
+    </li>`;
 }
 
 function renderNearby(place, allPlaces) {
@@ -369,20 +378,36 @@ function renderNearby(place, allPlaces) {
   let alt = 0;
 
   const tabs = $('#nearby-tabs');
+  const NEXT_KICKER = { eat: 'Поесть', walk: 'Догулять', see: 'Заглянуть' };
+  const planModal = plans.length ? createModal($('#plan-modal')) : null;
+  const fillPlan = () => {
+    const { s1, s2 } = plans[alt % plans.length];
+    $('#plan-stops').innerHTML = planStopHtml(place, 'Ты здесь')
+      + planStopHtml(s1.place, `Потом — ${NEXT_KICKER[s1.intent].toLowerCase()}`)
+      + planStopHtml(s2.place, `И ещё — ${NEXT_KICKER[s2.intent].toLowerCase()}`);
+    const points = [place, s1.place, s2.place].filter((p) => p.coords);
+    $('#plan-route').href = `https://yandex.ru/maps/?rtext=${points.map((p) => p.coords.join(',')).join('~')}&rtt=pd`;
+    $('#plan-other').hidden = plans.length < 2;
+    bindImageFallback($('#plan-stops'));
+  };
   const draw = () => {
     tabs.innerHTML = intents.map((k) => {
       const n = list.filter((x) => x.intent === k).length;
       return `<button type="button" class="category-btn${k === active ? ' active' : ''}" data-intent="${k}" aria-pressed="${k === active}">${NEARBY_TAB[k]} <span class="nearby-tabs__count">${n}</span></button>`;
     }).join('');
-    const plan = plans.length ? nearbyPlanCardHtml(place, plans[alt % plans.length], plans.length > 1) : '';
+    const plan = plans.length ? nearbyPlanCardHtml(plans[alt % plans.length]) : '';
     container.innerHTML = plan + list.filter((x) => x.intent === active).slice(0, 8)
       .map(({ place: p }) => similarCardHtml(p)).join('');
     bindImageFallback(container);
   };
   draw();
   on(tabs, 'click', '.category-btn', (e, btn) => { active = btn.dataset.intent; draw(); container.scrollLeft = 0; });
-  on(container, 'click', '#nearby-alt', () => { alt += 1; draw(); });
-  on(container, 'click', '.plan-card__link', () => goal('nearby_plan', { place: place.slug }));
+  on(container, 'click', '#nearby-plan-open', () => {
+    fillPlan();
+    planModal?.open();
+    goal('nearby_plan', { place: place.slug });
+  });
+  on($('#plan-other'), 'click', () => { alt += 1; fillPlan(); draw(); });
   section.hidden = false;
   initSimilarNav(container, $('#nearby-prev'), $('#nearby-next'));
 }

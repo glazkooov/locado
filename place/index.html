@@ -364,6 +364,23 @@
 
   <!-- Сообщить о неточности: Яндекс Форма в окне. src ставит place.js при
        первом открытии — форма не грузится, пока её не попросили -->
+  <!-- Маршрут отсюда: карточка в «Куда пойдём дальше?» открывает это окно -->
+  <div class="modal" id="plan-modal" role="dialog" aria-modal="true" aria-labelledby="plan-modal-title" aria-hidden="true">
+    <div class="modal-content plan-modal__content">
+      <div class="modal-header">
+        <h3 id="plan-modal-title">Маршрут отсюда</h3>
+        <button type="button" class="modal-close" data-modal-close aria-label="Закрыть"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#x"></use></svg></button>
+      </div>
+      <div class="modal-body">
+        <ol class="plan-stops" id="plan-stops"></ol>
+        <div class="plan-modal__actions">
+          <a class="btn" id="plan-route" href="https://yandex.ru/maps/" target="_blank" rel="noopener">Проложить путь</a>
+          <button type="button" class="btn btn-secondary" id="plan-other">Другой вариант</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="modal report-modal" id="report-modal" role="dialog" aria-modal="true" aria-labelledby="report-modal-title">
     <div class="modal-content report-modal__content">
       <div class="modal-header">

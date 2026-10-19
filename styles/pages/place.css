@@ -758,8 +758,8 @@
 .nearby-tabs__count { font-weight: 500; opacity: 0.6; }
 
 /* Карточка плана — тёмная, чтобы отличалась от мест в ряду; два фото
-   встык, как две остановки */
-.plan-card { position: relative; background: var(--ink); border-color: var(--ink); color: #fff; }
+   встык, как две остановки. Нажатие открывает окно «Маршрут отсюда» */
+.plan-card { padding: 0; font: inherit; text-align: left; cursor: pointer; background: var(--ink); border-color: var(--ink); }
 .plan-card__photos { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 2px; height: 160px; background: var(--ink); }
 .similar-card.plan-card .plan-card__photos img { width: 100%; height: 160px; }
 .plan-card__chip {
@@ -773,28 +773,30 @@
   font-weight: 700;
   color: #fff;
 }
-.plan-card__shuffle {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  z-index: 2;
+.plan-card__title { font-size: var(--fs-md); font-weight: 700; letter-spacing: -0.02em; color: #fff; }
+.plan-card__sub { margin-top: auto; font-size: var(--fs-sm); color: rgba(255, 255, 255, 0.7); }
+.plan-card:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+/* Окно «Маршрут отсюда»: остановки с фото и одной фразой, внизу — путь */
+.plan-stops { list-style: none; margin: 0; padding: 0; display: grid; }
+.plan-stop {
   display: grid;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  border: 0;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.92);
-  color: var(--ink);
-  cursor: pointer;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
 }
-.plan-card__shuffle:hover { background: #fff; }
-.plan-card .info h4 { color: #fff; -webkit-line-clamp: 3; }
-/* Вся карточка ведёт по ссылке «Проложить путь», кубик — поверх */
-.plan-card__link { margin-top: auto; font-size: var(--fs-sm); font-weight: 700; color: #FF9A66; text-decoration: none; }
-.plan-card__link::after { content: ''; position: absolute; inset: 0; z-index: 1; }
-.plan-card__link:focus-visible { outline: none; }
-.plan-card:has(.plan-card__link:focus-visible) { box-shadow: var(--focus-ring); }
+.plan-stop:first-child { border-top: 0; padding-top: 4px; }
+.plan-stop__img { width: 64px; height: 64px; border-radius: 14px; object-fit: cover; background: var(--photo-placeholder); }
+.plan-stop__img.is-broken { visibility: visible; content: url("data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="); }
+.plan-stop__text { display: grid; gap: 2px; min-width: 0; }
+.plan-stop__kicker { font-size: var(--fs-xs); color: var(--text-light); }
+.plan-stop__name { font-weight: 700; color: var(--text); text-decoration: none; }
+a.plan-stop__name:hover { color: var(--primary-text); }
+.plan-stop__desc { font-size: var(--fs-sm); color: var(--text-light); line-height: 1.45; }
+.plan-modal__actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.plan-modal__actions .btn { flex: 1 1 auto; justify-content: center; }
 
 .similar-scroll {
   --edge: 16px;
