@@ -16,8 +16,7 @@ import { createModal } from '../components/modal.js';
 import { initPlaceMap, routeUrl } from '../components/map.js';
 import { showToast } from '../components/toast.js';
 import { icon } from '../core/icons.js';
-import { loadCollections, collectionsWithPlace } from '../core/collections.js';
-import { collectionCardHtml } from '../components/collection-card.js';
+import { loadCollections, collectionsWithPlace, collectionUrl, COLLECTION_TYPES } from '../core/collections.js';
 import { initShare } from '../components/share.js';
 
 let timerInterval = null;
@@ -100,13 +99,12 @@ function setHeroPhoto(place) {
   img.src = place.photo;
 }
 
-/** Быстрые факты в hero вместо счётчиков просмотров/избранного. */
+/** Быстрые факты в hero: открыто ли сейчас и цена. Метро — в «Где и когда»,
+ *  рядом с адресом. */
 function renderFacts(place) {
   const list = $('#place-facts');
   if (!list) return;
   const facts = [];
-  const [metro] = metroList(place);
-  if (metro) facts.push({ icon: 'train-front', text: `м. ${metro}` });
   const status = openStatusLabel(place);
   if (status) facts.push({ icon: 'clock', text: status.text, mod: status.isOpen ? 'open' : 'closed' });
   if (place.price) {
@@ -136,20 +134,22 @@ function setLine(el, html) {
 }
 
 function renderInfo(place) {
-  // Адрес и метро (метро — строкой в карточке адреса, а не отдельной карточкой)
+  // Адрес, метро и подсказка «как дойти» — одной строкой с картой над ней
   const metro = metroList(place);
   const hasAddress = setLine($('#place-address'), place.address ? escapeHtml(place.address) : '');
   const hasMetro = setLine($('#place-metro'), metro.length ? escapeHtml(`м. ${metro.join(', м. ')}`) : '');
-  const addressRow = $('#address-row');
-  if (addressRow) addressRow.hidden = !hasAddress && !hasMetro;
+  const hasDirections = setLine($('#place-directions'), place.directions ? escapeHtml(place.directions) : '');
+  $('#address-row').hidden = !hasAddress && !hasMetro && !hasDirections;
 
-  // Часы работы: без расписания или круглосуточно во все дни строка ничего
-  // не сообщает — «Открыто круглосуточно» уже есть в hero
-  const hoursRow = $('#hours-row');
-  if (hoursRow) hoursRow.hidden = !place.schedule || isAlwaysOpen(place.schedule);
-
+  // Часы: сверху «Открыто до 22:00» / «Откроется завтра в 10:00», под ними
+  // часы на сегодня и «Все дни». Круглосуточно во все дни — хватает статуса
+  $('#hours-row').hidden = !place.schedule;
   const scheduleContainer = $('#place-schedule');
-  scheduleContainer.innerHTML = scheduleHtml(place.schedule, new Date(), place.season);
+  scheduleContainer.innerHTML = place.schedule && !isAlwaysOpen(place.schedule)
+    ? scheduleHtml(place.schedule, new Date(), place.season) : '';
+  // «Сегодня выходной, откроется завтра в 10:00» повторяло бы статус над ним
+  const todayLine = $('.today-schedule > span', scheduleContainer);
+  if (todayLine && /^Сегодня выходной/.test(todayLine.textContent)) todayLine.remove();
   const showBtn = $('.show-full-schedule-btn', scheduleContainer);
   const fullSchedule = $('.full-schedule-modal', scheduleContainer);
   if (showBtn && fullSchedule) {
@@ -158,20 +158,26 @@ function renderInfo(place) {
       const willShow = fullSchedule.hidden;
       fullSchedule.hidden = !willShow;
       showBtn.setAttribute('aria-expanded', String(willShow));
+      showBtn.textContent = willShow ? 'Свернуть' : 'Все дни';
     });
   }
 
   refreshOpenStatus(place);
 
-  // Телефон и сайт — отдельными строками со своими значками
-  const phone = place.phone || '';
+  // Телефон и сайт — двумя кнопками под часами
+  const phoneBtn = $('#place-phone');
+  const siteBtn = $('#place-website');
   const website = safeUrl(place.website, '');
-  $('#phone-row').hidden = !setLine($('#place-phone'), phone ? `<a href="${escapeHtml(telHref(phone))}">${escapeHtml(phone)}</a>` : '');
-  const host = website ? displayHost(website) : '';
-  $('#website-row').hidden = !setLine($('#place-website'), website
-    ? `<a href="${escapeHtml(website)}" target="_blank" rel="noopener" title="${escapeHtml(host)}">${escapeHtml(host)}</a>` : '');
+  phoneBtn.hidden = !place.phone;
+  if (place.phone) {
+    phoneBtn.href = telHref(place.phone);
+    phoneBtn.setAttribute('aria-label', `Позвонить: ${place.phone}`);
+  }
+  siteBtn.hidden = !website;
+  if (website) siteBtn.href = website;
+  $('#contact-btns').hidden = !place.phone && !website;
 
-  if (!phone) {
+  if (!place.phone) {
     $('#call-btn')?.style.setProperty('display', 'none');
     $('#action-call')?.style.setProperty('display', 'none');
   }
@@ -183,6 +189,13 @@ const CLOSING_SOON_MS = 60 * 60000;
 
 /** «Закроется через 40 минут» / «Откроется через …» под часами работы. */
 function refreshOpenStatus(place) {
+  const label = openStatusLabel(place);
+  const statusEl = $('#open-status');
+  if (statusEl) {
+    statusEl.textContent = label?.text || '';
+    statusEl.hidden = !label;
+    statusEl.classList.toggle('where-row__status--closed', Boolean(label && !label.isOpen));
+  }
   const status = getOpenStatus(place);
   const timerSpan = $('#closing-timer');
   if (!timerSpan) return;
@@ -193,80 +206,45 @@ function refreshOpenStatus(place) {
   timerSpan.classList.toggle('closing-timer--open', status.isOpen);
 }
 
-// Три ответа редакции — как другу: почему идти, когда, на что смотреть
-const STORY_PARTS = [
-  { key: 'why', title: 'Почему стоит пойти', icon: 'heart' },
+// Ответы редакции «когда лучше» и «что заметить» — короткими акцентами под
+// описанием; «почему стоит пойти» — крупным вступлением к нему
+const STORY_TIPS = [
   { key: 'when', title: 'Когда лучше', icon: 'clock' },
-  { key: 'notice', title: 'Что заметить', icon: 'star' }
+  { key: 'notice', title: 'Не пропусти', icon: 'star' }
 ];
 
-// «Выбрать вместе» (vmeste/) с этим местом в выборе: карточка «Идёшь не
-// один?» — на телефоне под шапкой, на компьютере в правой колонке. Только у
-// мест для свиданий и компаний, чтобы не висела на каждой странице
-const TOGETHER_TAGS = ['свидание', 'с друзьями'];
-
-function renderTogether(place) {
-  const show = (place.tags || []).some((t) => TOGETHER_TAGS.includes(t));
-  const url = `vmeste/?with=${encodeURIComponent(place.id)}`;
-  const text = `${place.name} уже будет в выборе. Добавь ещё пару мест, а друг отметит, куда хочет он.`;
-  [['#together-invite', '#together-invite-text', '#together-invite-btn'], ['#together-side', '#together-side-text', '#together-side-btn']]
-    .forEach(([box, textEl, btn]) => {
-      if (!$(box)) return;
-      $(box).hidden = !show;
-      $(textEl).textContent = text;
-      $(btn).href = url;
-    });
+function renderStory(place) {
+  const story = place.story || {};
+  setLine($('#place-lead'), story.why ? escapeHtml(story.why) : '');
+  const tips = STORY_TIPS.filter((t) => story[t.key]);
+  setLine($('#place-tips'), tips.map((t) => `
+      <div class="place-tip">
+        <span class="place-tip__icon">${icon(t.icon)}</span>
+        <p><b>${t.title}</b>${escapeHtml(story[t.key])}</p>
+      </div>`).join(''));
 }
 
-function renderStory(place) {
-  const el = $('#place-story');
-  const story = place.story || {};
-  const parts = STORY_PARTS.filter((p) => story[p.key]);
-  el.innerHTML = parts.map((p) => `
-      <div class="place-story__item place-story__item--${p.key}">
-        <h2 class="place-story__title">${icon(p.icon)} ${p.title}</h2>
-        <p class="place-story__text">${escapeHtml(story[p.key])}</p>
-      </div>`).join('');
-  el.hidden = !parts.length;
+/** «Позвать друга»: окно с выбором вместе (vmeste/ — это место уже в
+ *  выборе) и обычной ссылкой. Открывают карточка «Идёшь не один?», кнопка в
+ *  hero и кнопка в нижней панели. */
+function initInvite(place) {
+  const modal = createModal($('#invite-modal'), {
+    onOpen: () => goal('invite_open', { place: place.slug })
+  });
+  if (!modal) return;
+  const photo = $('#invite-photo');
+  if (photo && place.photo) photo.style.backgroundImage = cssUrl(place.photoSm || place.photo);
+  $('#invite-together').href = `vmeste/?with=${encodeURIComponent(place.id)}`;
+  $('#invite-together-text').textContent = `${place.name} уже будет в выборе. Добавь ещё пару мест — друг отметит, куда ему хочется, и вы сразу увидите совпадение`;
+  $$('[data-invite]').forEach((btn) => on(btn, 'click', () => modal.open()));
+  // Сначала закрываем это окно, потом открывается «Поделиться» (initShare)
+  on($('#invite-share'), 'click', () => modal.close());
 }
 
 function renderDescription(place) {
   const text = place.description_long || place.description || '';
-  const el = $('#place-description');
-  el.innerHTML = text ? `<p>${escapeHtml(text)}</p>` : '';
-  el.hidden = !text;
+  setLine($('#place-description'), text ? `<p>${escapeHtml(text)}</p>` : '');
   $('#place-readers').hidden = !place.fromReaders;
-}
-
-// Пользователю — только первые теги места (в данных они самые характерные:
-// атмосфера, сценарий, впечатление). Остальные теги работают на поиск,
-// настроения, подборки и «похожие места», но на странице не показываются.
-const VISIBLE_TAGS = 5;
-
-// Теги, которые дословно повторяют категорию места, — это уже написано на
-// плашке в hero; вместо них в пятёрку попадают теги настроения
-const CATEGORY_TAGS = { nature: 'природа', art: 'искусство', food: 'еда', theater: 'театр', entertainment: 'развлечения' };
-
-/** Теги для показа: без повторов категории и типа места — и целиком, и по
- *  словам («музей» у «Дом-музея», «парк» у «Парка скульптур»). */
-function visibleTags(place) {
-  const type = (place.type || '').toLowerCase();
-  const repeats = new Set([CATEGORY_TAGS[place.category], type, ...type.split(/[\s-]+/)]);
-  return (place.tags || []).filter((t) => !repeats.has(t.toLowerCase())).slice(0, VISIBLE_TAGS);
-}
-
-function renderTags(place) {
-  const container = $('#place-tags');
-  const card = $('#place-tags-card');
-  const tags = visibleTags(place);
-  if (card) card.hidden = !tags.length;
-  // Правая колонка пустая (ни тегов, ни приглашения) — её нет, список на всю ширину
-  const side = $('#info-side');
-  if (side) side.hidden = !tags.length && $('#together-side')?.hidden !== false;
-  if (!tags.length) return;
-  // Тег ведёт в ленту на главной с этим тегом — повод пойти дальше
-  container.innerHTML = tags.map((t) =>
-    `<a class="tag-chip" href="./?tag=${encodeURIComponent(t)}">#${escapeHtml(t)}</a>`).join('');
 }
 
 const AMENITY_ICONS = { wifi: 'wifi', parking: 'square-parking', card: 'credit-card', kids: 'baby', outdoor: 'trees', delivery: 'truck', takeaway: 'shopping-bag' };
@@ -291,25 +269,11 @@ function renderGallery(place) {
   bindImageFallback(container);
 }
 
-function renderDirections(place) {
-  $('#place-directions').textContent = place.directions || '';
-  $('#directions-row').hidden = !place.directions;
-
-  // Строк нет — нет и карточки; нет ни её, ни тегов — нет секции
-  const list = $('#info-list');
-  const rows = list ? $$('.info-row', list).filter((r) => !r.hidden).length : 0;
-  if (list) list.hidden = !rows;
-  $('.info-grid')?.setAttribute('data-rows', String(rows));
-  const infoSection = $('.place-info');
-  if (infoSection) infoSection.hidden = !$$('.info-card', infoSection).some((c) => !c.hidden);
-}
-
 async function renderMap(place) {
   const container = $('#place-map-container');
-  const map = await initPlaceMap(container, place);
-  // Карта не загрузилась — «Показать на карте» вела бы к надписи
-  // «Карта временно недоступна». Маршрут в Яндекс.Картах работает и так.
-  if (!map) $('#show-on-map')?.setAttribute('hidden', '');
+  await initPlaceMap(container, place);
+  // Не загрузилась карта — внутри надпись «Карта временно недоступна», а
+  // ссылка «Как добраться» поверх неё всё равно ведёт в Яндекс.Карты
   const routeLink = $('#route-link');
   if (routeLink) routeLink.href = routeUrl(place);
   on(routeLink, 'click', () => goal('route_click', { place: place.slug }));
@@ -447,6 +411,19 @@ function initSimilarNav(scroller, prev, next) {
   sync();
 }
 
+/** Подборка строкой: маленькое фото, тип и название. Полная карточка с
+ *  описанием здесь лишняя — человек уже выбирает конкретное место. */
+function collectionRowHtml(c) {
+  return `
+    <a class="collection-row" href="${collectionUrl(c.slug)}" data-title="${escapeHtml(c.title)}">
+      <span class="collection-row__photo" style='background-image: ${cssUrl(c.coverSm || c.cover)}' aria-hidden="true"></span>
+      <span class="collection-row__body">
+        <span class="collection-row__type">${escapeHtml(COLLECTION_TYPES[c.type] || '')}</span>
+        <span class="collection-row__title">${escapeHtml(c.title)}</span>
+      </span>
+    </a>`;
+}
+
 /** «Есть в подборках»: статьи, где упоминается место. Без подборок — секции нет. */
 async function renderCollections(place) {
   const section = $('#place-collections');
@@ -454,7 +431,7 @@ async function renderCollections(place) {
   try {
     const list = collectionsWithPlace(await loadCollections(), place.slug).slice(0, 3);
     if (!list.length) return;
-    $('#place-collections-grid').innerHTML = list.map(collectionCardHtml).join('');
+    $('#place-collections-grid').innerHTML = list.map(collectionRowHtml).join('');
     section.hidden = false;
   } catch (err) {
     console.error('[place] подборки:', err);
@@ -507,8 +484,9 @@ function attachEventListeners(place, allPlaces) {
   on($('#place-phone'), 'click', (e) => { if (e.target.closest('a')) contactGoal('Звонок'); });
   on($('#place-website'), 'click', (e) => { if (e.target.closest('a')) contactGoal('Сайт'); });
 
-  // Шеринг
-  initShare([$('#share-btn'), $('#action-share')], () => ({ title: place.name, text: place.description }), { what: `Место: ${place.name}` });
+  // «Позвать друга» → «Просто отправить ссылку»
+  initInvite(place);
+  initShare([$('#invite-share')], () => ({ title: place.name, text: place.description }), { what: `Место: ${place.name}` });
 
   // Мобильная панель быстрых действий
   on($('#action-fav'), 'click', () => favBtn.click());
@@ -523,14 +501,17 @@ function attachEventListeners(place, allPlaces) {
     window.open(routeUrl(place), '_blank');
   });
 
-  // Скролл к карте
-  on($('#show-on-map'), 'click', () => $('#on-map')?.scrollIntoView({ behavior: 'smooth', block: 'center' }));
-
   // Сообщить о неточности — Яндекс Форма в окне
+  let reportTopic = '';
   const reportModal = createModal($('#report-modal'), {
-    onOpen: () => { goal('report_open', { place: place.slug }); loadReportForm(place); }
+    onOpen: () => { goal('report_open', { place: place.slug }); loadReportForm(place, reportTopic); }
   });
-  on($('#suggest-edit'), 'click', () => reportModal?.open());
+  // Две ссылки: под часами и адресом и в конце «О месте» (с темой «Ошибка
+  // в описании» — уходит в форму параметром what)
+  $$('[data-report]').forEach((btn) => on(btn, 'click', () => {
+    reportTopic = btn.dataset.report;
+    reportModal?.open();
+  }));
 
   // Форма отзыва
   const form = $('#review-form');
@@ -565,20 +546,25 @@ const REPORT_FORM_ID = '6ab9085f49af475392c00f2e';
 const REPORT_FORM_URL = `https://forms.yandex.ru/u/${REPORT_FORM_ID}/`;
 const YA_FORMS_EMBED = 'https://forms.yandex.ru/_static/embed.js';
 
-function reportFormUrl(place, embed) {
+function reportFormUrl(place, embed, topic = '') {
   const params = new URLSearchParams({ place: place.name, page: window.location.href });
+  if (topic) params.set('what', topic);
   if (embed) params.set('iframe', '1');
   return `${REPORT_FORM_URL}?${params}`;
 }
 
 /** Форма грузится при первом открытии окна; embed.js Яндекса подгоняет
  *  высоту iframe под форму (без него у окна остаётся своя прокрутка). */
-function loadReportForm(place) {
+function loadReportForm(place, topic) {
   const frame = $('#report-frame');
   const fallback = $('#report-fallback');
-  if (fallback) fallback.href = reportFormUrl(place, false);
-  if (!frame || frame.src) return;
-  frame.src = reportFormUrl(place, true);
+  if (fallback) fallback.href = reportFormUrl(place, false, topic);
+  if (!frame) return;
+  const src = reportFormUrl(place, true, topic);
+  // Та же тема — форма уже загружена, не перезагружаем
+  if (frame.dataset.topic === topic && frame.src) return;
+  frame.dataset.topic = topic;
+  frame.src = src;
   if (!document.querySelector(`script[src="${YA_FORMS_EMBED}"]`)) {
     const script = document.createElement('script');
     script.src = YA_FORMS_EMBED;
@@ -608,13 +594,10 @@ async function main() {
 
   renderHero(place);
   renderStory(place);
-  renderTogether(place);
   renderInfo(place);
   renderDescription(place);
-  renderTags(place);
   renderAmenities(place);
   renderGallery(place);
-  renderDirections(place);
   renderNearby(place, places);
   renderSimilar(place, places);
   renderCollections(place);

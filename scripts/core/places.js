@@ -174,10 +174,6 @@ export function popular(places, count = 4) {
     .map((x) => x.p);
 }
 
-/** Похожие места: общие теги с весом по редкости (IDF) — «день» или
- *  «исторично» есть почти у всех мест и мало что говорят, а «скрыто» или
- *  «набережная» — много; та же категория даёт бонус; при равенстве — ближе
- *  по координатам. */
 /** Минуты пешком между точками: расстояние по прямой × 1,3 (улицы не
  *  прямые) при 4,8 км/ч. Для подсказки «рядом», не для навигации. */
 export function walkMinutes(a, b) {
@@ -207,11 +203,20 @@ export function nearby(places, place, { maxMinutes = 10, count = 8 } = {}) {
     .slice(0, count);
 }
 
+// Теги настроения: блок «Похожие по настроению» — про атмосферу, поэтому
+// совпадение по ним весит вдвое больше, чем по остальным тегам
+const MOOD_TAGS = new Set(['тихо', 'атмосферно', 'эстетично', 'исторично', 'необычно', 'уютно',
+  'красиво', 'просторно', 'оживлённо', 'скрыто', 'вдохновляюще', 'камерно']);
+
+/** Похожие по настроению: общие теги с весом по редкости (IDF) — «день»
+ *  есть почти у всех мест и мало что говорит, а «скрыто» или «набережная» —
+ *  много; теги настроения весят вдвое; та же категория даёт бонус; при
+ *  равенстве — ближе по координатам. */
 export function similar(places, place, count = 6) {
   const tags = new Set(place.tags || []);
   const tagCount = {};
   places.forEach((p) => (p.tags || []).forEach((t) => { tagCount[t] = (tagCount[t] || 0) + 1; }));
-  const weight = (t) => Math.log(places.length / (tagCount[t] || 1));
+  const weight = (t) => Math.log(places.length / (tagCount[t] || 1)) * (MOOD_TAGS.has(t) ? 2 : 1);
   const distance = (p) => {
     if (!place.coords || !p.coords) return Infinity;
     const dLat = p.coords[0] - place.coords[0];
