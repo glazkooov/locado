@@ -16,5 +16,7 @@ og_render(__DIR__ . '/index.html', $c ? array(
   'title' => $c['title'],
   'description' => $desc,
   'image' => isset($c['cover']) ? $c['cover'] : '',
+  'card' => 'collection=' . rawurlencode($c['slug']),
+  'kind' => $c['type'],
   'url' => 'collection/?slug=' . rawurlencode($c['slug'])
 ) : null);

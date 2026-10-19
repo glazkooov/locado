@@ -43,12 +43,9 @@ function og_set_meta($html, $attr, $name, $value) {
   return $html;
 }
 
-function og_remove_meta($html, $attr, $name) {
-  return preg_replace('~\s*<meta ' . $attr . '="' . preg_quote($name, '~') . '" content="[^"]*">~', '', $html, 1);
-}
-
-/** Отдаёт шаблон с мета-тегами $meta = [title, description, image (путь от
- *  корня сайта), url]. $meta === null — шаблон как есть (общее превью). */
+/** Отдаёт шаблон с мета-тегами $meta = [title, description, image (фото,
+ *  путь от корня сайта), card (параметр api/og-image.php: place=… или
+ *  collection=…), kind, url]. $meta === null — шаблон как есть (общее превью). */
 function og_render($template, $meta) {
   $html = is_file($template) ? file_get_contents($template) : '';
   header('Content-Type: text/html; charset=utf-8');
@@ -65,23 +62,19 @@ function og_render($template, $meta) {
     $html = og_set_meta($html, 'property', 'og:title', $title);
     if (!empty($meta['url'])) $html = og_set_meta($html, 'property', 'og:url', $site . $meta['url']);
 
-    // Фото места вместо общей картинки — только если файл есть на сервере.
-    // Размеры у фото свои: общие 1200×630 заменяем настоящими
+    // Картинка превью — своя для места или подборки (api/og-image.php:
+    // фото, логотип, название), только если фото есть на сервере. ?v —
+    // от названия и фото: поменялись — мессенджеры запросят картинку заново
     $image = isset($meta['image']) ? ltrim((string)$meta['image'], '/') : '';
     $file = $image !== '' ? dirname(__DIR__) . '/' . $image : '';
-    if ($file !== '' && strpos($image, '..') === false && is_file($file)) {
-      $url = $site . str_replace('%2F', '/', rawurlencode($image));
+    if ($file !== '' && !empty($meta['card']) && strpos($image, '..') === false && is_file($file)) {
+      $v = substr(md5($title . '|' . (isset($meta['kind']) ? $meta['kind'] : '') . '|' . $image . '|' . filemtime($file)), 0, 8);
+      $url = $site . 'api/og-image.php?' . $meta['card'] . '&v=' . $v;
       $html = og_set_meta($html, 'property', 'og:image', $url);
       $html = og_set_meta($html, 'name', 'twitter:image', $url);
       $html = og_set_meta($html, 'property', 'og:image:alt', $title);
-      $size = @getimagesize($file);
-      if ($size) {
-        $html = og_set_meta($html, 'property', 'og:image:width', $size[0]);
-        $html = og_set_meta($html, 'property', 'og:image:height', $size[1]);
-      } else {
-        $html = og_remove_meta($html, 'property', 'og:image:width');
-        $html = og_remove_meta($html, 'property', 'og:image:height');
-      }
+      $html = og_set_meta($html, 'property', 'og:image:width', '1200');
+      $html = og_set_meta($html, 'property', 'og:image:height', '630');
     }
   }
   echo $html;
