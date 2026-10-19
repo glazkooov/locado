@@ -2372,7 +2372,6 @@
     "id": 70,
     "slug": "soldatenkovsky-park",
     "name": "Солдатёнковский парк",
-    "hook": "Деревья, похожие на огромную брокколи",
     "category": "nature",
     "type": "Парк у пруда",
     "coords": [
@@ -6345,7 +6344,6 @@
     "id": 151,
     "slug": "osobnyak-turgeneva",
     "name": "Дом Тургенева",
-    "hook": "Тот самый дом из «Муму»",
     "category": "art",
     "type": "Дом-музей",
     "coords": [
@@ -9182,7 +9180,6 @@
     "id": 216,
     "slug": "perezvon-pyatnitskaya",
     "name": "«Перезвон» на Пятницкой",
-    "hook": "Кофе прямо в колокольне храма",
     "category": "food",
     "type": "Кофейня",
     "coords": [
@@ -9377,7 +9374,6 @@
     "id": 221,
     "slug": "kanal-tushinskiy-shlyuz",
     "name": "Канал имени Москвы у Тушинского шлюза",
-    "hook": "Корабли плывут над шоссе",
     "category": "entertainment",
     "type": "Смотровая точка",
     "coords": [
@@ -9415,7 +9411,6 @@
     "id": 222,
     "slug": "dom-muzey-chukovskogo",
     "name": "Дом-музей Корнея Чуковского",
-    "hook": "«Чудо-дерево» с ботинками вместо листьев",
     "category": "art",
     "type": "Дом-музей",
     "coords": [

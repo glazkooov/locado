@@ -65,13 +65,7 @@ function renderHero(place) {
   $('#place-category').textContent = place.type || categoryLabel(place.category);
   $('#place-name').textContent = place.name;
   // Краткое описание вместо шаблонного «… в центре Москвы» (не у всех мест правда)
-  // Есть крючок — он и встаёт на место краткого описания: обычно они
-  // говорят одно и то же, а крючок короче и ярче
-  const subtitle = $('#place-subtitle');
-  subtitle.textContent = place.hook ? '' : (place.subtitle || place.description || '');
-  subtitle.hidden = Boolean(place.hook);
-  const hook = $('#place-hook');
-  if (hook) { hook.textContent = place.hook || ''; hook.hidden = !place.hook; }
+  $('#place-subtitle').textContent = place.subtitle || place.description || '';
   renderFacts(place);
 
   updateFavButtonUI(Storage.isFavorite(place.slug));
@@ -321,7 +315,7 @@ async function renderMap(place) {
   on(routeLink, 'click', () => goal('route_click', { place: place.slug }));
 }
 
-/** «Заодно загляни»: соседи до ~10 минут пешком — по координатам, а не по тегам. */
+/** «В двух шагах»: соседи до ~10 минут пешком — по координатам, а не по тегам. */
 function renderNearby(place, allPlaces) {
   const section = $('#place-nearby');
   const container = $('#nearby-places-container');
