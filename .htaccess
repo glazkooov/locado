@@ -2,7 +2,10 @@
 # включи показ скрытых файлов, иначе он не попадёт на хостинг.
 
 Options -Indexes
-DirectoryIndex index.html
+# index.php — у страниц места и подборки (place/, collection/): сервер
+# вписывает в HTML название, описание и фото для превью ссылок в
+# мессенджерах (api/og.php). В остальных папках только index.html
+DirectoryIndex index.php index.html
 AddDefaultCharset utf-8
 
 # Один адрес сайта: https и без www — иначе поисковики и Метрика считают
