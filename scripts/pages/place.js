@@ -318,7 +318,7 @@ async function renderMap(place) {
 /* «Куда пойдём дальше?» — то, что просили в интервью: «сходил в одно место —
    хочется рядом поесть или догулять». Соседи до ~15 минут пешком разложены
    по тому, зачем туда идти; первая карточка ряда — готовый план из двух мест. */
-const NEARBY_TAB = { eat: 'Поесть', walk: 'Догулять', see: 'Заглянуть' };
+const NEARBY_TAB = { eat: 'Поесть', walk: 'Погулять', see: 'Посмотреть' };
 // После прогулки или музея первым делом хочется есть, после кафе — гулять
 const NEARBY_ORDER = { eat: ['walk', 'see', 'eat'], walk: ['eat', 'see', 'walk'], see: ['eat', 'walk', 'see'] };
 
@@ -354,12 +354,15 @@ function nearbyPlanCardHtml({ s1, s2 }) {
 }
 
 function planStopHtml(p, kicker) {
+  const here = kicker === 'Ты здесь';
+  const img = `<img class="plan-stop__img" src="${escapeHtml(p.photoSm || p.photo || '')}" alt="" loading="lazy">`;
+  // Фото тоже ведёт на страницу места; из клавиатуры — одна ссылка, на названии
   return `
     <li class="plan-stop">
-      <img class="plan-stop__img" src="${escapeHtml(p.photoSm || p.photo || '')}" alt="" loading="lazy">
+      ${here ? img : `<a class="plan-stop__photo" href="${placeUrl(p.slug)}" tabindex="-1" aria-hidden="true">${img}</a>`}
       <span class="plan-stop__text">
         <span class="plan-stop__kicker">${kicker}</span>
-        ${kicker === 'Ты здесь' ? `<span class="plan-stop__name">${escapeHtml(p.name)}</span>` : `<a class="plan-stop__name" href="${placeUrl(p.slug)}">${escapeHtml(p.name)}</a>`}
+        ${here ? `<span class="plan-stop__name">${escapeHtml(p.name)}</span>` : `<a class="plan-stop__name" href="${placeUrl(p.slug)}">${escapeHtml(p.name)}</a>`}
         <span class="plan-stop__desc">${escapeHtml(p.description || p.type || '')}</span>
       </span>
     </li>`;
@@ -378,7 +381,7 @@ function renderNearby(place, allPlaces) {
   let alt = 0;
 
   const tabs = $('#nearby-tabs');
-  const NEXT_KICKER = { eat: 'Поесть', walk: 'Догулять', see: 'Заглянуть' };
+  const NEXT_KICKER = { eat: 'Поесть', walk: 'Погулять', see: 'Посмотреть' };
   const planModal = plans.length ? createModal($('#plan-modal')) : null;
   const fillPlan = () => {
     const { s1, s2 } = plans[alt % plans.length];
