@@ -180,9 +180,6 @@
 
 .hero-fact .icon { color: #FF8A4C; }
 
-/* Практичные метки (бесплатно, под крышей, с детьми) — светлее фактов */
-.hero-fact--label { background: rgba(255, 255, 255, 0.18); }
-
 .hero-fact__link {
   color: inherit;
   text-decoration: underline;

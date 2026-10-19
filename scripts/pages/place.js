@@ -5,10 +5,10 @@ import { goal } from '../core/analytics.js';
 import { $, $$, on } from '../core/dom.js';
 import {
   escapeHtml, safeUrl, cssUrl, getOpenStatus, describeStatusTimer, scheduleHtml, telHref, displayHost,
-  openStatusLabel, isAlwaysOpen, pluralize
+  openStatusLabel, isAlwaysOpen
 } from '../core/format.js';
 import {
-  loadPlaces, bySlug, similar, nearby, placeLabels, toggleFavoritePlace, markVisited, placeUrl, metroList, categoryLabel
+  loadPlaces, bySlug, similar, nearby, toggleFavoritePlace, markVisited, placeUrl, metroList, categoryLabel
 } from '../core/places.js';
 import * as Storage from '../core/storage.js';
 import { similarCardHtml, bindImageFallback } from '../components/card.js';
@@ -115,16 +115,12 @@ function renderFacts(place) {
   if (metro) facts.push({ icon: 'train-front', text: `м. ${metro}` });
   const status = openStatusLabel(place);
   if (status) facts.push({ icon: 'clock', text: status.text, mod: status.isOpen ? 'open' : 'closed' });
-  const labels = placeLabels(place);
-  // «Бесплатно» уже есть меткой — строку цены с тем же смыслом не повторяем
-  const freeLabel = labels.some((l) => l.text === 'Бесплатно');
-  if (place.price && !(freeLabel && /бесплатн/i.test(place.price))) {
+  if (place.price) {
     // «Билеты — на сайте музея» без ссылки заставляет искать сайт самому
     const website = safeUrl(place.website, '');
     const href = website && /на сайте/i.test(place.price) ? website : '';
     facts.push({ icon: 'ticket', text: place.price, href, external: true });
   }
-  labels.forEach((l) => facts.push({ ...l, mod: 'label' }));
   list.innerHTML = facts.map(heroFactHtml).join('');
 }
 
@@ -325,15 +321,14 @@ async function renderMap(place) {
   on(routeLink, 'click', () => goal('route_click', { place: place.slug }));
 }
 
-/** «Рядом, до 10 минут пешком»: соседи по координатам, а не по тегам. */
+/** «Заодно загляни»: соседи до ~10 минут пешком — по координатам, а не по тегам. */
 function renderNearby(place, allPlaces) {
   const section = $('#place-nearby');
   const container = $('#nearby-places-container');
   if (!section || !container) return;
   const list = nearby(allPlaces, place);
   if (!list.length) return;
-  container.innerHTML = list.map(({ place: p, minutes }) =>
-    similarCardHtml(p, { note: `${minutes} ${pluralize(minutes, ['минута', 'минуты', 'минут'])} пешком` })).join('');
+  container.innerHTML = list.map(({ place: p }) => similarCardHtml(p)).join('');
   bindImageFallback(container);
   section.hidden = false;
   initSimilarNav(container, $('#nearby-prev'), $('#nearby-next'));

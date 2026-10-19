@@ -197,15 +197,6 @@ export function nearby(places, place, { maxMinutes = 10, count = 8 } = {}) {
     .slice(0, count);
 }
 
-/** Практичные метки из уже заполненных полей: бесплатно, под крышей, с детьми. */
-export function placeLabels(place) {
-  const labels = [];
-  if (place.price_level === 'free') labels.push({ icon: 'tag', text: 'Бесплатно' });
-  if (place.indoor === true) labels.push({ icon: 'umbrella', text: 'Под крышей' });
-  if ((place.tags || []).includes('с детьми')) labels.push({ icon: 'baby', text: 'Можно с детьми' });
-  return labels;
-}
-
 export function similar(places, place, count = 6) {
   const tags = new Set(place.tags || []);
   const tagCount = {};
