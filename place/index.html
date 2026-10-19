@@ -144,17 +144,12 @@
       </section>
 
       <div class="place-side">
-        <!-- Где и когда: карта сверху, под ней адрес с метро и часы;
-             телефон и сайт — кнопками. Строки без данных place.js скрывает -->
+        <!-- Где и когда: сначала адрес с метро и часы, телефон и сайт —
+             кнопками; карта — под ними (на компьютере справа). Строки без
+             данных place.js скрывает -->
         <section class="place-block place-where" id="on-map" aria-labelledby="where-title">
           <h2 class="place-block__title" id="where-title">Где и когда</h2>
           <div class="where-card">
-            <div class="where-card__map">
-              <div class="map-container" id="place-map-container" aria-label="Карта места"></div>
-              <a class="where-card__map-link" id="route-link" href="https://yandex.ru/maps/" target="_blank" rel="noopener">
-                <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#navigation"></use></svg> Как добраться
-              </a>
-            </div>
             <div class="where-card__info">
             <div class="where-row" id="address-row">
               <span class="where-row__icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#map-pin"></use></svg></span>
@@ -186,6 +181,12 @@
               <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#square-pen"></use></svg>
               <span>Что-то устарело?</span> <b>Поправить</b>
             </button>
+            </div>
+            <div class="where-card__map">
+              <div class="map-container" id="place-map-container" aria-label="Карта места"></div>
+              <a class="where-card__map-link" id="route-link" href="https://yandex.ru/maps/" target="_blank" rel="noopener">
+                <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#navigation"></use></svg> Как добраться
+              </a>
             </div>
           </div>
         </section>
