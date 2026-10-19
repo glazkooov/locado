@@ -1071,10 +1071,20 @@ a.plan-stop__name:hover { color: var(--primary-text); }
 
 .fact-fix:hover b { text-decoration: underline; text-underline-offset: 3px; }
 
-/* Компьютер: справка полосой в две колонки — слева часы и адрес, справа
+/* Компьютер: справка плашкой в две колонки — слева часы и адрес, справа
    цена и кнопки; карта и «Поправить» — на всю ширину */
 @media (min-width: 900px) {
+  /* На компьютере справка — отдельной плашкой, как карточки сайта */
   .place-facts {
+    /* Края плашки — вровень с текстом соседних блоков (у .container шире
+       768px по 24px отступа по бокам) */
+    width: calc(100% - 48px);
+    max-width: calc(1200px - 48px);
+    padding: 24px 28px 4px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-card);
+    background: var(--card-bg);
+    box-shadow: var(--shadow-soft);
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     grid-template-areas:
