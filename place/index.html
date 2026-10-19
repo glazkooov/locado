@@ -94,11 +94,8 @@
         <h1 class="hero-title" id="place-name">Загружаем…</h1>
         <p class="hero-subtitle" id="place-subtitle"></p>
 
-        <!-- Быстрые факты (открыто ли сейчас и цена — заполняет place.js;
-             метро — в «Где и когда»)
-             и действия — одной строкой: плашки слева, кнопки справа -->
+        <!-- Статус, цена и кнопки — в справке под фото, в шапке их нет -->
         <div class="hero-bottom">
-          <ul class="hero-facts" id="place-facts"></ul>
           <div class="hero-actions">
             <!-- Избранное вне MVP (см. CLAUDE.md) — скрыто, как и на карточках главной -->
             <button type="button" id="fav-btn-hero" class="fav-btn-hero" hidden>
@@ -109,12 +106,6 @@
             <button type="button" id="visited-btn" class="visited-btn" hidden>
               <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#check"></use></svg><span>Я здесь был</span>
             </button>
-            <button type="button" id="call-btn" class="call-btn" aria-label="Позвонить">
-              <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#phone"></use></svg><span>Позвонить</span>
-            </button>
-            <button type="button" class="share-btn" data-invite aria-haspopup="dialog">
-              <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#users"></use></svg><span>Позвать друга</span>
-            </button>
           </div>
         </div>
       </div>
@@ -123,8 +114,51 @@
       <p class="photo-credit photo-credit--on-photo container" id="photo-credit" hidden></p>
     </section>
 
-    <!-- «О месте» и «Где и когда»: на телефоне одно под другим, на
-         компьютере — две колонки (справа карточка с картой и часами) -->
+    <!-- Справка — сразу под фото, без заголовка: можно ли пойти сейчас, где
+         это и сколько стоит. Строки без данных place.js скрывает. На
+         компьютере — полосой в две колонки -->
+    <section class="place-facts container" id="place-facts" aria-label="Где и когда">
+      <div class="fact-row" id="hours-row">
+        <span class="fact-row__icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#clock"></use></svg></span>
+        <div class="fact-row__body">
+          <p class="fact-row__status" id="open-status" hidden></p>
+          <span class="closing-timer" id="closing-timer" hidden></span>
+          <div class="fact-row__hours" id="place-schedule"></div>
+        </div>
+      </div>
+      <div class="fact-row" id="address-row">
+        <span class="fact-row__icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#map-pin"></use></svg></span>
+        <div class="fact-row__body">
+          <p class="fact-row__value" id="place-address" hidden></p>
+          <p class="fact-row__sub" id="place-metro" hidden></p>
+          <p class="fact-row__sub" id="place-directions" hidden></p>
+        </div>
+      </div>
+      <div class="fact-row" id="price-row">
+        <span class="fact-row__icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#ticket"></use></svg></span>
+        <div class="fact-row__body"><p class="fact-row__price" id="place-price"></p></div>
+      </div>
+      <div class="fact-acts" id="place-acts">
+        <a class="fact-act" id="place-phone" href="#"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#phone"></use></svg><span>Позвонить</span></a>
+        <a class="fact-act" id="place-website" href="#" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#globe"></use></svg><span>Сайт</span></a>
+        <a class="fact-act" id="route-link" href="https://yandex.ru/maps/" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#navigation"></use></svg><span>Маршрут</span></a>
+      </div>
+      <!-- Карта — по нажатию: открывают её редко, скрипт Яндекса грузится
+           только при первом открытии -->
+      <button type="button" class="fact-line fact-map-toggle" id="map-toggle" aria-expanded="false" aria-controls="place-map">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#map-pin"></use></svg><span id="map-toggle-label">Показать на карте</span><svg class="icon fact-line__chevron" aria-hidden="true" focusable="false"><use href="assets/icons.svg#chevron-down"></use></svg>
+      </button>
+      <div class="fact-map" id="place-map" hidden>
+        <div class="map-container" id="place-map-container" aria-label="Карта места"></div>
+      </div>
+      <!-- Сообщить о неточности — одна ссылка на всю страницу, рядом с
+           данными, в которых ошибаются чаще всего. Яндекс Форма в окне -->
+      <button type="button" class="fact-line fact-fix" data-report aria-haspopup="dialog">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#square-pen"></use></svg><span>Что-то не так?</span> <b>Поправить</b>
+      </button>
+    </section>
+
+    <!-- «О месте» и справа (на компьютере) «Идёшь не один?» с подборками -->
     <div class="place-main container">
       <!-- О месте: «почему стоит пойти» (story.why) — крупным вступлением,
            затем описание и два акцента — «Когда лучше» и «Не пропусти» -->
@@ -139,85 +173,26 @@
           <span>Это место нам подсказали. <a href="suggest/">Знаешь своё? Расскажи</a></span>
         </p>
         <div class="amenities-section" id="place-amenities"></div>
-        <!-- Неточность в тексте замечают, пока читают, — ссылка здесь же -->
-        <button type="button" class="text-fix" data-report="Ошибка в описании" aria-haspopup="dialog">Неточность в тексте? <b>Напиши нам</b></button>
       </section>
 
-      <div class="place-side">
-        <!-- Где и когда: адрес с метро, часы, телефон и сайт кнопками,
-             карта — по нажатию. Строки без данных place.js скрывает -->
-        <section class="place-block place-where" id="on-map" aria-labelledby="where-title">
-          <h2 class="place-block__title" id="where-title">Где и когда</h2>
-          <div class="where-card">
-            <div class="where-row" id="address-row">
-              <span class="where-row__icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#map-pin"></use></svg></span>
-              <div class="where-row__body">
-                <p class="where-row__value" id="place-address" hidden></p>
-                <p class="where-row__sub" id="place-metro" hidden></p>
-                <p class="where-row__sub" id="place-directions" hidden></p>
-              </div>
-            </div>
-            <div class="where-row" id="hours-row">
-              <span class="where-row__icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#clock"></use></svg></span>
-              <div class="where-row__body">
-                <p class="where-row__status" id="open-status" hidden></p>
-                <span class="closing-timer" id="closing-timer" hidden></span>
-                <div class="where-row__hours" id="place-schedule"></div>
-              </div>
-            </div>
-            <div class="where-card__btns" id="contact-btns">
-              <a class="where-card__btn" id="place-phone" href="#">
-                <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#phone"></use></svg> Позвонить
-              </a>
-              <a class="where-card__btn" id="place-website" href="#" target="_blank" rel="noopener">
-                <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#globe"></use></svg> Сайт
-              </a>
-            </div>
-            <!-- Карта открывается по нажатию: пользуются ею редко, а
-                 «Как добраться» сразу ведёт в Яндекс.Карты. Скрипт карты
-                 грузится только при первом открытии -->
-            <div class="where-card__map-row">
-              <button type="button" class="where-card__map-toggle" id="map-toggle" aria-expanded="false" aria-controls="place-map">
-                <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#map-pin"></use></svg>
-                <span id="map-toggle-label">Показать на карте</span>
-                <svg class="icon where-card__chevron" aria-hidden="true" focusable="false"><use href="assets/icons.svg#chevron-down"></use></svg>
-              </button>
-              <a class="where-card__route" id="route-link" href="https://yandex.ru/maps/" target="_blank" rel="noopener">
-                <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#navigation"></use></svg> Как добраться
-              </a>
-            </div>
-            <div class="where-card__map" id="place-map" hidden>
-              <div class="map-container" id="place-map-container" aria-label="Карта места"></div>
-            </div>
-            <!-- Сообщить о неточности — там, где её замечают: под часами и
-                 адресом. Открывает Яндекс Форму в окне -->
-            <button type="button" class="where-card__fix" data-report="" aria-haspopup="dialog">
-              <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#square-pen"></use></svg>
-              <span>Что-то устарело?</span> <b>Поправить</b>
-            </button>
-          </div>
-        </section>
-
-        <!-- Справа от «Где и когда» на компьютере: «Идёшь не один?» и (её
-             переносит сюда place.js) «Есть в подборках». На телефоне —
-             карточка под «Где и когда», подборки — внизу страницы -->
-        <aside class="place-aside" id="place-aside">
-          <!-- «Позвать друга» — у каждого места, когда решение «иду» почти
-               принято. Открывает окно: выбрать вместе или отправить ссылку -->
-          <button type="button" class="invite-card" data-invite aria-haspopup="dialog">
-            <span class="invite-card__who">
-              <span class="invite-card__ava" aria-hidden="true"><i id="invite-photo"></i><i>?</i></span>
-              <span>
-                <span class="invite-card__title">Идёшь не один?</span>
-                <span class="invite-card__text">Спроси друга, куда ему хочется, и выберите вместе</span>
-              </span>
+      <!-- На компьютере «Есть в подборках» переносит сюда place.js, на
+           телефоне подборки — внизу страницы -->
+      <aside class="place-aside" id="place-aside">
+        <!-- «Позвать друга» — у каждого места. Открывает окно: выбрать
+             вместе или отправить ссылку -->
+        <button type="button" class="invite-card" data-invite aria-haspopup="dialog">
+          <span class="invite-card__who">
+            <span class="invite-card__ava" aria-hidden="true"><i id="invite-photo"></i><i>?</i></span>
+            <span>
+              <span class="invite-card__title">Идёшь не один?</span>
+              <span class="invite-card__text">Спроси друга, куда ему хочется, и выберите вместе</span>
             </span>
-            <span class="invite-card__btn">
-              <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#users"></use></svg> Позвать друга
-            </span>
-          </button>
-        </aside>
-      </div>
+          </span>
+          <span class="invite-card__btn">
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#users"></use></svg> Позвать друга
+          </span>
+        </button>
+      </aside>
     </div>
     <!-- Галерея -->
     <section class="place-gallery-section container" id="gallery-section">

@@ -65,7 +65,6 @@ function renderHero(place) {
   $('#place-name').textContent = place.name;
   // Краткое описание вместо шаблонного «… в центре Москвы» (не у всех мест правда)
   $('#place-subtitle').textContent = place.subtitle || place.description || '';
-  renderFacts(place);
 
   updateFavButtonUI(Storage.isFavorite(place.slug));
 
@@ -97,32 +96,6 @@ function setHeroPhoto(place) {
   };
   img.onerror = noPhoto;
   img.src = place.photo;
-}
-
-/** Быстрые факты в hero: открыто ли сейчас и цена. Метро — в «Где и когда»,
- *  рядом с адресом. */
-function renderFacts(place) {
-  const list = $('#place-facts');
-  if (!list) return;
-  const facts = [];
-  const status = openStatusLabel(place);
-  if (status) facts.push({ icon: 'clock', text: status.text, mod: status.isOpen ? 'open' : 'closed' });
-  if (place.price) {
-    // «Билеты — на сайте музея» без ссылки заставляет искать сайт самому
-    const website = safeUrl(place.website, '');
-    const href = website && /на сайте/i.test(place.price) ? website : '';
-    facts.push({ icon: 'ticket', text: place.price, href, external: true });
-  }
-  list.innerHTML = facts.map(heroFactHtml).join('');
-}
-
-function heroFactHtml(f) {
-  const body = `${icon(f.icon)} ${escapeHtml(f.text)}`;
-  const content = f.href
-    ? `<a class="hero-fact__link" href="${escapeHtml(f.href)}"${f.external ? ' target="_blank" rel="noopener"' : ''}>${body}</a>`
-    : body;
-  return `
-    <li class="hero-fact${f.mod ? ` hero-fact--${f.mod}` : ''}">${content}</li>`;
 }
 
 /** Показывает строку, только если есть что показать; прочерков не ставим. */
@@ -164,10 +137,16 @@ function renderInfo(place) {
 
   refreshOpenStatus(place);
 
-  // Телефон и сайт — двумя кнопками под часами
+  // Цена. «Билеты — на сайте музея» без ссылки заставляет искать сайт самому
+  const website = safeUrl(place.website, '');
+  const priceLink = website && /на сайте/i.test(place.price || '');
+  $('#price-row').hidden = !setLine($('#place-price'), place.price
+    ? (priceLink ? `<a href="${escapeHtml(website)}" target="_blank" rel="noopener">${escapeHtml(place.price)}</a>` : escapeHtml(place.price))
+    : '');
+
+  // «Позвонить», «Сайт», «Маршрут» — плитками под справкой; чего нет — нет
   const phoneBtn = $('#place-phone');
   const siteBtn = $('#place-website');
-  const website = safeUrl(place.website, '');
   phoneBtn.hidden = !place.phone;
   if (place.phone) {
     phoneBtn.href = telHref(place.phone);
@@ -175,12 +154,10 @@ function renderInfo(place) {
   }
   siteBtn.hidden = !website;
   if (website) siteBtn.href = website;
-  $('#contact-btns').hidden = !place.phone && !website;
+  $('#route-link').hidden = !place.coords;
+  $('#place-acts').hidden = !place.phone && !website && !place.coords;
 
-  if (!place.phone) {
-    $('#call-btn')?.style.setProperty('display', 'none');
-    $('#action-call')?.style.setProperty('display', 'none');
-  }
+  if (!place.phone) $('#action-call')?.style.setProperty('display', 'none');
 }
 
 // «Закроется через …» показываем, только когда до закрытия меньше часа:
@@ -194,7 +171,7 @@ function refreshOpenStatus(place) {
   if (statusEl) {
     statusEl.textContent = label?.text || '';
     statusEl.hidden = !label;
-    statusEl.classList.toggle('where-row__status--closed', Boolean(label && !label.isOpen));
+    statusEl.classList.toggle('fact-row__status--closed', Boolean(label && !label.isOpen));
   }
   const status = getOpenStatus(place);
   const timerSpan = $('#closing-timer');
@@ -277,7 +254,7 @@ function initMap(place) {
   const toggle = $('#map-toggle');
   const box = $('#place-map');
   if (!place.coords) {
-    $('.where-card__map-row').hidden = true;
+    toggle.hidden = true;
     return;
   }
   routeLink.href = routeUrl(place);
@@ -511,12 +488,10 @@ function attachEventListeners(place, allPlaces) {
     if (isNew) showToast('Спасибо! Место добавлено в твой список посещённых.');
   });
 
-  // Позвонить
-  const callBtn = $('#call-btn');
+  // Позвонить и сайт
   const contactGoal = (how) => goal('contact_click', { 'Связаться': { [place.name]: how } });
-  if (place.phone) on(callBtn, 'click', () => { contactGoal('Звонок'); window.location.href = telHref(place.phone); });
-  on($('#place-phone'), 'click', (e) => { if (e.target.closest('a')) contactGoal('Звонок'); });
-  on($('#place-website'), 'click', (e) => { if (e.target.closest('a')) contactGoal('Сайт'); });
+  on($('#place-phone'), 'click', () => contactGoal('Звонок'));
+  on($('#place-website'), 'click', () => contactGoal('Сайт'));
 
   // «Позвать друга» → «Просто отправить ссылку»
   initInvite(place);
@@ -526,7 +501,7 @@ function attachEventListeners(place, allPlaces) {
   on($('#action-fav'), 'click', () => favBtn.click());
   const actionCall = $('#action-call');
   if (actionCall) {
-    if (place.phone) on(actionCall, 'click', () => callBtn.click());
+    if (place.phone) on(actionCall, 'click', () => { contactGoal('Звонок'); window.location.href = telHref(place.phone); });
     else actionCall.style.display = 'none';
   }
   on($('#action-route'), 'click', () => {
@@ -536,16 +511,12 @@ function attachEventListeners(place, allPlaces) {
   });
 
   // Сообщить о неточности — Яндекс Форма в окне
-  let reportTopic = '';
   const reportModal = createModal($('#report-modal'), {
-    onOpen: () => { goal('report_open', { place: place.slug }); loadReportForm(place, reportTopic); }
+    onOpen: () => { goal('report_open', { place: place.slug }); loadReportForm(place); }
   });
-  // Две ссылки: под часами и адресом и в конце «О месте» (с темой «Ошибка
-  // в описании» — уходит в форму параметром what)
-  $$('[data-report]').forEach((btn) => on(btn, 'click', () => {
-    reportTopic = btn.dataset.report;
-    reportModal?.open();
-  }));
+  on($('[data-report]'), 'click', () => reportModal?.open());
+
+  initActionsBar();
 
   // Форма отзыва
   const form = $('#review-form');
@@ -573,6 +544,22 @@ function attachEventListeners(place, allPlaces) {
   });
 }
 
+/** Нижняя панель на телефоне появляется, когда справка ушла с экрана: пока
+ *  она видна, «Позвонить» и «Маршрут» уже под рукой. */
+function initActionsBar() {
+  const bar = $('#mobile-actions-bar');
+  const facts = $('#place-facts');
+  if (!bar || !facts || !('IntersectionObserver' in window)) {
+    bar?.classList.add('is-shown');
+    return;
+  }
+  new IntersectionObserver(([entry]) => {
+    // Справка ниже экрана (страницу ещё не долистали) — панель не нужна
+    const passed = !entry.isIntersecting && entry.boundingClientRect.top < 0;
+    bar.classList.toggle('is-shown', passed);
+  }).observe(facts);
+}
+
 // Яндекс Форма «Сообщить о неточности». Название и ссылка места уходят в
 // форму параметрами URL: в настройках формы у скрытых вопросов должны быть
 // идентификаторы place и page — тогда они заполнятся сами
@@ -580,25 +567,20 @@ const REPORT_FORM_ID = '6ab9085f49af475392c00f2e';
 const REPORT_FORM_URL = `https://forms.yandex.ru/u/${REPORT_FORM_ID}/`;
 const YA_FORMS_EMBED = 'https://forms.yandex.ru/_static/embed.js';
 
-function reportFormUrl(place, embed, topic = '') {
+function reportFormUrl(place, embed) {
   const params = new URLSearchParams({ place: place.name, page: window.location.href });
-  if (topic) params.set('what', topic);
   if (embed) params.set('iframe', '1');
   return `${REPORT_FORM_URL}?${params}`;
 }
 
 /** Форма грузится при первом открытии окна; embed.js Яндекса подгоняет
  *  высоту iframe под форму (без него у окна остаётся своя прокрутка). */
-function loadReportForm(place, topic) {
+function loadReportForm(place) {
   const frame = $('#report-frame');
   const fallback = $('#report-fallback');
-  if (fallback) fallback.href = reportFormUrl(place, false, topic);
-  if (!frame) return;
-  const src = reportFormUrl(place, true, topic);
-  // Та же тема — форма уже загружена, не перезагружаем
-  if (frame.dataset.topic === topic && frame.src) return;
-  frame.dataset.topic = topic;
-  frame.src = src;
+  if (fallback) fallback.href = reportFormUrl(place, false);
+  if (!frame || frame.src) return;
+  frame.src = reportFormUrl(place, true);
   if (!document.querySelector(`script[src="${YA_FORMS_EMBED}"]`)) {
     const script = document.createElement('script');
     script.src = YA_FORMS_EMBED;
