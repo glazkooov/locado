@@ -144,13 +144,11 @@
       </section>
 
       <div class="place-side">
-        <!-- Где и когда: сначала адрес с метро и часы, телефон и сайт —
-             кнопками; карта — под ними (на компьютере справа). Строки без
-             данных place.js скрывает -->
+        <!-- Где и когда: адрес с метро, часы, телефон и сайт кнопками,
+             карта — по нажатию. Строки без данных place.js скрывает -->
         <section class="place-block place-where" id="on-map" aria-labelledby="where-title">
           <h2 class="place-block__title" id="where-title">Где и когда</h2>
           <div class="where-card">
-            <div class="where-card__info">
             <div class="where-row" id="address-row">
               <span class="where-row__icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#map-pin"></use></svg></span>
               <div class="where-row__body">
@@ -175,36 +173,50 @@
                 <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#globe"></use></svg> Сайт
               </a>
             </div>
+            <!-- Карта открывается по нажатию: пользуются ею редко, а
+                 «Как добраться» сразу ведёт в Яндекс.Карты. Скрипт карты
+                 грузится только при первом открытии -->
+            <div class="where-card__map-row">
+              <button type="button" class="where-card__map-toggle" id="map-toggle" aria-expanded="false" aria-controls="place-map">
+                <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#map-pin"></use></svg>
+                <span id="map-toggle-label">Показать на карте</span>
+                <svg class="icon where-card__chevron" aria-hidden="true" focusable="false"><use href="assets/icons.svg#chevron-down"></use></svg>
+              </button>
+              <a class="where-card__route" id="route-link" href="https://yandex.ru/maps/" target="_blank" rel="noopener">
+                <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#navigation"></use></svg> Как добраться
+              </a>
+            </div>
+            <div class="where-card__map" id="place-map" hidden>
+              <div class="map-container" id="place-map-container" aria-label="Карта места"></div>
+            </div>
             <!-- Сообщить о неточности — там, где её замечают: под часами и
                  адресом. Открывает Яндекс Форму в окне -->
             <button type="button" class="where-card__fix" data-report="" aria-haspopup="dialog">
               <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#square-pen"></use></svg>
               <span>Что-то устарело?</span> <b>Поправить</b>
             </button>
-            </div>
-            <div class="where-card__map">
-              <div class="map-container" id="place-map-container" aria-label="Карта места"></div>
-              <a class="where-card__map-link" id="route-link" href="https://yandex.ru/maps/" target="_blank" rel="noopener">
-                <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#navigation"></use></svg> Как добраться
-              </a>
-            </div>
           </div>
         </section>
 
-        <!-- «Позвать друга» — у каждого места, когда решение «иду» почти
-             принято. Открывает окно: выбрать вместе или отправить ссылку -->
-        <button type="button" class="invite-card" data-invite aria-haspopup="dialog">
-          <span class="invite-card__who">
-            <span class="invite-card__ava" aria-hidden="true"><i id="invite-photo"></i><i>?</i></span>
-            <span>
-              <span class="invite-card__title">Идёшь не один?</span>
-              <span class="invite-card__text">Спроси друга, куда ему хочется, и выберите вместе</span>
+        <!-- Справа от «Где и когда» на компьютере: «Идёшь не один?» и (её
+             переносит сюда place.js) «Есть в подборках». На телефоне —
+             карточка под «Где и когда», подборки — внизу страницы -->
+        <aside class="place-aside" id="place-aside">
+          <!-- «Позвать друга» — у каждого места, когда решение «иду» почти
+               принято. Открывает окно: выбрать вместе или отправить ссылку -->
+          <button type="button" class="invite-card" data-invite aria-haspopup="dialog">
+            <span class="invite-card__who">
+              <span class="invite-card__ava" aria-hidden="true"><i id="invite-photo"></i><i>?</i></span>
+              <span>
+                <span class="invite-card__title">Идёшь не один?</span>
+                <span class="invite-card__text">Спроси друга, куда ему хочется, и выберите вместе</span>
+              </span>
             </span>
-          </span>
-          <span class="invite-card__btn">
-            <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#users"></use></svg> Позвать друга
-          </span>
-        </button>
+            <span class="invite-card__btn">
+              <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#users"></use></svg> Позвать друга
+            </span>
+          </button>
+        </aside>
       </div>
     </div>
     <!-- Галерея -->

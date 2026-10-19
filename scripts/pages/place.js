@@ -269,14 +269,32 @@ function renderGallery(place) {
   bindImageFallback(container);
 }
 
-async function renderMap(place) {
-  const container = $('#place-map-container');
-  await initPlaceMap(container, place);
-  // Не загрузилась карта — внутри надпись «Карта временно недоступна», а
-  // ссылка «Как добраться» поверх неё всё равно ведёт в Яндекс.Карты
+/** Карта — по кнопке «Показать на карте»: открывают её редко, а
+ *  «Как добраться» и так ведёт в Яндекс.Карты. Скрипт Яндекса грузится
+ *  только при первом открытии. Без координат — ни карты, ни маршрута. */
+function initMap(place) {
   const routeLink = $('#route-link');
-  if (routeLink) routeLink.href = routeUrl(place);
+  const toggle = $('#map-toggle');
+  const box = $('#place-map');
+  if (!place.coords) {
+    $('.where-card__map-row').hidden = true;
+    return;
+  }
+  routeLink.href = routeUrl(place);
   on(routeLink, 'click', () => goal('route_click', { place: place.slug }));
+  let created = false;
+  on(toggle, 'click', () => {
+    const show = box.hidden;
+    box.hidden = !show;
+    toggle.setAttribute('aria-expanded', String(show));
+    $('#map-toggle-label').textContent = show ? 'Скрыть карту' : 'Показать на карте';
+    if (show && !created) {
+      created = true;
+      goal('map_open', { place: place.slug });
+      // Не загрузилась — внутри надпись «Карта временно недоступна»
+      initPlaceMap($('#place-map-container'), place);
+    }
+  });
 }
 
 /* «Куда пойдём дальше?» — то, что просили в интервью: «сходил в одно место —
@@ -422,6 +440,22 @@ function collectionRowHtml(c) {
         <span class="collection-row__title">${escapeHtml(c.title)}</span>
       </span>
     </a>`;
+}
+
+/** На компьютере «Есть в подборках» — справа от «Где и когда», под
+ *  «Идёшь не один?»: там иначе пусто. На телефоне — внизу страницы. */
+function placeCollectionsSection() {
+  const section = $('#place-collections');
+  const aside = $('#place-aside');
+  const bottom = $('.place-more');
+  if (!section || !aside || !bottom) return;
+  const wide = window.matchMedia('(min-width: 900px)');
+  const place = () => {
+    if (wide.matches) aside.append(section);
+    else bottom.before(section);
+  };
+  place();
+  on(wide, 'change', place);
 }
 
 /** «Есть в подборках»: статьи, где упоминается место. Без подборок — секции нет. */
@@ -604,7 +638,8 @@ async function main() {
   renderReviews(place.slug);
   attachEventListeners(place, places);
 
-  await renderMap(place);
+  initMap(place);
+  placeCollectionsSection();
 
   if (timerInterval) clearInterval(timerInterval);
   timerInterval = setInterval(() => refreshOpenStatus(place), 60000);

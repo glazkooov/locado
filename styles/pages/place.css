@@ -889,6 +889,8 @@ a.plan-stop__name:hover { color: var(--primary-text); }
 
 .place-block__title {
   margin-bottom: 14px;
+  /* Высота строки задана явно: от неё считается отступ правой колонки */
+  line-height: 1.2;
   font-family: var(--font-heading);
   font-size: var(--fs-xl);
   font-weight: 700;
@@ -969,44 +971,56 @@ a.plan-stop__name:hover { color: var(--primary-text); }
   box-shadow: var(--shadow-soft);
 }
 
-/* Телефон: адрес, часы, кнопки, затем карта, «Что-то устарело?» — последней
-   строкой карточки */
-.where-card { display: flex; flex-direction: column; }
-.where-card__info { display: contents; }
-.where-card__map { position: relative; order: 1; border-top: 1px solid var(--line); }
-.where-card__fix { order: 2; }
 .where-card .where-row:first-child { border-top: 0; }
 
+/* «Показать на карте» и «Как добраться» — одной строкой, карта под ней */
+.where-card__map-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 18px;
+  border-top: 1px solid var(--line);
+}
+
+.where-card__map-row[hidden] { display: none; }
+
+.where-card__map-toggle,
+.where-card__route {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 48px;
+  font-family: inherit;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.where-card__map-toggle { padding: 0; border: 0; background: none; color: var(--ink); cursor: pointer; }
+
+.where-card__map-toggle .icon,
+.where-card__route .icon { color: var(--primary); }
+
+.where-card__chevron { transition: transform 0.2s; }
+
+.where-card__map-toggle[aria-expanded="true"] .where-card__chevron { transform: rotate(180deg); }
+
+.where-card__route { color: var(--primary-text); }
+
+.where-card__map-toggle:hover span,
+.where-card__route:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+.where-card__map[hidden] { display: none; }
+
 .where-card__map .map-container {
-  height: 200px;
+  height: 260px;
   max-width: 100%;
   overflow: hidden;
   border-radius: 0;
 }
 
 
-/* В левом верхнем углу: внизу — подпись и условия Яндекса, справа сверху —
-   кнопка «на весь экран», слева ниже — масштаб */
-.where-card__map-link {
-  position: absolute;
-  left: 12px;
-  top: 12px;
-  z-index: 2;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 36px;
-  padding: 0 14px;
-  border-radius: var(--radius-pill);
-  background: #fff;
-  box-shadow: 0 2px 10px rgba(40, 20, 10, 0.16);
-  font-size: var(--fs-sm);
-  font-weight: 700;
-  color: var(--ink);
-  text-decoration: none;
-}
-
-.where-card__map-link .icon { color: var(--primary); }
 
 .where-row {
   display: grid;
@@ -1169,19 +1183,7 @@ a.plan-stop__name:hover { color: var(--primary-text); }
 
 .invite-card:hover .invite-card__btn { background: var(--cream); }
 
-/* Компьютер: полосой — фото и текст слева, кнопка справа */
-@media (min-width: 900px) {
-  .invite-card {
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 24px;
-    padding: 22px 28px;
-  }
-  .invite-card::after { width: 220px; height: 220px; top: -90px; right: 120px; }
-  .invite-card__btn { padding: 0 32px; min-height: 50px; }
-  .invite-card__title { font-size: var(--fs-xl); }
-  .invite-card__text { font-size: var(--fs-md); }
-}
+
 
 /* Окно «Позвать друга»: на телефоне выезжает снизу */
 .invite-options { display: grid; gap: 10px; }
@@ -1280,15 +1282,19 @@ a.plan-stop__name:hover { color: var(--primary-text); }
 
 .collection-row__title { font-weight: 700; line-height: 1.3; }
 
-/* Компьютер: «Где и когда» — слева адрес, часы, кнопки и «Что-то
-   устарело?» (прижата к низу), справа карта на всю высоту карточки */
+/* Компьютер: «Где и когда» слева, справа — «Идёшь не один?» и «Есть в
+   подборках» (её переносит сюда place.js) */
 @media (min-width: 900px) {
-  .where-card { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); }
-  .where-card__map { min-height: 320px; border-top: 0; border-left: 1px solid var(--line); }
-  .where-card__map .map-container { position: absolute; inset: 0; height: auto; }
-  .where-card__info { display: flex; flex-direction: column; }
-  .where-card__info > .where-row:first-child { border-top: 0; }
+  .place-side { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 32px; align-items: start; }
+  /* Правая колонка начинается вровень с карточкой, а не с заголовком */
+  .place-aside { display: grid; gap: 28px; margin-top: calc(var(--fs-xl) * 1.2 + 14px); }
   .where-row { padding: 20px 24px; }
   .where-card__btns { padding: 4px 24px 20px; }
-  .where-card__fix { margin-top: auto; padding: 0 24px; }
+  .where-card__map-row,
+  .where-card__fix { padding: 0 24px; }
+  .where-card__map .map-container { height: 300px; }
+  .place-aside .place-collections { margin: 0; padding: 0; max-width: none; }
+  .place-aside .place-collections .section-head { margin-bottom: 12px; }
+  .place-aside .place-collections .section-title { font-size: var(--fs-lg); }
+  .place-aside .place-collections__list { grid-template-columns: minmax(0, 1fr); gap: 10px; }
 }
