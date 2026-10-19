@@ -317,46 +317,14 @@ async function renderMap(place) {
 
 /* «А что рядом?» — то, что просили в интервью: «сходил в одно место — хочется
    рядом поесть или догулять». Соседи до ~15 минут пешком разложены по тому,
-   зачем туда идти, а кнопка собирает из них готовое продолжение дня. */
-const NEARBY_ICON = { eat: 'utensils', walk: 'trees', see: 'landmark' };
-const NEARBY_GROUP = { eat: 'Поесть', walk: 'Догулять', see: 'Заглянуть ещё' };
-const NEARBY_STEP = { eat: 'Поесть', walk: 'Догулять', see: 'Заглянуть' };
+   зачем туда идти; одной строкой ниже — готовый план из двух остановок. */
+const NEARBY_TAB = { eat: 'Поесть', walk: 'Догулять', see: 'Заглянуть' };
 // После прогулки или музея первым делом хочется есть, после кафе — гулять
 const NEARBY_ORDER = { eat: ['walk', 'see', 'eat'], walk: ['eat', 'see', 'walk'], see: ['eat', 'walk', 'see'] };
-const NEARBY_PER_GROUP = 3;
 
-function nearbySummaryHtml(counts, order, filter) {
-  const words = {
-    eat: (n) => `${n} ${pluralize(n, ['место', 'места', 'мест'])}, где поесть`,
-    walk: (n) => `${n} ${pluralize(n, ['место', 'места', 'мест'])}, где погулять`,
-    see: (n) => `${n} ${pluralize(n, ['музей или пространство', 'музея или пространства', 'музеев и пространств'])}`
-  };
-  const parts = order.filter((k) => counts[k]).map((k) =>
-    `<button type="button" class="nearby-pill nearby-pill--${k}" data-intent="${k}" aria-pressed="${filter === k}">${words[k](counts[k])}</button>`);
-  const last = parts.pop();
-  // «…, где поесть, и …» — придаточное перед «и» закрывается запятой
-  const before = parts.length && /где /.test(parts[parts.length - 1]) ? ', и ' : ' и ';
-  return `Рядом есть ${parts.length ? `${parts.join(', ')}${before}` : ''}${last}.`;
-}
-
-function nearbyRowHtml({ place: p, minutes }, intent) {
-  return `
-    <a class="nearby-row" href="${placeUrl(p.slug)}">
-      <span class="nearby-row__thumb nearby-row__thumb--${intent}">
-        ${icon(NEARBY_ICON[intent])}
-        <img class="nearby-row__img" src="${escapeHtml(p.photoSm || p.photo || '')}" alt="" loading="lazy">
-      </span>
-      <span class="nearby-row__text">
-        <span class="nearby-row__name">${escapeHtml(p.name)}</span>
-        <span class="nearby-row__type">${escapeHtml(p.type || categoryLabel(p.category))}</span>
-      </span>
-      <span class="nearby-row__time">${minutes} мин</span>
-    </a>`;
-}
-
-/** Варианты продолжения: шаг 1 — чего хочется после этого места,
- *  шаг 2 — ближайшее к шагу 1 место другого рода. */
-function nearbyChains(place, list) {
+/** Готовые планы: шаг 1 — чего хочется после этого места, шаг 2 — ближайшее
+ *  к шагу 1 место другого рода. */
+function nearbyPlans(place, list) {
   const [first, second] = NEARBY_ORDER[placeIntent(place)];
   return list.filter((x) => x.intent === first).slice(0, 3).map((s1) => {
     let pool = list.filter((x) => x.intent === second);
@@ -368,78 +336,54 @@ function nearbyChains(place, list) {
   });
 }
 
-function nearbyChainHtml(place, chain, hasMore) {
-  const { s1, s2 } = chain;
-  const step = (intent, kicker, p, link = true) => `
-    <div class="nearby-step">
-      <span class="nearby-step__icon nearby-step__icon--${intent}">${icon(NEARBY_ICON[intent])}</span>
-      <span class="nearby-step__text">
-        <span class="nearby-step__kicker">${kicker}</span>
-        ${link ? `<a class="nearby-step__name" href="${placeUrl(p.slug)}">${escapeHtml(p.name)}</a>` : `<span class="nearby-step__name">${escapeHtml(p.name)}</span>`}
-      </span>
-    </div>`;
-  const walk = (m) => `<p class="nearby-walk">${m} мин пешком</p>`;
-  const points = [place, s1.place].concat(s2 ? [s2.place] : []).filter((p) => p.coords);
+function nearbyPlanHtml(place, { s1, s2 }, hasMore) {
+  const link = (p) => `<a href="${placeUrl(p.slug)}">${escapeHtml(p.name)}</a>`;
+  const points = [place, s1.place, s2.place].filter((p) => p.coords);
   const yandex = `https://yandex.ru/maps/?rtext=${points.map((p) => p.coords.join(',')).join('~')}&rtt=pd`;
-  const total = s1.minutes + (s2 ? s2.minutes : 0);
-  return `
-    ${step(placeIntent(place), 'Сейчас', place, false)}
-    ${walk(s1.minutes)}
-    ${step(s1.intent, NEARBY_STEP[s1.intent], s1.place)}
-    ${s2 ? walk(s2.minutes) + step(s2.intent, `Потом — ${NEARBY_STEP[s2.intent].toLowerCase()}`, s2.place) : ''}
-    <p class="nearby-chain__total">Около ${total} ${pluralize(total, ['минуты', 'минут', 'минут'])} пешком между точками</p>
-    <div class="nearby-chain__actions">
-      ${hasMore ? '<button type="button" class="nearby-chain__btn" id="nearby-alt">Другой вариант</button>' : ''}
-      <a class="nearby-chain__btn nearby-chain__btn--primary" href="${escapeHtml(yandex)}" target="_blank" rel="noopener">Пешком в Яндекс Картах</a>
-    </div>`;
+  const total = s1.minutes + s2.minutes;
+  return `<span class="nearby-plan__label">Если не хочется выбирать:</span>
+    ${link(s1.place)} → ${link(s2.place)},
+    около ${total} ${pluralize(total, ['минуты', 'минут', 'минут'])} пешком.
+    <a class="nearby-plan__route" href="${escapeHtml(yandex)}" target="_blank" rel="noopener">Проложить путь</a>${hasMore ? ' <button type="button" class="nearby-plan__more" id="nearby-alt">Другой план</button>' : ''}`;
 }
 
 function renderNearby(place, allPlaces) {
   const section = $('#place-nearby');
-  if (!section) return;
+  const container = $('#nearby-places-container');
+  if (!section || !container) return;
   const list = nearby(allPlaces, place, { maxMinutes: 15, count: 40 })
     .map((x) => ({ ...x, intent: placeIntent(x.place) }));
   if (!list.length) return;
-  const order = NEARBY_ORDER[placeIntent(place)];
-  const counts = { eat: 0, walk: 0, see: 0 };
-  list.forEach((x) => { counts[x.intent] += 1; });
-  let filter = null;
+  const intents = NEARBY_ORDER[placeIntent(place)].filter((k) => list.some((x) => x.intent === k));
+  let active = intents[0];
 
+  const tabs = $('#nearby-tabs');
   const draw = () => {
-    $('#nearby-summary').innerHTML = nearbySummaryHtml(counts, order, filter);
-    $('#nearby-groups').innerHTML = order
-      .filter((k) => counts[k] && (!filter || filter === k))
-      .map((k) => `
-        <div class="nearby-group">
-          <h3 class="nearby-group__title">${NEARBY_GROUP[k]}</h3>
-          ${list.filter((x) => x.intent === k).slice(0, filter ? 6 : NEARBY_PER_GROUP).map((x) => nearbyRowHtml(x, k)).join('')}
-        </div>`).join('');
+    tabs.innerHTML = intents.map((k) => {
+      const n = list.filter((x) => x.intent === k).length;
+      return `<button type="button" class="category-btn${k === active ? ' active' : ''}" data-intent="${k}" aria-pressed="${k === active}">${NEARBY_TAB[k]} <span class="nearby-tabs__count">${n}</span></button>`;
+    }).join('');
+    container.innerHTML = list.filter((x) => x.intent === active).slice(0, 8)
+      .map(({ place: p, minutes }) => similarCardHtml(p, { note: `${p.type || categoryLabel(p.category)} · ${minutes} мин` })).join('');
+    bindImageFallback(container);
+    container.scrollLeft = 0;
   };
   draw();
-  on($('#nearby-summary'), 'click', '.nearby-pill', (e, btn) => {
-    filter = filter === btn.dataset.intent ? null : btn.dataset.intent;
-    draw();
-  });
+  on(tabs, 'click', '.category-btn', (e, btn) => { active = btn.dataset.intent; draw(); });
 
-  // Продолжение дня — только если есть хотя бы первый шаг
-  const chains = nearbyChains(place, list);
-  const box = $('#nearby-next');
-  if (!chains.length) { box.hidden = true; } else {
-    const btn = $('#nearby-build');
-    const chainEl = $('#nearby-chain');
+  // План из одной остановки ничем не лучше первой карточки — только из двух
+  const plans = nearbyPlans(place, list).filter((x) => x.s2);
+  const planEl = $('#nearby-plan');
+  if (plans.length) {
     let alt = 0;
-    const show = () => { chainEl.innerHTML = nearbyChainHtml(place, chains[alt % chains.length], chains.length > 1); };
-    on(btn, 'click', () => {
-      const open = chainEl.hidden;
-      chainEl.hidden = !open;
-      btn.setAttribute('aria-expanded', String(open));
-      btn.textContent = open ? 'Свернуть' : 'Собрать продолжение дня';
-      if (open) { show(); goal('nearby_chain', { place: place.slug }); }
-    });
-    on(chainEl, 'click', '#nearby-alt', () => { alt += 1; show(); });
+    const show = () => { planEl.innerHTML = nearbyPlanHtml(place, plans[alt % plans.length], plans.length > 1); };
+    show();
+    planEl.hidden = false;
+    on(planEl, 'click', '#nearby-alt', () => { alt += 1; show(); });
+    on(planEl, 'click', '.nearby-plan__route', () => goal('nearby_plan', { place: place.slug }));
   }
-  bindImageFallback(section);
   section.hidden = false;
+  initSimilarNav(container, $('#nearby-prev'), $('#nearby-next'));
 }
 
 function renderSimilar(place, allPlaces) {

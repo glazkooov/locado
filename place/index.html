@@ -296,20 +296,22 @@
     </section>
 
     <!-- «А что рядом?»: места до ~10 минут пешком — заполняет place.js; нет соседей — секции нет -->
-    <section class="place-nearby container" id="place-nearby" hidden>
-      <div class="section-head">
-        <h2 class="section-title">А что <em>рядом</em>?</h2>
-      </div>
-      <div class="nearby-card">
-        <!-- «Рядом есть 4 места, где поесть, …» — части фразы оставляют одну группу -->
-        <p class="nearby-summary" id="nearby-summary"></p>
-        <div class="nearby-groups" id="nearby-groups"></div>
-        <!-- Готовое продолжение: отсюда поесть, потом догулять -->
-        <div class="nearby-next" id="nearby-next">
-          <button type="button" class="nearby-next__btn" id="nearby-build" aria-expanded="false" aria-controls="nearby-chain">Собрать продолжение дня</button>
-          <div class="nearby-chain" id="nearby-chain" hidden></div>
+    <!-- «А что рядом?»: соседи до ~15 минут пешком по намерению (поесть,
+         догулять, заглянуть) — тем же рядом карточек, что «Похожие места»,
+         и одной строкой готовый план. Заполняет place.js; соседей нет — секции нет -->
+    <section class="place-similar place-nearby" id="place-nearby" hidden>
+      <div class="container similar-head">
+        <div class="section-head">
+          <h2 class="section-title">А что <em>рядом</em>?</h2>
+        </div>
+        <div class="similar-nav">
+          <button type="button" class="similar-nav__btn" id="nearby-prev" aria-label="Назад" disabled><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#chevron-left"></use></svg></button>
+          <button type="button" class="similar-nav__btn" id="nearby-next" aria-label="Дальше"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#chevron-right"></use></svg></button>
         </div>
       </div>
+      <div class="container nearby-tabs" id="nearby-tabs" role="group" aria-label="Что искать рядом"></div>
+      <div class="similar-scroll" id="nearby-places-container"></div>
+      <p class="container nearby-plan" id="nearby-plan" hidden></p>
     </section>
 
     <!-- Похожие -->

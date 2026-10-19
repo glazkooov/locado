@@ -36,13 +36,14 @@ export function cardHtml(place, isFavorite, extraClass = '', { now = null } = {}
     </div>`;
 }
 
-export function similarCardHtml(place) {
+/** note — подпись вместо типа места («Пекарня · 5 мин» в «А что рядом?») */
+export function similarCardHtml(place, { note = '' } = {}) {
   return `
     <a href="${placeUrl(place.slug)}" class="similar-card">
       <img src="${escapeHtml(place.photoSm || place.photo || '')}" alt="${escapeHtml(place.name)}" loading="lazy">
       <div class="info">
         <h4>${escapeHtml(place.name)}</h4>
-        <p>${escapeHtml(place.type || categoryLabel(place.category))}</p>
+        <p>${escapeHtml(note || place.type || categoryLabel(place.category))}</p>
       </div>
     </a>`;
 }
@@ -68,7 +69,7 @@ export function syncFavoriteButtons(slug, isActive) {
 export function bindImageFallback(root = document) {
   root.addEventListener('error', (e) => {
     const img = e.target;
-    if (img.tagName === 'IMG' && img.matches('.place-card__img, .similar-card img, .nearby-row__img, .randomizer-preview img, .state-card img, .c-place__photo img, .now-card__photo')) {
+    if (img.tagName === 'IMG' && img.matches('.place-card__img, .similar-card img, .randomizer-preview img, .state-card img, .c-place__photo img, .now-card__photo')) {
       img.classList.add('is-broken');
     }
   }, true);
