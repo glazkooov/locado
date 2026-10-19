@@ -17,5 +17,5 @@ og_render(__DIR__ . '/index.html', $place ? array(
   'image' => isset($place['photo']) ? $place['photo'] : '',
   'card' => 'place=' . rawurlencode($place['slug']),
   'kind' => isset($place['type']) ? $place['type'] : '',
-  'url' => 'place/?slug=' . rawurlencode($place['slug'])
+  'url' => 'place/' . rawurlencode($place['slug'])
 ) : null);

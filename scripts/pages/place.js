@@ -2,7 +2,7 @@
 
 import { renderCredit } from '../core/credits.js';
 import { goal } from '../core/analytics.js';
-import { $, $$, on } from '../core/dom.js';
+import { $, $$, on, slugFromUrl } from '../core/dom.js';
 import {
   escapeHtml, safeUrl, cssUrl, getOpenStatus, describeStatusTimer, scheduleHtml, telHref, displayHost,
   openStatusLabel, isAlwaysOpen
@@ -579,7 +579,7 @@ function loadReportForm(place) {
 }
 
 async function main() {
-  const slug = new URLSearchParams(window.location.search).get('slug');
+  const slug = slugFromUrl('place');
   if (!slug) { showNotFound(); return; }
 
   let places;

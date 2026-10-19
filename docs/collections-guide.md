@@ -1,6 +1,6 @@
 # Как написать подборку
 
-Подборки лежат в `data/collections.json`. Страница — `collection.html?slug=…`.
+Подборки лежат в `data/collections.json`. Страница — `collection/<slug>` (например, `collection/vdol-reki`).
 Первые три подборки на главной берутся по порядку из этого файла.
 
 ## Жанр и голос

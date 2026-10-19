@@ -17,8 +17,8 @@ const urls = [
   '',
   'collections/',
   'suggest/',
-  ...collections.map((c) => `collection/?slug=${encodeURIComponent(c.slug)}`),
-  ...places.map((p) => `place/?slug=${encodeURIComponent(p.slug)}`)
+  ...collections.map((c) => `collection/${encodeURIComponent(c.slug)}`),
+  ...places.map((p) => `place/${encodeURIComponent(p.slug)}`)
 ];
 
 // & в адресе в XML нужно экранировать

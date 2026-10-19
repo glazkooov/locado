@@ -4,7 +4,7 @@
 
 import { renderCredit, creditToggleHtml } from '../core/credits.js';
 import { goal } from '../core/analytics.js';
-import { $, on } from '../core/dom.js';
+import { $, on, slugFromUrl } from '../core/dom.js';
 import { escapeHtml, cssUrl, hoursForArticle } from '../core/format.js';
 import { loadPlaces, bySlug, placeUrl, metroList, categoryLabel } from '../core/places.js';
 import { loadCollections, COLLECTION_TYPES } from '../core/collections.js';
@@ -187,7 +187,7 @@ function renderMore(c, collections) {
 }
 
 async function main() {
-  const slug = new URLSearchParams(window.location.search).get('slug');
+  const slug = slugFromUrl('collection');
   if (!slug) { showNotFound(); return; }
 
   let collections;

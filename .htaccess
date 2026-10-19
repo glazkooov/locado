@@ -28,6 +28,15 @@ AddDefaultCharset utf-8
   # Служебные файлы и папки проекта не отдаём, если их всё-таки загрузили
   RewriteRule (^|/)\.(?!well-known) - [F]
   RewriteRule ^(docs|tools)(/|$) - [F]
+
+  # Красивые адреса: /place/kolomenskoe и /collection/vdol-reki. Старые
+  # ?slug=… (ссылки в чатах, закладки) — постоянная переадресация на новые.
+  # THE_REQUEST — исходный запрос браузера: внутренняя подмена ниже его не
+  # меняет, поэтому переадресация не зацикливается
+  RewriteCond %{THE_REQUEST} \s/(place|collection)/(?:index\.(?:html|php))?\?(?:[^\s]*&)?slug=([a-z0-9-]+)[&\s] [NC]
+  RewriteRule ^ /%1/%2? [R=301,L]
+  # Сама страница — одна на все места: slug из адреса уходит в index.php
+  RewriteRule ^(place|collection)/([a-z0-9-]+)/?$ $1/index.php?slug=$2 [L,QSA]
 </IfModule>
 
 # Тестовый поддомен и любые другие адреса, кроме основного, поисковики
