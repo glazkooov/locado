@@ -1040,11 +1040,11 @@ a.plan-stop__name:hover { color: var(--primary-text); }
 
 .fact-fix { color: var(--text-light); }
 
-.fact-fix span { flex: 1; }
+.fact-fix span { text-decoration: underline; text-decoration-color: var(--line-strong); text-underline-offset: 3px; }
 
-.fact-fix b { color: var(--primary-text); font-weight: 700; }
+.fact-fix:hover { color: var(--primary-text); }
 
-.fact-fix:hover b { text-decoration: underline; text-underline-offset: 3px; }
+.fact-fix:hover span { text-decoration-color: currentColor; }
 
 /* Компьютер: справка плашкой в две колонки — слева часы и адрес, справа
    цена и кнопки; карта и «Поправить» — на всю ширину */
@@ -1149,10 +1149,13 @@ a.plan-stop__name:hover { color: var(--primary-text); }
   min-height: 46px;
   border-radius: var(--radius-pill);
   background: #fff;
+  font-size: var(--fs-md);
   font-weight: 700;
   color: var(--primary-strong);
   transition: background 0.2s;
 }
+
+.invite-card__btn .icon { width: 20px; height: 20px; }
 
 .invite-card:hover .invite-card__btn { background: var(--cream); }
 

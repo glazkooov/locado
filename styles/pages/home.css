@@ -1296,8 +1296,10 @@ body.feed-toolbar-stuck .main-header { box-shadow: none; }
   /* Воздух вокруг «Удиви меня»; из-под героя выглядывает заголовок
      ленты, а категории — уже за первым экраном. Вопрос чуть меньше,
      карточки чуть уже */
-  .hero { padding-bottom: calc(60px + var(--hero-wave-h)); }
-  .hero__choices { gap: 24px; }
+  /* «Удиви меня» — посередине между карточками и волной: одинаковый
+     отступ сверху и снизу, а не прижата к карточкам */
+  .hero { padding-bottom: calc(44px + var(--hero-wave-h)); }
+  .hero__choices { gap: 36px; } /* + 8px нижнего отступа ленты = 44px */
   .hero__content { gap: 22px; }
   .hero__title { font-size: 1.75rem; }
   .hero__pick { margin-bottom: -10px; }
