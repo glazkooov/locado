@@ -8,6 +8,7 @@ import { bindCards } from '../components/card.js';
 import { initFeed, serviceCardHtml, SERVICE_RATIO } from '../components/feed.js';
 import { initRandomizer } from '../components/randomizer.js';
 import { initHeroMoods, renderHeroMoods } from '../components/hero-moods.js';
+import { initHeroCarousel } from '../components/hero-carousel.js';
 import { heroGreeting } from '../core/daypart.js';
 import { renderCategoryButtons } from '../components/category-buttons.js';
 import { initPlacesMap } from '../components/map.js';
@@ -168,6 +169,7 @@ function reminderCards({ collections }) {
 async function main() {
   const collectionsShown = renderCollections();
   renderHeroMoods(renderHeroGreeting());
+  initHeroCarousel();
   renderCategoryButtons();
   bindCards(document.body);
 
