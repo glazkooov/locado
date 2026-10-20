@@ -16,7 +16,7 @@ const VARIANTS = {
     const a = Math.abs(d), s = Math.sign(d), k = Math.min(a, 1.6);
     return {
       t: `translate3d(${s * (k * 128 - Math.max(0, k - 1) * 30)}px, 0, ${-k * 150}px) rotateY(${-s * Math.min(a, 1) * 24}deg)`,
-      filter: `brightness(${1 - Math.min(a, 1) * 0.28}) blur(${Math.min(a, 1) * 1.2}px)`,
+      shade: Math.min(a, 1) * 0.3,
       o: a > 2.2 ? 0 : 1, z: 100 - Math.round(a * 10), par: -d * 14, label: 1 - Math.min(a, 1)
     };
   },
@@ -27,19 +27,32 @@ const VARIANTS = {
     return {
       t: `rotate(${d * 15}deg) scale(${1 - Math.min(a, 1.5) * 0.08})`,
       origin: '50% 1100px',
-      filter: `brightness(${1 - Math.min(a, 1) * 0.22})`,
+      shade: Math.min(a, 1) * 0.25,
       o: a > 2.3 ? 0 : 1, z: 100 - Math.round(a * 10), par: -d * 10, label: 1 - Math.min(a, 1)
     };
   },
-  // Колода: соседние прячутся за центральной и выглядывают краем, при
-  // свайпе центральная уезжает, следующая выходит вперёд
+  // Колода: карточки лежат стопкой веером — следующая выглядывает справа,
+  // за ней — слева. Свайп влево уносит верхнюю карточку за край (она всё
+  // время поверх остальных), из-под неё поднимается следующая; свайп
+  // вправо возвращает улетевшую. Ушедшая карточка ложится в низ стопки
   stack(d) {
-    const a = Math.abs(d), s = Math.sign(d);
-    return {
-      t: `translate3d(${a <= 1 ? s * a * 92 : s * (92 + (a - 1) * 14)}px, ${Math.min(a, 1.5) * 14}px, 0) scale(${1 - Math.min(a, 1.5) * 0.12})`,
-      filter: `brightness(${1 - Math.min(a, 1) * 0.3})`,
-      o: a > 1.9 ? 0 : 1, z: 100 - Math.round(a * 10), par: -d * 12, label: 1 - Math.min(a, 1)
-    };
+    if (d < 0) {
+      const a = -d;
+      return { t: `translate3d(${d * 330}px, ${a * 18}px, 0) rotate(${d * 14}deg)`,
+        o: Math.max(0, Math.min(1, (1 - a) / 0.25)), z: 300 - Math.round(a * 100), shade: 0, par: d * 10, label: 1 - Math.min(1, a * 1.6) };
+    }
+    // Места в стопке: 0 — сверху, 1 — справа, 2 — слева; между ними — плавно
+    const SLOTS = [
+      { x: 0, y: 0, r: 0, s: 1, shade: 0 },
+      { x: 38, y: 10, r: 5, s: 0.9, shade: 0.28 },
+      { x: -38, y: 18, r: -5, s: 0.82, shade: 0.45 },
+      { x: 0, y: 26, r: 0, s: 0.74, shade: 0.6 }
+    ];
+    const k = Math.min(Math.floor(d), 2), f = d - k;
+    const A = SLOTS[k], B = SLOTS[k + 1];
+    const m = (p) => A[p] + (B[p] - A[p]) * f;
+    return { t: `translate3d(${m('x')}px, ${m('y')}px, 0) rotate(${m('r')}deg) scale(${m('s')})`,
+      o: Math.max(0, Math.min(1, (2.5 - d) / 0.4)), z: 200 - Math.round(d * 30), shade: m('shade'), par: d * 6, label: 1 - Math.min(1, d * 1.6) };
   }
 };
 
@@ -71,7 +84,9 @@ export function initHeroCarousel() {
       const d = wrap(i - pos), L = layout(d);
       card.style.transform = L.t;
       if (L.origin) card.style.transformOrigin = L.origin;
-      card.style.filter = L.filter;
+      // Затемнение — прозрачностью слоя (::before), а не filter: фильтр
+      // перерисовывает фото на каждом кадре и тормозит на телефонах
+      card.style.setProperty('--shade', L.shade.toFixed(3));
       card.style.opacity = L.o;
       card.style.zIndex = L.z;
       card.style.setProperty('--par', `${L.par}%`);
@@ -126,7 +141,12 @@ export function initHeroCarousel() {
   });
   const release = () => {
     if (!dragging) return; dragging = false;
-    if (moved) go(Math.round(pos - flick * 2.4));
+    if (!moved) return;
+    // Бросок докручивает дальше, чем медленный свайп; колода — не больше
+    // одной карточки за свайп, как настоящая
+    let to = Math.round(pos - Math.max(-1.4, Math.min(1.4, flick * 2.4)));
+    if (kind === 'stack') to = Math.max(Math.round(startPos) - 1, Math.min(Math.round(startPos) + 1, to));
+    go(to);
   };
   container.addEventListener('pointerup', release);
   container.addEventListener('pointercancel', release);

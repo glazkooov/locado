@@ -1348,7 +1348,9 @@ body.feed-toolbar-stuck .main-header { box-shadow: none; }
     display: block;
     height: 316px;
     padding: 0;
+    /* Обрезаем только бока (улетевшие карточки); тень снизу не режем */
     overflow: hidden;
+    overflow: clip visible;
     perspective: 1000px;
     touch-action: pan-y;
     -webkit-user-select: none;
@@ -1364,9 +1366,29 @@ body.feed-toolbar-stuck .main-header { box-shadow: none; }
     border-width: 2px;
     box-shadow: 0 22px 40px -18px rgba(70, 30, 8, 0.55);
     transition: border-color 0.25s ease;
-    will-change: transform, filter;
+    will-change: transform;
     backface-visibility: hidden;
   }
+  /* Затемнение дальних карточек — слой поверх фото (--shade задаёт скрипт) */
+  .hero__moods.is-carousel .mood-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: #2A1608;
+    opacity: var(--shade, 0);
+    pointer-events: none;
+  }
+  .hero__moods.is-carousel .mood-card__text { z-index: 2; }
+  .hero__moods.is-carousel--stack { height: 340px; }
+  .hero__moods.is-carousel--stack .mood-card {
+    top: 14px;
+    width: 220px;
+    margin-left: -110px;
+    border-radius: 26px;
+    box-shadow: 0 26px 44px -22px rgba(70, 30, 8, 0.6), 0 2px 6px rgba(70, 30, 8, 0.12);
+  }
+  .hero__moods.is-carousel--stack .mood-card[data-mood] .mood-card__label { font-size: 1.25rem; }
   .hero__moods.is-carousel .mood-card:hover { border-color: var(--hero-card-line); }
   .hero__moods.is-carousel .mood-card.is-front { border-color: #fff; }
   /* Фото чуть шире карточки и сдвигается медленнее неё — объём без 3D */
@@ -1380,7 +1402,7 @@ body.feed-toolbar-stuck .main-header { box-shadow: none; }
   .hero__moods.is-carousel .mood-card:hover .mood-card__img { transform: translateX(var(--par, 0%)); }
   .hero__moods.is-carousel .mood-card__text { opacity: var(--label, 1); }
   .hero__moods.is-carousel .mood-card[data-mood] .mood-card__label { font-size: var(--fs-lg); }
-  .is-carousel--arc { height: 330px; }
+  .hero__moods.is-carousel--arc { height: 330px; }
 
   .mood-dots { display: flex; justify-content: center; gap: 6px; margin-top: -2px; }
   .mood-dots i { width: 6px; height: 6px; border-radius: 3px; background: var(--hero-line); transition: width 0.25s ease, background 0.25s ease; }
