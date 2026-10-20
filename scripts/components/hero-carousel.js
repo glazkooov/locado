@@ -68,16 +68,17 @@ export function initHeroCarousel() {
   if (n < 3) return;
 
   container.classList.add('is-carousel', `is-carousel--${kind}`);
+  // Точки — и указатель, и переход: нажатие на точку крутит к карточке
   const dots = document.createElement('div');
   dots.className = 'mood-dots';
-  dots.innerHTML = cards.map(() => '<i></i>').join('');
+  dots.innerHTML = cards.map((c) => `<button type="button" aria-label="${c.querySelector('.mood-card__label')?.textContent || ''}"><i></i></button>`).join('');
   container.after(dots);
   addSwitcher(kind);
 
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   // Расстояние до центра по кругу: −n/2 … n/2
   const wrap = (d) => ((d % n) + n + n / 2) % n - n / 2;
-  let pos = 0, vel = 0, target = 0, raf = 0;
+  let pos = 0, vel = 0, target = 0, raf = 0, shown = null;
 
   const draw = () => {
     cards.forEach((card, i) => {
@@ -96,7 +97,15 @@ export function initHeroCarousel() {
       card.tabIndex = front ? 0 : -1;
     });
     const cur = ((Math.round(pos) % n) + n) % n;
-    [...dots.children].forEach((dot, i) => dot.classList.toggle('on', i === cur));
+    [...dots.children].forEach((dot, i) => {
+      dot.classList.toggle('on', i === cur);
+      dot.setAttribute('aria-current', String(i === cur));
+    });
+    // Лёгкий отклик пальцу при смене карточки (Android; iOS не умеет)
+    if (cur !== shown) {
+      if (shown !== null && dragging) navigator.vibrate?.(6);
+      shown = cur;
+    }
   };
 
   // Пружина: к цели с затуханием, без перелёта — мягко, как в нативных лентах
@@ -161,6 +170,11 @@ export function initHeroCarousel() {
     if (Math.abs(d) >= 0.5) { e.preventDefault(); e.stopImmediatePropagation(); go(Math.round(pos + d)); }
   }, true);
 
+  dots.addEventListener('click', (e) => {
+    const i = [...dots.children].indexOf(e.target.closest('button'));
+    if (i >= 0) go(Math.round(pos + wrap(i - pos)));
+  });
+
   container.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowRight') { e.preventDefault(); go(Math.round(target) + 1); focusFront(); }
     if (e.key === 'ArrowLeft') { e.preventDefault(); go(Math.round(target) - 1); focusFront(); }
@@ -168,6 +182,25 @@ export function initHeroCarousel() {
   const focusFront = () => requestAnimationFrame(() => container.querySelector('.is-front')?.focus({ preventScroll: true }));
 
   draw();
+  hint();
+
+  // Подсказка «листается»: один раз за визит, когда колода видна, верхняя
+  // карточка чуть отъезжает и возвращается. Человек ещё не трогал колоду
+  function hint() {
+    if (reduce || !('IntersectionObserver' in window)) return;
+    try { if (sessionStorage.getItem('moods-hint')) return; } catch (e) { /* без хранилища — покажем */ }
+    const io = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      io.disconnect();
+      setTimeout(() => {
+        if (dragging || pos !== 0) return;
+        try { sessionStorage.setItem('moods-hint', '1'); } catch (e) { /* не важно */ }
+        target = 0.32; spring();
+        setTimeout(() => { if (!dragging) go(0); }, 420);
+      }, 900);
+    }, { threshold: 0.6 });
+    io.observe(container);
+  }
 }
 
 /** Переключатель вариантов внизу экрана — только для прототипа. */
