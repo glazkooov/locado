@@ -1340,9 +1340,10 @@ body.feed-toolbar-stuck .main-header { box-shadow: none; }
   .feed-next { grid-template-columns: 1fr 1fr; }
 }
 
-/* ===== ПРОТОТИП: настроения барабаном (components/hero-carousel.js,
-   только по адресу ?moods=depth | arc | stack, только на телефоне) ===== */
+/* ===== Настроения на телефоне — колодой (components/hero-carousel.js).
+   Положение каждой карточки задаёт скрипт; с 768px — обычный ряд ===== */
 @media (max-width: 767px) {
+  /* Высота — по верхней карточке (14 + 293px) плюс запас под нижнюю в стопке */
   .hero__moods.is-carousel {
     position: relative;
     display: block;
@@ -1351,25 +1352,27 @@ body.feed-toolbar-stuck .main-header { box-shadow: none; }
     /* Обрезаем только бока (улетевшие карточки); тень снизу не режем */
     overflow: hidden;
     overflow: clip visible;
-    perspective: 1000px;
     touch-action: pan-y;
     -webkit-user-select: none;
     user-select: none;
   }
   .hero__moods.is-carousel .mood-card {
     position: absolute;
-    top: 8px;
+    top: 14px;
     left: 50%;
-    width: 210px;
-    margin-left: -105px;
+    width: 220px;
+    margin-left: -110px;
     aspect-ratio: 3 / 4;
     border-width: 2px;
-    box-shadow: 0 22px 40px -18px rgba(70, 30, 8, 0.55);
+    border-radius: 26px;
+    box-shadow: 0 26px 44px -22px rgba(70, 30, 8, 0.6), 0 2px 6px rgba(70, 30, 8, 0.12);
     transition: border-color 0.25s ease;
     will-change: transform;
     backface-visibility: hidden;
   }
-  /* Затемнение дальних карточек — слой поверх фото (--shade задаёт скрипт) */
+  .hero__moods.is-carousel .mood-card:hover { border-color: var(--hero-card-line); }
+  .hero__moods.is-carousel .mood-card.is-front { border-color: #fff; }
+  /* Затемнение карточек в глубине стопки — слой поверх фото (--shade) */
   .hero__moods.is-carousel .mood-card::before {
     content: '';
     position: absolute;
@@ -1379,55 +1382,16 @@ body.feed-toolbar-stuck .main-header { box-shadow: none; }
     opacity: var(--shade, 0);
     pointer-events: none;
   }
-  .hero__moods.is-carousel .mood-card__text { z-index: 2; }
-  /* Высота — по верхней карточке (14 + 293px) плюс запас под нижнюю в стопке */
-  .hero__moods.is-carousel--stack { height: 316px; }
-  .hero__moods.is-carousel--stack .mood-card {
-    top: 14px;
-    width: 220px;
-    margin-left: -110px;
-    border-radius: 26px;
-    box-shadow: 0 26px 44px -22px rgba(70, 30, 8, 0.6), 0 2px 6px rgba(70, 30, 8, 0.12);
-  }
-  .hero__moods.is-carousel--stack .mood-card[data-mood] .mood-card__label { font-size: 1.25rem; }
-  .hero__moods.is-carousel .mood-card:hover { border-color: var(--hero-card-line); }
-  .hero__moods.is-carousel .mood-card.is-front { border-color: #fff; }
   /* Фото чуть шире карточки и сдвигается медленнее неё — объём без 3D */
-  .hero__moods.is-carousel .mood-card__img {
+  .hero__moods.is-carousel .mood-card__img,
+  .hero__moods.is-carousel .mood-card:hover .mood-card__img {
     inset: 0 -12%;
     width: 124%;
     max-width: none; /* сброс стилей ограничивает картинки шириной родителя */
     transform: translateX(var(--par, 0%));
     transition: none;
   }
-  .hero__moods.is-carousel .mood-card:hover .mood-card__img { transform: translateX(var(--par, 0%)); }
-  .hero__moods.is-carousel .mood-card__text { opacity: var(--label, 1); }
+  /* Подпись — только у верхней карточки (--label гасит её у остальных) */
+  .hero__moods.is-carousel .mood-card__text { z-index: 2; opacity: var(--label, 1); }
   .hero__moods.is-carousel .mood-card[data-mood] .mood-card__label { font-size: var(--fs-lg); }
-  .hero__moods.is-carousel--arc { height: 330px; }
-
 }
-
-.moods-proto {
-  position: fixed;
-  left: 50%;
-  bottom: calc(14px + env(safe-area-inset-bottom, 0px));
-  z-index: 3000;
-  display: flex;
-  gap: 4px;
-  padding: 4px;
-  border-radius: 999px;
-  background: rgba(42, 37, 33, 0.88);
-  backdrop-filter: blur(10px);
-  transform: translateX(-50%);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-}
-.moods-proto a {
-  padding: 8px 12px;
-  border-radius: 999px;
-  font-size: var(--fs-xs);
-  font-weight: 700;
-  color: #fff;
-  text-decoration: none;
-  white-space: nowrap;
-}
-.moods-proto a[aria-current] { background: var(--primary-strong); }

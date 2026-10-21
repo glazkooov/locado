@@ -1,98 +1,69 @@
-// components/hero-carousel.js — ПРОТОТИП: карточки настроений на телефоне
-// барабаном (в центре одна, по бокам выглядывают соседние, свайп крутит
-// их по кругу). Включается только по адресу ?moods=depth | arc | stack —
-// без параметра главная остаётся как была. Внизу экрана — переключатель
-// вариантов, чтобы сравнить на своём телефоне.
+// components/hero-carousel.js — карточки настроений на телефоне колодой:
+// сверху одна карточка, из-под неё веером выглядывают соседние. Свайп
+// влево уносит верхнюю за край (она всё время поверх остальных), из-под неё
+// поднимается следующая; свайп вправо возвращает улетевшую. Карточки идут по
+// кругу. С 768px — обычный ряд из пяти карточек (home.css), колоды нет.
 //
-// Карточки те же, что рисует hero-moods.js: нажатие на центральную
-// выбирает настроение как обычно, на боковую — подкручивает к ней.
+// Карточки те же, что рисует hero-moods.js: нажатие на верхнюю выбирает
+// настроение как обычно, на выглядывающую — подкручивает к ней.
 
 import { $$ } from '../core/dom.js';
 
-const VARIANTS = {
-  // Глубина: соседние карточки уходят назад, чуть повёрнуты и размыты,
-  // фото внутри сдвигается медленнее карточки (параллакс)
-  depth(d) {
-    const a = Math.abs(d), s = Math.sign(d), k = Math.min(a, 1.6);
-    return {
-      t: `translate3d(${s * (k * 128 - Math.max(0, k - 1) * 30)}px, 0, ${-k * 150}px) rotateY(${-s * Math.min(a, 1) * 24}deg)`,
-      shade: Math.min(a, 1) * 0.3,
-      o: a > 2.2 ? 0 : 1, z: 100 - Math.round(a * 10), par: -d * 14, label: 1 - Math.min(a, 1)
-    };
-  },
-  // Дуга: карточки на большом колесе с центром далеко под экраном — как
-  // циферблат, боковые ниже и наклонены
-  arc(d) {
-    const a = Math.abs(d);
-    return {
-      t: `rotate(${d * 15}deg) scale(${1 - Math.min(a, 1.5) * 0.08})`,
-      origin: '50% 1100px',
-      shade: Math.min(a, 1) * 0.25,
-      o: a > 2.3 ? 0 : 1, z: 100 - Math.round(a * 10), par: -d * 10, label: 1 - Math.min(a, 1)
-    };
-  },
-  // Колода: карточки лежат стопкой веером — следующая выглядывает справа,
-  // за ней — слева. Свайп влево уносит верхнюю карточку за край (она всё
-  // время поверх остальных), из-под неё поднимается следующая; свайп
-  // вправо возвращает улетевшую. Ушедшая карточка ложится в низ стопки
-  stack(d) {
-    if (d < 0) {
-      const a = -d;
-      return { t: `translate3d(${d * 330}px, ${a * 18}px, 0) rotate(${d * 14}deg)`,
-        o: Math.max(0, Math.min(1, (1 - a) / 0.25)), z: 300 - Math.round(a * 100), shade: 0, par: d * 10, label: 1 - Math.min(1, a * 1.6) };
-    }
-    // Места в стопке: 0 — сверху, 1 — справа, 2 — слева; между ними — плавно
-    const SLOTS = [
-      { x: 0, y: 0, r: 0, s: 1, shade: 0 },
-      { x: 38, y: 10, r: 5, s: 0.9, shade: 0.28 },
-      { x: -38, y: 18, r: -5, s: 0.82, shade: 0.45 },
-      { x: 0, y: 26, r: 0, s: 0.74, shade: 0.6 }
-    ];
-    const k = Math.min(Math.floor(d), 2), f = d - k;
-    const A = SLOTS[k], B = SLOTS[k + 1];
-    const m = (p) => A[p] + (B[p] - A[p]) * f;
-    return { t: `translate3d(${m('x')}px, ${m('y')}px, 0) rotate(${m('r')}deg) scale(${m('s')})`,
-      o: Math.max(0, Math.min(1, (2.5 - d) / 0.4)), z: 200 - Math.round(d * 30), shade: m('shade'), par: d * 6, label: 1 - Math.min(1, d * 1.6) };
+// Места в стопке: 0 — сверху, 1 — справа, 2 — слева, 3 — спрятана
+const SLOTS = [
+  { x: 0, y: 0, r: 0, s: 1, shade: 0 },
+  { x: 38, y: 10, r: 5, s: 0.9, shade: 0.28 },
+  { x: -38, y: 18, r: -5, s: 0.82, shade: 0.45 },
+  { x: 0, y: 26, r: 0, s: 0.74, shade: 0.6 }
+];
+
+/** Как лежит карточка в d позициях от верха (d дробное во время свайпа). */
+function layout(d) {
+  if (d < 0) {
+    // Улетает влево с поворотом и всё время лежит поверх стопки
+    const a = -d;
+    return { t: `translate3d(${d * 330}px, ${a * 18}px, 0) rotate(${d * 14}deg)`,
+      o: Math.max(0, Math.min(1, (1 - a) / 0.25)), z: 300 - Math.round(a * 100), shade: 0, par: d * 10, label: 1 - Math.min(1, a * 1.6) };
   }
-};
+  // Между местами в стопке — плавно
+  const k = Math.min(Math.floor(d), 2), f = d - k;
+  const A = SLOTS[k], B = SLOTS[k + 1];
+  const m = (p) => A[p] + (B[p] - A[p]) * f;
+  return { t: `translate3d(${m('x')}px, ${m('y')}px, 0) rotate(${m('r')}deg) scale(${m('s')})`,
+    o: Math.max(0, Math.min(1, (2.5 - d) / 0.4)), z: 200 - Math.round(d * 30), shade: m('shade'), par: d * 6, label: 1 - Math.min(1, d * 1.6) };
+}
 
 export function initHeroCarousel() {
-  const kind = new URLSearchParams(window.location.search).get('moods');
   const container = document.getElementById('hero-moods');
-  if (!container || !kind || !window.matchMedia('(max-width: 767px)').matches) return;
-  // ?moods=off — обычная лента, но с переключателем: сравнить «как сейчас»
-  if (kind === 'off' || !VARIANTS[kind]) { addSwitcher('off'); return; }
-  const layout = VARIANTS[kind];
+  if (!container) return;
   const cards = $$('.mood-card[data-mood]', container);
   const n = cards.length;
   if (n < 3) return;
 
-  container.classList.add('is-carousel', `is-carousel--${kind}`);
-  addSwitcher(kind);
-
+  const narrow = window.matchMedia('(max-width: 767px)');
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  // Расстояние до центра по кругу: −n/2 … n/2
+  // Расстояние до верха стопки по кругу: −n/2 … n/2
   const wrap = (d) => ((d % n) + n + n / 2) % n - n / 2;
-  let pos = 0, vel = 0, target = 0, raf = 0, shown = null;
+  let active = false, pos = 0, vel = 0, target = 0, raf = 0, shown = null;
+  let startX = 0, startY = 0, startPos = 0, lastX = 0, lastT = 0, flick = 0, dragging = false, moved = false, locked = null;
 
   const draw = () => {
     cards.forEach((card, i) => {
       const d = wrap(i - pos), L = layout(d);
       card.style.transform = L.t;
-      if (L.origin) card.style.transformOrigin = L.origin;
+      card.style.opacity = L.o;
+      card.style.zIndex = L.z;
       // Затемнение — прозрачностью слоя (::before), а не filter: фильтр
       // перерисовывает фото на каждом кадре и тормозит на телефонах
       card.style.setProperty('--shade', L.shade.toFixed(3));
-      card.style.opacity = L.o;
-      card.style.zIndex = L.z;
       card.style.setProperty('--par', `${L.par}%`);
       card.style.setProperty('--label', L.label.toFixed(3));
       const front = Math.abs(d) < 0.5;
       card.classList.toggle('is-front', front);
       card.tabIndex = front ? 0 : -1;
     });
-    const cur = ((Math.round(pos) % n) + n) % n;
     // Лёгкий отклик пальцу при смене карточки (Android; iOS не умеет)
+    const cur = ((Math.round(pos) % n) + n) % n;
     if (cur !== shown) {
       if (shown !== null && dragging) navigator.vibrate?.(6);
       shown = cur;
@@ -117,10 +88,11 @@ export function initHeroCarousel() {
   };
   const go = (to) => { target = to; spring(); };
 
-  // Свайп: ширина карточки пальцем — одна позиция; бросок пролистывает дальше
+  // Свайп: ширина карточки пальцем — одна позиция. Вертикальное движение
+  // отдаём странице: колода не мешает листать вниз
   const STEP = 190;
-  let startX = 0, startY = 0, startPos = 0, lastX = 0, lastT = 0, flick = 0, dragging = false, moved = false, locked = null;
   container.addEventListener('pointerdown', (e) => {
+    if (!active) return;
     dragging = true; moved = false; locked = null;
     startX = lastX = e.clientX; startY = e.clientY; lastT = performance.now(); startPos = pos; flick = 0;
     cancelAnimationFrame(raf); vel = 0;
@@ -136,24 +108,23 @@ export function initHeroCarousel() {
     moved = true;
     const now = performance.now();
     flick = (e.clientX - lastX) / Math.max(1, now - lastT); lastX = e.clientX; lastT = now;
-    // У края — сопротивление не нужно: лента бесконечная
     pos = startPos - dx / STEP; target = pos; draw();
   });
   const release = () => {
     if (!dragging) return; dragging = false;
     if (!moved) return;
-    // Бросок докручивает дальше, чем медленный свайп; колода — не больше
-    // одной карточки за свайп, как настоящая
-    let to = Math.round(pos - Math.max(-1.4, Math.min(1.4, flick * 2.4)));
-    if (kind === 'stack') to = Math.max(Math.round(startPos) - 1, Math.min(Math.round(startPos) + 1, to));
-    go(to);
+    // Бросок досылает карточку, даже если палец прошёл меньше половины;
+    // за свайп — не больше одной карточки, как в настоящей колоде
+    const to = Math.round(pos - Math.max(-1.4, Math.min(1.4, flick * 2.4)));
+    go(Math.max(Math.round(startPos) - 1, Math.min(Math.round(startPos) + 1, to)));
   };
   container.addEventListener('pointerup', release);
   container.addEventListener('pointercancel', release);
 
-  // Клик: после свайпа — ничего; по боковой — подкрутить; по центральной —
+  // Клик: после свайпа — ничего; по выглядывающей — подкрутить; по верхней —
   // дальше, к обработчику hero-moods.js (выбор настроения)
   container.addEventListener('click', (e) => {
+    if (!active) return;
     const card = e.target.closest('.mood-card[data-mood]');
     if (!card) return;
     if (moved) { e.preventDefault(); e.stopImmediatePropagation(); moved = false; return; }
@@ -162,12 +133,33 @@ export function initHeroCarousel() {
   }, true);
 
   container.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowRight') { e.preventDefault(); go(Math.round(target) + 1); focusFront(); }
-    if (e.key === 'ArrowLeft') { e.preventDefault(); go(Math.round(target) - 1); focusFront(); }
+    if (!active) return;
+    const step = { ArrowRight: 1, ArrowLeft: -1 }[e.key];
+    if (!step) return;
+    e.preventDefault();
+    go(Math.round(target) + step);
+    requestAnimationFrame(() => container.querySelector('.is-front')?.focus({ preventScroll: true }));
   });
-  const focusFront = () => requestAnimationFrame(() => container.querySelector('.is-front')?.focus({ preventScroll: true }));
 
-  draw();
+  // Повернули телефон или растянули окно шире 768px — обычный ряд
+  const enable = () => {
+    active = true;
+    container.classList.add('is-carousel');
+    draw();
+  };
+  const disable = () => {
+    active = false; dragging = false;
+    cancelAnimationFrame(raf);
+    container.classList.remove('is-carousel');
+    cards.forEach((card) => {
+      ['transform', 'opacity', 'z-index', '--shade', '--par', '--label'].forEach((p) => card.style.removeProperty(p));
+      card.classList.remove('is-front');
+      card.removeAttribute('tabindex');
+    });
+  };
+  narrow.addEventListener('change', () => (narrow.matches ? enable() : disable()));
+  if (!narrow.matches) return;
+  enable();
   hint();
 
   // Подсказка «листается»: один раз за визит, когда колода видна, верхняя
@@ -179,7 +171,7 @@ export function initHeroCarousel() {
       if (!entry.isIntersecting) return;
       io.disconnect();
       setTimeout(() => {
-        if (dragging || pos !== 0) return;
+        if (!active || dragging || pos !== 0) return;
         try { sessionStorage.setItem('moods-hint', '1'); } catch (e) { /* не важно */ }
         target = 0.32; spring();
         setTimeout(() => { if (!dragging) go(0); }, 420);
@@ -187,18 +179,4 @@ export function initHeroCarousel() {
     }, { threshold: 0.6 });
     io.observe(container);
   }
-}
-
-/** Переключатель вариантов внизу экрана — только для прототипа. */
-function addSwitcher(current) {
-  const bar = document.createElement('nav');
-  bar.className = 'moods-proto';
-  bar.setAttribute('aria-label', 'Варианты прототипа');
-  const items = [['off', 'Как сейчас'], ['depth', 'Глубина'], ['arc', 'Дуга'], ['stack', 'Колода']];
-  bar.innerHTML = items.map(([k, label]) => {
-    const url = new URL(window.location.href);
-    url.searchParams.set('moods', k);
-    return `<a href="${url.pathname}${url.search}"${k === current ? ' aria-current="true"' : ''}>${label}</a>`;
-  }).join('');
-  document.body.append(bar);
 }
