@@ -68,11 +68,6 @@ export function initHeroCarousel() {
   if (n < 3) return;
 
   container.classList.add('is-carousel', `is-carousel--${kind}`);
-  // Точки — и указатель, и переход: нажатие на точку крутит к карточке
-  const dots = document.createElement('div');
-  dots.className = 'mood-dots';
-  dots.innerHTML = cards.map((c) => `<button type="button" aria-label="${c.querySelector('.mood-card__label')?.textContent || ''}"><i></i></button>`).join('');
-  container.after(dots);
   addSwitcher(kind);
 
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -97,10 +92,6 @@ export function initHeroCarousel() {
       card.tabIndex = front ? 0 : -1;
     });
     const cur = ((Math.round(pos) % n) + n) % n;
-    [...dots.children].forEach((dot, i) => {
-      dot.classList.toggle('on', i === cur);
-      dot.setAttribute('aria-current', String(i === cur));
-    });
     // Лёгкий отклик пальцу при смене карточки (Android; iOS не умеет)
     if (cur !== shown) {
       if (shown !== null && dragging) navigator.vibrate?.(6);
@@ -169,11 +160,6 @@ export function initHeroCarousel() {
     const d = wrap(cards.indexOf(card) - pos);
     if (Math.abs(d) >= 0.5) { e.preventDefault(); e.stopImmediatePropagation(); go(Math.round(pos + d)); }
   }, true);
-
-  dots.addEventListener('click', (e) => {
-    const i = [...dots.children].indexOf(e.target.closest('button'));
-    if (i >= 0) go(Math.round(pos + wrap(i - pos)));
-  });
 
   container.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowRight') { e.preventDefault(); go(Math.round(target) + 1); focusFront(); }

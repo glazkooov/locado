@@ -1405,13 +1405,6 @@ body.feed-toolbar-stuck .main-header { box-shadow: none; }
   .hero__moods.is-carousel .mood-card[data-mood] .mood-card__label { font-size: var(--fs-lg); }
   .hero__moods.is-carousel--arc { height: 330px; }
 
-  /* Точки — кнопки: видимая точка маленькая, нажимать — на 28×28 */
-  /* В .hero__choices между блоками 36px — точки подтягиваем к колоде */
-  .mood-dots { display: flex; justify-content: center; margin-top: -40px; }
-  .mood-dots button { display: grid; place-items: center; width: 28px; height: 28px; padding: 0; border: 0; background: none; cursor: pointer; }
-  .mood-dots i { width: 6px; height: 6px; border-radius: 3px; background: var(--hero-line); transition: width 0.25s ease, background 0.25s ease; }
-  .mood-dots .on i { width: 18px; background: var(--hero-accent); }
-  .mood-dots button:focus-visible { outline: 2px solid var(--hero-accent); outline-offset: -4px; border-radius: 8px; }
 }
 
 .moods-proto {
@@ -1438,6 +1431,3 @@ body.feed-toolbar-stuck .main-header { box-shadow: none; }
   white-space: nowrap;
 }
 .moods-proto a[aria-current] { background: var(--primary-strong); }
-@media (prefers-reduced-motion: reduce) {
-  .mood-dots i { transition: none; }
-}
