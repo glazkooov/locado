@@ -28,6 +28,7 @@ AddDefaultCharset utf-8
   # Служебные файлы и папки проекта не отдаём, если их всё-таки загрузили
   RewriteRule (^|/)\.(?!well-known) - [F]
   RewriteRule ^(docs|tools)(/|$) - [F]
+  RewriteRule ^(CLAUDE\.md|package\.json)$ - [F]
 
   # Красивые адреса: /place/kolomenskoe и /collection/vdol-reki. Старые
   # ?slug=… (ссылки в чатах, закладки) — постоянная переадресация на новые.
