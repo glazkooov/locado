@@ -332,3 +332,125 @@
    «Под крышей», «Закат в 17:34». Иконка — в цвет текста плашки */
 .badge-now { display: inline-flex; align-items: center; gap: 5px; }
 .badge-now .icon { flex: none; }
+
+/* Прототип (задача 75): варианты первой карточки ленты «Идёшь не один?»,
+   ?lead=low | fan | orange. Высоты — синхронно с ratio в home.js */
+.feed-lead {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow: hidden;
+  padding: 16px;
+  border-radius: var(--radius-card);
+  color: var(--text);
+  text-decoration: none;
+  transition: transform 0.3s ease;
+}
+.places-grid .feed-lead { border-radius: 16px; }
+@media (hover: hover) { .feed-lead:hover { transform: translateY(-4px); } }
+.feed-lead__title { font-family: var(--font-heading); font-size: var(--fs-md); font-weight: 700; line-height: 1.2; }
+.feed-lead__link { font-size: var(--fs-sm); font-weight: 600; color: var(--primary-text); }
+
+/* low — ниже соседних: иконка и текст рядом, без пустоты посередине */
+.feed-lead--low {
+  aspect-ratio: 5 / 4;
+  justify-content: center;
+  border: 1.5px dashed rgba(185, 60, 5, 0.35);
+  background:
+    radial-gradient(ellipse 80% 70% at 100% 0%, rgba(255, 170, 110, 0.35), transparent 70%),
+    linear-gradient(160deg, #FFF6EE 0%, #FBE6D6 100%);
+}
+.feed-lead__icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-bottom: 4px;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--primary);
+}
+.feed-lead__icon .icon { width: 22px; height: 22px; }
+
+/* fan — веер из трёх фото мест сверху, подпись снизу */
+.feed-lead--fan {
+  aspect-ratio: 4 / 5;
+  justify-content: flex-end;
+  background:
+    radial-gradient(ellipse 80% 70% at 100% 0%, rgba(255, 170, 110, 0.35), transparent 70%),
+    linear-gradient(160deg, #FFF6EE 0%, #FBE6D6 100%);
+}
+.feed-lead__fan { position: relative; flex: 1; margin-bottom: 8px; }
+.feed-lead__fan img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 52%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border: 3px solid #fff;
+  border-radius: 12px;
+  background: var(--cream-deep);
+  box-shadow: 0 8px 18px -8px rgba(80, 30, 0, 0.45);
+  transform: translate(-50%, -50%);
+}
+.feed-lead__fan img:nth-child(1) { transform: translate(-92%, -46%) rotate(-12deg); }
+.feed-lead__fan img:nth-child(2) { transform: translate(-8%, -46%) rotate(12deg); }
+.feed-lead__fan img:nth-child(3) { z-index: 1; transform: translate(-50%, -54%); }
+
+/* orange — как карточка «Идёшь не один?» на странице места. Высота — по
+   содержимому: на телефоне около 1,15 ширины, на компьютере ниже */
+.feed-lead--orange {
+  position: relative;
+  /* Не светлее #D24406 — белый мелкий текст должен читаться */
+  background: linear-gradient(135deg, var(--primary-strong) 0%, #B33A04 100%);
+  box-shadow: 0 12px 28px -12px rgba(210, 68, 6, 0.6);
+  color: #fff;
+}
+.feed-lead--orange::after {
+  content: "";
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  pointer-events: none;
+}
+.feed-lead__ava { display: flex; margin-bottom: 8px; }
+.feed-lead__ava i {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: var(--cream) center / cover no-repeat;
+  font-style: normal;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--primary-strong);
+}
+.feed-lead__ava i + i { margin-left: -14px; background: var(--accent-soft); }
+.feed-lead__text { font-size: var(--fs-xs); line-height: 1.35; }
+.feed-lead__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 40px;
+  margin-top: 6px;
+  border-radius: var(--radius-pill);
+  background: #fff;
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--primary-strong);
+}
+.feed-lead__btn .icon { width: 18px; height: 18px; }
+
+@media (max-width: 480px) {
+  .feed-lead { padding: 12px; }
+  .feed-lead__title { font-size: var(--fs-sm); }
+  .feed-lead__link { font-size: var(--fs-xs); }
+}

@@ -2,7 +2,7 @@
 
 import { goal, categoryGoal } from '../core/analytics.js';
 import { $, $$, on } from '../core/dom.js';
-import { escapeHtml } from '../core/format.js';
+import { escapeHtml, cssUrl } from '../core/format.js';
 import { loadPlaces, CATEGORIES } from '../core/places.js';
 import { bindCards } from '../components/card.js';
 import { initFeed, serviceCardHtml, SERVICE_RATIO } from '../components/feed.js';
@@ -166,6 +166,53 @@ function reminderCards({ collections }) {
   return (k, ctx) => (k % 2 === 0 ? plan(k / 2, ctx) : (k % 4 === 1 ? together() : suggest()));
 }
 
+// Прототип (задача 75): варианты первой карточки ленты за параметром
+// ?lead=low | fan | orange. Без параметра — как раньше. После выбора
+// останется один вариант, параметр уйдёт
+const LEAD_VARIANT = new URLSearchParams(window.location.search).get('lead');
+const LEAD = { href: 'vmeste/?from=feed-top', title: 'Идёшь не один?', link: 'Выбрать вместе →' };
+
+/** Три случайных места со своим фото (есть уменьшенная копия) — для
+ *  «веера» в карточке */
+function fanPhotos(places) {
+  const withPhoto = places.filter((p) => p.photoSm && p.photoSm !== p.photo);
+  const picked = [];
+  while (picked.length < 3 && withPhoto.length) picked.push(withPhoto.splice(Math.floor(Math.random() * withPhoto.length), 1)[0]);
+  return picked.map((p) => p.photoSm);
+}
+
+function leadCard(places) {
+  const icon = '<svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#users"></use></svg>';
+  if (LEAD_VARIANT === 'low') {
+    return { ratio: 0.8, html: `
+      <a class="feed-lead feed-lead--low" href="${LEAD.href}">
+        <span class="feed-lead__icon">${icon}</span>
+        <span class="feed-lead__title">${LEAD.title}</span>
+        <span class="feed-lead__link">${LEAD.link}</span>
+      </a>` };
+  }
+  if (LEAD_VARIANT === 'fan') {
+    const imgs = fanPhotos(places).map((src) => `<img src="${escapeHtml(src)}" alt="">`).join('');
+    return { ratio: SERVICE_RATIO, html: `
+      <a class="feed-lead feed-lead--fan" href="${LEAD.href}">
+        <span class="feed-lead__fan" aria-hidden="true">${imgs}</span>
+        <span class="feed-lead__title">${LEAD.title}</span>
+        <span class="feed-lead__link">${LEAD.link}</span>
+      </a>` };
+  }
+  if (LEAD_VARIANT === 'orange') {
+    const [photo] = fanPhotos(places);
+    return { ratio: 1.15, html: `
+      <a class="feed-lead feed-lead--orange" href="${LEAD.href}">
+        <span class="feed-lead__ava" aria-hidden="true"><i style='background-image:${cssUrl(photo)}'></i><i>?</i></span>
+        <span class="feed-lead__title">${LEAD.title}</span>
+        <span class="feed-lead__text">Отметьте места, и сразу будет видно, куда хочется обоим</span>
+        <span class="feed-lead__btn">${icon} Выбрать вместе</span>
+      </a>` };
+  }
+  return { ratio: SERVICE_RATIO, html: serviceCardHtml({ ...LEAD, iconName: 'users' }) };
+}
+
 async function main() {
   const collectionsShown = renderCollections();
   renderHeroMoods(renderHeroGreeting());
@@ -208,7 +255,7 @@ async function main() {
   const feed = initFeed(withNowPlaces(shuffledFeed(places), picks.map((c) => c.place)), {
     nowBadges, showcases, reminder: reminderCards({ collections }),
     // «Выбрать вместе» — самой первой карточкой ленты
-    lead: { ratio: SERVICE_RATIO, html: serviceCardHtml({ href: 'vmeste/?from=feed-top', iconName: 'users', title: 'Идёшь не один?', link: 'Выбрать вместе →' }) }
+    lead: leadCard(places)
   });
   applyUrlFilter(feed);
   // Лента сразу под героем: настроение фильтрует её на месте
