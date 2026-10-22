@@ -1028,6 +1028,9 @@
     },
     "phone": "+7 (495) 990-00-00",
     "website": "https://ges-2.org",
+    "links": {
+      "telegram": "https://t.me/vacges2"
+    },
     "price_level": "free",
     "price": "Вход бесплатный по регистрации",
     "tags": [
