@@ -60,7 +60,8 @@
   margin-top: 14px;
   border: none;
   border-radius: var(--radius-pill);
-  background: var(--primary);
+  /* Тёмный оранжевый: белый текст на ярком читался плохо (контраст 3,2) */
+  background: var(--primary-strong);
   color: #fff;
   font: inherit;
   font-size: var(--fs-md);

@@ -1,0 +1,9 @@
+{
+  "name": "locado",
+  "private": true,
+  "description": "Локадо — места в Москве под настроение. Статический сайт без сборки; здесь только команды.",
+  "scripts": {
+    "check": "node tools/check.mjs",
+    "sitemap": "node tools/sitemap.mjs"
+  }
+}

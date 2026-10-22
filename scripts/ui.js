@@ -208,7 +208,7 @@ const initPlanGoal = () => {
   const from = /\/collections\/?$/.test(path) ? 'Все подборки'
     : /\/place\//.test(path) ? 'Страница места'
       : /\/collection\//.test(path) ? 'Другая подборка' : 'Главная';
-  on(document, 'click', '.collection-card', (e, card) => {
+  on(document, 'click', '.collection-card, .collection-row', (e, card) => {
     goal('plan_select', { 'Подборка': { [card.dataset.title || '']: from } });
   });
 };
