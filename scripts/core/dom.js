@@ -34,3 +34,12 @@ export function toggleClear(input, button) {
   if (!button) return;
   button.hidden = !(input && input.value);
 }
+
+/** Slug страницы места или подборки: из адреса /place/kolomenskoe, а
+ *  если его нет (старая ссылка, локальный сервер без .htaccess) — из
+ *  ?slug=kolomenskoe. */
+export function slugFromUrl(section) {
+  const m = new RegExp(`/${section}/([^/?#]+)/?$`).exec(window.location.pathname);
+  if (m && m[1] !== 'index.html' && m[1] !== 'index.php') return decodeURIComponent(m[1]);
+  return new URLSearchParams(window.location.search).get('slug');
+}

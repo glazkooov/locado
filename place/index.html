@@ -2,15 +2,16 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <!-- Страница лежит в папке (адрес …/place/): все относительные пути —
-       к стилям, картинкам, другим страницам — считаются от корня сайта -->
-  <base href="../">
+  <!-- Адрес страницы — /place/slug (.htaccess): все относительные пути — к
+       стилям, картинкам, другим страницам — считаются от корня сайта. Сайт
+       должен лежать в корне домена (locado.ru, test.locado.ru) -->
+  <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- Бета: страницы не индексируются (вместе с блоком в robots.txt — он
        работает, только когда сайт в корне домена). На релизе убрать оба -->
   <meta name="robots" content="noindex, nofollow">
   <title>Место — Локадо</title>
-  <meta name="description" content="Подробно о месте: адрес, часы работы, как добраться, отзывы.">
+  <meta name="description" content="Адрес, часы работы и как добраться — рекомендация Локадо.">
   <meta name="theme-color" content="#FF570A">
 
   <meta property="og:type" content="article">
@@ -94,10 +95,8 @@
         <h1 class="hero-title" id="place-name">Загружаем…</h1>
         <p class="hero-subtitle" id="place-subtitle"></p>
 
-        <!-- Быстрые факты (метро, открыто ли сейчас, цена — заполняет place.js)
-             и действия — одной строкой: плашки слева, кнопки справа -->
+        <!-- Статус, цена и кнопки — в справке под фото, в шапке их нет -->
         <div class="hero-bottom">
-          <ul class="hero-facts" id="place-facts"></ul>
           <div class="hero-actions">
             <!-- Избранное вне MVP (см. CLAUDE.md) — скрыто, как и на карточках главной -->
             <button type="button" id="fav-btn-hero" class="fav-btn-hero" hidden>
@@ -108,12 +107,6 @@
             <button type="button" id="visited-btn" class="visited-btn" hidden>
               <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#check"></use></svg><span>Я здесь был</span>
             </button>
-            <button type="button" id="call-btn" class="call-btn" aria-label="Позвонить">
-              <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#phone"></use></svg><span>Позвонить</span>
-            </button>
-            <button type="button" id="share-btn" class="share-btn" aria-label="Поделиться">
-              <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#share-2"></use></svg><span>Поделиться</span>
-            </button>
           </div>
         </div>
       </div>
@@ -122,101 +115,62 @@
       <p class="photo-credit photo-credit--on-photo container" id="photo-credit" hidden></p>
     </section>
 
-    <!-- Голос Локадо: почему стоит пойти, когда лучше, что заметить — поле
-         story у места (те же три вопроса, что в форме «Предложить место»).
-         Нет поля — блока нет -->
-    <section class="place-story container" id="place-story" aria-label="Как сходить" hidden></section>
-
-    <!-- Практическая информация одной карточкой-списком + настроение места.
-         Строки без данных place.js скрывает: прочерки только шумят -->
-    <!-- Телефон: приглашение выбрать вместе — только у мест для свиданий и
-         компаний (на компьютере та же карточка в правой колонке, #together-side) -->
-    <section class="together-invite container" id="together-invite" hidden>
-      <div class="together-invite__card">
-        <p class="together-invite__title">Идёшь не один?</p>
-        <p class="together-invite__text" id="together-invite-text"></p>
-        <a class="together-invite__btn" id="together-invite-btn" href="vmeste/">
-          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#users"></use></svg> Позвать друга
+    <!-- Справка — сразу под фото, без заголовка: можно ли пойти сейчас, где
+         это и сколько стоит. Строки без данных place.js скрывает. На
+         компьютере — полосой в две колонки -->
+    <section class="place-facts container" id="place-facts" aria-label="Где и когда">
+      <div class="fact-row" id="hours-row">
+        <span class="fact-row__icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#clock"></use></svg></span>
+        <div class="fact-row__body">
+          <p class="fact-row__status" id="open-status" hidden></p>
+          <span class="closing-timer" id="closing-timer" hidden></span>
+          <div class="fact-row__hours" id="place-schedule"></div>
+        </div>
+      </div>
+      <div class="fact-row" id="address-row">
+        <span class="fact-row__icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#map-pin"></use></svg></span>
+        <div class="fact-row__body">
+          <p class="fact-row__value" id="place-address" hidden></p>
+          <p class="fact-row__sub" id="place-metro" hidden></p>
+          <p class="fact-row__sub" id="place-directions" hidden></p>
+        </div>
+      </div>
+      <div class="fact-row" id="price-row">
+        <span class="fact-row__icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#ticket"></use></svg></span>
+        <div class="fact-row__body"><p class="fact-row__price" id="place-price"></p></div>
+      </div>
+      <div class="fact-acts" id="place-acts">
+        <a class="fact-act" id="place-phone" href="#"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#phone"></use></svg><span>Позвонить</span></a>
+        <a class="fact-act" id="place-website" href="#" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#globe"></use></svg><span>Сайт</span></a>
+        <a class="fact-act" id="route-link" href="https://yandex.ru/maps/" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#navigation"></use></svg><span>Маршрут</span></a>
+      </div>
+      <!-- Карта — по нажатию: открывают её редко, скрипт Яндекса грузится
+           только при первом открытии -->
+      <!-- Если кроме маршрута кнопок нет (ни телефона, ни сайта), плиток не
+           показываем: «Маршрут» встаёт справа в эту строку -->
+      <div class="fact-maprow" id="map-row">
+        <button type="button" class="fact-line fact-map-toggle" id="map-toggle" aria-expanded="false" aria-controls="place-map">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#map-pin"></use></svg><span id="map-toggle-label">Показать на карте</span><svg class="icon fact-line__chevron" aria-hidden="true" focusable="false"><use href="assets/icons.svg#chevron-down"></use></svg>
+        </button>
+        <a class="fact-maprow__route" id="route-inline" href="https://yandex.ru/maps/" target="_blank" rel="noopener" hidden>
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#navigation"></use></svg> Маршрут
         </a>
       </div>
-    </section>
-
-    <section class="place-info container">
-      <div class="info-grid">
-        <div class="info-card info-list" id="info-list">
-          <div class="info-row" id="address-row">
-            <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#map-pin"></use></svg>
-            <div class="info-row__body">
-              <h3>Адрес</h3>
-              <p class="info-row__value" id="place-address" hidden></p>
-              <p class="info-row__sub" id="place-metro" hidden></p>
-              <button type="button" class="map-link-btn" id="show-on-map">Показать на карте</button>
-            </div>
-          </div>
-
-          <div class="info-row" id="hours-row">
-            <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#clock"></use></svg>
-            <div class="info-row__body">
-              <h3>Часы работы</h3>
-              <div class="info-row__value" id="place-schedule"></div>
-              <span class="closing-timer" id="closing-timer" hidden></span>
-            </div>
-          </div>
-
-          <div class="info-row" id="phone-row">
-            <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#phone"></use></svg>
-            <div class="info-row__body">
-              <h3>Телефон</h3>
-              <p class="info-row__value" id="place-phone"></p>
-            </div>
-          </div>
-
-          <div class="info-row" id="website-row">
-            <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#globe"></use></svg>
-            <div class="info-row__body">
-              <h3>Сайт</h3>
-              <p class="info-row__value info-row__value--link" id="place-website"></p>
-            </div>
-          </div>
-
-          <div class="info-row" id="directions-row">
-            <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#route"></use></svg>
-            <div class="info-row__body">
-              <h3>Как добраться</h3>
-              <p class="info-row__value" id="place-directions"></p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Правая колонка: настроение места и (с компьютера) приглашение
-             «Выбрать вместе»; на телефоне приглашение — карточкой выше -->
-        <div class="info-side" id="info-side">
-          <div class="info-card info-card--mood" id="place-tags-card">
-            <h3><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#wand-sparkles"></use></svg> Настроение места</h3>
-            <!-- Тег ведёт в ленту главной с этим тегом -->
-            <div class="tags-section" id="place-tags"></div>
-          </div>
-          <div class="info-card together-side" id="together-side" hidden>
-            <p class="together-invite__title">Идёшь не один?</p>
-            <p class="together-invite__text" id="together-side-text"></p>
-            <a class="together-invite__btn" id="together-side-btn" href="vmeste/">
-              <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#users"></use></svg> Позвать друга
-            </a>
-          </div>
-        </div>
+      <div class="fact-map" id="place-map" hidden>
+        <div class="map-container" id="place-map-container" aria-label="Карта места"></div>
       </div>
-      <!-- Сообщить о неточности — рядом с данными, в которых ошибаются чаще
-           всего (часы, адрес, цены). Открывает Яндекс Форму в окне -->
-      <button type="button" class="suggestion-edit" id="suggest-edit" aria-haspopup="dialog">
-        <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#square-pen"></use></svg> Что-то изменилось? Напиши нам
+      <!-- Сообщить о неточности — одна ссылка на всю страницу, рядом с
+           данными, в которых ошибаются чаще всего. Яндекс Форма в окне -->
+      <button type="button" class="fact-line fact-fix" data-report aria-haspopup="dialog">
+        <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#square-pen"></use></svg><span>Что-то не так?</span>
       </button>
     </section>
 
-    <!-- Описание и карта — одним блоком в две колонки: у описания 2–3 строки,
-         отдельная секция с крупным заголовком для него слишком тяжёлая -->
-    <section class="place-about container">
-      <div class="place-about__text">
-        <h2 class="place-about__title">О месте</h2>
+    <!-- «О месте» и справа (на компьютере) «Идёшь не один?» с подборками -->
+    <div class="place-main container">
+      <!-- О месте — просто описание (description_long) -->
+      <section class="place-block place-about" aria-labelledby="about-title">
+        <h2 class="place-block__title" id="about-title">О месте</h2>
         <div class="description-text" id="place-description"></div>
         <!-- Места от читателей: поле fromReaders в places.json -->
         <p class="place-readers" id="place-readers" hidden>
@@ -224,19 +178,27 @@
           <span>Это место нам подсказали. <a href="suggest/">Знаешь своё? Расскажи</a></span>
         </p>
         <div class="amenities-section" id="place-amenities"></div>
-      </div>
+      </section>
 
-      <div class="place-map" id="on-map">
-        <div class="map-container" id="place-map-container" aria-label="Карта места"></div>
-        <!-- На телефоне маршрут — в нижней панели, здесь кнопка скрыта -->
-        <div class="map-actions">
-          <a class="btn route-btn" id="route-link" href="https://yandex.ru/maps/" target="_blank" rel="noopener">
-            <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#navigation"></use></svg> Построить маршрут
-          </a>
-        </div>
-      </div>
-    </section>
-
+      <!-- На компьютере «Есть в подборках» переносит сюда place.js, на
+           телефоне подборки — внизу страницы -->
+      <aside class="place-aside" id="place-aside">
+        <!-- «Позвать друга» — у каждого места. Открывает окно: выбрать
+             вместе или отправить ссылку -->
+        <button type="button" class="invite-card" data-invite aria-haspopup="dialog">
+          <span class="invite-card__who">
+            <span class="invite-card__ava" aria-hidden="true"><i id="invite-photo"></i><i>?</i></span>
+            <span>
+              <span class="invite-card__title">Идёшь не один?</span>
+              <span class="invite-card__text">Спроси друга, куда ему хочется, и выберите вместе</span>
+            </span>
+          </span>
+          <span class="invite-card__btn">
+            <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#users"></use></svg> Позвать друга
+          </span>
+        </button>
+      </aside>
+    </div>
     <!-- Галерея -->
     <section class="place-gallery-section container" id="gallery-section">
       <div class="section-head">
@@ -287,19 +249,28 @@
       </div>
     </section>
 
-    <!-- Подборки, где упоминается место — заполняет place.js -->
-    <section class="place-collections container" id="place-collections" hidden>
-      <div class="section-head">
-        <h2 class="section-title">Есть в подборках</h2>
+    <!-- «Куда пойдём дальше?»: соседи до ~15 минут пешком по намерению (поесть,
+         догулять, заглянуть) тем же рядом карточек, что «Похожие места»; первая
+         карточка — готовый план из двух мест. Заполняет place.js; соседей нет — секции нет -->
+    <section class="place-similar place-nearby" id="place-nearby" hidden>
+      <div class="container similar-head">
+        <div class="section-head">
+          <h2 class="section-title">Куда пойдём <em>дальше</em>?</h2>
+        </div>
+        <div class="similar-nav">
+          <button type="button" class="similar-nav__btn" id="nearby-prev" aria-label="Назад" disabled><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#chevron-left"></use></svg></button>
+          <button type="button" class="similar-nav__btn" id="nearby-next" aria-label="Дальше"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#chevron-right"></use></svg></button>
+        </div>
       </div>
-      <div class="collection-more__grid" id="place-collections-grid"></div>
+      <div class="container nearby-tabs" id="nearby-tabs" role="group" aria-label="Что искать рядом"></div>
+      <div class="similar-scroll" id="nearby-places-container"></div>
     </section>
 
     <!-- Похожие -->
-    <section class="place-similar">
+    <section class="place-similar place-similar--mood">
       <div class="container similar-head">
         <div class="section-head">
-          <h2 class="section-title">Похожие места</h2>
+          <h2 class="section-title">Похожие по <em>настроению</em></h2>
         </div>
         <!-- Стрелки — для мыши; на сенсорных экранах ряд листается пальцем -->
         <div class="similar-nav">
@@ -309,6 +280,14 @@
       </div>
       <!-- Ряд идёт до краёв экрана, а не обрезается по колонке контента -->
       <div class="similar-scroll" id="similar-places-container"></div>
+    </section>
+
+    <!-- Подборки, где упоминается место — заполняет place.js -->
+    <section class="place-collections container" id="place-collections" hidden>
+      <div class="section-head">
+        <h2 class="section-title">Есть в подборках</h2>
+      </div>
+      <div class="place-collections__list" id="place-collections-grid"></div>
     </section>
 
     <!-- Выход дальше, если пришли по ссылке прямо на место -->
@@ -321,8 +300,8 @@
   <div class="mobile-actions-bar" id="mobile-actions-bar">
     <button type="button" id="action-fav" hidden><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#heart"></use></svg><span>В избранное</span></button>
     <button type="button" id="action-call"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#phone"></use></svg><span>Позвонить</span></button>
-    <button type="button" id="action-route"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#route"></use></svg><span>Маршрут</span></button>
-    <button type="button" id="action-share"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#share-2"></use></svg><span>Поделиться</span></button>
+    <button type="button" id="action-route"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#navigation"></use></svg><span>Как добраться</span></button>
+    <button type="button" class="mobile-actions-bar__accent" data-invite aria-haspopup="dialog"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#users"></use></svg><span>Позвать друга</span></button>
   </div>
 
   <!-- Модалка шеринга -->
@@ -344,8 +323,45 @@
     </div>
   </div>
 
+  <!-- Позвать друга: выбрать вместе (vmeste/ с этим местом в выборе) или
+       просто отправить ссылку. На телефоне окно выезжает снизу -->
+  <div class="modal modal--sheet" id="invite-modal" role="dialog" aria-modal="true" aria-labelledby="invite-modal-title" aria-hidden="true">
+    <div class="modal-content modal-content--sm">
+      <div class="modal-header">
+        <h3 id="invite-modal-title">Позвать друга</h3>
+        <button type="button" class="modal-close" data-modal-close aria-label="Закрыть"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#x"></use></svg></button>
+      </div>
+      <div class="modal-body invite-options">
+        <a class="invite-option invite-option--main" id="invite-together" href="vmeste/">
+          <span class="invite-option__icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#users"></use></svg></span>
+          <span><b>Выбрать вместе</b><small id="invite-together-text">Добавь ещё пару мест — друг отметит, куда ему хочется, и вы сразу увидите совпадение</small></span>
+        </a>
+        <button type="button" class="invite-option" id="invite-share">
+          <span class="invite-option__icon"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#share-2"></use></svg></span>
+          <span><b>Просто отправить ссылку</b><small>В Telegram, ВКонтакте или куда удобно</small></span>
+        </button>
+      </div>
+    </div>
+  </div>
   <!-- Сообщить о неточности: Яндекс Форма в окне. src ставит place.js при
        первом открытии — форма не грузится, пока её не попросили -->
+  <!-- Маршрут отсюда: карточка в «Куда пойдём дальше?» открывает это окно -->
+  <div class="modal" id="plan-modal" role="dialog" aria-modal="true" aria-labelledby="plan-modal-title" aria-hidden="true">
+    <div class="modal-content plan-modal__content">
+      <div class="modal-header">
+        <h3 id="plan-modal-title">Маршрут отсюда</h3>
+        <button type="button" class="modal-close" data-modal-close aria-label="Закрыть"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#x"></use></svg></button>
+      </div>
+      <div class="modal-body">
+        <ol class="plan-stops" id="plan-stops"></ol>
+        <div class="plan-modal__actions">
+          <a class="btn" id="plan-route" href="https://yandex.ru/maps/" target="_blank" rel="noopener">Проложить путь</a>
+          <button type="button" class="btn btn-secondary" id="plan-other">Другой вариант</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="modal report-modal" id="report-modal" role="dialog" aria-modal="true" aria-labelledby="report-modal-title">
     <div class="modal-content report-modal__content">
       <div class="modal-header">

@@ -23,8 +23,10 @@
 
 @media (max-width: 768px) {
   .place-hero { --hero-wave-h: 24px; }
+  /* Название и подзаголовок — у нижнего края фото, над волной */
+  .place-hero:not(.place-hero--no-photo) { padding-bottom: calc(28px + var(--hero-wave-h)); }
+  .place-hero .hero-subtitle { margin-bottom: 0; }
 }
-
 
 .hero-bg {
   position: absolute;
@@ -166,17 +168,6 @@
 
 .hero-fact .icon { color: #FF8A4C; }
 
-.hero-fact__link {
-  color: inherit;
-  text-decoration: underline;
-  text-decoration-color: rgba(255, 255, 255, 0.45);
-  text-underline-offset: 3px;
-}
-
-.hero-fact__link:hover { text-decoration-color: #fff; }
-
-.hero-fact--open .icon { color: #7EE2A0; }
-
 @media (min-width: 992px) {
   .hero-title { font-size: 2.75rem; }
 }
@@ -253,198 +244,7 @@
   .hero-subtitle { font-size: var(--fs-md); }
 }
 
-.place-info {
-  margin: 40px auto 64px;
-}
-
-/* Практическая информация (список) и настроение — две карточки рядом;
-   если одной нет, другая занимает всю ширину */
-.info-grid {
-  display: grid;
-  /* minmax(0, …): колонку не распирает содержимое — ни ширина карты
-     Яндекса, ни длинный адрес сайта */
-  grid-template-columns: minmax(0, 1fr);
-  gap: 16px;
-}
-
-@media (min-width: 900px) {
-  .info-grid { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); }
-  .info-grid:has(> .info-card[hidden]),
-  .info-grid:has(> .info-side[hidden]) { grid-template-columns: 1fr; }
-}
-
-.info-card {
-  background: var(--card-bg);
-  padding: 20px;
-  border-radius: var(--radius-card);
-  border: 1px solid var(--line);
-  box-shadow: var(--shadow-soft);
-}
-
-/* Подпись строки или карточки — как подписи секций */
-.info-card h3 {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: var(--fs-caption);
-  font-weight: 600;
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
-  color: var(--text-light);
-  margin-bottom: 4px;
-}
-
-/* Список: на телефоне — строки с разделителями, шире — сетка в две
-   колонки без линий (при нечётном числе строк линия висела бы в пустоте) */
-.info-list {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  padding: 0 16px;
-}
-
-.info-list[hidden] { display: none; }
-
-.info-row {
-  display: flex;
-  gap: 14px;
-  padding: 13px 0;
-  min-width: 0;
-}
-
-.info-row + .info-row { border-top: 1px solid var(--line); }
-
-.info-row[hidden] { display: none; }
-
-@media (min-width: 600px) {
-  .info-list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 20px 28px;
-    padding: 22px 24px;
-  }
-  .info-row { padding: 0; }
-  .info-row + .info-row { border-top: none; }
-}
-
-/* Строка всего одна — список уже, настроение шире */
-@media (min-width: 900px) {
-  .info-grid[data-rows="1"] { grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); }
-  .info-grid[data-rows="1"] .info-list { grid-template-columns: 1fr; }
-}
-
-.info-row > .icon {
-  width: 20px;
-  height: 20px;
-  margin-top: 1px;
-  color: var(--primary);
-}
-
-.info-row__body { min-width: 0; flex: 1; }
-
-/* Все значения — одним стилем: адрес, часы, телефон, сайт */
-.info-row__value,
-.info-row__value .today-schedule > span {
-  font-size: var(--fs-md);
-  font-weight: 600;
-  color: var(--ink);
-  line-height: 1.45;
-}
-
-.info-row__value a {
-  color: inherit;
-  text-decoration: none;
-  /* строка-ссылка выше, чем текст: удобно попасть пальцем */
-  display: inline-block;
-  padding: 9px 0;
-  margin: -9px 0;
-}
-.info-row__value a:hover { color: var(--primary-text); }
-
-/* Адрес сайта не переносится посреди слова — обрезается многоточием */
-.info-card .info-row__value--link {
-  overflow-wrap: normal;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.info-row__sub {
-  margin-top: 2px;
-  font-size: var(--fs-sm);
-  font-weight: 500;
-  color: var(--text-light);
-}
-
-.map-link-btn {
-  display: inline-flex;
-  align-items: center;
-  min-height: 40px; /* удобно попасть пальцем */
-  background: none;
-  border: none;
-  color: var(--primary-text);
-  font-family: inherit;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 0;
-  margin: -2px 0 -8px;
-  font-size: var(--fs-sm);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.closing-timer {
-  display: block;
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  color: var(--danger);
-  margin-top: 4px;
-}
-
-.closing-timer[hidden] { display: none; }
-
-.closing-timer--open { color: var(--success); }
-
-/* «Настроение места» — тёплая карточка, как плитки категорий */
-.info-card--mood {
-  padding: 20px 22px;
-  background:
-    radial-gradient(ellipse 70% 60% at 95% 0%, rgba(255, 206, 150, 0.45), transparent 70%),
-    linear-gradient(160deg, #FFF6EE 0%, #FBE6D6 100%);
-}
-
-.info-card--mood[hidden] { display: none; }
-
-.info-card--mood h3 { color: var(--primary-text); margin-bottom: 12px; }
-
-.info-card--mood .tags-section { gap: 8px; }
-
-.info-card--mood .tag-chip {
-  display: inline-flex;
-  align-items: center;
-  min-height: 40px;
-  padding: 0 14px;
-  font-size: var(--fs-xs);
-}
-
-.tags-section {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.tag-chip {
-  text-decoration: none;
-  transition: border-color 0.2s, background 0.2s, color 0.2s;
-  background: var(--card-bg);
-  border: 1px solid var(--line);
-  padding: 6px 14px;
-  border-radius: var(--radius-pill);
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  color: var(--text);
-}
-
 /* Секции страницы */
-.place-about,
 .place-collections,
 .place-gallery-section,
 .place-reviews,
@@ -452,36 +252,13 @@
   margin-bottom: 72px;
 }
 
-/* «О месте» и карта — в две колонки на широком экране */
-.place-about {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 28px;
-  align-items: start;
-}
-
-@media (min-width: 900px) {
-  .place-about { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 48px; }
-}
-
-.place-about__title {
-  font-family: var(--font-heading);
-  font-size: var(--fs-xl);
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  color: var(--ink);
-  margin-bottom: 14px;
-}
-
+/* Описание — главный текст страницы: крупно и тёмным, чтобы не терялось
+   среди справки и карточек */
 .description-text {
   font-size: var(--fs-lg);
-  line-height: 1.7;
-  color: var(--text);
+  line-height: 1.65;
+  color: var(--ink);
   margin-bottom: 18px;
-}
-
-@media (max-width: 480px) {
-  .description-text { font-size: var(--fs-md); }
 }
 
 /* «Это место нам подсказали» — место от читателей */
@@ -498,32 +275,6 @@
 .place-readers[hidden] { display: none; }
 .place-readers .icon { flex: none; margin-top: 3px; color: var(--primary); }
 .place-readers a { color: var(--primary-text); text-underline-offset: 3px; }
-
-/* Карточек информации нет совсем — отступ, который давала секция */
-.place-info[hidden] + .place-about { margin-top: 48px; }
-
-/* «Что-то изменилось? Сообщите нам» — тихая ссылка под карточками */
-.suggestion-edit {
-  background: none;
-  border: none;
-  color: var(--text-light);
-  font-family: inherit; /* у <button> шрифт по умолчанию системный */
-  font-weight: 500;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: var(--fs-sm);
-  min-height: 44px;
-  padding: 0;
-  margin-top: 4px;
-}
-
-.suggestion-edit:hover {
-  color: var(--text);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
 
 /* Окно с Яндекс Формой: шире обычного, форма прокручивается внутри */
 .report-modal__content { max-width: 640px; display: flex; flex-direction: column; }
@@ -558,28 +309,6 @@
 }
 
 .report-modal__fallback:hover { color: var(--primary-text); }
-
-/* Контейнер карты не шире колонки, что бы ни нарисовала внутри карта */
-.place-map { min-width: 0; }
-.place-map .map-container { max-width: 100%; overflow: hidden; }
-
-/* Одна метка — большой карте незачем занимать целый экран */
-.place-map .map-container {
-  height: 240px;
-}
-
-@media (min-width: 769px) {
-  .place-map .map-container { height: 360px; }
-}
-
-.map-actions {
-  margin-top: 16px;
-}
-
-/* На телефоне «Маршрут» уже есть в нижней панели */
-@media (max-width: 768px) {
-  .map-actions { display: none; }
-}
 
 .reviews-header {
   display: flex;
@@ -750,6 +479,56 @@
   .similar-nav { display: none; }
 }
 
+/* «Куда пойдём дальше?» — тот же ряд карточек, что «Похожие места»:
+   вкладки по намерению (как фильтры ленты), первая карточка — готовый план */
+.place-nearby .section-title em { font-style: normal; color: var(--primary); }
+
+.nearby-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
+.nearby-tabs__count { font-weight: 500; opacity: 0.6; }
+
+/* Карточка плана — тёмная, чтобы отличалась от мест в ряду; два фото
+   встык, как две остановки. Нажатие открывает окно «Маршрут отсюда» */
+.plan-card { padding: 0; font: inherit; text-align: left; cursor: pointer; background: var(--ink); border-color: var(--ink); }
+.plan-card__photos { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 2px; height: 160px; background: var(--ink); }
+.similar-card.plan-card .plan-card__photos img { width: 100%; height: 160px; }
+.plan-card__chip {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--primary-strong);
+  font-size: var(--fs-caption);
+  font-weight: 700;
+  color: #fff;
+}
+.plan-card__title { font-size: var(--fs-md); font-weight: 700; letter-spacing: -0.02em; color: #fff; }
+.plan-card__sub { margin-top: auto; font-size: var(--fs-sm); color: rgba(255, 255, 255, 0.7); }
+.plan-card:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+/* Окно «Маршрут отсюда»: остановки с фото и одной фразой, внизу — путь */
+.plan-stops { list-style: none; margin: 0; padding: 0; display: grid; }
+.plan-stop {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
+}
+.plan-stop:first-child { border-top: 0; padding-top: 4px; }
+.plan-stop__photo { display: block; border-radius: 14px; transition: opacity 0.2s; }
+.plan-stop__photo:hover { opacity: 0.85; }
+.plan-stop__img { display: block; width: 64px; height: 64px; border-radius: 14px; object-fit: cover; background: var(--photo-placeholder); }
+.plan-stop__img.is-broken { visibility: visible; content: url("data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="); }
+.plan-stop__text { display: grid; gap: 2px; min-width: 0; }
+.plan-stop__kicker { font-size: var(--fs-xs); color: var(--text-light); }
+.plan-stop__name { font-weight: 700; color: var(--text); text-decoration: none; }
+a.plan-stop__name:hover { color: var(--primary-text); }
+.plan-stop__desc { font-size: var(--fs-sm); color: var(--text-light); line-height: 1.45; }
+.plan-modal__actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+.plan-modal__actions .btn { flex: 1 1 auto; justify-content: center; }
+
 .similar-scroll {
   --edge: 16px;
   display: flex;
@@ -917,12 +696,6 @@
   .gallery-item:hover img { transform: none; }
 }
 
-.tag-chip:hover {
-  background: var(--ink);
-  border-color: var(--ink);
-  color: #fff;
-}
-
 /* Последняя карточка «Похожих мест» — вся категория */
 .similar-card--more {
   display: flex;
@@ -955,7 +728,6 @@
   justify-content: center;
   margin-bottom: 24px;
 }
-
 
 /* Заглушка hero до загрузки данных: вместо тёмного экрана с «Загружаем…» —
    мерцающий фон и плашки на месте заголовка и описания */
@@ -1062,120 +834,443 @@
   z-index: 3;
 }
 
-/* «Почему стоит пойти / Когда лучше / Что заметить» — сразу под первым
-   экраном: это то, чего нет в справочниках. «Почему» — крупно, на всю
-   ширину; два других — рядом на широком экране */
-.place-story {
+/* ---------- Справка и «О месте» ----------
+   Справка — сразу под фото, без заголовка и без рамки: строки с иконками
+   и тонкими линиями лежат прямо на фоне страницы. Ниже «О месте», на
+   компьютере справа от него — «Идёшь не один?» и «Есть в подборках» */
+.place-facts { margin-top: 24px; }
+
+@media (min-width: 900px) {
+  .place-facts { margin-top: 48px; }
+}
+
+.place-main {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
+  gap: var(--place-gap);
+  margin: var(--place-gap) auto;
+}
+
+@media (min-width: 900px) {
+  .place-main { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 56px; align-items: start; }
+  /* Правая колонка начинается вровень с текстом, а не с заголовком */
+  .place-aside { margin-top: calc(var(--place-title-size) * 1.2 + 14px); }
+}
+
+/* Отступ между блоками страницы — один на всех: на телефоне 56px, шире — 72px.
+   Заголовок «О месте» — 24px на телефоне, 28px шире */
+.place-page { --place-gap: 72px; --place-title-size: var(--fs-2xl); }
+@media (max-width: 768px) {
+  .place-page { --place-gap: 56px; --place-title-size: 1.5rem; }
+  .place-facts { margin-top: 28px; }
+  .place-collections,
+  .place-gallery-section,
+  .place-similar { margin-bottom: var(--place-gap); }
+  .similar-nav { margin-bottom: 16px; }
+  /* У ленты карточек снизу запас под тень — гасим его, чтобы после ленты
+     отступ был тем же, что между остальными блоками */
+  .similar-scroll { margin-bottom: -40px; }
+}
+
+.place-aside { display: grid; gap: 28px; min-width: 0; }
+
+.place-block__title {
+  margin-bottom: 14px;
+  /* Высота строки задана явно: от неё считается отступ правой колонки */
+  line-height: 1.2;
+  font-family: var(--font-heading);
+  font-size: var(--place-title-size);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+
+.description-text[hidden] { display: none; }
+
+/* Строки справки: иконка в кружке, значение, подпись */
+.fact-row {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
   gap: 12px;
-  margin-top: 40px;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
 }
 
-.place-story[hidden] { display: none; }
-.place-story + .place-info { margin-top: 12px; }
+.fact-row:first-child { padding-top: 0; border-top: 0; }
 
-@media (min-width: 768px) {
-  .place-story { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-  .place-story__item--why { grid-column: 1 / -1; }
-  .place-story + .place-info { margin-top: 16px; }
+.fact-row[hidden] { display: none; }
+
+.fact-row__icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--cream);
+  color: var(--primary);
 }
 
-.place-story__item {
-  padding: 20px 22px;
-  border-radius: var(--radius-card);
+.fact-row__icon .icon { width: 17px; height: 17px; }
+
+.fact-row__body { min-width: 0; align-self: center; }
+
+.fact-row__value,
+.fact-row__status,
+.fact-row__price { font-size: var(--fs-md); font-weight: 700; line-height: 1.4; color: var(--ink); }
+
+.fact-row__price { font-weight: 600; }
+
+.fact-row__price a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+
+.fact-row__status { color: var(--success); }
+
+.fact-row__status--closed { color: var(--danger); }
+
+.fact-row__sub,
+.fact-row__hours { margin-top: 2px; font-size: var(--fs-sm); line-height: 1.45; color: var(--text-light); }
+
+.fact-row__value[hidden],
+.fact-row__sub[hidden],
+.fact-row__status[hidden] { display: none; }
+
+.fact-row__hours .today-schedule { gap: 4px 10px; }
+
+.closing-timer { display: block; margin-top: 2px; font-size: var(--fs-sm); font-weight: 600; color: var(--danger); }
+
+.closing-timer[hidden] { display: none; }
+
+.closing-timer--open { color: var(--success); }
+
+/* «Позвонить», «Сайт», «Маршрут» — плитками с иконкой над подписью */
+.fact-acts { display: flex; gap: 8px; padding: 4px 0 14px; }
+
+.fact-acts[hidden] { display: none; }
+
+.fact-act {
+  flex: 1;
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  min-width: 0;
+  padding: 10px 4px;
+  border: 1px solid var(--line-strong);
+  border-radius: 14px;
   background: var(--card-bg);
-  box-shadow: var(--shadow-soft);
+  font-size: var(--fs-sm);
+  font-weight: 700;
+  color: var(--ink);
+  text-decoration: none;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
 }
 
-.place-story__item--why {
-  background: var(--accent-soft);
-  box-shadow: none;
-}
+.fact-act[hidden] { display: none; }
 
-.place-story__title {
+.fact-act .icon { width: 20px; height: 20px; color: var(--primary); }
+
+.fact-act:hover { background: var(--ink); border-color: var(--ink); color: #fff; }
+
+.fact-act:hover .icon { color: #fff; }
+
+/* «Показать на карте» и «Что-то не так? Поправить» — строками-кнопками */
+.fact-line {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 8px;
-  font-size: var(--fs-caption);
+  width: 100%;
+  min-height: 48px;
+  padding: 0;
+  border: 0;
+  border-top: 1px solid var(--line);
+  background: none;
+  font-family: inherit;
+  font-size: var(--fs-sm);
+  text-align: left;
+  cursor: pointer;
+}
+
+.fact-line[hidden] { display: none; }
+
+/* Строка карты: слева «Показать на карте», справа (только когда нет
+   плиток) — «Маршрут» */
+.fact-maprow { display: flex; align-items: center; justify-content: space-between; gap: 12px; border-top: 1px solid var(--line); }
+
+.fact-maprow[hidden] { display: none; }
+
+.fact-maprow .fact-line { flex: 1; width: auto; border-top: 0; }
+
+.fact-maprow__route {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 48px;
+  font-size: var(--fs-sm);
   font-weight: 700;
-  letter-spacing: 0.06em;
+  color: var(--primary-text);
+  text-decoration: none;
+}
+
+.fact-maprow__route[hidden] { display: none; }
+
+.fact-maprow__route .icon { color: var(--primary); }
+
+.fact-maprow__route:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+/* Есть «Маршрут» справа — стрелка раскрытия карты рядом с текстом */
+.fact-maprow:has(.fact-maprow__route:not([hidden])) .fact-line__chevron { margin-left: 4px; }
+
+.fact-map-toggle { font-weight: 700; color: var(--ink); }
+
+.fact-map-toggle .icon { color: var(--primary); }
+
+.fact-line__chevron { margin-left: auto; color: var(--text-light) !important; transition: transform 0.2s; }
+
+.fact-map-toggle[aria-expanded="true"] .fact-line__chevron { transform: rotate(180deg); }
+
+.fact-map-toggle:hover span { text-decoration: underline; text-underline-offset: 3px; }
+
+.fact-map[hidden] { display: none; }
+
+.fact-map .map-container {
+  height: 260px;
+  max-width: 100%;
+  margin-bottom: 12px;
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+}
+
+.fact-fix { color: var(--text-light); }
+
+.fact-fix span { text-decoration: underline; text-decoration-color: var(--line-strong); text-underline-offset: 3px; }
+
+.fact-fix:hover { color: var(--primary-text); }
+
+.fact-fix:hover span { text-decoration-color: currentColor; }
+
+/* Компьютер: справка плашкой в две колонки — слева часы и адрес, справа
+   цена и кнопки; карта и «Поправить» — на всю ширину */
+@media (min-width: 900px) {
+  /* На компьютере справка — отдельной плашкой, как карточки сайта */
+  .place-facts {
+    /* Края плашки — вровень с текстом соседних блоков (у .container шире
+       768px по 24px отступа по бокам) */
+    width: calc(100% - 48px);
+    max-width: calc(1200px - 48px);
+    padding: 24px 28px 4px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-card);
+    background: var(--card-bg);
+    box-shadow: var(--shadow-soft);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      "hours price"
+      "addr acts"
+      "map-t map-t"
+      "map map"
+      "fix fix";
+    column-gap: 56px;
+  }
+  #hours-row { grid-area: hours; }
+  #address-row { grid-area: addr; }
+  #price-row { grid-area: price; padding-top: 0; border-top: 0; }
+  .fact-acts { grid-area: acts; align-self: start; padding: 12px 0 14px; border-top: 1px solid var(--line); }
+  .fact-maprow { grid-area: map-t; }
+  .fact-map { grid-area: map; }
+  .fact-fix { grid-area: fix; }
+  .fact-map .map-container { height: 320px; }
+  /* Плитки на широком экране — в строку: иконка слева от подписи */
+  .fact-act { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 12px; }
+}
+
+/* «Идёшь не один?» — яркая карточка: при прокрутке её видно сразу */
+.invite-card {
+  position: relative;
+  display: grid;
+  gap: 14px;
+  width: 100%;
+  overflow: hidden;
+  padding: 18px 16px 16px;
+  border: 0;
+  border-radius: var(--radius-card);
+  /* Не светлее #D24406: на более ярком оранжевом белый мелкий текст
+     читался плохо (контраст ниже 4,5) */
+  background: linear-gradient(135deg, var(--primary-strong) 0%, #B33A04 100%);
+  box-shadow: 0 12px 28px -12px rgba(210, 68, 6, 0.6);
+  font-family: inherit;
+  color: #fff;
+  text-align: left;
+  cursor: pointer;
+}
+
+.invite-card::after {
+  content: "";
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  pointer-events: none;
+}
+
+.invite-card:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+.invite-card__who { position: relative; display: flex; align-items: center; gap: 12px; }
+
+.invite-card__ava { display: flex; flex: none; }
+
+.invite-card__ava i {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: var(--cream) center / cover no-repeat;
+  font-style: normal;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--primary-strong);
+}
+
+.invite-card__ava i + i { margin-left: -14px; background: var(--accent-soft); }
+
+.invite-card__title { display: block; font-size: var(--fs-lg); font-weight: 700; line-height: 1.2; }
+
+.invite-card__text { display: block; margin-top: 3px; font-size: var(--fs-sm); line-height: 1.4; }
+
+.invite-card__btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  border-radius: var(--radius-pill);
+  background: #fff;
+  font-size: var(--fs-md);
+  font-weight: 700;
+  color: var(--primary-strong);
+  transition: background 0.2s;
+}
+
+.invite-card__btn .icon { width: 20px; height: 20px; }
+
+.invite-card:hover .invite-card__btn { background: var(--cream); }
+
+/* Окно «Позвать друга»: на телефоне выезжает снизу */
+.invite-options { display: grid; gap: 10px; }
+
+.invite-option {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--card-bg);
+  font-family: inherit;
+  color: var(--ink);
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.invite-option:hover { border-color: var(--line-strong); }
+
+.invite-option--main { border-color: var(--primary); background: #FFF6EF; }
+
+.invite-option--main:hover { border-color: var(--primary-strong); }
+
+.invite-option__icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--accent-soft);
+  color: var(--primary);
+}
+
+.invite-option b { display: block; font-size: var(--fs-md); }
+
+.invite-option small { display: block; margin-top: 2px; font-size: var(--fs-sm); line-height: 1.4; color: var(--text-light); }
+
+@media (max-width: 768px) {
+  .modal--sheet { align-items: flex-end; padding: 0; }
+  .modal--sheet .modal-content {
+    max-width: none;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Нижняя панель: «Позвать друга» — акцентом */
+.mobile-actions-bar .mobile-actions-bar__accent { color: var(--primary-text); }
+
+/* Панель выезжает, когда справка ушла с экрана (place.js, .is-shown): на
+   первом экране «Позвонить» и «Маршрут» уже есть в справке */
+@media (max-width: 768px) {
+  .mobile-actions-bar { transform: translateY(110%); transition: transform 0.25s ease; }
+  .mobile-actions-bar.is-shown { transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-actions-bar { transition: none; }
+}
+
+/* «Похожие по настроению» — слово «настроению» цветом, как «дальше» */
+.place-similar--mood .section-title em { font-style: normal; color: var(--primary); }
+
+/* «Есть в подборках» — компактными строками */
+.place-collections__list { display: grid; gap: 10px; }
+
+@media (min-width: 768px) {
+  .place-collections__list { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+}
+
+.collection-row {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--card-bg);
+  color: var(--ink);
+  text-decoration: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.collection-row:hover { border-color: var(--line-strong); box-shadow: var(--shadow-soft); }
+
+.collection-row__photo {
+  height: 68px;
+  border-radius: calc(var(--radius-card) - 6px);
+  background: var(--photo-placeholder) center / cover no-repeat;
+}
+
+.collection-row__body { display: grid; gap: 2px; min-width: 0; }
+
+.collection-row__type {
+  font-size: var(--fs-caption);
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--primary-text);
 }
 
-.place-story__title .icon { width: 16px; height: 16px; flex: none; }
+.collection-row__title { font-weight: 700; line-height: 1.3; }
 
-.place-story__text {
-  font-size: var(--fs-md);
-  line-height: 1.6;
-  color: var(--text);
-}
-
-.place-story__item--why .place-story__text {
-  font-family: var(--font-heading);
-  font-size: var(--fs-lg);
-  font-weight: 500;
-  line-height: 1.45;
-  letter-spacing: -0.01em;
-  color: var(--ink);
-}
-
-@media (min-width: 768px) {
-  .place-story__item--why .place-story__text { font-size: var(--fs-xl); }
-}
-
-/* «Идёшь не один?» — приглашение в «Выбрать вместе» (vmeste/). На телефоне
-   — карточка под шапкой, на компьютере — в правой колонке (.together-side) */
-.info-side {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  min-width: 0;
-}
-.info-side[hidden] { display: none; }
-.together-side {
-  border: none;
-  background: linear-gradient(120deg, #FFE3CF, #FFD0B5);
-}
-.together-side[hidden] { display: none; }
-@media (max-width: 768px) {
-  .together-side { display: none; }
-}
-.together-invite { margin-top: 20px; }
-.together-invite[hidden] { display: none; }
-@media (min-width: 769px) {
-  .together-invite { display: none; }
-}
-.together-invite__card {
-  padding: 16px;
-  border-radius: 20px;
-  background: linear-gradient(120deg, #FFE3CF, #FFD0B5);
-  color: var(--ink);
-}
-.together-invite__title {
-  margin: 0 0 6px;
-  font-family: var(--font-heading);
-  font-size: var(--fs-md);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-}
-.together-invite__text {
-  margin: 0 0 12px;
-  font-size: var(--fs-sm);
-  line-height: 1.45;
-  color: var(--text);
-}
-.together-invite__btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 44px;
-  padding: 0 18px;
-  border-radius: var(--radius-pill);
-  background: var(--primary);
-  color: #fff;
-  font-weight: 700;
-  text-decoration: none;
+/* «Есть в подборках» в правой колонке на компьютере (переносит place.js) */
+@media (min-width: 900px) {
+  .place-aside .place-collections { margin: 0; padding: 0; max-width: none; }
+  .place-aside .place-collections .section-head { margin-bottom: 12px; }
+  .place-aside .place-collections .section-title { font-size: var(--fs-lg); }
+  .place-aside .place-collections__list { grid-template-columns: minmax(0, 1fr); gap: 10px; }
 }

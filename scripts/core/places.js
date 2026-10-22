@@ -12,11 +12,13 @@ const DATA_URL = new URL('../../data/places.json', import.meta.url);
 export const CATEGORIES = {
   food: { label: 'Еда', emoji: '🍕', icon: 'utensils' },
   nature: { label: 'Природа', emoji: '🌳', icon: 'trees' },
-  art: { label: 'Музеи и выставки', emoji: '🎨', icon: 'landmark' },
+  art: { label: 'Искусство', emoji: '🎨', icon: 'landmark' },
   // Театры убраны, пока мест нет (Большой театр — слишком очевидный).
   // Вернуть: theater: { label: 'Театры', emoji: '🎭', icon: 'drama' },
   photo: { label: 'Фотолокации', emoji: '📸', icon: 'camera' },
-  entertainment: { label: 'Развлечения', emoji: '🎉', icon: 'ticket' }
+  entertainment: { label: 'Развлечения', emoji: '🎉', icon: 'ticket' },
+  // Книжные, барахолки, винтаж, маркеты (временные — с плашкой «временно»)
+  shops: { label: 'Магазины', emoji: '🛍️', icon: 'shopping-bag' }
 };
 
 export function categoryLabel(category, { emoji = false } = {}) {
@@ -26,7 +28,7 @@ export function categoryLabel(category, { emoji = false } = {}) {
 }
 
 export function placeUrl(slug) {
-  return `place/?slug=${encodeURIComponent(slug)}`;
+  return `place/${encodeURIComponent(slug)}`;
 }
 
 /** Путь к фото в data/places.json уже хранится в готовом виде
@@ -172,15 +174,49 @@ export function popular(places, count = 4) {
     .map((x) => x.p);
 }
 
-/** Похожие места: общие теги с весом по редкости (IDF) — «день» или
- *  «исторично» есть почти у всех мест и мало что говорят, а «скрыто» или
- *  «набережная» — много; та же категория даёт бонус; при равенстве — ближе
- *  по координатам. */
+/** Минуты пешком между точками: расстояние по прямой × 1,3 (улицы не
+ *  прямые) при 4,8 км/ч. Для подсказки «рядом», не для навигации. */
+export function walkMinutes(a, b) {
+  if (!a || !b) return Infinity;
+  const dLat = (b[0] - a[0]) * 111;
+  const dLon = (b[1] - a[1]) * 111 * Math.cos((a[0] * Math.PI) / 180);
+  return Math.max(1, Math.round((Math.hypot(dLat, dLon) * 1.3 / 4.8) * 60));
+}
+
+/** Зачем идти в место после другого: поесть, догулять или заглянуть
+ *  (музей, книжный, пространство). Коворкинги и библиотеки из «Фотолокаций» —
+ *  это «заглянуть», а не прогулка. */
+export function placeIntent(place) {
+  if (place.category === 'food') return 'eat';
+  if (place.category === 'nature') return 'walk';
+  if (place.category === 'photo') return /библиотек|пространств|квартал|городок/i.test(place.type || '') ? 'see' : 'walk';
+  return 'see';
+}
+
+/** Места в пешей доступности: [{ place, minutes }] от ближних к дальним. */
+export function nearby(places, place, { maxMinutes = 10, count = 8 } = {}) {
+  return places
+    .filter((p) => p.slug !== place.slug)
+    .map((p) => ({ place: p, minutes: walkMinutes(place.coords, p.coords) }))
+    .filter((x) => x.minutes <= maxMinutes)
+    .sort((a, b) => a.minutes - b.minutes)
+    .slice(0, count);
+}
+
+// Теги настроения: блок «Похожие по настроению» — про атмосферу, поэтому
+// совпадение по ним весит вдвое больше, чем по остальным тегам
+const MOOD_TAGS = new Set(['тихо', 'атмосферно', 'эстетично', 'исторично', 'необычно', 'уютно',
+  'красиво', 'просторно', 'оживлённо', 'скрыто', 'вдохновляюще', 'камерно']);
+
+/** Похожие по настроению: общие теги с весом по редкости (IDF) — «день»
+ *  есть почти у всех мест и мало что говорит, а «скрыто» или «набережная» —
+ *  много; теги настроения весят вдвое; та же категория даёт бонус; при
+ *  равенстве — ближе по координатам. */
 export function similar(places, place, count = 6) {
   const tags = new Set(place.tags || []);
   const tagCount = {};
   places.forEach((p) => (p.tags || []).forEach((t) => { tagCount[t] = (tagCount[t] || 0) + 1; }));
-  const weight = (t) => Math.log(places.length / (tagCount[t] || 1));
+  const weight = (t) => Math.log(places.length / (tagCount[t] || 1)) * (MOOD_TAGS.has(t) ? 2 : 1);
   const distance = (p) => {
     if (!place.coords || !p.coords) return Infinity;
     const dLat = p.coords[0] - place.coords[0];

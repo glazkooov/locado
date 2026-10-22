@@ -1,8 +1,8 @@
 // components/hero-moods.js — фотокарточки настроений в hero. Клик применяет
 // настроение к ленте мест (через feed.setFilters) прямо под героем и
-// подсвечивает карточку. Когда места загружены, порядок карточек учитывает
-// время суток и погоду. Плашек «сейчас в тему» нет: что в тему — человек
-// решит сам.
+// подсвечивает карточку. Порядок — по времени суток, и он не меняется после
+// загрузки данных: иначе при открытии страницы карточки «прыгали». Плашек
+// «сейчас в тему» нет: что в тему — человек решит сам.
 // Тот же паттерн клик → фильтр → скролл, что уже используют плитки
 // категорий и карточки подборок (см. initCategoryTiles/initCollections в
 // scripts/pages/home.js) — просто третий источник того же действия.
@@ -10,7 +10,7 @@
 import { goal } from '../core/analytics.js';
 import { $, $$, on } from '../core/dom.js';
 import { escapeHtml } from '../core/format.js';
-import { MOODS, moodsFor, moodsNow, resolveMoodFilters } from '../core/moods.js';
+import { MOODS, moodsFor, resolveMoodFilters } from '../core/moods.js';
 
 /** Рисует карточки сразу, до загрузки places.json: первый экран не ждёт данных. */
 export function renderHeroMoods(daypart) {
@@ -23,20 +23,6 @@ export function renderHeroMoods(daypart) {
           <span class="mood-card__label">${escapeHtml(mood.label)}</span>
         </span>
       </button>`).join('');
-}
-
-/** Порядок карточек с учётом времени суток и погоды. */
-export function liveHeroMoods(places, { daypart, bad = false } = {}) {
-  const container = $('#hero-moods');
-  if (!container) return null;
-  const live = moodsNow(places, { daypart, bad });
-  live.order.forEach((mood) => {
-    const card = $(`.mood-card[data-mood="${mood.id}"]`, container);
-    if (!card) return;
-    container.append(card); // в порядке live.order
-  });
-  container.scrollLeft = 0;
-  return live;
 }
 
 export function initHeroMoods(feed, places, { onSelect } = {}) {
