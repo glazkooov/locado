@@ -486,15 +486,17 @@
 .nearby-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
 .nearby-tabs__count { font-weight: 500; opacity: 0.6; }
 
-/* Карточка плана — тёмная, чтобы отличалась от мест в ряду; два фото
-   встык, как две остановки. Нажатие открывает окно «Маршрут отсюда» */
-.plan-card { padding: 0; font: inherit; text-align: left; cursor: pointer; background: var(--ink); border-color: var(--ink); }
-.plan-card__photos { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 2px; height: 160px; background: var(--ink); }
-.similar-card.plan-card .plan-card__photos img { width: 100%; height: 160px; }
+/* Карточка плана — одно фото на всю карточку, текст поверх на затемнении.
+   Без фото остаётся тёплая подложка, текст читается на том же затемнении.
+   Нажатие открывает окно «Маршрут отсюда» */
+.plan-card { position: relative; min-height: 236px; padding: 0; font: inherit; text-align: left; cursor: pointer; background: var(--photo-placeholder); }
+.plan-card::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 30%, rgba(20, 16, 13, 0.88)); }
+.similar-card.plan-card .plan-card__cover { position: absolute; inset: 0; width: 100%; height: 100%; }
 .plan-card__chip {
   position: absolute;
   top: 12px;
   left: 12px;
+  z-index: 1;
   padding: 4px 10px;
   border-radius: var(--radius-pill);
   background: var(--primary-strong);
@@ -502,85 +504,10 @@
   font-weight: 700;
   color: #fff;
 }
+.plan-card__text { position: absolute; left: 16px; right: 16px; bottom: 16px; z-index: 1; display: grid; gap: 4px; }
 .plan-card__title { font-size: var(--fs-md); font-weight: 700; letter-spacing: -0.02em; color: #fff; }
-.plan-card__sub { margin-top: auto; font-size: var(--fs-sm); color: rgba(255, 255, 255, 0.7); }
+.plan-card__sub { font-size: var(--fs-sm); color: rgba(255, 255, 255, 0.82); overflow-wrap: anywhere; }
 .plan-card:focus-visible { outline: none; box-shadow: var(--focus-ring); }
-
-/* ПРОТОТИП задачи 71 (?plan=a|b|v|g|d|e|zh) — после выбора оставить один вариант */
-.plan-x { position: relative; min-height: 236px; background: var(--card-bg); border-color: var(--line); }
-.plan-x__chip {
-  position: absolute; top: 12px; left: 12px; z-index: 2;
-  padding: 4px 10px; border-radius: var(--radius-pill);
-  background: var(--primary-strong); font-size: var(--fs-caption); font-weight: 700; color: #fff;
-}
-.plan-x__title { font-size: var(--fs-md); font-weight: 700; letter-spacing: -0.02em; color: var(--text); }
-.plan-x__sub { margin-top: auto; font-size: var(--fs-sm); color: var(--text-light); overflow-wrap: anywhere; }
-.plan-x .info { gap: 4px; }
-
-/* А — одно фото на всю карточку */
-.plan-x--a { background: var(--photo-placeholder); border-color: var(--line); }
-.plan-x__cover, .similar-card.plan-x--a .plan-x__cover img { position: absolute; inset: 0; width: 100%; height: 100%; }
-.plan-x__shade { position: absolute; inset: 0; background: linear-gradient(180deg, transparent 35%, rgba(20, 16, 13, 0.82)); }
-.plan-x__over { position: absolute; left: 16px; right: 16px; bottom: 16px; display: grid; gap: 4px; }
-.plan-x--a .plan-x__title { color: #fff; }
-.plan-x--a .plan-x__sub { color: rgba(255, 255, 255, 0.82); }
-
-/* Б — тёмная, путь из трёх точек */
-.plan-x--b { background: var(--ink); border-color: var(--ink); padding: 52px 18px 18px; gap: 14px; }
-.plan-x--b .plan-x__title { color: #fff; }
-.plan-x__path { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; position: relative; }
-.plan-x__path::before { content: ""; position: absolute; left: 5px; top: 8px; bottom: 8px; border-left: 2px dashed rgba(255, 255, 255, 0.3); }
-.plan-x__path li { position: relative; display: grid; grid-template-columns: 12px minmax(0, 1fr); gap: 12px; align-items: start; color: #fff; font-size: var(--fs-sm); font-weight: 600; }
-.plan-x__path small { display: block; font-weight: 400; color: rgba(255, 255, 255, 0.6); font-size: var(--fs-xs); }
-.plan-x__dot { width: 12px; height: 12px; margin-top: 4px; border-radius: 50%; background: var(--primary); box-shadow: 0 0 0 3px var(--ink); }
-
-/* В — три кружка с фото на тёплом фоне */
-.plan-x--v { background: linear-gradient(160deg, #FFF6EE 0%, #FBE6D6 100%); }
-.plan-x__circles { display: flex; justify-content: center; align-items: center; height: 160px; }
-.plan-x__circle { width: 76px; height: 76px; border-radius: 50%; overflow: hidden; border: 3px solid #fff; background: var(--photo-placeholder); box-shadow: var(--shadow-soft); }
-.plan-x__circle + .plan-x__circle { margin-left: -14px; }
-.similar-card.plan-x--v .plan-x__circle img { width: 100%; height: 100%; }
-
-/* Д — нарисованная схема пути */
-.plan-x__map { position: relative; display: block; height: 160px; background: linear-gradient(160deg, #FFF6EE 0%, #FBE6D6 100%); }
-.plan-x__map svg { width: 100%; height: 100%; }
-.plan-x__map path { fill: none; stroke: var(--primary); stroke-width: 3; stroke-dasharray: 2 8; stroke-linecap: round; }
-.plan-x__map circle { fill: var(--primary-strong); stroke: #fff; stroke-width: 3; }
-.plan-x__map text { fill: #fff; font-size: 11px; font-weight: 700; text-anchor: middle; }
-
-/* Е — «билет» */
-.plan-x--e { background: var(--card-bg); }
-.plan-x__head {
-  display: grid; gap: 2px; padding: 16px 18px 18px; background: var(--primary-strong); color: #fff;
-  font-size: var(--fs-md); font-weight: 700; letter-spacing: -0.02em;
-  -webkit-mask: radial-gradient(circle 6px at 6px 100%, transparent 98%, #000) 0 0 / 12px 100% repeat-x;
-          mask: radial-gradient(circle 6px at 6px 100%, transparent 98%, #000) 0 0 / 12px 100% repeat-x;
-}
-.plan-x__head small { font-size: var(--fs-caption); font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; opacity: 0.85; }
-.plan-x__stops { list-style: none; margin: 0; padding: 14px 18px 18px; display: grid; gap: 10px; }
-.plan-x__stops li { display: grid; grid-template-columns: 24px minmax(0, 1fr); gap: 10px; align-items: center; font-size: var(--fs-sm); font-weight: 600; }
-.plan-x__num { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: var(--cream-deep); color: var(--primary-text); font-size: var(--fs-xs); font-weight: 700; }
-
-/* Г — тёмная полоса над рядом */
-.plan-strip {
-  display: flex; align-items: center; gap: 6px 10px; flex-wrap: wrap; width: 100%;
-  margin: 8px 0 4px; padding: 12px 44px 12px 16px; position: relative;
-  border: 0; border-radius: var(--radius-card); background: var(--ink); color: #fff;
-  font: inherit; text-align: left; cursor: pointer;
-}
-.plan-strip__label { font-size: var(--fs-sm); color: rgba(255, 255, 255, 0.7); }
-.plan-strip__route { font-weight: 700; overflow-wrap: anywhere; }
-.plan-strip__arrow { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--primary); font-weight: 700; }
-.plan-strip:focus-visible { outline: none; box-shadow: var(--focus-ring); }
-
-/* Ж — номер остановки на обычной карточке */
-.plan-num { position: relative; }
-.plan-num::before {
-  content: attr(data-num); position: absolute; top: 12px; left: 12px; z-index: 1;
-  width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center;
-  background: var(--primary-strong); color: #fff; font-weight: 700; font-size: var(--fs-sm);
-}
-.plan-x--end { font: inherit; text-align: left; cursor: pointer; }
 
 /* Окно «Маршрут отсюда»: остановки с фото и одной фразой, внизу — путь */
 .plan-stops { list-style: none; margin: 0; padding: 0; display: grid; }

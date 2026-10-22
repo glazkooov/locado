@@ -18,7 +18,6 @@ import { showToast } from '../components/toast.js';
 import { icon } from '../core/icons.js';
 import { loadCollections, collectionsWithPlace, collectionUrl, COLLECTION_TYPES } from '../core/collections.js';
 import { initShare } from '../components/share.js';
-import { planVariant, planCardProtoHtml, planStripHtml, numberCard, planTabEndHtml } from './place-plan-proto.js';
 
 let timerInterval = null;
 
@@ -286,18 +285,18 @@ function nearbyPlans(place, list) {
   }).filter((x) => x.s2);
 }
 
-/** Карточка плана в ряду: два фото встык и коротко — «Маршрут отсюда».
- *  Подробности (остановки, путь, другой вариант) — в окне по нажатию. */
+/** Карточка плана в ряду: одно фото на всю карточку — второй остановки,
+ *  первая и так стоит в ряду следом. Поверх — «Маршрут отсюда» и куда
+ *  идти. Подробности — в окне по нажатию. */
 function nearbyPlanCardHtml({ s1, s2 }) {
-  const photo = (p) => `<img src="${escapeHtml(p.photoSm || p.photo || '')}" alt="" loading="lazy">`;
+  const cover = [s2.place, s1.place].find((p) => p.photoSm || p.photo);
   return `
     <button type="button" class="similar-card plan-card" id="nearby-plan-open" aria-haspopup="dialog">
-      <span class="plan-card__photos">${photo(s1.place)}${photo(s2.place)}
-        <span class="plan-card__chip">Готовый план</span>
-      </span>
-      <span class="info">
+      ${cover ? `<img class="plan-card__cover" src="${escapeHtml(cover.photoSm || cover.photo)}" alt="" loading="lazy">` : ''}
+      <span class="plan-card__chip">Готовый план</span>
+      <span class="plan-card__text">
         <span class="plan-card__title">Маршрут отсюда</span>
-        <span class="plan-card__sub">Ещё 2 места рядом</span>
+        <span class="plan-card__sub">${escapeHtml(s1.place.name)} → ${escapeHtml(s2.place.name)}</span>
       </span>
     </button>`;
 }
@@ -342,39 +341,23 @@ function renderNearby(place, allPlaces) {
     $('#plan-other').hidden = plans.length < 2;
     bindImageFallback($('#plan-stops'));
   };
-  // Прототип задачи 71: Г — полоса над рядом, Ж — вкладка, остальные — карточка
-  const strip = planVariant === 'g' && plans.length ? document.createElement('div') : null;
-  if (strip) { strip.className = 'container'; container.before(strip); }
   const draw = () => {
-    const plan = plans.length ? plans[alt % plans.length] : null;
-    const planTab = planVariant === 'zh' && plan
-      ? `<button type="button" class="category-btn${active === 'plan' ? ' active' : ''}" data-intent="plan" aria-pressed="${active === 'plan'}">План</button>` : '';
-    tabs.innerHTML = planTab + intents.map((k) => {
+    tabs.innerHTML = intents.map((k) => {
       const n = list.filter((x) => x.intent === k).length;
       return `<button type="button" class="category-btn${k === active ? ' active' : ''}" data-intent="${k}" aria-pressed="${k === active}">${NEARBY_TAB[k]} <span class="nearby-tabs__count">${n}</span></button>`;
     }).join('');
-    if (strip) strip.innerHTML = planStripHtml(plan);
-    if (active === 'plan') {
-      container.innerHTML = numberCard(similarCardHtml(plan.s1.place), 1) + numberCard(similarCardHtml(plan.s2.place), 2) + planTabEndHtml;
-      bindImageFallback(container);
-      return;
-    }
-    let card = '';
-    if (plan && !planVariant) card = nearbyPlanCardHtml(plan);
-    else if (plan && planVariant !== 'g' && planVariant !== 'zh') card = planCardProtoHtml(planVariant, place, plan);
-    container.innerHTML = card + list.filter((x) => x.intent === active).slice(0, 8)
+    const plan = plans.length ? nearbyPlanCardHtml(plans[alt % plans.length]) : '';
+    container.innerHTML = plan + list.filter((x) => x.intent === active).slice(0, 8)
       .map(({ place: p }) => similarCardHtml(p)).join('');
     bindImageFallback(container);
   };
   draw();
   on(tabs, 'click', '.category-btn', (e, btn) => { active = btn.dataset.intent; draw(); container.scrollLeft = 0; });
-  const openPlan = () => {
+  on(container, 'click', '#nearby-plan-open', () => {
     fillPlan();
     planModal?.open();
     goal('nearby_plan', { place: place.slug });
-  };
-  on(container, 'click', '#nearby-plan-open', openPlan);
-  if (strip) on(strip, 'click', '#nearby-plan-open', openPlan);
+  });
   on($('#plan-other'), 'click', () => { alt += 1; fillPlan(); draw(); });
   section.hidden = false;
   initSimilarNav(container, $('#nearby-prev'), $('#nearby-next'));
