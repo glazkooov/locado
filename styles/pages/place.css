@@ -26,6 +26,8 @@
   /* Название и подзаголовок — у нижнего края фото, над волной */
   .place-hero:not(.place-hero--no-photo) { padding-bottom: calc(28px + var(--hero-wave-h)); }
   .place-hero .hero-subtitle { margin-bottom: 0; }
+  /* У подборки под подзаголовком плашки — им нужен отступ */
+  .place-hero .hero-subtitle + .hero-facts { margin-top: 16px; }
 }
 
 .hero-bg {
