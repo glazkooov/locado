@@ -166,51 +166,18 @@ function reminderCards({ collections }) {
   return (k, ctx) => (k % 2 === 0 ? plan(k / 2, ctx) : (k % 4 === 1 ? together() : suggest()));
 }
 
-// Прототип (задача 75): варианты первой карточки ленты за параметром
-// ?lead=low | fan | orange. Без параметра — как раньше. После выбора
-// останется один вариант, параметр уйдёт
-const LEAD_VARIANT = new URLSearchParams(window.location.search).get('lead');
-const LEAD = { href: 'vmeste/?from=feed-top', title: 'Идёшь не один?', link: 'Выбрать вместе →' };
-
-/** Три случайных места со своим фото (есть уменьшенная копия) — для
- *  «веера» в карточке */
-function fanPhotos(places) {
-  const withPhoto = places.filter((p) => p.photoSm && p.photoSm !== p.photo);
-  const picked = [];
-  while (picked.length < 3 && withPhoto.length) picked.push(withPhoto.splice(Math.floor(Math.random() * withPhoto.length), 1)[0]);
-  return picked.map((p) => p.photoSm);
-}
-
+/** Первая карточка ленты «Идёшь не один?» — оранжевая, как на странице
+ *  места: аватар с фото случайного места и «?» (друг), заголовок и кнопка.
+ *  Без подписи: в ленте карточку должно быть видно сразу, а не читать */
 function leadCard(places) {
-  const icon = '<svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#users"></use></svg>';
-  if (LEAD_VARIANT === 'low') {
-    return { ratio: 0.8, html: `
-      <a class="feed-lead feed-lead--low" href="${LEAD.href}">
-        <span class="feed-lead__icon">${icon}</span>
-        <span class="feed-lead__title">${LEAD.title}</span>
-        <span class="feed-lead__link">${LEAD.link}</span>
-      </a>` };
-  }
-  if (LEAD_VARIANT === 'fan') {
-    const imgs = fanPhotos(places).map((src) => `<img src="${escapeHtml(src)}" alt="">`).join('');
-    return { ratio: SERVICE_RATIO, html: `
-      <a class="feed-lead feed-lead--fan" href="${LEAD.href}">
-        <span class="feed-lead__fan" aria-hidden="true">${imgs}</span>
-        <span class="feed-lead__title">${LEAD.title}</span>
-        <span class="feed-lead__link">${LEAD.link}</span>
-      </a>` };
-  }
-  if (LEAD_VARIANT === 'orange') {
-    const [photo] = fanPhotos(places);
-    return { ratio: 1.15, html: `
-      <a class="feed-lead feed-lead--orange" href="${LEAD.href}">
-        <span class="feed-lead__ava" aria-hidden="true"><i style='background-image:${cssUrl(photo)}'></i><i>?</i></span>
-        <span class="feed-lead__title">${LEAD.title}</span>
-        <span class="feed-lead__text">Отметьте места, и сразу будет видно, куда хочется обоим</span>
-        <span class="feed-lead__btn">${icon} Выбрать вместе</span>
-      </a>` };
-  }
-  return { ratio: SERVICE_RATIO, html: serviceCardHtml({ ...LEAD, iconName: 'users' }) };
+  const withPhoto = places.filter((p) => p.photoSm && p.photoSm !== p.photo); // своё фото с уменьшенной копией
+  const photo = withPhoto.length ? withPhoto[Math.floor(Math.random() * withPhoto.length)].photoSm : '';
+  return { ratio: 1.1, html: `
+    <a class="feed-lead" href="vmeste/?from=feed-top">
+      <span class="feed-lead__ava" aria-hidden="true"><i style='background-image:${cssUrl(photo)}'></i><i>?</i></span>
+      <span class="feed-lead__title">Идёшь не один?</span>
+      <span class="feed-lead__btn">Выбрать вместе</span>
+    </a>` };
 }
 
 async function main() {
