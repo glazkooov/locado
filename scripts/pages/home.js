@@ -2,7 +2,7 @@
 
 import { goal, categoryGoal } from '../core/analytics.js';
 import { $, $$, on } from '../core/dom.js';
-import { escapeHtml, cssUrl } from '../core/format.js';
+import { escapeHtml } from '../core/format.js';
 import { loadPlaces, CATEGORIES } from '../core/places.js';
 import { bindCards } from '../components/card.js';
 import { initFeed, serviceCardHtml, SERVICE_RATIO } from '../components/feed.js';
@@ -166,20 +166,6 @@ function reminderCards({ collections }) {
   return (k, ctx) => (k % 2 === 0 ? plan(k / 2, ctx) : (k % 4 === 1 ? together() : suggest()));
 }
 
-/** Первая карточка ленты «Идёшь не один?» — оранжевая, как на странице
- *  места: аватар с фото случайного места и «?» (друг), заголовок и кнопка.
- *  Без подписи: в ленте карточку должно быть видно сразу, а не читать */
-function leadCard(places) {
-  const withPhoto = places.filter((p) => p.photoSm && p.photoSm !== p.photo); // своё фото с уменьшенной копией
-  const photo = withPhoto.length ? withPhoto[Math.floor(Math.random() * withPhoto.length)].photoSm : '';
-  return { ratio: 1.1, html: `
-    <a class="feed-lead" href="vmeste/?from=feed-top">
-      <span class="feed-lead__ava" aria-hidden="true"><i style='background-image:${cssUrl(photo)}'></i><i>?</i></span>
-      <span class="feed-lead__title">Идёшь не один?</span>
-      <span class="feed-lead__btn">Выбрать вместе</span>
-    </a>` };
-}
-
 async function main() {
   const collectionsShown = renderCollections();
   renderHeroMoods(renderHeroGreeting());
@@ -222,7 +208,7 @@ async function main() {
   const feed = initFeed(withNowPlaces(shuffledFeed(places), picks.map((c) => c.place)), {
     nowBadges, showcases, reminder: reminderCards({ collections }),
     // «Выбрать вместе» — самой первой карточкой ленты
-    lead: leadCard(places)
+    lead: { ratio: SERVICE_RATIO, html: serviceCardHtml({ href: 'vmeste/?from=feed-top', iconName: 'users', title: 'Идёшь не один?', link: 'Выбрать вместе →' }) }
   });
   applyUrlFilter(feed);
   // Лента сразу под героем: настроение фильтрует её на месте
