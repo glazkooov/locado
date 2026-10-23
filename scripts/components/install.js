@@ -59,7 +59,7 @@ function modalHtml() {
         <p class="modal-hint">Будет под рукой, как приложение: открывается с одного касания, без адресной строки.</p>
         <button type="button" class="btn install-modal__native" id="install-native" hidden>Установить</button>
         <ol class="install-steps" id="install-steps">${steps}</ol>
-        ${ios ? '<p class="install-modal__note">Работает в Safari. Если открыл сайт в другом браузере — скопируй ссылку в Safari.</p>' : ''}
+        ${ios ? '<p class="install-modal__note">Работает в Safari. Если сайт открыт в другом браузере, скопируй ссылку в Safari.</p>' : ''}
       </div>
     </div>
   </div>`;
