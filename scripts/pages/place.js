@@ -448,7 +448,7 @@ function renderReviews(slug) {
   const starsSpan = $('#average-stars');
   starsSpan.innerHTML = [1, 2, 3, 4, 5].map((i) => icon('star', i <= Math.round(avg) ? 'icon--filled' : '')).join('');
 
-  if (!reviews.length) { container.innerHTML = '<p>Отзывов пока нет — стань первым!</p>'; return; }
+  if (!reviews.length) { container.innerHTML = '<p>Отзывов пока нет.</p>'; return; }
   container.innerHTML = reviews.map((rev) => `
     <div class="review-card">
       <div class="review-header">
