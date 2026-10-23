@@ -133,18 +133,23 @@ async function renderCollections() {
   }
 }
 
+// Прототип задачи 82 (?feed=v2): «Предложить место» — во втором ряду ленты
+// и с фото места от читателей, «Выбрать вместе» — только первой карточкой
+const FEED_V2 = new URLSearchParams(window.location.search).get('feed') === 'v2';
+
+const photoCard = ({ href, photo, chip, title, link, mod = '' }) => `
+    <a class="feed-promo${mod}" href="${href}">
+      <img class="feed-promo__img" src="${escapeHtml(photo || '')}" alt="" loading="lazy">
+      <span class="feed-promo__chip">${escapeHtml(chip)}</span>
+      <span class="feed-promo__text"><b>${escapeHtml(title)}</b><small>${escapeHtml(link)}</small></span>
+    </a>`;
+
 /** Карточки-напоминания в ленте — по кругу: подборка, «Выбрать вместе»,
  *  подборка, «Предложить место». Подборок будет много, поэтому они — через
  *  раз. Если в ленте есть полоса «Готовые планы» — только те, которых в ней
  *  не было (пока других нет, их место пропускается). В категории или
  *  настроении — только подборки, где есть места из этой ленты. */
 function reminderCards({ collections }) {
-  const photoCard = ({ href, photo, chip, title, link }) => `
-    <a class="feed-promo" href="${href}">
-      <img class="feed-promo__img" src="${escapeHtml(photo || '')}" alt="" loading="lazy">
-      <span class="feed-promo__chip">${escapeHtml(chip)}</span>
-      <span class="feed-promo__text"><b>${escapeHtml(title)}</b><small>${escapeHtml(link)}</small></span>
-    </a>`;
   const notInBand = collections.slice(PLANS_IN_BAND);
   const plans = [...notInBand, ...collections.slice(0, PLANS_IN_BAND)];
 
@@ -163,7 +168,19 @@ function reminderCards({ collections }) {
 
   // k-е напоминание: чётные — подборки (k / 2 — какая по счёту), нечётные —
   // по очереди «Выбрать вместе» и «Предложить место»
+  // В прототипе обе карточки уже были в первых рядах: первое нечётное
+  // напоминание пропускаем, дальше — то же чередование
+  if (FEED_V2) return (k, ctx) => (k % 2 === 0 ? plan(k / 2, ctx) : (k === 1 ? null : (k % 4 === 3 ? together() : suggest())));
   return (k, ctx) => (k % 2 === 0 ? plan(k / 2, ctx) : (k % 4 === 1 ? together() : suggest()));
+}
+
+/** «Предложить место» во втором ряду ленты (прототип ?feed=v2): с фото
+ *  места, которое подсказали читатели, — видно, что предложения доходят. */
+function suggestEarlyCard(places) {
+  const sample = places.find((p) => p.fromReaders && p.photo);
+  if (!sample) return { ratio: SERVICE_RATIO, html: serviceCardHtml({ href: 'suggest/', iconName: 'heart', title: 'Знаешь место, которого здесь нет?', link: 'Расскажи о нём →' }) };
+  // Выше обычной служебной карточки (3 / 2): фото, плашка и вопрос не теснятся
+  return { ratio: 3 / 2, html: photoCard({ href: 'suggest/', photo: sample.photo, chip: 'От читателей', title: 'Знаешь место, которого здесь нет?', link: `${sample.name} нам тоже подсказали. Расскажи о своём →`, mod: ' feed-promo--tall' }) };
 }
 
 async function main() {
@@ -208,7 +225,8 @@ async function main() {
   const feed = initFeed(withNowPlaces(shuffledFeed(places), picks.map((c) => c.place)), {
     nowBadges, showcases, reminder: reminderCards({ collections }),
     // «Выбрать вместе» — самой первой карточкой ленты
-    lead: { ratio: SERVICE_RATIO, html: serviceCardHtml({ href: 'vmeste/?from=feed-top', iconName: 'users', title: 'Идёшь не один?', link: 'Выбрать вместе →' }) }
+    lead: { ratio: SERVICE_RATIO, html: serviceCardHtml({ href: 'vmeste/?from=feed-top', iconName: 'users', title: 'Идёшь не один?', link: 'Выбрать вместе →' }) },
+    early: FEED_V2 ? suggestEarlyCard(places) : null
   });
   applyUrlFilter(feed);
   // Лента сразу под героем: настроение фильтрует её на месте
