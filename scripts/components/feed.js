@@ -84,12 +84,13 @@ const AUTO_LOAD_LIMIT = 36;
 // showcases — полосы на всю ширину ленты («Сейчас», «Готовые планы»):
 // { 3: <section> } — после 3-го ряда карточек.
 // lead — { html, ratio }: самая первая карточка ленты (кроме поиска).
+// afterShowcase — { html, ratio }: карточка сразу под полосой (кроме поиска).
 // reminder(k, { filtered, list, band }) — k-я карточка-напоминание: { html, ratio }
 // или null; list — места, которые сейчас в ленте (для уместных напоминаний). Лента — это
 // отрезки-сетки (.places-grid), витрина стоит между ними, а колонки перед
 // ней выравниваются по нижнему краю, чтобы не было пустот. В поиске
 // витрин нет: там человек ищет своё.
-export function initFeed(allPlaces, { pageSize = PAGE_SIZE, nowBadges = new Map(), showcases = {}, reminder = null, lead = null } = {}) {
+export function initFeed(allPlaces, { pageSize = PAGE_SIZE, nowBadges = new Map(), showcases = {}, reminder = null, lead = null, afterShowcase = null } = {}) {
   const seasonal = new Set(nowBadges.keys());
   const container = $('#places-container');
   if (!container) return null; // не на этой странице
@@ -165,13 +166,24 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE, nowBadges = new Map(
 
   // start — сколько карточек уже в ленте: по нему видно, где встать
   // напоминаниям и полосам
+  // Колонка последней служебной карточки: следующая встаёт в другую,
+  // чтобы две служебные не шли в одной колонке подряд
+  let serviceCol = -1;
   const appendCards = (places, start = 0) => {
     const favorites = Storage.getFavorites();
-    const shortest = () => heights.indexOf(Math.min(...heights));
+    const shortest = (avoid = -1) => heights.reduce((best, h, i) => (i !== avoid && (best < 0 || h < heights[best]) ? i : best), -1);
+    const placeService = (card) => {
+      const c = shortest(columns.length > 1 ? serviceCol : -1);
+      columns[c].insertAdjacentHTML('beforeend', card.html);
+      heights[c] += card.ratio;
+      serviceCol = c;
+    };
+    if (start === 0) serviceCol = -1;
     // Самая первая карточка ленты — lead («Выбрать вместе»): её видят сразу
     if (start === 0 && lead && !state.query && places.length) {
       columns[0].insertAdjacentHTML('beforeend', lead.html);
       heights[0] += lead.ratio;
+      serviceCol = 0;
     }
     places.forEach((place, i) => {
       const ratio = ratioIndex(place.slug);
@@ -188,11 +200,7 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE, nowBadges = new Map(
         // подборки в напоминаниях не повторяем)
         const band = Object.keys(showcases).length > 0 && list.length >= 3 * columns.length;
         const card = reminder((n - from) / REMIND_EVERY, { filtered: !isUnfiltered(), list, band });
-        if (card) {
-          const c = shortest();
-          columns[c].insertAdjacentHTML('beforeend', card.html);
-          heights[c] += card.ratio;
-        }
+        if (card) placeService(card);
       }
       // Витрина — после своего ряда, но не сразу: сначала колонки должны
       // почти сравняться по высоте. Иначе перед ней последнюю карточку в
@@ -213,6 +221,7 @@ export function initFeed(allPlaces, { pageSize = PAGE_SIZE, nowBadges = new Map(
           container.append(pending.node);
           pending = null;
           newSegment();
+          if (afterShowcase) placeService(afterShowcase);
         }
       }
     });

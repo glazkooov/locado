@@ -133,8 +133,8 @@ async function renderCollections() {
   }
 }
 
-/** Карточки-напоминания в ленте — по кругу: подборка, «Выбрать вместе»,
- *  подборка, «Предложить место». Подборок будет много, поэтому они — через
+/** Карточки-напоминания в ленте — по кругу: подборка, (пропуск), подборка,
+ *  «Выбрать вместе», подборка, «Предложить место». Подборок будет много, поэтому они — через
  *  раз. Если в ленте есть полоса «Готовые планы» — только те, которых в ней
  *  не было (пока других нет, их место пропускается). В категории или
  *  настроении — только подборки, где есть места из этой ленты. */
@@ -159,11 +159,18 @@ function reminderCards({ collections }) {
     return { ratio: SERVICE_RATIO, html: photoCard({ href: collectionUrl(c.slug), photo: c.coverSm || c.cover, chip: 'Готовый план', title: c.title, link: 'Открыть →' }) };
   };
   const together = () => ({ ratio: SERVICE_RATIO, html: serviceCardHtml({ href: 'vmeste/?from=feed', iconName: 'users', title: 'Не можете решить вдвоём?', link: 'Выбрать вместе →' }) });
-  const suggest = () => ({ ratio: SERVICE_RATIO, html: serviceCardHtml({ href: 'suggest/', iconName: 'heart', title: 'Знаешь место, которого здесь нет?', link: 'Расскажи о нём →' }) });
+  const suggest = suggestCard;
 
   // k-е напоминание: чётные — подборки (k / 2 — какая по счёту), нечётные —
-  // по очереди «Выбрать вместе» и «Предложить место»
-  return (k, ctx) => (k % 2 === 0 ? plan(k / 2, ctx) : (k % 4 === 1 ? together() : suggest()));
+  // по очереди «Выбрать вместе» и «Предложить место». Первое нечётное
+  // пропускаем: «Выбрать вместе» только что было первой карточкой ленты,
+  // а «Предложить место» — под полосой «Готовые планы»
+  return (k, ctx) => (k % 2 === 0 ? plan(k / 2, ctx) : (k === 1 ? null : (k % 4 === 3 ? together() : suggest())));
+}
+
+/** «Предложить место» — сразу под полосой «Готовые планы». */
+function suggestCard() {
+  return { ratio: SERVICE_RATIO, html: serviceCardHtml({ href: 'suggest/', iconName: 'heart', title: 'Знаешь место, которого здесь нет?', link: 'Расскажи о нём →' }) };
 }
 
 async function main() {
@@ -208,7 +215,8 @@ async function main() {
   const feed = initFeed(withNowPlaces(shuffledFeed(places), picks.map((c) => c.place)), {
     nowBadges, showcases, reminder: reminderCards({ collections }),
     // «Выбрать вместе» — самой первой карточкой ленты
-    lead: { ratio: SERVICE_RATIO, html: serviceCardHtml({ href: 'vmeste/?from=feed-top', iconName: 'users', title: 'Идёшь не один?', link: 'Выбрать вместе →' }) }
+    lead: { ratio: SERVICE_RATIO, html: serviceCardHtml({ href: 'vmeste/?from=feed-top', iconName: 'users', title: 'Идёшь не один?', link: 'Выбрать вместе →' }) },
+    afterShowcase: suggestCard()
   });
   applyUrlFilter(feed);
   // Лента сразу под героем: настроение фильтрует её на месте
