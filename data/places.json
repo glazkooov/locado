@@ -7561,7 +7561,7 @@
       ]
     },
     "phone": "",
-    "website": "https://t.me/lesnayachaynaya",
+    "website": "",
     "price_level": "₽",
     "price": "Недорого",
     "tags": [
@@ -7577,7 +7577,10 @@
       "день",
       "осень",
       "лето"
-    ]
+    ],
+    "links": {
+      "telegram": "https://t.me/lesnayachaynaya"
+    }
   },
   {
     "id": 164,
@@ -9970,7 +9973,7 @@
       ]
     },
     "phone": "",
-    "website": "https://t.me/zoebakerymoscow",
+    "website": "",
     "price_level": "₽₽",
     "price": "Средний чек — уточняется",
     "tags": [
@@ -9991,7 +9994,10 @@
     "indoor": true,
     "alsoIn": [
       "photo"
-    ]
+    ],
+    "links": {
+      "telegram": "https://t.me/zoebakerymoscow"
+    }
   },
   {
     "id": 206,
