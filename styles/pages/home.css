@@ -1213,13 +1213,6 @@ body.feed-toolbar-stuck .main-header { box-shadow: none; }
 .feed-promo__text { position: absolute; left: 14px; right: 14px; bottom: 14px; z-index: 1; display: grid; gap: 4px; }
 .feed-promo__text b { font-family: var(--font-heading); font-size: var(--fs-md); line-height: 1.2; }
 .feed-promo__text small { font-size: var(--fs-sm); font-weight: 600; color: rgba(255, 255, 255, 0.9); }
-/* «Предложить место» во втором ряду (прототип ?feed=v2) — выше обычной,
-   высота синхронно с ratio 3 / 2 в home.js */
-.places-grid .feed-promo--tall { aspect-ratio: 2 / 3; }
-@media (max-width: 480px) {
-  .feed-promo--tall .feed-promo__text b { font-size: var(--fs-sm); }
-  .feed-promo--tall .feed-promo__text small { font-size: var(--fs-xs); }
-}
 @media (hover: hover) {
   .feed-promo:hover { transform: translateY(-4px); box-shadow: var(--shadow-soft-hover); }
 }
