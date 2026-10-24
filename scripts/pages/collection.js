@@ -6,7 +6,7 @@ import { renderCredit, creditToggleHtml } from '../core/credits.js';
 import { goal } from '../core/analytics.js';
 import { $, on, slugFromUrl } from '../core/dom.js';
 import { escapeHtml, cssUrl, hoursForArticle } from '../core/format.js';
-import { loadPlaces, bySlug, placeUrl, metroList, categoryLabel } from '../core/places.js';
+import { loadPlaces, bySlug, placeUrl, metroList, categoryLabel, sample } from '../core/places.js';
 import { loadCollections, COLLECTION_TYPES } from '../core/collections.js';
 import { collectionCardHtml } from '../components/collection-card.js';
 import { bindImageFallback } from '../components/card.js';
@@ -180,7 +180,8 @@ async function renderMap(c, ordered) {
 }
 
 function renderMore(c, collections) {
-  const others = collections.filter((x) => x.slug !== c.slug).slice(0, 3);
+  // Каждый раз три случайные — чтобы из одной подборки можно было уйти в любую
+  const others = sample(collections.filter((x) => x.slug !== c.slug), 3);
   if (!others.length) return;
   $('#collection-more-grid').innerHTML = others.map(collectionCardHtml).join('');
   $('#collection-more').hidden = false;

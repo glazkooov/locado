@@ -26,6 +26,8 @@
   /* Название и подзаголовок — у нижнего края фото, над волной */
   .place-hero:not(.place-hero--no-photo) { padding-bottom: calc(28px + var(--hero-wave-h)); }
   .place-hero .hero-subtitle { margin-bottom: 0; }
+  /* У подборки под подзаголовком плашки — им нужен отступ */
+  .place-hero .hero-subtitle + .hero-facts { margin-top: 16px; }
 }
 
 .hero-bg {
@@ -486,15 +488,17 @@
 .nearby-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 4px; }
 .nearby-tabs__count { font-weight: 500; opacity: 0.6; }
 
-/* Карточка плана — тёмная, чтобы отличалась от мест в ряду; два фото
-   встык, как две остановки. Нажатие открывает окно «Маршрут отсюда» */
-.plan-card { padding: 0; font: inherit; text-align: left; cursor: pointer; background: var(--ink); border-color: var(--ink); }
-.plan-card__photos { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 2px; height: 160px; background: var(--ink); }
-.similar-card.plan-card .plan-card__photos img { width: 100%; height: 160px; }
+/* Карточка плана — одно фото на всю карточку, текст поверх на затемнении.
+   Без фото остаётся тёплая подложка, текст читается на том же затемнении.
+   Нажатие открывает окно «Маршрут отсюда» */
+.plan-card { position: relative; min-height: 236px; padding: 0; font: inherit; text-align: left; cursor: pointer; background: var(--photo-placeholder); }
+.plan-card::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 30%, rgba(20, 16, 13, 0.88)); }
+.similar-card.plan-card .plan-card__cover { position: absolute; inset: 0; width: 100%; height: 100%; }
 .plan-card__chip {
   position: absolute;
   top: 12px;
   left: 12px;
+  z-index: 1;
   padding: 4px 10px;
   border-radius: var(--radius-pill);
   background: var(--primary-strong);
@@ -502,8 +506,9 @@
   font-weight: 700;
   color: #fff;
 }
+.plan-card__text { position: absolute; left: 16px; right: 16px; bottom: 16px; z-index: 1; display: grid; gap: 4px; }
 .plan-card__title { font-size: var(--fs-md); font-weight: 700; letter-spacing: -0.02em; color: #fff; }
-.plan-card__sub { margin-top: auto; font-size: var(--fs-sm); color: rgba(255, 255, 255, 0.7); }
+.plan-card__sub { font-size: var(--fs-sm); color: rgba(255, 255, 255, 0.82); overflow-wrap: anywhere; }
 .plan-card:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 
 /* Окно «Маршрут отсюда»: остановки с фото и одной фразой, внизу — путь */

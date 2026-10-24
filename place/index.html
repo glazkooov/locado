@@ -141,7 +141,10 @@
       </div>
       <div class="fact-acts" id="place-acts">
         <a class="fact-act" id="place-phone" href="#"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#phone"></use></svg><span>Позвонить</span></a>
+        <!-- Третья плитка: сайт, или одна соцсеть, или «Соцсети» — когда
+             ссылок несколько, список выезжает снизу (place.js) -->
         <a class="fact-act" id="place-website" href="#" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#globe"></use></svg><span>Сайт</span></a>
+        <button type="button" class="fact-act" id="place-links" aria-haspopup="dialog" hidden><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#message-circle"></use></svg><span>Соцсети</span></button>
         <a class="fact-act" id="route-link" href="https://yandex.ru/maps/" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#navigation"></use></svg><span>Маршрут</span></a>
       </div>
       <!-- Карта — по нажатию: открывают её редко, скрипт Яндекса грузится
@@ -341,6 +344,16 @@
           <span><b>Просто отправить ссылку</b><small>В Telegram, ВКонтакте или куда удобно</small></span>
         </button>
       </div>
+    </div>
+  </div>
+  <!-- Сайт и соцсети места: строки собирает place.js -->
+  <div class="modal modal--sheet" id="links-modal" role="dialog" aria-modal="true" aria-labelledby="links-modal-title" aria-hidden="true">
+    <div class="modal-content modal-content--sm">
+      <div class="modal-header">
+        <h3 id="links-modal-title">Сайт и соцсети</h3>
+        <button type="button" class="modal-close" data-modal-close aria-label="Закрыть"><svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#x"></use></svg></button>
+      </div>
+      <div class="modal-body invite-options" id="links-list"></div>
     </div>
   </div>
   <!-- Сообщить о неточности: Яндекс Форма в окне. src ставит place.js при
