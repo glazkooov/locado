@@ -37,6 +37,11 @@ dupes(collections.map((c) => c.slug)).forEach((s) => problem('collections.json',
 places.forEach((p) => {
   if (!/^[a-z0-9-]+$/.test(p.slug)) problem(`место ${p.slug}`, 'slug — только латиница, цифры и дефис');
   if (!p.name || !p.category || !p.coords) problem(`место ${p.slug}`, 'нет названия, категории или координат');
+  const LINK_HOSTS = { telegram: 'https://t.me/', vk: 'https://vk.com/' };
+  Object.entries(p.links || {}).forEach(([key, url]) => {
+    if (!LINK_HOSTS[key]) problem(`место ${p.slug}`, `links.${key}: есть только telegram и vk`);
+    else if (!String(url).startsWith(LINK_HOSTS[key])) problem(`место ${p.slug}`, `links.${key} должна начинаться с ${LINK_HOSTS[key]}`);
+  });
 });
 collections.forEach((c) => (c.blocks || []).forEach((b) => {
   if (b.type === 'place' && !placeSlugs.has(b.slug)) problem(`подборка ${c.slug}`, `нет места ${b.slug}`);

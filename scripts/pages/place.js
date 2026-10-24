@@ -145,24 +145,65 @@ function renderInfo(place) {
     ? (priceLink ? `<a href="${escapeHtml(website)}" target="_blank" rel="noopener">${escapeHtml(place.price)}</a>` : escapeHtml(place.price))
     : '');
 
-  // «Позвонить», «Сайт», «Маршрут» — плитками под справкой; чего нет — нет
+  // «Позвонить», третья плитка, «Маршрут» — под справкой; чего нет — нет.
+  // Плиток не больше трёх: одна ссылка — плитка с её названием, несколько —
+  // «Соцсети» со списком снизу
   const phoneBtn = $('#place-phone');
-  const siteBtn = $('#place-website');
   phoneBtn.hidden = !place.phone;
   if (place.phone) {
     phoneBtn.href = telHref(place.phone);
     phoneBtn.setAttribute('aria-label', `Позвонить: ${place.phone}`);
   }
-  siteBtn.hidden = !website;
-  if (website) siteBtn.href = website;
+  const links = placeLinks(place);
+  const siteBtn = $('#place-website');
+  siteBtn.hidden = links.length !== 1;
+  if (links.length === 1) {
+    const [link] = links;
+    siteBtn.href = link.href;
+    siteBtn.innerHTML = `${icon(link.icon)}<span>${escapeHtml(link.label)}</span>`;
+  }
+  $('#place-links').hidden = links.length < 2;
   // Только маршрут — одна плитка на всю ширину выглядела пустой кнопкой:
   // вместо плиток «Маршрут» встаёт в строку «Показать на карте»
-  const routeOnly = !place.phone && !website;
+  const routeOnly = !place.phone && !links.length;
   $('#route-link').hidden = !place.coords;
   $('#route-inline').hidden = !place.coords || !routeOnly;
   $('#place-acts').hidden = routeOnly;
 
   if (!place.phone) $('#action-call')?.style.setProperty('display', 'none');
+}
+
+/** Сайт и соцсети места: поле website и links: { telegram, vk } */
+function placeLinks(place) {
+  const path = (url) => { try { return new URL(url).pathname.replace(/^\/|\/$/g, ''); } catch (e) { return ''; } };
+  const website = safeUrl(place.website, '');
+  const telegram = safeUrl(place.links?.telegram, '');
+  const vk = safeUrl(place.links?.vk, '');
+  return [
+    website && { label: 'Сайт', sub: displayHost(website), href: website, icon: 'globe' },
+    telegram && { label: 'Telegram', sub: path(telegram) && `@${path(telegram)}`, href: telegram, icon: 'send' },
+    vk && { label: 'ВКонтакте', sub: '', href: vk, icon: 'message-circle' }
+  ].filter(Boolean);
+}
+
+/** «Соцсети»: список ссылок выезжает снизу */
+function initLinks(place, contactGoal) {
+  const links = placeLinks(place);
+  const siteBtn = $('#place-website');
+  on(siteBtn, 'click', () => contactGoal(links[0]?.label || 'Сайт'));
+  if (links.length < 2) return;
+  const list = $('#links-list');
+  list.innerHTML = links.map((link) => `
+    <a class="invite-option" href="${escapeHtml(link.href)}" target="_blank" rel="noopener" data-label="${escapeHtml(link.label)}">
+      <span class="invite-option__icon">${icon(link.icon)}</span>
+      <span><b>${escapeHtml(link.label)}</b>${link.sub ? `<small>${escapeHtml(link.sub)}</small>` : ''}</span>
+    </a>`).join('');
+  const modal = createModal($('#links-modal'));
+  on($('#place-links'), 'click', () => modal?.open());
+  on(list, 'click', (e) => {
+    const link = e.target.closest('a[data-label]');
+    if (link) contactGoal(link.dataset.label);
+  });
 }
 
 // «Закроется через …» показываем, только когда до закрытия меньше часа:
@@ -477,10 +518,10 @@ function attachEventListeners(place, allPlaces) {
     if (isNew) showToast('Спасибо! Место добавлено в твой список посещённых.');
   });
 
-  // Позвонить и сайт
+  // Позвонить, сайт и соцсети
   const contactGoal = (how) => goal('contact_click', { 'Связаться': { [place.name]: how } });
   on($('#place-phone'), 'click', () => contactGoal('Звонок'));
-  on($('#place-website'), 'click', () => contactGoal('Сайт'));
+  initLinks(place, contactGoal);
 
   // «Позвать друга» → «Просто отправить ссылку»
   initInvite(place);

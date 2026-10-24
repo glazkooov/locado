@@ -311,7 +311,8 @@ Locado помогает выбрать место или маршрут под �
 * Данные: `data/places.json` (места), `data/collections.json` (подборки:
   `type` — `route` или `occasion`; блоки `text`, `place`, `walk`),
   `data/now.json` (блок «Сейчас»). Схема места — в первых записях
-  `places.json`; `alsoIn` — вторая категория, `story` — тексты для «Сейчас».
+  `places.json`; `alsoIn` — вторая категория, `story` — тексты для «Сейчас»,
+  `links: { telegram, vk }` — соцсети рядом с `website` (полные ссылки t.me/…, vk.com/…).
 * Адреса: `/place/<slug>` и `/collection/<slug>` (правила в `.htaccess`,
   старые `?slug=` переадресуются). PHP вписывает в HTML заголовок,
   описание и картинку превью (`api/og.php`); картинку 1200×630 рисует
