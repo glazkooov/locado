@@ -285,18 +285,18 @@ function nearbyPlans(place, list) {
   }).filter((x) => x.s2);
 }
 
-/** Карточка плана в ряду: два фото встык и коротко — «Маршрут отсюда».
- *  Подробности (остановки, путь, другой вариант) — в окне по нажатию. */
+/** Карточка плана в ряду: одно фото на всю карточку — второй остановки,
+ *  первая и так стоит в ряду следом. Поверх — «Маршрут отсюда» и куда
+ *  идти. Подробности — в окне по нажатию. */
 function nearbyPlanCardHtml({ s1, s2 }) {
-  const photo = (p) => `<img src="${escapeHtml(p.photoSm || p.photo || '')}" alt="" loading="lazy">`;
+  const cover = [s2.place, s1.place].find((p) => p.photoSm || p.photo);
   return `
     <button type="button" class="similar-card plan-card" id="nearby-plan-open" aria-haspopup="dialog">
-      <span class="plan-card__photos">${photo(s1.place)}${photo(s2.place)}
-        <span class="plan-card__chip">Готовый план</span>
-      </span>
-      <span class="info">
+      ${cover ? `<img class="plan-card__cover" src="${escapeHtml(cover.photoSm || cover.photo)}" alt="" loading="lazy">` : ''}
+      <span class="plan-card__chip">Готовый план</span>
+      <span class="plan-card__text">
         <span class="plan-card__title">Маршрут отсюда</span>
-        <span class="plan-card__sub">Ещё 2 места рядом</span>
+        <span class="plan-card__sub">${escapeHtml(s1.place.name)} → ${escapeHtml(s2.place.name)}</span>
       </span>
     </button>`;
 }
