@@ -37,6 +37,9 @@ dupes(collections.map((c) => c.slug)).forEach((s) => problem('collections.json',
 places.forEach((p) => {
   if (!/^[a-z0-9-]+$/.test(p.slug)) problem(`место ${p.slug}`, 'slug — только латиница, цифры и дефис');
   if (!p.name || !p.category || !p.coords) problem(`место ${p.slug}`, 'нет названия, категории или координат');
+  // Подзаголовок на фото: длиннее — на телефоне четыре строки (задача 74)
+  const subtitle = p.subtitle || p.description || '';
+  if (subtitle.length > 110) problem(`место ${p.slug}`, `подзаголовок ${subtitle.length} знаков, нужно не больше 110`);
   const LINK_HOSTS = { telegram: 'https://t.me/', vk: 'https://vk.com/' };
   Object.entries(p.links || {}).forEach(([key, url]) => {
     if (!LINK_HOSTS[key]) problem(`место ${p.slug}`, `links.${key}: есть только telegram и vk`);
