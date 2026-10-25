@@ -4079,7 +4079,11 @@
       37.6751
     ],
     "photo": "assets/images/places/ostrov-mechty.jpg",
-    "photoCredit": null,
+    "photoCredit": {
+      "author": "MBH",
+      "source": "https://commons.wikimedia.org/wiki/File:Dream_Island_02.jpg",
+      "license": "CC BY-SA 4.0"
+    },
     "description": "Огромный крытый парк аттракционов, где можно бесплатно погулять в тепле по променаду.",
     "description_long": "За турникетами аттракционы на целый день, снаружи ещё несколько тематических зон и длинные американские горки. Перед входом крытый городской променад с магазинами и ресторанами, туда пускают без билета. Билет одноразовый: если выйти за турникеты, обратно уже не зайти.",
     "views": 0,
@@ -4363,7 +4367,11 @@
       37.5978
     ],
     "photo": "assets/images/places/muzey-kriptografii.jpg",
-    "photoCredit": null,
+    "photoCredit": {
+      "author": "MBH",
+      "source": "https://commons.wikimedia.org/wiki/File:Digital_cryptography_section_in_Cryptography_Museum_15.jpg",
+      "license": "CC BY 4.0"
+    },
     "description": "Музей шифров в здании бывшей секретной лаборатории, где можно самому что-нибудь зашифровать.",
     "description_long": "Шифровальные машины от немецкой «Энигмы» до советской «Фиалки» и много интерактивных стендов. Здание само по себе история: здесь была Марфинская шарашка, которую Солженицын описал в «В круге первом». От метро далеко, зато рядом Ботанический сад.",
     "views": 0,
@@ -5014,7 +5022,11 @@
       37.6322
     ],
     "photo": "assets/images/places/muzey-gorodskogo-hozyaystva.jpg",
-    "photoCredit": null,
+    "photoCredit": {
+      "author": "Olga-lisenkova",
+      "source": "https://commons.wikimedia.org/wiki/File:%D0%92%D0%94%D0%9D%D0%A5_%D0%BF%D0%B0%D0%B2%D0%B8%D0%BB%D1%8C%D0%BE%D0%BD_5.jpg",
+      "license": "CC BY-SA 4.0"
+    },
     "description": "Музей на ВДНХ о том, как устроен город: метро, вода, свет и дороги, и почти всё можно потрогать.",
     "description_long": "Музей занимает павильон № 5. Здесь заглядывают в подземную Москву и разбираются, как работают водопровод, освещение и транспорт. Интересно и взрослым, и детям, а после удобно погулять по ВДНХ.",
     "views": 0,
@@ -5450,7 +5462,11 @@
       37.5128
     ],
     "photo": "assets/images/places/eksperimentanium.jpg",
-    "photoCredit": null,
+    "photoCredit": {
+      "author": "Барвенковский",
+      "source": "https://commons.wikimedia.org/wiki/File:Experimentanium_(2021-11-21)_04.jpg",
+      "license": "CC BY-SA 4.0"
+    },
     "description": "Музей занимательных наук, где все экспонаты нужно трогать, крутить и запускать.",
     "description_long": "Сотни экспонатов по физике, механике, оптике и электричеству: можно оказаться внутри мыльного пузыря, поднять себя на блоке и поиграть с иллюзиями. Задуман для детей, но взрослые увлекаются не меньше, так что сюда хорошо прийти компанией в дождливый день.",
     "views": 0,
@@ -8783,7 +8799,11 @@
       37.6398
     ],
     "photo": "assets/images/places/muzey-kosmonavtiki.jpg",
-    "photoCredit": null,
+    "photoCredit": {
+      "author": "Don-vip",
+      "source": "https://commons.wikimedia.org/wiki/File:2019-07-27-3300-Moscow-Monument_to_the_Conquerors_of_Space.jpg",
+      "license": "CC BY-SA 4.0"
+    },
     "description": "Настоящие спутники, скафандры и Белка со Стрелкой под монументом «Покорителям космоса».",
     "description_long": "Музей спрятан в основании монумента на ВДНХ. Внутри первые спутники, спускаемые аппараты, макет станции «Мир» и центр управления, где можно попробовать себя оператором. Хватит на полдня, а потом можно продолжить по ВДНХ.",
     "views": 0,
@@ -9039,7 +9059,11 @@
       37.5935
     ],
     "photo": "assets/images/places/basseyn-chayka.jpg",
-    "photoCredit": null,
+    "photoCredit": {
+      "author": "Aloockh",
+      "source": "https://commons.wikimedia.org/wiki/File:Chayka_pool_25m.jpg",
+      "license": "CC BY-SA 4.0"
+    },
     "description": "Открытый бассейн у Парка Горького, где вода тёплая даже в снег.",
     "description_long": "Две чаши под открытым небом: пятидесятиметровая и для прыжков в воду. В холод над тёплой водой поднимается пар, и это особенно красиво. Сюда ходят и поплавать всерьёз, и просто полежать в воде.",
     "views": 0,
@@ -9143,7 +9167,11 @@
       37.5617
     ],
     "photo": "assets/images/places/darvinovskiy-muzey.jpg",
-    "photoCredit": null,
+    "photoCredit": {
+      "author": "Natalia Senatorova",
+      "source": "https://commons.wikimedia.org/wiki/File:%D0%93%D0%BE%D1%81%D1%83%D0%B4%D0%B0%D1%80%D1%81%D1%82%D0%B2%D0%B5%D0%BD%D0%BD%D1%8B%D0%B9_%D0%94%D0%B0%D1%80%D0%B2%D0%B8%D0%BD%D0%BE%D0%B2%D1%81%D0%BA%D0%B8%D0%B9_%D0%BC%D1%83%D0%B7%D0%B5%D0%B9._%D0%9E%D1%81%D0%BD%D0%BE%D0%B2%D0%BD%D0%B0%D1%8F_%D1%8D%D0%BA%D1%81%D0%BF%D0%BE%D0%B7%D0%B8%D1%86%D0%B8%D1%8F._2021_03.jpg",
+      "license": "CC BY-SA 4.0"
+    },
     "description": "Огромный музей эволюции, где можно послушать голоса животных и поиграть в интерактивном корпусе.",
     "description_long": "Один из крупнейших естественнонаучных музеев Европы: путь эволюции, чучела и скелеты. Взрослым здесь тоже интересно, особенно в залах с редкими животными и на временных выставках.",
     "views": 0,
@@ -9205,7 +9233,11 @@
       37.5121
     ],
     "photo": "assets/images/places/paleontologicheskiy-muzey.jpg",
-    "photoCredit": null,
+    "photoCredit": {
+      "author": "MBH",
+      "source": "https://commons.wikimedia.org/wiki/File:Moscow_Paleontological_Museum_108.jpg",
+      "license": "CC BY 4.0"
+    },
     "description": "Скелеты динозавров и мамонтов в кирпичном здании, похожем на крепость.",
     "description_long": "Музей при Палеонтологическом институте РАН: огромные скелеты, следы древних морей и одна из лучших коллекций динозавров в мире. Само здание тоже экспонат, с внутренними двориками и керамическими панно. Детям не скучно, взрослым тоже.",
     "views": 0,
@@ -10900,7 +10932,12 @@
       37.444
     ],
     "photo": "assets/images/places/kanal-tushinskiy-shlyuz.jpg",
-    "photoCredit": null,
+    "photoCredit": {
+      "author": "Gennady Grachev from Moscow, Russia",
+      "source": "https://commons.wikimedia.org/wiki/File:Locks_7-8_of_Moscow-Volga_Canal_2015-08_1440686898.jpg",
+      "license": "CC BY 2.0"
+    },
+    "photoFocus": "50% 75%",
     "description": "Место, где теплоходы идут по каналу прямо над Волоколамским шоссе.",
     "description_long": "Канал имени Москвы проходит здесь по высокой дамбе, а под ним в тоннеле ныряет шоссе: внизу машины, наверху корабли. Рядом шлюзы № 7 и № 8, и если повезёт, можно увидеть, как судно поднимают или опускают в шлюзовой камере. Сюда едут скорее за инженерным восторгом, чем за красивыми фото.",
     "views": 0,
@@ -11001,7 +11038,11 @@
       37.6255
     ],
     "photo": "assets/images/places/pavilon-kosmos.jpg",
-    "photoCredit": null,
+    "photoCredit": {
+      "author": "Dmitry Ivanov.",
+      "source": "https://commons.wikimedia.org/wiki/File:VDNKh_Pavilion_No_32_Cosmos_View_from_southeast.jpg",
+      "license": "CC BY-SA 4.0"
+    },
     "description": "Огромный павильон на ВДНХ с настоящими ракетами, спутниками и макетами кораблей в натуральную величину.",
     "description_long": "После реставрации в павильоне № 34 открылся центр «Космонавтика и авиация». Под стеклянным куполом «Космический бульвар» с подлинными аппаратами и полноразмерными макетами, от первых спутников до современных кораблей. Отлично дополняет Музей космонавтики, и детям здесь интересно.",
     "views": 0,
