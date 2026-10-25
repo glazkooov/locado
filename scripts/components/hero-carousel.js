@@ -90,7 +90,7 @@ export function initHeroCarousel() {
 
   // Свайп: ширина карточки пальцем — одна позиция. Вертикальное движение
   // отдаём странице: колода не мешает листать вниз
-  const STEP = 165;
+  const STEP = 190;
   container.addEventListener('pointerdown', (e) => {
     if (!active) return;
     dragging = true; moved = false; locked = null;
