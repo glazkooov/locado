@@ -1492,7 +1492,11 @@
     "teaser": "Дом Мельникова, Наркомфин, Ле Корбюзье, ДК ЗИЛ, гараж-музей и посёлок-сад 1920-х.",
     "lead": "Здания и места 1920–30-х, когда в Москве придумывали новый способ жить: дом из двух цилиндров, дом-коммуна, стеклянный Ле Корбюзье и дворец для рабочих завода.",
     "cover": "assets/images/places/dom-narkomfina.jpg",
-    "photoCredit": null,
+    "photoCredit": {
+      "author": "Retired electrician",
+      "source": "https://commons.wikimedia.org/wiki/File:Moscow,_Narkomfin_building_in_May_2021_04.jpg",
+      "license": "CC0"
+    },
     "author": "Редакция Локадо",
     "published": "2026-10-18",
     "meta": {

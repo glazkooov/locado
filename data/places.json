@@ -4741,7 +4741,11 @@
       37.6598
     ],
     "photo": "assets/images/places/krutitskoe-podvorye.jpg",
-    "photoCredit": null,
+    "photoCredit": {
+      "author": "Alexxx1979",
+      "source": "https://commons.wikimedia.org/wiki/File:Moscow._Krutitsy_Metochion._Dormition_Cathedral_P5172961_2925.jpg",
+      "license": "CC BY-SA 4.0"
+    },
     "description": "Старинное подворье у Новоспасского монастыря, где над воротами стоит теремок в зелёных изразцах.",
     "description_long": "Каменные палаты, храм и Крутицкий теремок над воротами. Туристов почти нет, и в переходах и арках легко забыть, что вокруг большой город. Хорошо зайти по пути к Новоспасскому монастырю или Таганке.",
     "views": 0,
@@ -4810,7 +4814,11 @@
       37.6614
     ],
     "photo": "assets/images/places/rostokinskiy-akveduk.jpg",
-    "photoCredit": null,
+    "photoCredit": {
+      "author": "AlixSaz",
+      "source": "https://commons.wikimedia.org/wiki/File:Rostokino_Aqueduct_%D0%A0%D0%BE%D1%81%D1%82%D0%BE%D0%BA%D0%B8%D0%BD%D1%81%D0%BA%D0%B8%D0%B9_%D0%B0%D0%BA%D0%B2%D0%B5%D0%B4%D1%83%D0%BA_3776.jpg",
+      "license": "CC BY-SA 4.0"
+    },
     "description": "Белокаменный акведук XVIII века, который арка за аркой шагает через долину Яузы.",
     "description_long": "Двадцать одна арка старого Мытищинского водопровода стоит над Яузой больше двухсот лет. Вокруг долина реки с дорожками и мостиками, так что с акведука удобно начать прогулку вдоль Яузы: в одну сторону к Ботаническому саду, в другую к Сокольникам.",
     "views": 0,
@@ -4850,7 +4858,11 @@
       37.5809
     ],
     "photo": "assets/images/places/dom-narkomfina.jpg",
-    "photoCredit": null,
+    "photoCredit": {
+      "author": "Retired electrician",
+      "source": "https://commons.wikimedia.org/wiki/File:Moscow,_Narkomfin_building_in_May_2021_04.jpg",
+      "license": "CC0"
+    },
     "description": "Дом-коммуна Гинзбурга 1930 года, на который оглядывались архитекторы всего XX века.",
     "description_long": "Лента окон, колонны-опоры и плоская крыша. После реставрации в коммунальном корпусе работает публичное пространство, а внутрь жилого корпуса и на крышу пускают только с экскурсией, её лучше бронировать заранее. Снаружи дом можно посмотреть в любое время.",
     "views": 0,
@@ -5981,7 +5993,12 @@
       37.6447
     ],
     "photo": "assets/images/places/usadba-vysotskih.jpg",
-    "photoCredit": null,
+    "photoCredit": {
+      "author": "AndyVolykhov",
+      "source": "https://commons.wikimedia.org/wiki/File:%D0%9C%D0%BE%D1%81%D0%BA%D0%B2%D0%B0,_%D0%9E%D0%B3%D0%BE%D1%80%D0%BE%D0%B4%D0%BD%D0%B0%D1%8F_%D0%A1%D0%BB%D0%BE%D0%B1%D0%BE%D0%B4%D0%B0,_6,_%D1%81%D1%82%D1%80%D0%BE%D0%B5%D0%BD%D0%B8%D0%B5_1.jpg",
+      "license": "CC BY-SA 4.0"
+    },
+    "photoFocus": "50% 65%",
     "description": "Особняк чаеторговцев Высоцких с башенкой и сложной крышей, похожий на маленький замок.",
     "description_long": "Роман Клейн построил его в 1900 году и смешал мотивы средневекового замка и ренессансного дворца. Интерьеры не сохранились, зато фасад с башенкой и каменной резьбой один из самых необычных у Красных ворот.",
     "views": 0,
@@ -7046,7 +7063,11 @@
       37.6097
     ],
     "photo": "assets/images/places/dom-pashkova.jpg",
-    "photoCredit": null,
+    "photoCredit": {
+      "author": "Юрий Д.К.",
+      "source": "https://commons.wikimedia.org/wiki/File:Moscow_-_2025_-_Pashkov_House_-_Facade.jpg",
+      "license": "CC BY 4.0"
+    },
     "description": "Белоснежный дворец на холме напротив Кремля, особенно красивый на закате.",
     "description_long": "Классицизм конца XVIII века: бельведер, колоннады и вид на Кремль и Боровицкую площадь. Сейчас дом принадлежит Российской государственной библиотеке, внутрь водят экскурсии.",
     "views": 0,
@@ -7186,7 +7207,11 @@
       37.5918
     ],
     "photo": "assets/images/places/osobnyak-morozovoy.jpg",
-    "photoCredit": null,
+    "photoCredit": {
+      "author": "Vzorets",
+      "source": "https://commons.wikimedia.org/wiki/File:%D0%9E%D1%81%D0%BE%D0%B1%D0%BD%D1%8F%D0%BA_%D0%97%D0%B8%D0%BD%D0%B0%D0%B8%D0%B4%D1%8B_%D0%9C%D0%BE%D1%80%D0%BE%D0%B7%D0%BE%D0%B2%D0%BE%D0%B9_%D0%BD%D0%B0_%D0%A1%D0%BF%D0%B8%D1%80%D0%B8%D0%B4%D0%BE%D0%BD%D0%BE%D0%B2%D0%BA%D0%B5.jpg",
+      "license": "CC BY-SA 4.0"
+    },
     "description": "Готический особняк Шехтеля на Спиридоновке, похожий с улицы на маленький замок.",
     "description_long": "Стрельчатые окна, башенки и кованая ограда. Внутри гостиные, столовая и будуар хозяйки с работами Врубеля. Сейчас здесь Дом приёмов МИД, внутрь водят редкие экскурсии.",
     "views": 0,
@@ -10218,7 +10243,12 @@
       37.57
     ],
     "photo": "assets/images/places/sadovye-kvartaly.jpg",
-    "photoCredit": null,
+    "photoCredit": {
+      "author": "Александр Сигачёв",
+      "source": "https://commons.wikimedia.org/wiki/File:Usachyova_Street_13,_Moscow,_Khamovniki_District.jpg",
+      "license": "CC BY-SA 4.0"
+    },
+    "photoFocus": "50% 80%",
     "description": "Открытый двор жилого квартала в Хамовниках с прудом, деревянной террасой и аккуратными аллеями.",
     "description_long": "Двор принадлежит жилому комплексу, но он общественный, и зайти может любой. Пруд с террасой, дорожки, клумбы и современная архитектура вокруг. Красивее всего в золотой час, когда фасады отражаются в воде.",
     "views": 0,
