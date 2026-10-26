@@ -1181,7 +1181,11 @@
     "teaser": "Места, где детям интересно, а взрослым не скучно: от космоса до динозавров.",
     "lead": "Полдня в тепле: потрогать физику, посмотреть на настоящие ракеты, динозавров и трамваи.",
     "cover": "assets/images/places/eksperimentanium.jpg",
-    "photoCredit": null,
+    "photoCredit": {
+      "author": "Барвенковский",
+      "source": "https://commons.wikimedia.org/wiki/File:Experimentanium_(2021-11-21)_04.jpg",
+      "license": "CC BY-SA 4.0"
+    },
     "author": "Редакция Локадо",
     "published": "2026-10-18",
     "meta": {
@@ -1352,7 +1356,11 @@
     "teaser": "Бани, горячая вода под открытым небом и чай из самовара: места, где отогреваешься по-настоящему.",
     "lead": "На холодный день: пропариться в старинных банях, полежать в горячей воде под открытым небом или выпить чаю из самовара в лесу.",
     "cover": "assets/images/places/basseyn-chayka.jpg",
-    "photoCredit": null,
+    "photoCredit": {
+      "author": "Aloockh",
+      "source": "https://commons.wikimedia.org/wiki/File:Chayka_pool_25m.jpg",
+      "license": "CC BY-SA 4.0"
+    },
     "author": "Редакция Локадо",
     "published": "2026-10-18",
     "meta": {
@@ -1492,7 +1500,11 @@
     "teaser": "Дом Мельникова, Наркомфин, Ле Корбюзье, ДК ЗИЛ, гараж-музей и посёлок-сад 1920-х.",
     "lead": "Здания и места 1920–30-х, когда в Москве придумывали новый способ жить: дом из двух цилиндров, дом-коммуна, стеклянный Ле Корбюзье и дворец для рабочих завода.",
     "cover": "assets/images/places/dom-narkomfina.jpg",
-    "photoCredit": null,
+    "photoCredit": {
+      "author": "Retired electrician",
+      "source": "https://commons.wikimedia.org/wiki/File:Moscow,_Narkomfin_building_in_May_2021_04.jpg",
+      "license": "CC0"
+    },
     "author": "Редакция Локадо",
     "published": "2026-10-18",
     "meta": {
