@@ -4336,6 +4336,9 @@
     },
     "phone": "+7 (915) 453-13-17",
     "website": "https://cafesanta.ru",
+    "links": {
+      "vk": "https://vk.com/allsaints_cafe"
+    },
     "price_level": "₽₽",
     "price": "Средний чек — около 1500 ₽, бизнес-ланч — от 590 ₽",
     "tags": [
@@ -4595,6 +4598,10 @@
     },
     "phone": "8 (800) 350-86-20",
     "website": "https://centrezotov.ru",
+    "links": {
+      "telegram": "https://t.me/centrezotov",
+      "vk": "https://vk.com/centrezotov"
+    },
     "price_level": "₽₽",
     "price": "Вход в здание бесплатный, выставки — около 700–900 ₽",
     "tags": [
@@ -4924,6 +4931,10 @@
     "schedule": null,
     "phone": "+7 (495) 690-39-00",
     "website": "https://muar.ru/dom-melnikova/",
+    "links": {
+      "telegram": "https://t.me/melnikov_museum",
+      "vk": "https://vk.com/melnikov__museum"
+    },
     "price_level": "free",
     "price": "Снаружи смотреть бесплатно, внутрь пока не пускают",
     "tags": [
@@ -5139,6 +5150,10 @@
     },
     "phone": "+7 (495) 139-89-87",
     "website": "https://www.voznesenskycenter.ru",
+    "links": {
+      "telegram": "https://t.me/voznesenskycenter",
+      "vk": "https://vk.com/public187876568"
+    },
     "price_level": "₽",
     "price": "Цены — на сайте центра",
     "tags": [
@@ -5360,6 +5375,10 @@
     },
     "phone": "+7 (495) 691-02-12",
     "website": "https://orientmuseum.ru",
+    "links": {
+      "telegram": "https://t.me/orientmuseum",
+      "vk": "https://vk.com/club51591430"
+    },
     "price_level": "₽₽",
     "price": "Цены — на сайте музея",
     "tags": [
@@ -5800,6 +5819,10 @@
     },
     "phone": "+7 (930) 012-90-88",
     "website": "https://ramen.moscow/land",
+    "links": {
+      "telegram": "https://t.me/ramenmoscow",
+      "vk": "https://vk.com/ramen.moscow"
+    },
     "price_level": "₽₽",
     "price": "Средний чек — уточняется",
     "tags": [
@@ -6993,6 +7016,10 @@
     },
     "phone": "+7 (495) 637-56-74",
     "website": "https://www.pushkinmuseum.ru/filialy/dom-muzey-i-s-turgeneva/",
+    "links": {
+      "telegram": "https://t.me/pushkin_museum",
+      "vk": "https://vk.com/pushkinmuseum"
+    },
     "price_level": "₽₽",
     "price": "От 400 ₽",
     "tags": [
@@ -7174,6 +7201,10 @@
     },
     "phone": "",
     "website": "https://museummhat.ru",
+    "links": {
+      "telegram": "https://t.me/museummhat",
+      "vk": "https://vk.com/mhatmuseum"
+    },
     "price_level": "₽₽",
     "price": "От 400 ₽",
     "tags": [
@@ -7796,6 +7827,9 @@
     },
     "phone": "+7 (985) 346-99-54",
     "website": "https://tresanti.moscow",
+    "links": {
+      "telegram": "https://t.me/tre_santi"
+    },
     "price_level": "₽₽₽",
     "price": "Средний чек — уточняется",
     "tags": [
@@ -7863,6 +7897,10 @@
     },
     "phone": "+7 (916) 200-33-24",
     "website": "https://nene.restaurant",
+    "links": {
+      "telegram": "https://t.me/nene_restaurant",
+      "vk": "https://vk.com/nene.restaurant"
+    },
     "price_level": "₽₽",
     "price": "Средний чек — уточняется",
     "tags": [
@@ -7996,6 +8034,10 @@
     },
     "phone": "+7 (985) 996-11-28",
     "website": "https://sentimenti.moscow",
+    "links": {
+      "telegram": "https://t.me/sentimenti_moscow",
+      "vk": "https://vk.com/sentimenti_moscow"
+    },
     "price_level": "₽₽₽",
     "price": "Средний чек — уточняется",
     "tags": [
@@ -8059,6 +8101,10 @@
     },
     "phone": "+7 (495) 697-13-06",
     "website": "https://muar.ru",
+    "links": {
+      "telegram": "https://t.me/archmuseum",
+      "vk": "https://vk.com/archmuseum"
+    },
     "price_level": "₽₽",
     "price": "Билет — около 450 ₽",
     "tags": [
@@ -8422,6 +8468,9 @@
     },
     "phone": "+7 (495) 565-30-13",
     "website": "https://tacobar.ru",
+    "links": {
+      "telegram": "https://t.me/tacogram_msk"
+    },
     "price_level": "₽₽",
     "price": "Средний чек — уточняется",
     "indoor": true,
@@ -9486,6 +9535,9 @@
     },
     "phone": "+7 (495) 142-69-00",
     "website": "https://vietnamiko.ru",
+    "links": {
+      "telegram": "https://t.me/vietnamiko"
+    },
     "price_level": "₽",
     "price": "Средний чек — уточняется",
     "tags": [
@@ -9552,6 +9604,9 @@
     },
     "phone": "+7 (499) 474-53-20",
     "website": "https://arrurru.ru",
+    "links": {
+      "telegram": "https://t.me/arrurru_ru"
+    },
     "price_level": "₽₽₽",
     "price": "Средний чек — уточняется",
     "tags": [
@@ -9619,6 +9674,9 @@
     },
     "phone": "+7 (969) 125-40-00",
     "website": "",
+    "links": {
+      "telegram": "https://t.me/teburasika_bar"
+    },
     "price_level": "₽₽",
     "price": "Средний чек — уточняется",
     "tags": [
@@ -9686,6 +9744,10 @@
     },
     "phone": "+7 (915) 183-59-80",
     "website": "https://wu-shu.moscow",
+    "links": {
+      "telegram": "https://t.me/wushu_moscow",
+      "vk": "https://vk.com/wushu_moscow"
+    },
     "price_level": "₽₽",
     "price": "Средний чек — уточняется",
     "tags": [
@@ -9752,6 +9814,9 @@
     },
     "phone": "+7 (993) 362-22-57",
     "website": "https://motishnaya.ru",
+    "links": {
+      "telegram": "https://t.me/motishnaya"
+    },
     "price_level": "₽",
     "price": "Около 300 ₽ за моти",
     "tags": [
@@ -9884,6 +9949,10 @@
     },
     "phone": "+7 (915) 130-13-68",
     "website": "https://jpan.moscow",
+    "links": {
+      "telegram": "https://t.me/jpan_bistro",
+      "vk": "https://vk.com/jpan.bistro"
+    },
     "price_level": "₽₽",
     "price": "Средний чек — уточняется",
     "tags": [
@@ -10522,6 +10591,9 @@
     },
     "phone": "+7 (919) 764-44-40",
     "website": "https://cafesanta.ru",
+    "links": {
+      "vk": "https://vk.com/allsaints_cafe"
+    },
     "price_level": "₽₽",
     "price": "Средний чек — около 1500 ₽",
     "tags": [
@@ -10594,6 +10666,9 @@
     },
     "phone": "+7 (939) 847-54-85",
     "website": "https://nitkatea.com",
+    "links": {
+      "vk": "https://vk.com/nitkatea"
+    },
     "price_level": "₽₽",
     "price": "Средний чек — уточняется",
     "tags": [
@@ -10859,6 +10934,10 @@
     },
     "phone": "+7 (495) 139-93-31",
     "website": "https://zilartmuseum.ru",
+    "links": {
+      "telegram": "https://t.me/zilart_museum",
+      "vk": "https://vk.com/zilart.museum"
+    },
     "price_level": "₽₽",
     "price": "Билеты — на сайте музея",
     "tags": [
@@ -10926,6 +11005,10 @@
     },
     "phone": "+7 (499) 246-94-44",
     "website": "https://tolstoymuseum.ru",
+    "links": {
+      "telegram": "https://t.me/tolstoymuseum",
+      "vk": "https://vk.com/tolstoymuseum"
+    },
     "price_level": "₽",
     "price": "Билеты — на сайте музея",
     "tags": [
@@ -11034,6 +11117,10 @@
     },
     "phone": "+7 (495) 695-53-08",
     "website": "https://goslitmuz.ru",
+    "links": {
+      "telegram": "https://t.me/literaturemuseum",
+      "vk": "https://vk.com/literaturemuseum"
+    },
     "price_level": "₽",
     "price": "Билеты — на сайте Гослитмузея",
     "tags": [
@@ -11233,6 +11320,10 @@
     },
     "phone": "+7 (495) 675-16-36",
     "website": "https://zilcc.ru",
+    "links": {
+      "telegram": "https://t.me/zilcc_official",
+      "vk": "https://vk.com/zilcc"
+    },
     "price_level": "free",
     "price": "Вход в фойе свободный, события — по билетам",
     "tags": [
@@ -11303,6 +11394,10 @@
     },
     "phone": "",
     "website": "https://zdraste.ru",
+    "links": {
+      "telegram": "https://t.me/zdrastecafe",
+      "vk": "https://vk.com/zdrastecoffeebar"
+    },
     "price_level": "₽₽",
     "price": "Средний чек — уточняется",
     "tags": [
@@ -11433,6 +11528,10 @@
     },
     "phone": "+7 (495) 025-00-65",
     "website": "https://www.m2-cafe.ru/restaurants/aeroport/",
+    "links": {
+      "telegram": "https://t.me/m2organicclub",
+      "vk": "https://vk.com/m2organiccafe"
+    },
     "price_level": "₽₽",
     "price": "Средний чек — уточняется",
     "tags": [
