@@ -4631,7 +4631,11 @@
       37.5302
     ],
     "photo": "assets/images/places/hodynskoe-pole.jpg",
-    "photoCredit": null,
+    "photoCredit": {
+      "author": "Retired electrician",
+      "source": "https://commons.wikimedia.org/wiki/File:Khodynka_Park_-_Grand-Park_towers,_July_2026_04.jpg",
+      "license": "CC0"
+    },
     "description": "Большой открытый парк на месте старого аэродрома с панорамными качелями на самой высокой точке.",
     "description_long": "Широкие лужайки и пруд с фонтаном, который вечером подсвечивают. Есть скейт-парк, площадки для волейбола и тенниса, летом открытые бассейны. Тени почти нет, а парк большой, так что по нему удобнее кататься на велосипеде.",
     "views": 0,
@@ -4705,7 +4709,11 @@
       37.4118
     ],
     "photo": "assets/images/places/shodnenskiy-kovsh.jpg",
-    "photoCredit": null,
+    "photoCredit": {
+      "author": "Triburon",
+      "source": "https://commons.wikimedia.org/wiki/File:%D0%92%D0%B8%D0%B4_%D0%BD%D0%B0_%D1%81%D1%85%D0%BE%D0%B4%D0%BD%D0%B5%D0%BD%D1%81%D0%BA%D1%83%D1%8E_%D1%87%D0%B0%D1%88%D1%83.jpg",
+      "license": "CC BY-SA 4.0"
+    },
     "description": "Глубокая природная чаша в Тушине, по краю которой идёт деревянная экотропа над кронами.",
     "description_long": "Огромный природный амфитеатр: лес, ручьи и старое русло реки на нескольких уровнях. Со смотровых площадок на тропе кроны видно сверху. Про чашу рассказывают легенды о метеорите и древнем вулкане. Склоны крутые, нужна удобная обувь, а после дождя и в первые морозы настил скользкий.",
     "views": 0,
@@ -4983,7 +4991,11 @@
       37.4732
     ],
     "photo": "assets/images/places/park-olimpiyskoy-derevni.jpg",
-    "photoCredit": null,
+    "photoCredit": {
+      "author": "MBH",
+      "source": "https://commons.wikimedia.org/wiki/File:Olympic_village_park,_Moscow_10.jpg",
+      "license": "CC BY 4.0"
+    },
     "description": "Небольшой парк у пруда, мимо которого жители соседних кварталов годами ходят, не заглядывая.",
     "description_long": "Пруд с утками, дорожки и спокойные лужайки внутри района, построенного к Олимпиаде-80. На целый день сюда не едут, но для неспешной прогулки или пикника он подходит, как и для остановки в маршруте по юго-западу.",
     "views": 0,
@@ -5270,7 +5282,11 @@
       37.472286
     ],
     "photo": "assets/images/places/pokrovskiy-bereg.jpg",
-    "photoCredit": null,
+    "photoCredit": {
+      "author": "MBH",
+      "source": "https://commons.wikimedia.org/wiki/File:Pokrovsky_Bereg_park_06.jpg",
+      "license": "CC BY 4.0"
+    },
     "description": "Бесплатный пляж у входа в канал имени Москвы, мимо которого проходят большие корабли.",
     "description_long": "Песчаный пляж, лежаки, спортивные площадки и мини-гольф на берегу Химкинского водохранилища, мимо идут теплоходы и баржи. Летом здесь купаются и загорают, в межсезонье гуляют вдоль воды. Парковка маленькая, удобнее приехать на метро.",
     "views": 0,
@@ -5424,7 +5440,11 @@
       37.5685
     ],
     "photo": "assets/images/places/park-dubki.jpg",
-    "photoCredit": null,
+    "photoCredit": {
+      "author": "Sergey A. Demidov",
+      "source": "https://commons.wikimedia.org/wiki/File:20230413_Dubky_Park,_Moscow_02.jpg",
+      "license": "CC BY 4.0"
+    },
     "description": "Тихий парк со старыми дубами и прудом рядом с Тимирязевкой.",
     "description_long": "Вековые дубы, пруд с утками и спокойные аллеи. Ради одного этого парка через весь город не едут, но он хорош для прогулки по району или как остановка по пути в Тимирязевский парк.",
     "views": 0,
@@ -10204,7 +10224,11 @@
       37.505
     ],
     "photo": "assets/images/places/ostafyevo.jpg",
-    "photoCredit": null,
+    "photoCredit": {
+      "author": "Sergey Sebelev",
+      "source": "https://commons.wikimedia.org/wiki/File:%D0%A3%D1%81%D0%B0%D0%B4%D1%8C%D0%B1%D0%B0_%D0%9E%D1%81%D1%82%D0%B0%D1%84%D1%8C%D0%B5%D0%B2%D0%BE_-_%D0%93%D0%BB%D0%B0%D0%B2%D0%BD%D1%8B%D0%B9_%D0%B4%D0%BE%D0%BC.jpg",
+      "license": "CC BY-SA 4.0"
+    },
     "description": "Парк «Русского Парнаса», где бывали Пушкин и Карамзин: пруд, хвойный и берёзовый лес, памятники поэтам.",
     "description_long": "Усадьба Вяземских, где гостили Пушкин, Карамзин и Жуковский. Вокруг большой парк с прудом, тенистыми аллеями и смешанным лесом. Здесь можно погулять тихо, как за городом, не выезжая из Москвы.",
     "views": 0,
