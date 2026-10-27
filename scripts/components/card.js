@@ -32,7 +32,7 @@ export function cardHtml(place, isFavorite, extraClass = '', { now = null } = {}
         ${badge}
       </div>
       <img src="${escapeHtml(place.photoSm || place.photo || '')}" alt="${escapeHtml(place.name)}" class="place-card__img" loading="lazy">
-      <div class="place-card__info"><h3>${escapeHtml(place.name)}</h3></div>
+      <div class="place-card__info"><h3>${escapeHtml(place.name)}</h3>${place.metro ? `<p class="place-card__metro">м. ${escapeHtml(place.metro)}</p>` : ''}</div>
     </div>`;
 }
 

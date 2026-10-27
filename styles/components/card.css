@@ -209,6 +209,18 @@
   margin: 0;
 }
 
+/* Метро под названием: по нему решают, далеко ли идти (задача 97) */
+.place-card__metro {
+  margin: 6px 0 0;
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+@media (max-width: 767px) {
+  .place-card__metro { font-size: var(--fs-xs); }
+}
+
 .badge-temporary,
 .badge-now {
   padding: 4px 10px;
