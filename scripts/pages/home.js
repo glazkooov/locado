@@ -173,6 +173,8 @@ function suggestCard() {
   return { ratio: SERVICE_RATIO, html: serviceCardHtml({ href: 'suggest/', iconName: 'heart', title: 'Знаешь место, которого здесь нет?', link: 'Расскажи о нём →' }) };
 }
 
+const PLANS_TOP = new URLSearchParams(window.location.search).get('plans') === 'top';
+
 async function main() {
   const collectionsShown = renderCollections();
   renderHeroMoods(renderHeroGreeting());
@@ -195,11 +197,13 @@ async function main() {
     return;
   }
 
-  // «Готовые планы» — полоса в ленте после 3-го ряда
+  // «Готовые планы» — полоса в ленте после 3-го ряда. Прототип ?plans=top
+  // (задача 97, пункт 3): полоса остаётся сразу под героем, в ленту не уходит
   const collections = await collectionsShown;
   const showcases = {};
-  if (collections.length) showcases[3] = $('#collections');
-  else $('#collections')?.remove();
+  if (!collections.length) $('#collections')?.remove();
+  else if (PLANS_TOP) document.documentElement.classList.add('plans-top');
+  else showcases[3] = $('#collections');
 
   // «Сейчас» — не отдельный блок: места под погоду, время и сезон встают в
   // первые ряды ленты с короткой плашкой «почему сейчас»

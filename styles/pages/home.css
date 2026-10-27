@@ -1395,3 +1395,17 @@ body.feed-toolbar-stuck .main-header { box-shadow: none; }
   .hero__moods.is-carousel .mood-card__text { z-index: 2; opacity: var(--label, 1); }
   .hero__moods.is-carousel .mood-card[data-mood] .mood-card__label { font-size: var(--fs-lg); }
 }
+
+/* Прототип ?plans=top (задача 97, пункт 3): «Готовые планы» сразу под
+   героем. Полоса подложена под волну героя — волна переходит прямо в неё,
+   а снизу полоса становится прозрачной: зерно фона страницы проступает
+   постепенно, и резкой границы нет */
+.plans-top .hero { z-index: 1; }
+.plans-top #collections {
+  margin-top: calc(-1 * var(--hero-wave-h));
+  padding-top: calc(var(--hero-wave-h) + 40px);
+  background:
+    radial-gradient(ellipse 50% 40% at 100% 0%, rgba(255, 206, 150, 0.35), transparent 70%),
+    linear-gradient(180deg, var(--cream-deep) 0%, var(--cream-deep) 55%, rgba(243, 235, 223, 0) 100%);
+}
+.plans-top .place-section { margin-top: 8px; }
