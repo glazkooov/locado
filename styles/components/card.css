@@ -209,37 +209,16 @@
   margin: 0;
 }
 
-/* Прототип ?card=v2 (задача 97): под названием — зачем идти, метро и цена.
-   Затемнение начинается выше, чтобы три строки читались и на светлом фото */
-.place-card--v2::before {
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 20%, rgba(0, 0, 0, 0.55) 55%, rgba(0, 0, 0, 0.85) 100%);
-}
-
-.place-card__why {
+/* Метро под названием: по нему решают, далеко ли идти (задача 97) */
+.place-card__metro {
   margin: 6px 0 0;
   font-size: var(--fs-sm);
-  line-height: 1.35;
-  opacity: 0.92;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 3;
-  line-clamp: 3;
-  overflow: hidden;
-}
-
-.place-card__meta {
-  margin: 8px 0 0;
-  font-size: var(--fs-caption);
   font-weight: 600;
-  opacity: 0.8;
+  opacity: 0.85;
 }
-
-.place-card__meta span { white-space: nowrap; }
 
 @media (max-width: 767px) {
-  .places-grid .place-card--v2 .place-card__info { padding: 12px; }
-  .places-grid .place-card--v2 .place-card__info h3 { font-size: var(--fs-md); }
-  .place-card__why { font-size: var(--fs-xs); -webkit-line-clamp: 4; line-clamp: 4; }
+  .place-card__metro { font-size: var(--fs-xs); }
 }
 
 .badge-temporary,

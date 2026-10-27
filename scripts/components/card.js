@@ -11,21 +11,6 @@ import { icon } from '../core/icons.js';
 // нет — сердечко на карточках скрыто. Вернуть: SHOW_FAVORITES = true.
 const SHOW_FAVORITES = false;
 
-// Прототип (задача 97, пункт 2): ?card=v2 — под названием строка «зачем»
-// (короткое описание), метро и цена. Без параметра карточка прежняя.
-const CARD_V2 = new URLSearchParams(window.location.search).get('card') === 'v2';
-
-const priceLabel = (level) => (level === 'free' ? 'Бесплатно' : level || '');
-
-function cardDetailsHtml(place) {
-  if (!CARD_V2) return '';
-  // части метаданных не рвутся посередине: «м. Библиотека им. Ленина» целиком
-  const meta = [place.metro ? `м. ${place.metro}` : '', priceLabel(place.price_level)]
-    .filter(Boolean).map((part) => `<span>${escapeHtml(part)}</span>`).join(' · ');
-  return (place.description ? `<p class="place-card__why">${escapeHtml(place.description)}</p>` : '')
-    + (meta ? `<p class="place-card__meta">${meta}</p>` : '');
-}
-
 function favButtonHtml(place, isFavorite) {
   if (!SHOW_FAVORITES) return '';
   return `
@@ -41,13 +26,13 @@ export function cardHtml(place, isFavorite, extraClass = '', { now = null } = {}
   const badge = (place.temporary ? '<div class="badge-temporary">Успей посетить</div>' : '')
     + (now ? `<div class="badge-now">${now.icon ? icon(now.icon) : ''}${escapeHtml(now.text)}</div>` : '');
   return `
-    <div class="place-card${CARD_V2 ? ' place-card--v2' : ''}${extraClass ? ` ${extraClass}` : ''}" data-category="${escapeHtml(place.category)}" data-slug="${escapeHtml(place.slug)}">
+    <div class="place-card${extraClass ? ` ${extraClass}` : ''}" data-category="${escapeHtml(place.category)}" data-slug="${escapeHtml(place.slug)}">
       <div class="place-card__top">
         <div class="place-card__category">${escapeHtml(place.type || categoryLabel(place.category))}</div>${favButtonHtml(place, isFavorite)}
         ${badge}
       </div>
       <img src="${escapeHtml(place.photoSm || place.photo || '')}" alt="${escapeHtml(place.name)}" class="place-card__img" loading="lazy">
-      <div class="place-card__info"><h3>${escapeHtml(place.name)}</h3>${cardDetailsHtml(place)}</div>
+      <div class="place-card__info"><h3>${escapeHtml(place.name)}</h3>${place.metro ? `<p class="place-card__metro">м. ${escapeHtml(place.metro)}</p>` : ''}</div>
     </div>`;
 }
 
