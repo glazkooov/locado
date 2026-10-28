@@ -1403,16 +1403,38 @@ body.feed-toolbar-stuck .main-header { box-shadow: none; }
    своей карточки, слайдер как внутри ленты */
 .has-plans-first .hero { z-index: 1; }
 .plans-first {
+  position: relative;
   margin-top: calc(-1 * var(--hero-wave-h));
   padding: calc(var(--hero-wave-h) + 8px) 0 24px;
   background:
     radial-gradient(ellipse 50% 40% at 100% 0%, rgba(255, 206, 150, 0.35), transparent 70%),
-    linear-gradient(180deg, var(--cream-deep) 0%, var(--cream-deep) 55%, rgba(243, 235, 223, 0) 100%);
+    var(--cream-deep);
+}
+/* Продолжение фона под заголовком ленты: тает долго и неравномерно
+   (быстрее в начале, медленнее к концу) — так глаз не видит границы */
+.plans-first::after {
+  content: '';
+  position: absolute;
+  inset: 100% 0 auto;
+  height: 220px;
+  background: linear-gradient(180deg,
+    rgba(243, 235, 223, 1) 0%,
+    rgba(243, 235, 223, 0.7) 25%,
+    rgba(243, 235, 223, 0.4) 50%,
+    rgba(243, 235, 223, 0.15) 75%,
+    rgba(243, 235, 223, 0) 100%);
+  pointer-events: none;
+  z-index: -1;
 }
 .plans-first .feed-stream > .categories-collections {
   margin: 0;
   padding-inline: 0;
   background: none;
   box-shadow: none;
+}
+/* Слайдер обрезает всё, что за его краем, — и тень карточек снизу резалась
+   тёмной линией. Даём тени место внутри слайдера */
+@media (max-width: 767px) {
+  .plans-first .feed-stream .collections-grid { padding-bottom: 28px; margin-bottom: -22px; }
 }
 .plans-first + .place-section { margin-top: 8px; }
