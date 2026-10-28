@@ -168,12 +168,28 @@ function reminderCards({ collections }) {
   return (k, ctx) => (k % 2 === 0 ? plan(k / 2, ctx) : (k === 1 ? null : (k % 4 === 3 ? together() : suggest())));
 }
 
+/** Полоса перед лентой видна всегда — её подборки в напоминаниях не повторяем. */
+const withBand = (reminder) => (k, ctx) => reminder(k, { ...ctx, band: true });
+
 /** «Предложить место» — сразу под полосой «Готовые планы». */
 function suggestCard() {
   return { ratio: SERVICE_RATIO, html: serviceCardHtml({ href: 'suggest/', iconName: 'heart', title: 'Знаешь место, которого здесь нет?', link: 'Расскажи о нём →' }) };
 }
 
 const PLANS_ROW1 = new URLSearchParams(window.location.search).get('plans') === 'row1';
+// Прототип ?plans=first (задача 97, пункт 3): та же компактная полоса, но
+// перед лентой, сразу под героем
+const PLANS_FIRST = new URLSearchParams(window.location.search).get('plans') === 'first';
+
+/** Полоса «Готовые планы» перед лентой: обёртка .feed-stream даёт ей тот же
+ *  вид, что и внутри ленты (карточка со слайдером). */
+function placePlansFirst(node) {
+  const wrap = document.createElement('div');
+  wrap.className = 'container plans-first';
+  wrap.innerHTML = '<div class="feed-stream"></div>';
+  wrap.firstElementChild.append(node);
+  $('#all-places')?.before(wrap);
+}
 
 async function main() {
   const collectionsShown = renderCollections();
@@ -201,7 +217,8 @@ async function main() {
   // (задача 97, пункт 3): после 1-го ряда, чтобы её видели раньше
   const collections = await collectionsShown;
   const showcases = {};
-  if (collections.length) showcases[PLANS_ROW1 ? 1 : 3] = $('#collections');
+  if (collections.length && PLANS_FIRST) placePlansFirst($('#collections'));
+  else if (collections.length) showcases[PLANS_ROW1 ? 1 : 3] = $('#collections');
   else $('#collections')?.remove();
 
   // «Сейчас» — не отдельный блок: места под погоду, время и сезон встают в
@@ -216,7 +233,7 @@ async function main() {
   const badge = (c) => (SPECIAL.includes(c.reason?.icon) ? { icon: c.reason.icon, text: c.reason.text } : { text: 'Сейчас в тему' });
   const nowBadges = new Map(picks.map((c) => [c.place.slug, badge(c)]));
   const feed = initFeed(withNowPlaces(shuffledFeed(places), picks.map((c) => c.place)), {
-    nowBadges, showcases, reminder: reminderCards({ collections }),
+    nowBadges, showcases, reminder: PLANS_FIRST ? withBand(reminderCards({ collections })) : reminderCards({ collections }),
     // «Выбрать вместе» — самой первой карточкой ленты
     lead: { ratio: SERVICE_RATIO, html: serviceCardHtml({ href: 'vmeste/?from=feed-top', iconName: 'users', title: 'Идёшь не один?', link: 'Выбрать вместе →' }) },
     afterShowcase: suggestCard()

@@ -1395,3 +1395,9 @@ body.feed-toolbar-stuck .main-header { box-shadow: none; }
   .hero__moods.is-carousel .mood-card__text { z-index: 2; opacity: var(--label, 1); }
   .hero__moods.is-carousel .mood-card[data-mood] .mood-card__label { font-size: var(--fs-lg); }
 }
+
+/* Прототип ?plans=first (задача 97, пункт 3): компактная полоса «Готовые
+   планы» перед лентой — та же карточка со слайдером, что внутри ленты */
+.plans-first { margin-top: 8px; }
+.plans-first .feed-stream > section { margin-bottom: 0; }
+.plans-first + .place-section { margin-top: 32px; }
