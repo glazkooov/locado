@@ -89,8 +89,10 @@
         }
       ]
     },
-    "status": "draft",
-    "draftedAt": "2026-10-28T17:03:17.364Z"
+    "status": "published",
+    "draftedAt": "2026-10-28T17:03:17.364Z",
+    "publishedAt": "2026-10-28T18:35:18.029Z",
+    "messageId": 9
   },
   {
     "id": "2026-10-28-tihie-hamovniki",
