@@ -18,8 +18,9 @@
 //
 // post.json: { "rubric": "place", "place": "kolomenskoe", "text": "…" }
 // (или "collection": "<slug>" вместо "place"; у «Куда на выходные» —
-// "places": [три slug]). Фото, подпись автора и
-// ссылку с метками и хэштеги скрипт добавляет сам. Нет фото с подписью — пост уходит
+// "places": [три slug]). Фото, подписи авторов и хэштеги скрипт добавляет
+// сам. В тексте: [название](slug) — ссылка на место или подборку с метками,
+// **жирный** — для заголовков блоков. Нет фото с подписью — пост уходит
 // текстом, Telegram покажет превью страницы сайта.
 
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
@@ -114,6 +115,20 @@ function photoCreditHtml(credit) {
   return credit.source ? `Фото: <a href="${credit.source}">${author}</a>` : `Фото: ${author}`;
 }
 
+/** Текст поста в HTML Telegram: [название](slug) — ссылка на место или
+ *  подборку сайта с метками, **жирный** — <b>. Остальное экранируется. */
+function formatText(raw, rubric) {
+  return escapeHtml(raw)
+    .replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
+    .replace(/\[([^\]]+)\]\(([a-z0-9-]+)\)/g, (_, label, slug) => {
+      const kind = places.some((p) => p.slug === slug) ? 'place'
+        : collections.some((c) => c.slug === slug) ? 'collection' : null;
+      if (!kind) fail(`Ссылка на «${slug}»: такого места или подборки нет.`);
+      const url = `${SITE}${kind}/${slug}?utm_source=telegram&utm_campaign=${rubric}`;
+      return `<a href="${escapeHtml(url)}">${label}</a>`;
+    });
+}
+
 /** Темы поста: одно место или подборка, у «Куда на выходные» — три места. */
 function postTopics(input, rubric) {
   if (input.places) {
@@ -146,15 +161,21 @@ function buildPost(input) {
     return { kind, slug, item, photo, url };
   });
 
-  const link = (t, label) => `<a href="${escapeHtml(t.url)}">${escapeHtml(label)}</a>`;
-  const links = topics.length === 1
-    ? link(topics[0], 'Подробнее на Локадо')
-    : `На Локадо: ${topics.map((t) => link(t, t.item.name)).join(' · ')}`;
+  const text = formatText(input.text.trim(), input.rubric);
+  // Каждая тема поста должна быть ссылкой в тексте: читатель переходит в моменте.
+  // Без ссылок в тексте (старые записи журнала) — одна ссылка в конце
+  const missing = topics.filter((t) => !text.includes(`/${t.kind}/${t.slug}?`));
+  if (missing.length && missing.length < topics.length) {
+    fail(`Нет ссылки в тексте на: ${missing.map((t) => t.slug).join(', ')} — оформи как [название](slug).`);
+  }
+  const links = missing.length && topics.length === 1
+    ? `<a href="${escapeHtml(topics[0].url)}">Подробнее на Локадо</a>` : null;
+  if (missing.length > 1) fail('В посте с несколькими местами каждое — ссылкой в тексте: [название](slug).');
   const withPhoto = topics.filter((t) => t.photo);
   const categoryTags = topics.filter((t) => t.kind === 'place').map((t) => CATEGORY_TAGS[t.item.category]);
 
   const caption = [
-    escapeHtml(input.text.trim()),
+    text,
     links,
     withPhoto.map((t) => photoCreditHtml(t.item.photoCredit)).join('\n'),
     [...new Set([rubric.tag, ...categoryTags])].filter(Boolean).join(' ')
