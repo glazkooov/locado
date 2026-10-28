@@ -16,7 +16,6 @@ import { showToast } from '../components/toast.js';
 import { loadCollections, collectionUrl, collectionPlaceSlugs } from '../core/collections.js';
 import { collectionCardHtml } from '../components/collection-card.js';
 import { loadNow, pickNow } from '../core/now.js';
-import { loadWeather } from '../core/weather.js';
 
 // Скроллим к заголовку ленты, а не к карточкам: так видны вкладки и
 // плашка выбранного настроения/подборки над ними.
@@ -179,7 +178,6 @@ async function main() {
   bindCards(document.body);
 
   const nowEntry = loadNow(); // параллельно с местами
-  const weather = loadWeather();
   const feedContainer = $('#places-container');
   if (feedContainer) feedContainer.innerHTML = `<div class="places-grid">${skeletonCards(8, 'place-card')}</div>`;
 
@@ -197,11 +195,10 @@ async function main() {
   const collections = await collectionsShown;
   if (!collections.length) $('.plans-band')?.remove();
 
-  // «Сейчас» — не отдельный блок: места под погоду, время и сезон встают в
+  // «Сейчас» — не отдельный блок: места под время и сезон встают в
   // первые ряды ленты с короткой плашкой «почему сейчас»
   const entry = await nowEntry;
-  const w = await weather;
-  const view = entry ? pickNow(entry, places, { weather: w }) : null;
+  const view = entry ? pickNow(entry, places) : null;
   const picks = view ? view.cards : [];
   // Плашка — только когда причина особенная: закат или «всю ночь». «Под
   // крышей» и часы работы — не повод выделять место, таких много

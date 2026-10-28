@@ -1,5 +1,3 @@
 # Картинки превью, которые рисует сервер (api/og-image.php)
 api/og-cache/
 
-# Кэш погоды, который сервер кладёт рядом с api/weather.php
-api/weather-cache.json

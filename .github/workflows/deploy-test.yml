@@ -60,8 +60,7 @@ jobs:
           cat version.txt
 
       # Заливает только изменённые файлы: список уже залитых хранится на
-      # сервере в .ftp-deploy-sync-state.json. Кэш погоды (api/weather-cache.json)
-      # создаёт сам сервер — его не трогаем
+      # сервере в .ftp-deploy-sync-state.json
       - name: Залить на test.locado.ru
         id: deploy
         if: env.FTP_SERVER != ''
@@ -81,7 +80,6 @@ jobs:
             .github/**
             docs/**
             tools/**
-            api/weather-cache.json
 
       # FTP Бегета иногда не отвечает — через минуту пробуем ещё раз
       - name: Повторная попытка
@@ -105,4 +103,3 @@ jobs:
             .github/**
             docs/**
             tools/**
-            api/weather-cache.json
