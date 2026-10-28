@@ -7,7 +7,13 @@
 //   node tools/telegram.mjs pick <рубрика>    кандидаты, которых давно не было
 //   node tools/telegram.mjs preview <post.json>   подпись, как она уйдёт
 //   node tools/telegram.mjs draft <post.json>     черновик владельцу в личку
-//   node tools/telegram.mjs publish <id>          опубликовать черновик в канал
+//   node tools/telegram.mjs publish <id> [текст.txt]  опубликовать черновик в канал;
+//                                     с файлом — с итоговым текстом владельца
+//   node tools/telegram.mjs inbox                 что владелец писал боту (за сутки)
+//   node tools/telegram.mjs send <файл.html> owner|channel [--pin]
+//                                     своё сообщение: приветствие, навигация
+//   node tools/telegram.mjs avatar <файл.png>     аватарка канала
+//   node tools/telegram.mjs about <файл.txt>      описание канала (до 255 знаков)
 //
 // post.json: { "rubric": "place", "place": "kolomenskoe", "text": "…" }
 // (или "collection": "<slug>" вместо "place"). Фото, подпись автора и
@@ -244,13 +250,14 @@ async function draft(path, force) {
   console.log(`Черновик ${id} отправлен владельцу.`);
 }
 
-async function publish(id) {
+async function publish(id, textFile) {
   const config = readJson(CONFIG, {});
   if (!config.channel) fail('Нет канала: node tools/telegram.mjs setup @канал');
   const log = readJson(LOG, []);
   const entry = log.find((e) => e.id === id);
   if (!entry) fail(`В журнале нет черновика «${id}».`);
   if (entry.status === 'published') fail(`«${id}» уже опубликован.`);
+  if (textFile) entry.text = readFile(textFile).trim();
 
   const post = buildPost(entry);
   const sent = await sendPost(config.channel, post);
@@ -259,13 +266,63 @@ async function publish(id) {
   console.log(`Опубликовано: ${id}, сообщение ${sent.message_id}.`);
 }
 
-const [command, arg, flag] = process.argv.slice(2);
+function readFile(file) {
+  const path = file && resolve(startDir, file);
+  if (!path || !existsSync(path)) fail(`Нет файла «${file}».`);
+  return readFileSync(path, 'utf8');
+}
+
+/** Текст, который владелец прислал боту: итоговая версия поста или правка.
+ *  Telegram хранит такие сообщения для бота только сутки. */
+async function inbox() {
+  const config = readJson(CONFIG, {});
+  const updates = await api('getUpdates', { allowed_updates: ['message'] });
+  const messages = updates.map((u) => u.message).filter((m) => m?.chat.id === config.ownerChatId && m.text && !m.text.startsWith('/'));
+  if (!messages.length) console.log('За последние сутки владелец боту ничего не писал.');
+  for (const m of messages) {
+    const replyTo = m.reply_to_message?.text || m.reply_to_message?.caption;
+    console.log(`— ${new Date(m.date * 1000).toISOString().slice(0, 16)}${replyTo ? ` (ответ на «${replyTo.slice(0, 40)}…»)` : ''}\n${m.text}\n`);
+  }
+}
+
+/** Своё сообщение (HTML-разметка Telegram): владельцу на проверку или в канал. */
+async function send(file, to, pin) {
+  const config = readJson(CONFIG, {});
+  const chatId = { owner: config.ownerChatId, channel: config.channel }[to];
+  if (!chatId) fail('Кому: owner или channel (и setup должен знать оба).');
+  const sent = await api('sendMessage', { chat_id: chatId, text: readFile(file).trim(), parse_mode: 'HTML' });
+  if (pin) await api('pinChatMessage', { chat_id: chatId, message_id: sent.message_id, disable_notification: true });
+  console.log(`Отправлено (${to}), сообщение ${sent.message_id}${pin ? ', закреплено' : ''}.`);
+}
+
+async function avatar(file) {
+  const { channel } = readJson(CONFIG, {});
+  const form = new FormData();
+  form.append('chat_id', String(channel));
+  form.append('photo', new Blob([readFileSync(resolve(startDir, file))]), 'avatar.png');
+  await api('setChatPhoto', form);
+  console.log('Аватарка канала обновлена.');
+}
+
+async function about(file) {
+  const { channel } = readJson(CONFIG, {});
+  const description = readFile(file).trim();
+  if (description.length > 255) fail(`Описание длиннее 255 знаков (${description.length}).`);
+  await api('setChatDescription', { chat_id: channel, description });
+  console.log('Описание канала обновлено.');
+}
+
+const [command, arg, ...rest] = process.argv.slice(2);
 const commands = {
   setup: () => setup(arg),
   pick: () => pick(arg),
   preview: () => preview(arg),
-  draft: () => draft(arg, flag === '--force'),
-  publish: () => publish(arg)
+  draft: () => draft(arg, rest.includes('--force')),
+  publish: () => publish(arg, rest[0]),
+  inbox: () => inbox(),
+  send: () => send(arg, rest[0], rest.includes('--pin')),
+  avatar: () => avatar(arg),
+  about: () => about(arg)
 };
-if (!commands[command]) fail('Команды: setup, pick, preview, draft, publish — см. начало tools/telegram.mjs.');
+if (!commands[command]) fail('Команды: setup, pick, preview, draft, publish, inbox, send, avatar, about — см. начало tools/telegram.mjs.');
 await commands[command]();
