@@ -12,11 +12,13 @@
 //   node tools/telegram.mjs inbox                 что владелец писал боту (за сутки)
 //   node tools/telegram.mjs send <файл.html> owner|channel [--pin]
 //                                     своё сообщение: приветствие, навигация
+//   node tools/telegram.mjs edit <id> <файл.html> поправить сообщение в канале
 //   node tools/telegram.mjs avatar <файл.png>     аватарка канала
 //   node tools/telegram.mjs about <файл.txt>      описание канала (до 255 знаков)
 //
 // post.json: { "rubric": "place", "place": "kolomenskoe", "text": "…" }
-// (или "collection": "<slug>" вместо "place"). Фото, подпись автора и
+// (или "collection": "<slug>" вместо "place"; у «Куда на выходные» —
+// "places": [три slug]). Фото, подпись автора и
 // ссылку с метками и хэштеги скрипт добавляет сам. Нет фото с подписью — пост уходит
 // текстом, Telegram покажет превью страницы сайта.
 
@@ -41,7 +43,8 @@ const RUBRICS = {
   weekend: { label: 'Куда в выходные', tag: '#на_выходные', kind: 'place' },
   route: { label: 'Маршрут', tag: '#маршруты', kind: 'collection' },
   now: { label: 'Сейчас', tag: '#сезон', kind: 'place' },
-  occasion: { label: 'Под повод', tag: '#под_повод', kind: 'collection' }
+  occasion: { label: 'Под повод', tag: '#под_повод', kind: 'collection' },
+  fact: { label: 'Интересное', tag: '#интересное', kind: 'place' }
 };
 
 /** Хэштег категории места — по CATEGORIES из scripts/core/places.js. */
@@ -80,15 +83,23 @@ async function api(method, params = {}) {
   return data.result;
 }
 
-/** Пост с фото — фото с подписью, без фото — сообщение с превью ссылки. */
+/** Без фото — сообщение с превью ссылки, одно фото — фото с подписью,
+ *  несколько — альбом с подписью под первым. Возвращает первое сообщение. */
 async function sendPost(chatId, post) {
-  if (!post.photo) return api('sendMessage', { chat_id: chatId, text: post.caption, parse_mode: 'HTML' });
+  if (!post.photos.length) return api('sendMessage', { chat_id: chatId, text: post.caption, parse_mode: 'HTML' });
   const form = new FormData();
   form.append('chat_id', String(chatId));
-  form.append('photo', new Blob([readFileSync(post.photo)]), post.photo.split('/').pop());
-  form.append('caption', post.caption);
-  form.append('parse_mode', 'HTML');
-  return api('sendPhoto', form);
+  post.photos.forEach((file, i) => form.append(`p${i}`, new Blob([readFileSync(file)]), file.split('/').pop()));
+  if (post.photos.length === 1) {
+    form.append('photo', 'attach://p0');
+    form.append('caption', post.caption);
+    form.append('parse_mode', 'HTML');
+    return api('sendPhoto', form);
+  }
+  form.append('media', JSON.stringify(post.photos.map((_, i) => ({
+    type: 'photo', media: `attach://p${i}`, ...(i === 0 && { caption: post.caption, parse_mode: 'HTML' })
+  }))));
+  return (await api('sendMediaGroup', form))[0];
 }
 
 // ——— Пост ———
@@ -103,45 +114,72 @@ function photoCreditHtml(credit) {
   return credit.source ? `Фото: <a href="${credit.source}">${author}</a>` : `Фото: ${author}`;
 }
 
-/** Собирает пост из post.json: проверяет, что тема есть на сайте и у неё
- *  подписанное фото, добавляет ссылку с метками и подпись автора. */
+/** Темы поста: одно место или подборка, у «Куда на выходные» — три места. */
+function postTopics(input, rubric) {
+  if (input.places) {
+    if (input.rubric !== 'weekend') fail('Несколько мест — только в «Куда на выходные».');
+    if (input.places.length < 2 || input.places.length > 3) fail('В «Куда на выходные» — два-три места.');
+    return input.places.map((slug) => ({ kind: 'place', slug }));
+  }
+  const kind = input.place ? 'place' : input.collection ? 'collection' : null;
+  if (!kind) fail('В посте нужен "place", "collection" или "places" — slug темы.');
+  if (kind !== rubric.kind) fail(`Рубрика «${rubric.label}» — про ${rubric.kind === 'place' ? 'место' : 'подборку'}.`);
+  return [{ kind, slug: input[kind] }];
+}
+
+/** Собирает пост из post.json: проверяет, что темы есть на сайте, берёт их
+ *  подписанные фото, добавляет ссылки с метками, подписи авторов и хэштеги. */
 function buildPost(input) {
   const rubric = RUBRICS[input.rubric];
   if (!rubric) fail(`Неизвестная рубрика «${input.rubric}». Есть: ${Object.keys(RUBRICS).join(', ')}.`);
   if (!input.text?.trim()) fail('Пустой текст поста.');
 
-  const kind = input.place ? 'place' : input.collection ? 'collection' : null;
-  if (!kind) fail('В посте нужен "place" или "collection" — slug темы.');
-  if (kind !== rubric.kind) fail(`Рубрика «${rubric.label}» — про ${rubric.kind === 'place' ? 'место' : 'подборку'}.`);
+  const topics = postTopics(input, rubric).map(({ kind, slug }) => {
+    const item = kind === 'place'
+      ? places.find((p) => p.slug === slug)
+      : collections.find((c) => c.slug === slug);
+    if (!item) fail(`Нет ${kind === 'place' ? 'места' : 'подборки'} «${slug}».`);
+    // Фото без подписи автора не публикуем (docs/photos.md) — тогда тема без фото
+    const file = kind === 'place' ? item.photo : item.cover;
+    const photo = file && existsSync(file) && item.photoCredit?.author ? file : null;
+    const url = `${SITE}${kind}/${slug}?utm_source=telegram&utm_campaign=${input.rubric}`;
+    return { kind, slug, item, photo, url };
+  });
 
-  const slug = input[kind];
-  const item = kind === 'place'
-    ? places.find((p) => p.slug === slug)
-    : collections.find((c) => c.slug === slug);
-  if (!item) fail(`Нет ${kind === 'place' ? 'места' : 'подборки'} «${slug}».`);
+  const link = (t, label) => `<a href="${escapeHtml(t.url)}">${escapeHtml(label)}</a>`;
+  const links = topics.length === 1
+    ? link(topics[0], 'Подробнее на Локадо')
+    : `На Локадо: ${topics.map((t) => link(t, t.item.name)).join(' · ')}`;
+  const withPhoto = topics.filter((t) => t.photo);
+  const categoryTags = topics.filter((t) => t.kind === 'place').map((t) => CATEGORY_TAGS[t.item.category]);
 
-  // Фото без подписи автора не публикуем (docs/photos.md) — тогда пост без фото
-  const file = kind === 'place' ? item.photo : item.cover;
-  const photo = file && existsSync(file) && item.photoCredit?.author ? file : null;
-
-  const url = `${SITE}${kind}/${slug}?utm_source=telegram&utm_campaign=${input.rubric}`;
   const caption = [
     escapeHtml(input.text.trim()),
-    `<a href="${escapeHtml(url)}">Подробнее на Локадо</a>`,
-    photo && photoCreditHtml(item.photoCredit),
-    [rubric.tag, kind === 'place' && CATEGORY_TAGS[item.category]].filter(Boolean).join(' ')
+    links,
+    withPhoto.map((t) => photoCreditHtml(t.item.photoCredit)).join('\n'),
+    [...new Set([rubric.tag, ...categoryTags])].filter(Boolean).join(' ')
   ].filter(Boolean).join('\n\n');
 
-  const limit = photo ? CAPTION_LIMIT : TEXT_LIMIT;
+  const limit = withPhoto.length ? CAPTION_LIMIT : TEXT_LIMIT;
   const length = visibleLength(caption);
   if (length > limit) fail(`Текст длиннее ${limit} знаков (${length}) — сократи.`);
 
-  return { rubric: input.rubric, kind, slug, text: input.text.trim(), photo, caption, length, limit };
+  return {
+    rubric: input.rubric, topics, text: input.text.trim(),
+    photos: withPhoto.map((t) => t.photo), caption, length, limit
+  };
+}
+
+/** Что записать в журнал о темах поста: place, collection или places. */
+function topicFields(post) {
+  if (post.rubric === 'weekend' && post.topics.length > 1) return { places: post.topics.map((t) => t.slug) };
+  return { [post.topics[0].kind]: post.topics[0].slug };
 }
 
 /** Когда тему брали последний раз (черновик тоже считается). */
 function lastUsed(log, kind, slug) {
-  const dates = log.filter((e) => e[kind] === slug).map((e) => e.publishedAt || e.draftedAt);
+  const dates = log.filter((e) => e[kind] === slug || (kind === 'place' && e.places?.includes(slug)))
+    .map((e) => e.publishedAt || e.draftedAt);
   return dates.sort().at(-1) || null;
 }
 
@@ -227,7 +265,7 @@ function readPost(file) {
 
 function preview(path) {
   const post = readPost(path);
-  console.log(`${post.caption}\n\n— ${post.length} из ${post.limit} знаков, ${post.photo ? `фото ${post.photo}` : 'без фото'}`);
+  console.log(`${post.caption}\n\n— ${post.length} из ${post.limit} знаков, ${post.photos.length ? `фото: ${post.photos.join(', ')}` : 'без фото'}`);
 }
 
 async function draft(path, force) {
@@ -236,22 +274,24 @@ async function draft(path, force) {
   const post = readPost(path);
   const log = readJson(LOG, []);
 
-  const last = lastUsed(log, post.kind, post.slug);
-  if (!force && weeksSince(last) < REPEAT_WEEKS[post.kind]) {
-    fail(`«${post.slug}» уже было ${last.slice(0, 10)} — повторять не раньше чем через ${REPEAT_WEEKS[post.kind]} недель.`);
+  for (const { kind, slug } of post.topics) {
+    const last = lastUsed(log, kind, slug);
+    if (!force && weeksSince(last) < REPEAT_WEEKS[kind]) {
+      fail(`«${slug}» уже было ${last.slice(0, 10)} — повторять не раньше чем через ${REPEAT_WEEKS[kind]} недель.`);
+    }
   }
 
   const date = new Date().toISOString().slice(0, 10);
-  const id = `${date}-${post.slug}`;
+  const id = `${date}-${post.rubric === 'weekend' && post.topics.length > 1 ? 'weekend' : post.topics[0].slug}`;
   const sent = await sendPost(config.ownerChatId, post);
   await api('sendMessage', {
     chat_id: config.ownerChatId,
     reply_to_message_id: sent.message_id,
-    text: `Черновик · ${RUBRICS[post.rubric].label} · ${id}${post.photo ? '' : ' · без фото'}`
+    text: `Черновик · ${RUBRICS[post.rubric].label} · ${id}${post.photos.length ? '' : ' · без фото'}`
   });
 
   log.push({
-    id, rubric: post.rubric, [post.kind]: post.slug, text: post.text,
+    id, rubric: post.rubric, ...topicFields(post), text: post.text,
     status: 'draft', draftedAt: new Date().toISOString()
   });
   writeJson(LOG, log);
@@ -303,6 +343,15 @@ async function send(file, to, pin) {
   console.log(`Отправлено (${to}), сообщение ${sent.message_id}${pin ? ', закреплено' : ''}.`);
 }
 
+/** Поправить уже опубликованное сообщение канала (например, закреп). */
+async function edit(messageId, file) {
+  const { channel } = readJson(CONFIG, {});
+  await api('editMessageText', {
+    chat_id: channel, message_id: Number(messageId), text: readFile(file).trim(), parse_mode: 'HTML'
+  });
+  console.log(`Сообщение ${messageId} в канале обновлено.`);
+}
+
 async function avatar(file) {
   const { channel } = readJson(CONFIG, {});
   const form = new FormData();
@@ -329,8 +378,9 @@ const commands = {
   publish: () => publish(arg, rest[0]),
   inbox: () => inbox(),
   send: () => send(arg, rest[0], rest.includes('--pin')),
+  edit: () => edit(arg, rest[0]),
   avatar: () => avatar(arg),
   about: () => about(arg)
 };
-if (!commands[command]) fail('Команды: setup, pick, preview, draft, publish, inbox, send, avatar, about — см. начало tools/telegram.mjs.');
+if (!commands[command]) fail('Команды: setup, pick, preview, draft, publish, inbox, send, edit, avatar, about — см. начало tools/telegram.mjs.');
 await commands[command]();
