@@ -7,7 +7,7 @@
 // Подключают place/index.php и collection/index.php. Шаблон — index.html
 // той же папки: страницу по-прежнему рисует скрипт, сервер меняет только
 // мета-теги в <head>. Без нового синтаксиса PHP 7+: на хостинге может
-// стоять старая версия PHP (см. api/weather.php).
+// стоять старая версия PHP.
 
 function og_esc($s) {
   return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8');

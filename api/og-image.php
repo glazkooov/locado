@@ -9,7 +9,7 @@
 //
 // Шрифт — Unbounded Bold (лицензия OFL, assets/fonts/LICENSE-unbounded.txt),
 // собран в TTF из woff2 сайта: GD не читает woff2. Логотип — assets/og/.
-// Без нового синтаксиса PHP 7+ (см. api/weather.php).
+// Без нового синтаксиса PHP 7+: на хостинге может стоять старая версия.
 
 require __DIR__ . '/og.php';
 
