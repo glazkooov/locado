@@ -7,8 +7,10 @@
 //   node tools/telegram.mjs pick <рубрика>    кандидаты, которых давно не было
 //   node tools/telegram.mjs preview <post.json>   подпись, как она уйдёт
 //   node tools/telegram.mjs draft <post.json>     черновик владельцу в личку
-//   node tools/telegram.mjs publish <id> [текст.txt]  опубликовать черновик в канал;
-//                                     с файлом — с итоговым текстом владельца
+//   node tools/telegram.mjs publish <id> [текст.txt] [--no-photo]
+//                                     опубликовать черновик в канал; с файлом —
+//                                     с итоговым текстом владельца; --no-photo —
+//                                     без фото и подписи автора
 //   node tools/telegram.mjs inbox                 что владелец писал боту (за сутки)
 //   node tools/telegram.mjs send <файл.html> owner|channel [--pin]
 //                                     своё сообщение: приветствие, навигация
@@ -156,7 +158,7 @@ function buildPost(input) {
     if (!item) fail(`Нет ${kind === 'place' ? 'места' : 'подборки'} «${slug}».`);
     // Фото без подписи автора не публикуем (docs/photos.md) — тогда тема без фото
     const file = kind === 'place' ? item.photo : item.cover;
-    const photo = file && existsSync(file) && item.photoCredit?.author ? file : null;
+    const photo = !input.noPhoto && file && existsSync(file) && item.photoCredit?.author ? file : null;
     const url = `${SITE}${kind}/${slug}?utm_source=telegram&utm_campaign=${input.rubric}`;
     return { kind, slug, item, photo, url };
   });
@@ -319,7 +321,7 @@ async function draft(path, force) {
   console.log(`Черновик ${id} отправлен владельцу.`);
 }
 
-async function publish(id, textFile) {
+async function publish(id, textFile, noPhoto) {
   const config = readJson(CONFIG, {});
   if (!config.channel) fail('Нет канала: node tools/telegram.mjs setup @канал');
   const log = readJson(LOG, []);
@@ -327,6 +329,7 @@ async function publish(id, textFile) {
   if (!entry) fail(`В журнале нет черновика «${id}».`);
   if (entry.status === 'published') fail(`«${id}» уже опубликован.`);
   if (textFile) entry.text = readFile(textFile).trim();
+  if (noPhoto) entry.noPhoto = true;
 
   const post = buildPost(entry);
   const sent = await sendPost(config.channel, post);
@@ -396,7 +399,7 @@ const commands = {
   pick: () => pick(arg),
   preview: () => preview(arg),
   draft: () => draft(arg, rest.includes('--force')),
-  publish: () => publish(arg, rest[0]),
+  publish: () => publish(arg, rest.find((a) => !a.startsWith('--')), rest.includes('--no-photo')),
   inbox: () => inbox(),
   send: () => send(arg, rest[0], rest.includes('--pin')),
   edit: () => edit(arg, rest[0]),
