@@ -113,12 +113,12 @@
       </div>
     </section>
 
-    <!-- «Готовые планы» — полоса-прерывание ленты, наше персональное
-         предложение: здесь она только до запуска скриптов, feed.js переносит
-         её в ленту (после 3-го ряда карточек). «Сейчас» отдельным блоком
-         больше нет: места под погоду и время — плашками в самой ленте -->
-
-    <!-- «Готовые планы» — подборки (data/collections.json) -->
+    <!-- «Готовые планы» — подборки (data/collections.json) сразу под героем:
+         ответ на его вопрос «Куда пойдём?». Компактная полоса со слайдером
+         (обёртка .feed-stream — тот же вид, что у полос в ленте), фон
+         подложен под волну героя. «Сейчас» отдельным блоком больше нет:
+         места под погоду и время — плашками в самой ленте -->
+    <div class="plans-band"><div class="container"><div class="feed-stream">
     <section class="categories-collections" id="collections">
       <div class="container">
         <div class="section-head section-head--row">
@@ -133,6 +133,7 @@
         <div class="collections-grid" id="collections-grid"></div>
       </div>
     </section>
+    </div></div></div>
 
     <!-- 8. Лента всех мест -->
     <section class="place-section" id="all-places">
