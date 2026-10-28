@@ -24,8 +24,8 @@ description: |
    git checkout -B claude/telegram origin/claude/telegram   # если ветки ещё нет — от origin/main
    git merge origin/main
    ```
-2. **Рубрика.** Если её назвали — она. Иначе по дню недели из `docs/telegram-plan.md`
-   `docs/telegram.md`; где рубрик две, взять ту, которой не было дольше
+2. **Рубрика.** Если её назвали — она. Иначе по дню недели из
+   `docs/telegram-plan.md`; где рубрик две, взять ту, которой не было дольше
    (последние записи `data/telegram-log.json`).
 3. **Тема.** `node tools/telegram.mjs pick <метка>` — кандидаты, которых
    давно не было (`photo` — есть ли фото с подписью). Выбрать
