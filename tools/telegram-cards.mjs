@@ -1,5 +1,6 @@
-// tools/telegram-cards.mjs — альбом карточек «Журнал» для постов-подборок
-// в Telegram (рубрика «Под повод»). Рисует обложку и карточку на каждое
+// tools/telegram-cards.mjs — фирменные картинки для Telegram: альбом
+// карточек «Журнал» для постов-подборок (рубрика «Под повод») и схема
+// маршрута, как линия метро (рубрика «Маршрут»). Рисует обложку и карточку на каждое
 // место, 1080×1350, шрифтами и цветами сайта. Нужен Playwright (в облачной
 // среде есть, как и для tools/check.mjs).
 //
@@ -9,6 +10,12 @@
 //     "items": [{ "place": "moskvarium", "text": "Акулы, скаты…" }, …]
 //   }
 // Фото — только места с файлом и photoCredit (docs/photos.md).
+//
+// Схема маршрута — когда в post.json есть "scheme":
+//   "scheme": { "title": "Тихие Хамовники",            — если название длинное
+//               "stops": [{ "place": "usadba-tolstogo", "name": "Дом Толстого",
+//                           "note": "дом, где всё как при семье" }, …] }
+// Время пешком, бюджет и старт — из данных маршрута на сайте.
 
 import { createRequire } from 'node:module';
 import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
@@ -100,4 +107,64 @@ export async function renderCards({ title, cover, items }) {
   }
   await browser.close();
   return files;
+}
+
+const schemeCss = `
+.scheme h1{position:absolute;left:64px;right:64px;top:120px;margin:0;font:700 96px/1 U;letter-spacing:-.05em}
+.facts{position:absolute;left:64px;right:64px;top:345px;display:flex;border-top:2px solid #1F1B18;border-bottom:2px solid #1F1B18}
+.facts div{flex:1;padding:18px 16px 18px 0;font:700 19px Ra;letter-spacing:.16em;text-transform:uppercase}
+.facts b{display:block;font:700 30px/1.15 U;letter-spacing:-.03em;text-transform:none;margin-top:8px}
+.track{position:absolute;left:112px;width:14px;background:#FF570A}
+.stop{position:absolute;left:84px;right:64px;display:flex;align-items:center}
+.dot{flex:none;border-radius:50%;background:#FBF7F2;border:12px solid #FF570A;box-sizing:border-box}
+.stop.last .dot{background:#FF570A}
+.stop-name{font:700 40px/1.05 U;letter-spacing:-.035em}
+.stop-note{font-size:26px;color:#5A5048;margin-top:8px}
+.walk{position:absolute;right:64px;font:700 20px Ra;letter-spacing:.14em;text-transform:uppercase;color:#B93C05}
+`;
+
+/** «15 минут пешком через …» → «15 мин пешком»; без минут — без подписи. */
+function walkLabel(text) {
+  const match = /(\d+)\s*мин\S*\s*(пешком)?/.exec(text || '');
+  return match ? `↓ ${match[1]} мин${match[2] ? ' пешком' : ''}` : '';
+}
+
+/** Рисует схему маршрута и возвращает путь к картинке.
+ *  { title, facts: [[подпись, значение]], stops: [{ name, note, walk }] } —
+ *  walk — дорога до следующей остановки. */
+export async function renderScheme({ title, facts, stops }) {
+  const { chromium } = createRequire(import.meta.url)('playwright');
+  const dir = mkdtempSync(join(tmpdir(), 'locado-scheme-'));
+  // Остановки делят место между шапкой и логотипом; чем их больше, тем мельче
+  const top = 560, bottom = 1150;
+  const step = Math.min(140, (bottom - top) / (stops.length - 1));
+  const scale = Math.min(1, step / 140);
+  const dot = Math.round(70 * scale);
+  const titleSize = title.length > 18 ? 72 : 96;
+
+  const html = `<div class="card scheme">
+    <div class="run"><span>Маршрут</span><span>Локадо</span></div>
+    <h1 style="font-size:${titleSize}px">${escapeHtml(title)}</h1>
+    <div class="facts">${facts.map(([label, value]) => `<div>${escapeHtml(label)}<b>${escapeHtml(value)}</b></div>`).join('')}</div>
+    <div class="track" style="top:${top + dot / 2}px;height:${step * (stops.length - 1)}px;left:${84 + dot / 2 - 7}px"></div>
+    ${stops.map((stop, i) => `<div class="stop${i === stops.length - 1 ? ' last' : ''}" style="top:${top + i * step}px;gap:${40 * scale}px">
+      <div class="dot" style="width:${dot}px;height:${dot}px;border-width:${Math.round(12 * scale)}px"></div>
+      <div><div class="stop-name" style="font-size:${Math.round(40 * Math.max(scale, .8))}px">${escapeHtml(stop.name)}</div>
+      <div class="stop-note" style="font-size:${Math.round(26 * Math.max(scale, .85))}px">${escapeHtml(stop.note)}</div></div>
+    </div>`).join('')}
+    ${stops.slice(0, -1).map((stop, i) => walkLabel(stop.walk)
+      ? `<div class="walk" style="top:${top + i * step + step * .66}px">${escapeHtml(walkLabel(stop.walk))}</div>` : '').join('')}
+    <img class="logo" src="${logo}">
+  </div>`;
+
+  const browser = await chromium.launch();
+  const page = await browser.newPage({ viewport: { width: 1080, height: 1350 } });
+  const htmlFile = join(dir, 'scheme.html');
+  writeFileSync(htmlFile, `<!doctype html><meta charset="utf-8"><style>${css}${schemeCss}</style>${html}`);
+  await page.goto(pathToFileURL(htmlFile).href);
+  await page.evaluate(() => document.fonts.ready);
+  const file = join(dir, 'scheme.jpg');
+  await page.screenshot({ path: file, type: 'jpeg', quality: 90 });
+  await browser.close();
+  return file;
 }

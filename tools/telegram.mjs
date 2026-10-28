@@ -23,13 +23,14 @@
 // "places": [три slug]). Фото, подписи авторов и хэштеги скрипт добавляет
 // сам. В тексте: [название](slug) — ссылка на место или подборку с метками,
 // **жирный** — если нужно что-то выделить. У «Под повод» можно "cards" —
-// альбом карточек «Журнал» вместо фото (tools/telegram-cards.mjs). Нет фото с подписью — пост уходит
+// альбом карточек «Журнал» вместо фото, у «Маршрута» — "scheme", схема
+// маршрута (tools/telegram-cards.mjs). Нет фото с подписью — пост уходит
 // текстом, Telegram покажет превью страницы сайта.
 
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { renderCards } from './telegram-cards.mjs';
+import { renderCards, renderScheme } from './telegram-cards.mjs';
 
 // Файл поста — относительно папки, откуда запустили; остальное — от корня
 const startDir = process.cwd();
@@ -91,7 +92,7 @@ async function api(method, params = {}) {
 /** Без фото — сообщение с превью ссылки, одно фото — фото с подписью,
  *  несколько — альбом с подписью под первым. Возвращает первое сообщение. */
 async function sendPost(chatId, post) {
-  if (post.cards && !post.photos.length) post.photos = await renderCards(post.cards);
+  await renderVisual(post);
   if (!post.photos.length) return api('sendMessage', { chat_id: chatId, text: post.caption, parse_mode: 'HTML' });
   const form = new FormData();
   form.append('chat_id', String(chatId));
@@ -177,7 +178,8 @@ function buildPost(input) {
     ? `<a href="${escapeHtml(topics[0].url)}">Подробнее на Локадо</a>` : null;
   if (missing.length > 1) fail('В посте с несколькими местами каждое — ссылкой в тексте: [название](slug).');
   const cards = input.cards && !input.noPhoto ? buildCards(input, topics) : null;
-  const withPhoto = cards ? [] : topics.filter((t) => t.photo);
+  const scheme = input.scheme && !input.noPhoto ? buildScheme(input, topics) : null;
+  const withPhoto = cards || scheme ? [] : topics.filter((t) => t.photo);
   const credits = cards ? cards.items.map((c) => c.credit) : withPhoto.map((t) => t.item.photoCredit);
   const categoryTags = topics.filter((t) => t.kind === 'place').map((t) => CATEGORY_TAGS[t.item.category]);
 
@@ -188,13 +190,51 @@ function buildPost(input) {
     [...new Set([rubric.tag, ...categoryTags])].filter(Boolean).join(' ')
   ].filter(Boolean).join('\n\n');
 
-  const limit = withPhoto.length || cards ? CAPTION_LIMIT : TEXT_LIMIT;
+  const limit = withPhoto.length || cards || scheme ? CAPTION_LIMIT : TEXT_LIMIT;
   const length = visibleLength(caption);
   if (length > limit) fail(`Текст длиннее ${limit} знаков (${length}) — сократи.`);
 
   return {
     rubric: input.rubric, topics, text: input.text.trim(),
-    photos: withPhoto.map((t) => t.photo), cards, cardsInput: input.cards, caption, length, limit
+    photos: withPhoto.map((t) => t.photo), cards, scheme,
+    visualInput: { cards: input.cards, scheme: input.scheme }, caption, length, limit
+  };
+}
+
+/** Фирменная картинка поста (альбом «Журнал» или схема маршрута) рисуется
+ *  только перед отправкой или предпросмотром: нужен браузер. */
+async function renderVisual(post) {
+  if (post.photos.length) return;
+  if (post.cards) post.photos = await renderCards(post.cards);
+  else if (post.scheme) post.photos = [await renderScheme(post.scheme)];
+}
+
+/** Схема маршрута: остановки — места маршрута по порядку, время пешком,
+ *  бюджет и старт — из подборки на сайте. */
+function buildScheme(input, topics) {
+  if (input.rubric !== 'route') fail('Схема маршрута — только для рубрики «Маршрут».');
+  const route = topics[0].item;
+  const { title = route.title, stops } = input.scheme;
+  const blocks = route.blocks.filter((b) => b.type === 'place' || b.type === 'walk');
+  const routeStops = blocks.filter((b) => b.type === 'place');
+  if (!stops?.length) fail('В "scheme" нужны остановки "stops".');
+  if (stops.length !== routeStops.length || stops.some((s, i) => s.place !== routeStops[i].slug)) {
+    fail(`Остановки схемы — все места маршрута по порядку: ${routeStops.map((b) => b.slug).join(', ')}.`);
+  }
+  if (title.length > 26) fail(`Название на схеме длинное (${title.length}) — дай короткое в "scheme.title".`);
+  const meta = route.meta || {};
+  const clean = (v) => String(v || '').replace(/^≈\s*/, '');
+  return {
+    title,
+    facts: [['Время', clean(meta.duration)], ['Бюджет', clean(meta.budget)], ['Старт', clean(meta.start)]],
+    stops: stops.map((stop, i) => {
+      const place = places.find((p) => p.slug === stop.place);
+      const name = stop.name || place.name;
+      if (name.length > 24) fail(`Название остановки «${name}» длинное — дай короткое в "name".`);
+      if (!stop.note?.trim()) fail(`Остановка «${stop.place}»: нужна пара слов в "note".`);
+      const next = blocks[blocks.indexOf(routeStops[i]) + 1];
+      return { name, note: stop.note, walk: next?.type === 'walk' ? next.text : '' };
+    })
   };
 }
 
@@ -315,7 +355,7 @@ function readPost(file) {
 
 async function preview(path) {
   const post = readPost(path);
-  if (post.cards) post.photos = await renderCards(post.cards);
+  await renderVisual(post);
   console.log(`${post.caption}\n\n— ${post.length} из ${post.limit} знаков, ${post.photos.length ? `фото: ${post.photos.join(', ')}` : 'без фото'}`);
 }
 
@@ -343,7 +383,7 @@ async function draft(path, force) {
 
   log.push({
     id, rubric: post.rubric, ...topicFields(post), text: post.text,
-    ...(post.cardsInput && { cards: post.cardsInput }),
+    ...post.visualInput,
     status: 'draft', draftedAt: new Date().toISOString()
   });
   writeJson(LOG, log);
