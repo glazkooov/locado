@@ -7,12 +7,11 @@
   bottom: calc(12px + env(safe-area-inset-bottom));
   z-index: 810;
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 10px 16px;
-  padding: 12px 12px 12px 16px;
+  gap: 12px;
+  padding: 6px 6px 6px 16px;
   border: 1px solid var(--line);
-  border-radius: var(--radius-card);
+  border-radius: var(--radius-pill);
   background: rgba(255, 255, 255, 0.97);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -23,9 +22,10 @@
 .place-page .consent-banner { bottom: calc(84px + env(safe-area-inset-bottom)); }
 
 .consent-banner__text {
-  flex: 1 1 220px;
-  font-size: var(--fs-sm);
-  line-height: 1.4;
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: var(--fs-xs);
+  line-height: 1.35;
   color: var(--ink);
 }
 
@@ -38,8 +38,8 @@
 }
 
 .consent-banner__btn {
-  min-height: 44px;
-  padding: 0 18px;
+  min-height: 40px;
+  padding: 0 16px;
   border: none;
   border-radius: var(--radius-pill);
   background: var(--primary-strong);
@@ -47,6 +47,7 @@
   font: inherit;
   font-size: var(--fs-sm);
   font-weight: 600;
+  white-space: nowrap;
   cursor: pointer;
 }
 
@@ -64,9 +65,9 @@
     left: auto;
     right: 24px;
     bottom: 24px;
-    max-width: 520px;
+    max-width: 460px;
   }
 }
 
 /* Кнопка «наверх» не прячется под плашкой */
-.has-consent-banner .back-to-top { bottom: calc(96px + env(safe-area-inset-bottom)); }
+.has-consent-banner .back-to-top { bottom: calc(80px + env(safe-area-inset-bottom)); }
