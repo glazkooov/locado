@@ -11,7 +11,9 @@ description: |
 
 # Посты для Telegram-канала Локадо
 
-Правила канала — `docs/telegram.md`: рубрики, формат, частота, запреты.
+Правила канала — `docs/telegram.md`: рубрики, формат, запреты. Ритм
+недели, форматы и контент-план — `docs/telegram-plan.md`: тему брать
+оттуда, если на этот день она есть.
 Здесь — как работать и как писать.
 
 ## Порядок
@@ -22,7 +24,7 @@ description: |
    git checkout -B claude/telegram origin/claude/telegram   # если ветки ещё нет — от origin/main
    git merge origin/main
    ```
-2. **Рубрика.** Если её назвали — она. Иначе по дню недели из
+2. **Рубрика.** Если её назвали — она. Иначе по дню недели из `docs/telegram-plan.md`
    `docs/telegram.md`; где рубрик две, взять ту, которой не было дольше
    (последние записи `data/telegram-log.json`).
 3. **Тема.** `node tools/telegram.mjs pick <метка>` — кандидаты, которых
