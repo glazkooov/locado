@@ -75,7 +75,7 @@ const browser = await chromium.launch();
 for (const [label, width, height] of sizes) {
   const ctx = await browser.newContext({ viewport: { width, height } });
   // Внешние сервисы не нужны и в песочнице недоступны
-  await ctx.route(/yandex|metrika|open-meteo|forms\./, (r) => r.abort());
+  await ctx.route(/yandex|metrika|forms\./, (r) => r.abort());
   await ctx.addInitScript(() => { try { localStorage.setItem('locado:cookie-consent', 'accepted'); } catch (e) { /* без хранилища */ } });
   const queue = [...pages];
   await Promise.all(Array.from({ length: 6 }, async () => {
