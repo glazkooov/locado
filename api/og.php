@@ -9,6 +9,14 @@
 // мета-теги в <head>. Без нового синтаксиса PHP 7+: на хостинге может
 // стоять старая версия PHP.
 
+// Версию PHP наружу не показываем (то же в .htaccess — на случай, если
+// PHP на хостинге работает так, что Apache этот заголовок не видит)
+header_remove('X-Powered-By');
+
+// Главный адрес сайта для canonical: у копии на test.locado.ru он тоже
+// указывает сюда — поисковик считает основной именно эту страницу
+define('OG_CANONICAL_SITE', 'https://locado.ru/');
+
 function og_esc($s) {
   return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8');
 }
@@ -60,7 +68,10 @@ function og_render($template, $meta) {
       $html = og_set_meta($html, 'property', 'og:description', $desc);
     }
     $html = og_set_meta($html, 'property', 'og:title', $title);
-    if (!empty($meta['url'])) $html = og_set_meta($html, 'property', 'og:url', $site . $meta['url']);
+    if (!empty($meta['url'])) {
+      $html = og_set_meta($html, 'property', 'og:url', $site . $meta['url']);
+      $html = str_replace('</head>', '  <link rel="canonical" href="' . og_esc(OG_CANONICAL_SITE . $meta['url']) . "\">\n</head>", $html);
+    }
 
     // Картинка превью — своя для места или подборки (api/og-image.php:
     // фото, логотип, название), только если фото есть на сервере. ?v —

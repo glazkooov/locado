@@ -33,9 +33,11 @@ AddDefaultCharset utf-8
   # Красивые адреса: /place/kolomenskoe и /collection/vdol-reki. Старые
   # ?slug=… (ссылки в чатах, закладки) — постоянная переадресация на новые.
   # THE_REQUEST — исходный запрос браузера: внутренняя подмена ниже его не
-  # меняет, поэтому переадресация не зацикливается
+  # меняет, поэтому переадресация не зацикливается. Адрес — сразу с https:
+  # Apache за nginx считает запрос http-шным, и короткий /%1/%2 уводил на
+  # http://, откуда был ещё один прыжок
   RewriteCond %{THE_REQUEST} \s/(place|collection)/(?:index\.(?:html|php))?\?(?:[^\s]*&)?slug=([a-z0-9-]+)[&\s] [NC]
-  RewriteRule ^ /%1/%2? [R=301,L]
+  RewriteRule ^ https://%{HTTP_HOST}/%1/%2? [R=301,L]
   # Сама страница — одна на все места: slug из адреса уходит в index.php
   RewriteRule ^(place|collection)/([a-z0-9-]+)/?$ $1/index.php?slug=$2 [L,QSA]
 </IfModule>
@@ -46,6 +48,28 @@ AddDefaultCharset utf-8
   <If "%{HTTP_HOST} != 'locado.ru'">
     Header set X-Robots-Tag "noindex, nofollow"
   </If>
+</IfModule>
+
+# Заголовки безопасности. Ставит их Apache — то есть на страницы, PHP и
+# данные; картинки, стили и скрипты отдаёт nginx Бегета, им они не нужны.
+# always — и на переадресации, и на страницы ошибок
+<IfModule mod_headers.c>
+  # Только https: браузер, раз зайдя, больше не пробует http (год)
+  Header always set Strict-Transport-Security "max-age=31536000"
+  # Не угадывать тип файла: скрипт — только то, что отдано как скрипт
+  Header always set X-Content-Type-Options "nosniff"
+  # Чужим сайтам — только адрес Локадо, без страницы и поиска
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  # frame-ancestors — сайт нельзя встроить в чужую страницу (кроме Метрики:
+  # карта кликов показывает сайт во фрейме); base-uri — нельзя подменить
+  # <base>; object-src — никаких плагинов; form-action — формы уходят только
+  # к нам и в Яндекс Формы. Список разрешённых скриптов не задаём: Карты и
+  # Метрика грузят ресурсы с десятков адресов Яндекса и меняют их без
+  # предупреждения, а строгий список сломал бы карту
+  Header always set Content-Security-Policy "frame-ancestors 'self' https://metrika.yandex.ru https://metrica.yandex.com https://webvisor.com https://*.webvisor.com; base-uri 'self'; object-src 'none'; form-action 'self' https://forms.yandex.ru"
+  # Версию PHP наружу не показываем
+  Header always unset X-Powered-By
+  Header unset X-Powered-By
 </IfModule>
 
 # Своя страница «Такой страницы нет» вместо стандартной ошибки сервера
