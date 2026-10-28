@@ -11,7 +11,8 @@
 //
 // post.json: { "rubric": "place", "place": "kolomenskoe", "text": "…" }
 // (или "collection": "<slug>" вместо "place"). Фото, подпись автора и
-// ссылку с метками скрипт добавляет сам.
+// ссылку с метками скрипт добавляет сам. Нет фото с подписью — пост уходит
+// текстом, Telegram покажет превью страницы сайта.
 
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -25,6 +26,7 @@ const SITE = 'https://locado.ru/';
 const CONFIG = 'tools/telegram.json';
 const LOG = 'data/telegram-log.json';
 const CAPTION_LIMIT = 1024; // столько Telegram разрешает в подписи к фото
+const TEXT_LIMIT = 4096; // а столько — в обычном сообщении
 
 /** Рубрики: метка utm_campaign → название и что в ней бывает. */
 const RUBRICS = {
@@ -65,7 +67,9 @@ async function api(method, params = {}) {
   return data.result;
 }
 
-async function sendPhoto(chatId, post) {
+/** Пост с фото — фото с подписью, без фото — сообщение с превью ссылки. */
+async function sendPost(chatId, post) {
+  if (!post.photo) return api('sendMessage', { chat_id: chatId, text: post.caption, parse_mode: 'HTML' });
   const form = new FormData();
   form.append('chat_id', String(chatId));
   form.append('photo', new Blob([readFileSync(post.photo)]), post.photo.split('/').pop());
@@ -103,21 +107,22 @@ function buildPost(input) {
     : collections.find((c) => c.slug === slug);
   if (!item) fail(`Нет ${kind === 'place' ? 'места' : 'подборки'} «${slug}».`);
 
-  const photo = kind === 'place' ? item.photo : item.cover;
-  if (!photo || !existsSync(photo)) fail(`У «${slug}» нет файла фото — в канал не берём.`);
-  if (!item.photoCredit?.author) fail(`У «${slug}» нет photoCredit — в канал не берём.`);
+  // Фото без подписи автора не публикуем (docs/photos.md) — тогда пост без фото
+  const file = kind === 'place' ? item.photo : item.cover;
+  const photo = file && existsSync(file) && item.photoCredit?.author ? file : null;
 
   const url = `${SITE}${kind}/${slug}?utm_source=telegram&utm_campaign=${input.rubric}`;
   const caption = [
     escapeHtml(input.text.trim()),
     `<a href="${escapeHtml(url)}">Подробнее на Локадо</a>`,
-    photoCreditHtml(item.photoCredit)
-  ].join('\n\n');
+    photo && photoCreditHtml(item.photoCredit)
+  ].filter(Boolean).join('\n\n');
 
+  const limit = photo ? CAPTION_LIMIT : TEXT_LIMIT;
   const length = visibleLength(caption);
-  if (length > CAPTION_LIMIT) fail(`Подпись длиннее ${CAPTION_LIMIT} знаков (${length}) — сократи текст.`);
+  if (length > limit) fail(`Текст длиннее ${limit} знаков (${length}) — сократи.`);
 
-  return { rubric: input.rubric, kind, slug, text: input.text.trim(), photo, caption, length };
+  return { rubric: input.rubric, kind, slug, text: input.text.trim(), photo, caption, length, limit };
 }
 
 /** Когда тему брали последний раз (черновик тоже считается). */
@@ -165,8 +170,8 @@ function pick(rubricName) {
   let items;
   if (rubric.kind === 'collection') {
     const type = rubricName === 'route' ? 'route' : 'occasion';
-    items = collections.filter((c) => c.type === type && c.cover && existsSync(c.cover) && c.photoCredit)
-      .map((c) => ({ slug: c.slug, title: c.title, teaser: c.teaser }));
+    items = collections.filter((c) => c.type === type)
+      .map((c) => ({ slug: c.slug, title: c.title, teaser: c.teaser, photo: Boolean(c.cover && c.photoCredit) }));
   } else {
     let pool = places;
     if (rubricName === 'now') {
@@ -177,8 +182,10 @@ function pick(rubricName) {
     }
     // Без расписания (schedule: null) — часы не известны или открыто всегда: не отсекаем
     if (rubricName === 'weekend') pool = places.filter((p) => !p.schedule || p.schedule.sat || p.schedule.sun);
-    items = pool.filter((p) => p.photo && existsSync(p.photo) && p.photoCredit)
-      .map((p) => ({ slug: p.slug, name: p.name, type: p.type, metro: p.metro, description: p.description }));
+    items = pool.map((p) => ({
+      slug: p.slug, name: p.name, type: p.type, metro: p.metro, description: p.description,
+      photo: Boolean(p.photo && p.photoCredit)
+    }));
   }
 
   const fresh = items
@@ -206,7 +213,7 @@ function readPost(file) {
 
 function preview(path) {
   const post = readPost(path);
-  console.log(`${post.caption}\n\n— ${post.length} из ${CAPTION_LIMIT} знаков, фото ${post.photo}`);
+  console.log(`${post.caption}\n\n— ${post.length} из ${post.limit} знаков, ${post.photo ? `фото ${post.photo}` : 'без фото'}`);
 }
 
 async function draft(path, force) {
@@ -222,11 +229,11 @@ async function draft(path, force) {
 
   const date = new Date().toISOString().slice(0, 10);
   const id = `${date}-${post.slug}`;
-  const sent = await sendPhoto(config.ownerChatId, post);
+  const sent = await sendPost(config.ownerChatId, post);
   await api('sendMessage', {
     chat_id: config.ownerChatId,
     reply_to_message_id: sent.message_id,
-    text: `Черновик · ${RUBRICS[post.rubric].label} · ${id}`
+    text: `Черновик · ${RUBRICS[post.rubric].label} · ${id}${post.photo ? '' : ' · без фото'}`
   });
 
   log.push({
@@ -246,7 +253,7 @@ async function publish(id) {
   if (entry.status === 'published') fail(`«${id}» уже опубликован.`);
 
   const post = buildPost(entry);
-  const sent = await sendPhoto(config.channel, post);
+  const sent = await sendPost(config.channel, post);
   Object.assign(entry, { status: 'published', publishedAt: new Date().toISOString(), messageId: sent.message_id });
   writeJson(LOG, log);
   console.log(`Опубликовано: ${id}, сообщение ${sent.message_id}.`);
