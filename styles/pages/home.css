@@ -1396,13 +1396,13 @@ body.feed-toolbar-stuck .main-header { box-shadow: none; }
   .hero__moods.is-carousel .mood-card[data-mood] .mood-card__label { font-size: var(--fs-lg); }
 }
 
-/* Прототип ?plans=first (задача 97, пункт 3): компактная полоса «Готовые
-   планы» перед лентой. Фон во всю ширину подложен под волну героя — волна
+/* «Готовые планы» перед лентой (задача 97, пункт 3): компактная полоса
+   сразу под героем. Фон во всю ширину подложен под волну героя — волна
    переходит прямо в него, а снизу он становится прозрачным: зерно фона
    страницы проступает постепенно, резкой границы нет. Сама полоса — без
    своей карточки, слайдер как внутри ленты */
-.has-plans-first .hero { z-index: 1; }
-.plans-first {
+.hero:has(+ .plans-band) { z-index: 1; }
+.plans-band {
   position: relative;
   margin-top: calc(-1 * var(--hero-wave-h));
   padding: calc(var(--hero-wave-h) + 8px) 0 24px;
@@ -1412,7 +1412,7 @@ body.feed-toolbar-stuck .main-header { box-shadow: none; }
 }
 /* Продолжение фона под заголовком ленты: тает долго и неравномерно
    (быстрее в начале, медленнее к концу) — так глаз не видит границы */
-.plans-first::after {
+.plans-band::after {
   content: '';
   position: absolute;
   inset: 100% 0 auto;
@@ -1426,7 +1426,7 @@ body.feed-toolbar-stuck .main-header { box-shadow: none; }
   pointer-events: none;
   z-index: -1;
 }
-.plans-first .feed-stream > .categories-collections {
+.plans-band .feed-stream > .categories-collections {
   margin: 0;
   padding-inline: 0;
   background: none;
@@ -1435,6 +1435,6 @@ body.feed-toolbar-stuck .main-header { box-shadow: none; }
 /* Слайдер обрезает всё, что за его краем, — и тень карточек снизу резалась
    тёмной линией. Даём тени место внутри слайдера */
 @media (max-width: 767px) {
-  .plans-first .feed-stream .collections-grid { padding-bottom: 28px; margin-bottom: -22px; }
+  .plans-band .feed-stream .collections-grid { padding-bottom: 28px; margin-bottom: -22px; }
 }
-.plans-first + .place-section { margin-top: 8px; }
+.plans-band + .place-section { margin-top: 8px; }

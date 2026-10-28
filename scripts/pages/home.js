@@ -133,11 +133,11 @@ async function renderCollections() {
   }
 }
 
-/** Карточки-напоминания в ленте — по кругу: подборка, (пропуск), подборка,
- *  «Выбрать вместе», подборка, «Предложить место». Подборок будет много, поэтому они — через
- *  раз. Если в ленте есть полоса «Готовые планы» — только те, которых в ней
- *  не было (пока других нет, их место пропускается). В категории или
- *  настроении — только подборки, где есть места из этой ленты. */
+/** Карточки-напоминания в ленте — по кругу: «Предложить место», подборка,
+ *  «Выбрать вместе», подборка… Подборок будет много, поэтому они — через
+ *  раз. Только те, которых нет в полосе «Готовые планы» над лентой (пока
+ *  других нет, их место пропускается). В категории или настроении — только
+ *  подборки, где есть места из этой ленты. */
 function reminderCards({ collections }) {
   const photoCard = ({ href, photo, chip, title, link }) => `
     <a class="feed-promo" href="${href}">
@@ -146,10 +146,9 @@ function reminderCards({ collections }) {
       <span class="feed-promo__text"><b>${escapeHtml(title)}</b><small>${escapeHtml(link)}</small></span>
     </a>`;
   const notInBand = collections.slice(PLANS_IN_BAND);
-  const plans = [...notInBand, ...collections.slice(0, PLANS_IN_BAND)];
 
-  const plan = (round, { filtered, list, band }) => {
-    let pool = band ? notInBand : plans;
+  const plan = (round, { filtered, list }) => {
+    let pool = notInBand;
     if (filtered) {
       const inList = new Set(list.map((p) => p.slug));
       pool = pool.filter((c) => collectionPlaceSlugs(c).some((s) => inList.has(s)));
@@ -162,35 +161,14 @@ function reminderCards({ collections }) {
   const suggest = suggestCard;
 
   // k-е напоминание: чётные — подборки (k / 2 — какая по счёту), нечётные —
-  // по очереди «Выбрать вместе» и «Предложить место». Первое нечётное
-  // пропускаем: «Выбрать вместе» только что было первой карточкой ленты,
-  // а «Предложить место» — под полосой «Готовые планы»
-  return (k, ctx) => (k % 2 === 0 ? plan(k / 2, ctx) : (k === 1 ? null : (k % 4 === 3 ? together() : suggest())));
+  // по очереди «Предложить место» и «Выбрать вместе». Первым — «Предложить
+  // место»: «Выбрать вместе» только что было первой карточкой ленты
+  return (k, ctx) => (k % 2 === 0 ? plan(k / 2, ctx) : (k % 4 === 3 ? together() : suggest()));
 }
 
-/** Полоса перед лентой видна всегда — её подборки в напоминаниях не повторяем. */
-const withBand = (reminder) => (k, ctx) => reminder(k, { ...ctx, band: true });
-
-/** «Предложить место» — сразу под полосой «Готовые планы». */
+/** «Предложить место» — карточка-напоминание в ленте. */
 function suggestCard() {
   return { ratio: SERVICE_RATIO, html: serviceCardHtml({ href: 'suggest/', iconName: 'heart', title: 'Знаешь место, которого здесь нет?', link: 'Расскажи о нём →' }) };
-}
-
-const PLANS_ROW1 = new URLSearchParams(window.location.search).get('plans') === 'row1';
-// Прототип ?plans=first (задача 97, пункт 3): та же компактная полоса, но
-// перед лентой, сразу под героем
-const PLANS_FIRST = new URLSearchParams(window.location.search).get('plans') === 'first';
-
-/** Полоса «Готовые планы» перед лентой: обёртка .feed-stream даёт ей тот же
- *  компактный вид, что и внутри ленты (слайдер), а фон во всю ширину
- *  подложен под волну героя (класс на <html> — для стилей героя). */
-function placePlansFirst(node) {
-  const wrap = document.createElement('div');
-  wrap.className = 'plans-first';
-  wrap.innerHTML = '<div class="container"><div class="feed-stream"></div></div>';
-  wrap.querySelector('.feed-stream').append(node);
-  $('#all-places')?.before(wrap);
-  document.documentElement.classList.add('has-plans-first');
 }
 
 async function main() {
@@ -215,13 +193,9 @@ async function main() {
     return;
   }
 
-  // «Готовые планы» — полоса в ленте после 3-го ряда. Прототип ?plans=row1
-  // (задача 97, пункт 3): после 1-го ряда, чтобы её видели раньше
+  // «Готовые планы» — полоса над лентой (index.html); подборок нет — нет и её
   const collections = await collectionsShown;
-  const showcases = {};
-  if (collections.length && PLANS_FIRST) placePlansFirst($('#collections'));
-  else if (collections.length) showcases[PLANS_ROW1 ? 1 : 3] = $('#collections');
-  else $('#collections')?.remove();
+  if (!collections.length) $('.plans-band')?.remove();
 
   // «Сейчас» — не отдельный блок: места под погоду, время и сезон встают в
   // первые ряды ленты с короткой плашкой «почему сейчас»
@@ -235,10 +209,9 @@ async function main() {
   const badge = (c) => (SPECIAL.includes(c.reason?.icon) ? { icon: c.reason.icon, text: c.reason.text } : { text: 'Сейчас в тему' });
   const nowBadges = new Map(picks.map((c) => [c.place.slug, badge(c)]));
   const feed = initFeed(withNowPlaces(shuffledFeed(places), picks.map((c) => c.place)), {
-    nowBadges, showcases, reminder: PLANS_FIRST ? withBand(reminderCards({ collections })) : reminderCards({ collections }),
+    nowBadges, reminder: reminderCards({ collections }),
     // «Выбрать вместе» — самой первой карточкой ленты
-    lead: { ratio: SERVICE_RATIO, html: serviceCardHtml({ href: 'vmeste/?from=feed-top', iconName: 'users', title: 'Идёшь не один?', link: 'Выбрать вместе →' }) },
-    afterShowcase: suggestCard()
+    lead: { ratio: SERVICE_RATIO, html: serviceCardHtml({ href: 'vmeste/?from=feed-top', iconName: 'users', title: 'Идёшь не один?', link: 'Выбрать вместе →' }) }
   });
   applyUrlFilter(feed);
   // Лента сразу под героем: настроение фильтрует её на месте
