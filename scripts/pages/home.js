@@ -191,10 +191,6 @@ function placePlansFirst(node) {
   wrap.querySelector('.feed-stream').append(node);
   $('#all-places')?.before(wrap);
   document.documentElement.classList.add('has-plans-first');
-  // Заголовок ленты продолжает диалог: «Куда пойдём?» → «Мы уже всё
-  // придумали» → «Или выберем сами?»
-  const feedTitle = $('#all-places .feed-head .section-title');
-  if (feedTitle) feedTitle.textContent = 'Или выберем сами?';
 }
 
 async function main() {
