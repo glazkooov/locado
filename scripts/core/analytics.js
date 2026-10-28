@@ -31,6 +31,15 @@ function start() {
     accurateTrackBounce: true, // отказ — меньше 15 секунд на странице
     webvisor: false // запись действий выключена: её пришлось бы отдельно описывать в политике
   });
+  telegramGoal();
+}
+
+/** Пришёл по ссылке из Telegram-канала (метки ставит tools/telegram.mjs):
+ *  в отчёте — «Telegram → рубрика». */
+function telegramGoal() {
+  const query = new URLSearchParams(window.location.search);
+  if (query.get('utm_source') !== 'telegram') return;
+  goal('telegram_visit', { 'Telegram': query.get('utm_campaign') || 'без рубрики' });
 }
 
 // Статистика — только с основного сайта: тестовый поддомен и локальный
