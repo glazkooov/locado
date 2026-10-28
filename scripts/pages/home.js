@@ -182,13 +182,15 @@ const PLANS_ROW1 = new URLSearchParams(window.location.search).get('plans') === 
 const PLANS_FIRST = new URLSearchParams(window.location.search).get('plans') === 'first';
 
 /** Полоса «Готовые планы» перед лентой: обёртка .feed-stream даёт ей тот же
- *  вид, что и внутри ленты (карточка со слайдером). */
+ *  компактный вид, что и внутри ленты (слайдер), а фон во всю ширину
+ *  подложен под волну героя (класс на <html> — для стилей героя). */
 function placePlansFirst(node) {
   const wrap = document.createElement('div');
-  wrap.className = 'container plans-first';
-  wrap.innerHTML = '<div class="feed-stream"></div>';
-  wrap.firstElementChild.append(node);
+  wrap.className = 'plans-first';
+  wrap.innerHTML = '<div class="container"><div class="feed-stream"></div></div>';
+  wrap.querySelector('.feed-stream').append(node);
   $('#all-places')?.before(wrap);
+  document.documentElement.classList.add('has-plans-first');
 }
 
 async function main() {

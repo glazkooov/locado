@@ -1397,7 +1397,22 @@ body.feed-toolbar-stuck .main-header { box-shadow: none; }
 }
 
 /* Прототип ?plans=first (задача 97, пункт 3): компактная полоса «Готовые
-   планы» перед лентой — та же карточка со слайдером, что внутри ленты */
-.plans-first { margin-top: 8px; }
-.plans-first .feed-stream > section { margin-bottom: 0; }
-.plans-first + .place-section { margin-top: 32px; }
+   планы» перед лентой. Фон во всю ширину подложен под волну героя — волна
+   переходит прямо в него, а снизу он становится прозрачным: зерно фона
+   страницы проступает постепенно, резкой границы нет. Сама полоса — без
+   своей карточки, слайдер как внутри ленты */
+.has-plans-first .hero { z-index: 1; }
+.plans-first {
+  margin-top: calc(-1 * var(--hero-wave-h));
+  padding: calc(var(--hero-wave-h) + 8px) 0 24px;
+  background:
+    radial-gradient(ellipse 50% 40% at 100% 0%, rgba(255, 206, 150, 0.35), transparent 70%),
+    linear-gradient(180deg, var(--cream-deep) 0%, var(--cream-deep) 55%, rgba(243, 235, 223, 0) 100%);
+}
+.plans-first .feed-stream > .categories-collections {
+  margin: 0;
+  padding-inline: 0;
+  background: none;
+  box-shadow: none;
+}
+.plans-first + .place-section { margin-top: 8px; }
