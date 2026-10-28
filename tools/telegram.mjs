@@ -11,6 +11,7 @@
 //                                     опубликовать черновик в канал; с файлом —
 //                                     с итоговым текстом владельца; --no-photo —
 //                                     без фото и подписи автора
+//   node tools/telegram.mjs resend <id> [подпись]  прислать черновик из журнала ещё раз
 //   node tools/telegram.mjs inbox                 что владелец писал боту (за сутки)
 //   node tools/telegram.mjs send <файл.html> owner|channel [--pin]
 //                                     своё сообщение: приветствие, навигация
@@ -390,6 +391,21 @@ async function draft(path, force) {
   console.log(`Черновик ${id} отправлен владельцу.`);
 }
 
+/** Черновик из журнала — владельцу ещё раз, например в порядке публикации. */
+async function resend(id, note) {
+  const config = readJson(CONFIG, {});
+  const entry = readJson(LOG, []).find((e) => e.id === id);
+  if (!entry) fail(`В журнале нет черновика «${id}».`);
+  const post = buildPost(entry);
+  const sent = await sendPost(config.ownerChatId, post);
+  await api('sendMessage', {
+    chat_id: config.ownerChatId,
+    reply_to_message_id: sent.message_id,
+    text: [note, `Черновик · ${RUBRICS[post.rubric].label} · ${id}`].filter(Boolean).join(' · ')
+  });
+  console.log(`Черновик ${id} отправлен ещё раз.`);
+}
+
 async function publish(id, textFile, noPhoto) {
   const config = readJson(CONFIG, {});
   if (!config.channel) fail('Нет канала: node tools/telegram.mjs setup @канал');
@@ -469,11 +485,12 @@ const commands = {
   preview: () => preview(arg),
   draft: () => draft(arg, rest.includes('--force')),
   publish: () => publish(arg, rest.find((a) => !a.startsWith('--')), rest.includes('--no-photo')),
+  resend: () => resend(arg, rest.join(' ')),
   inbox: () => inbox(),
   send: () => send(arg, rest[0], rest.includes('--pin')),
   edit: () => edit(arg, rest[0]),
   avatar: () => avatar(arg),
   about: () => about(arg)
 };
-if (!commands[command]) fail('Команды: setup, pick, preview, draft, publish, inbox, send, edit, avatar, about — см. начало tools/telegram.mjs.');
+if (!commands[command]) fail('Команды: setup, pick, preview, draft, publish, resend, inbox, send, edit, avatar, about — см. начало tools/telegram.mjs.');
 await commands[command]();
