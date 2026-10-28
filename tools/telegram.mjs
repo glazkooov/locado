@@ -17,7 +17,7 @@
 //
 // post.json: { "rubric": "place", "place": "kolomenskoe", "text": "…" }
 // (или "collection": "<slug>" вместо "place"). Фото, подпись автора и
-// ссылку с метками скрипт добавляет сам. Нет фото с подписью — пост уходит
+// ссылку с метками и хэштеги скрипт добавляет сам. Нет фото с подписью — пост уходит
 // текстом, Telegram покажет превью страницы сайта.
 
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
@@ -34,13 +34,20 @@ const LOG = 'data/telegram-log.json';
 const CAPTION_LIMIT = 1024; // столько Telegram разрешает в подписи к фото
 const TEXT_LIMIT = 4096; // а столько — в обычном сообщении
 
-/** Рубрики: метка utm_campaign → название и что в ней бывает. */
+/** Рубрики: метка utm_campaign → название, хэштег и что в ней бывает.
+ *  Хэштеги — те же, что в навигационном посте (docs/telegram/nav.html). */
 const RUBRICS = {
-  place: { label: 'Место недели', kind: 'place' },
-  weekend: { label: 'Куда в выходные', kind: 'place' },
-  route: { label: 'Маршрут', kind: 'collection' },
-  now: { label: 'Сейчас', kind: 'place' },
-  occasion: { label: 'Под повод', kind: 'collection' }
+  place: { label: 'Место недели', tag: '#место_недели', kind: 'place' },
+  weekend: { label: 'Куда в выходные', tag: '#на_выходные', kind: 'place' },
+  route: { label: 'Маршрут', tag: '#маршруты', kind: 'collection' },
+  now: { label: 'Сейчас', tag: '#сезон', kind: 'place' },
+  occasion: { label: 'Под повод', tag: '#под_повод', kind: 'collection' }
+};
+
+/** Хэштег категории места — по CATEGORIES из scripts/core/places.js. */
+const CATEGORY_TAGS = {
+  food: '#еда', nature: '#природа', art: '#искусство',
+  photo: '#фотолокации', entertainment: '#развлечения', shops: '#магазины'
 };
 
 /** Через сколько недель можно снова взять то же место или подборку. */
@@ -121,7 +128,8 @@ function buildPost(input) {
   const caption = [
     escapeHtml(input.text.trim()),
     `<a href="${escapeHtml(url)}">Подробнее на Локадо</a>`,
-    photo && photoCreditHtml(item.photoCredit)
+    photo && photoCreditHtml(item.photoCredit),
+    [rubric.tag, kind === 'place' && CATEGORY_TAGS[item.category]].filter(Boolean).join(' ')
   ].filter(Boolean).join('\n\n');
 
   const limit = photo ? CAPTION_LIMIT : TEXT_LIMIT;
