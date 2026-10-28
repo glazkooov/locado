@@ -22,12 +22,14 @@
 // (или "collection": "<slug>" вместо "place"; у «Куда на выходные» —
 // "places": [три slug]). Фото, подписи авторов и хэштеги скрипт добавляет
 // сам. В тексте: [название](slug) — ссылка на место или подборку с метками,
-// **жирный** — если нужно что-то выделить. Нет фото с подписью — пост уходит
+// **жирный** — если нужно что-то выделить. У «Под повод» можно "cards" —
+// альбом карточек «Журнал» вместо фото (tools/telegram-cards.mjs). Нет фото с подписью — пост уходит
 // текстом, Telegram покажет превью страницы сайта.
 
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { renderCards } from './telegram-cards.mjs';
 
 // Файл поста — относительно папки, откуда запустили; остальное — от корня
 const startDir = process.cwd();
@@ -89,6 +91,7 @@ async function api(method, params = {}) {
 /** Без фото — сообщение с превью ссылки, одно фото — фото с подписью,
  *  несколько — альбом с подписью под первым. Возвращает первое сообщение. */
 async function sendPost(chatId, post) {
+  if (post.cards && !post.photos.length) post.photos = await renderCards(post.cards);
   if (!post.photos.length) return api('sendMessage', { chat_id: chatId, text: post.caption, parse_mode: 'HTML' });
   const form = new FormData();
   form.append('chat_id', String(chatId));
@@ -173,23 +176,47 @@ function buildPost(input) {
   const links = missing.length && topics.length === 1
     ? `<a href="${escapeHtml(topics[0].url)}">Подробнее на Локадо</a>` : null;
   if (missing.length > 1) fail('В посте с несколькими местами каждое — ссылкой в тексте: [название](slug).');
-  const withPhoto = topics.filter((t) => t.photo);
+  const cards = input.cards && !input.noPhoto ? buildCards(input, topics) : null;
+  const withPhoto = cards ? [] : topics.filter((t) => t.photo);
+  const credits = cards ? cards.items.map((c) => c.credit) : withPhoto.map((t) => t.item.photoCredit);
   const categoryTags = topics.filter((t) => t.kind === 'place').map((t) => CATEGORY_TAGS[t.item.category]);
 
   const caption = [
     text,
     links,
-    withPhoto.map((t) => photoCreditHtml(t.item.photoCredit)).join('\n'),
+    [...new Set(credits.map(photoCreditHtml))].join('\n'),
     [...new Set([rubric.tag, ...categoryTags])].filter(Boolean).join(' ')
   ].filter(Boolean).join('\n\n');
 
-  const limit = withPhoto.length ? CAPTION_LIMIT : TEXT_LIMIT;
+  const limit = withPhoto.length || cards ? CAPTION_LIMIT : TEXT_LIMIT;
   const length = visibleLength(caption);
   if (length > limit) fail(`Текст длиннее ${limit} знаков (${length}) — сократи.`);
 
   return {
     rubric: input.rubric, topics, text: input.text.trim(),
-    photos: withPhoto.map((t) => t.photo), caption, length, limit
+    photos: withPhoto.map((t) => t.photo), cards, cardsInput: input.cards, caption, length, limit
+  };
+}
+
+/** Альбом «Журнал» для подборки: обложка и карточка на каждое место с
+ *  подписанным фото. В альбоме Telegram не больше 10 картинок. */
+function buildCards(input, topics) {
+  if (input.rubric !== 'occasion') fail('Карточки «Журнал» — только для рубрики «Под повод».');
+  const { cover, items } = input.cards;
+  if (!cover?.trim()) fail('В "cards" нужна строка обложки "cover".');
+  if (!items?.length || items.length < 3 || items.length > 9) fail('В "cards" — от 3 до 9 мест.');
+  return {
+    title: topics[0].item.title,
+    cover,
+    items: items.map(({ place: slug, name, text }) => {
+      const place = places.find((p) => p.slug === slug);
+      if (!place) fail(`Карточка: нет места «${slug}».`);
+      if (!place.photo || !existsSync(place.photo) || !place.photoCredit?.author) {
+        fail(`Карточка: у «${slug}» нет фото с подписью автора — в альбом не берём.`);
+      }
+      if (!text?.trim()) fail(`Карточка «${slug}»: нужен короткий текст.`);
+      return { name: name || place.name, text, metro: place.metro, photo: place.photo, credit: place.photoCredit };
+    })
   };
 }
 
@@ -286,8 +313,9 @@ function readPost(file) {
   return buildPost(JSON.parse(readFileSync(path, 'utf8')));
 }
 
-function preview(path) {
+async function preview(path) {
   const post = readPost(path);
+  if (post.cards) post.photos = await renderCards(post.cards);
   console.log(`${post.caption}\n\n— ${post.length} из ${post.limit} знаков, ${post.photos.length ? `фото: ${post.photos.join(', ')}` : 'без фото'}`);
 }
 
@@ -315,6 +343,7 @@ async function draft(path, force) {
 
   log.push({
     id, rubric: post.rubric, ...topicFields(post), text: post.text,
+    ...(post.cardsInput && { cards: post.cardsInput }),
     status: 'draft', draftedAt: new Date().toISOString()
   });
   writeJson(LOG, log);
