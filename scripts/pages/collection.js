@@ -20,11 +20,14 @@ function showNotFound() {
   $('#collection-error').hidden = false;
 }
 
+/** Title и описание — те же, что ставит сервер (collection/index.php):
+ *  для поисковиков seoTitle и seoDescription, в превью — живое название. */
 function setMeta(c) {
-  document.title = `${c.title} — Локадо`;
-  $('meta[name="description"]')?.setAttribute('content', c.lead || '');
+  const description = c.seoDescription || c.teaser || c.lead || '';
+  document.title = `${c.seoTitle || c.title} — Локадо`;
+  $('meta[name="description"]')?.setAttribute('content', description);
   $('meta[property="og:title"]')?.setAttribute('content', c.title);
-  $('meta[property="og:description"]')?.setAttribute('content', c.lead || '');
+  $('meta[property="og:description"]')?.setAttribute('content', description);
   if (c.cover) $('meta[property="og:image"]')?.setAttribute('content', new URL(c.cover, document.baseURI).href);
 }
 
