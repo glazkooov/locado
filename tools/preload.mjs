@@ -23,7 +23,7 @@ function escapeRe(s) {
 }
 
 /** Страницы сайта: index.html в корне и в папках первого уровня, 404.html. */
-function pages() {
+export function pages() {
   const list = ['index.html', '404.html'];
   for (const dir of readdirSync(root, { withFileTypes: true })) {
     if (dir.isDirectory() && existsSync(`${root}${dir.name}/index.html`)) list.push(`${dir.name}/index.html`);

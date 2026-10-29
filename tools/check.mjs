@@ -5,7 +5,8 @@
 // 2. Страницы: главная, подборки, все подборки и все места, служебные —
 //    на телефоне (390px) и компьютере (1280px): ошибки скриптов,
 //    горизонтальная прокрутка, «такого места нет» вместо места.
-//    Списки модулей в <head> (tools/preload.mjs) совпадают с импортами.
+//    Списки модулей в <head> (tools/preload.mjs) совпадают с импортами,
+//    styles/site.css собран из актуальных стилей (tools/build-css.mjs).
 // 3. Ссылки: все внутренние ссылки со страниц открываются и ведут на
 //    существующие места и подборки.
 //
@@ -18,6 +19,7 @@ import { spawn } from 'node:child_process';
 import { readFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { stalePreloads } from './preload.mjs';
+import { staleCss } from './build-css.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const args = process.argv.slice(2);
@@ -54,6 +56,8 @@ collections.forEach((c) => (c.blocks || []).forEach((b) => {
 
 // Список модулей в <head> отстал от импортов в скриптах
 stalePreloads().forEach((p) => problem(p, 'список модулей устарел — запусти node tools/preload.mjs'));
+// Собранные стили отстали от файлов в styles/
+staleCss().forEach((p) => problem(p, 'стили не пересобраны — запусти node tools/build-css.mjs'));
 
 // ---------- Сервер ----------
 const server = spawn('php', ['-S', `127.0.0.1:${port}`, 'tools/dev-router.php'], { cwd: root, stdio: 'ignore' });
