@@ -85,16 +85,27 @@ function setHeroPhoto(place) {
   if (!hero || !heroBg) return;
   hero.dataset.category = place.category || '';
   const noPhoto = () => {
+    heroBg.style.backgroundImage = '';
     hero.classList.add('place-hero--no-photo');
     renderCredit($('#photo-credit'), null);
   };
   if (!place.photo) { noPhoto(); return; }
-  const img = new Image();
-  img.onload = () => {
-    heroBg.style.backgroundImage = cssUrl(place.photo);
-    if (place.photoFocus) heroBg.style.backgroundPosition = place.photoFocus;
+  if (place.photoFocus) heroBg.style.backgroundPosition = place.photoFocus;
+  // Сначала уменьшенная копия: она лёгкая и уже грузится с самого начала
+  // страницы (place/index.php). Большое фото подменяет её, когда загрузится;
+  // успело раньше — копию не показываем
+  let fullShown = false;
+  const show = (url) => {
+    heroBg.style.backgroundImage = cssUrl(url);
     renderCredit($('#photo-credit'), place.photoCredit);
   };
+  if (place.photoSm && place.photoSm !== place.photo) {
+    const small = new Image();
+    small.onload = () => { if (!fullShown) show(place.photoSm); };
+    small.src = place.photoSm;
+  }
+  const img = new Image();
+  img.onload = () => { fullShown = true; show(place.photo); };
   img.onerror = noPhoto;
   img.src = place.photo;
 }

@@ -30,7 +30,27 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link rel="preload" href="assets/fonts/unbounded-cyrillic-700-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/raleway-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/site.css?v=2c357837">
+  <!-- Модули страницы: браузер качает их сразу, а не по цепочке импортов. Список — node tools/preload.mjs -->
+  <link rel="modulepreload" href="scripts/ui.js">
+  <link rel="modulepreload" href="scripts/pages/together.js">
+  <link rel="modulepreload" href="scripts/core/dom.js">
+  <link rel="modulepreload" href="scripts/components/install.js">
+  <link rel="modulepreload" href="scripts/components/consent.js">
+  <link rel="modulepreload" href="scripts/core/analytics.js">
+  <link rel="modulepreload" href="scripts/core/places.js">
+  <link rel="modulepreload" href="scripts/core/moods.js">
+  <link rel="modulepreload" href="scripts/core/now.js">
+  <link rel="modulepreload" href="scripts/core/format.js">
+  <link rel="modulepreload" href="scripts/core/icons.js">
+  <link rel="modulepreload" href="scripts/components/toast.js">
+  <link rel="modulepreload" href="scripts/components/modal.js">
+  <link rel="modulepreload" href="scripts/core/storage.js">
+  <link rel="modulepreload" href="scripts/core/search.js">
+  <link rel="modulepreload" href="scripts/core/daypart.js">
+  <link rel="modulepreload" href="scripts/core/sun.js">
+  <link rel="modulepreload" href="scripts/core/search-words.js">
+  <!-- /модули страницы -->
 </head>
 <body>
   <header class="main-header">

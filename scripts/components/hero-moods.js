@@ -16,9 +16,12 @@ import { MOODS, moodsFor, resolveMoodFilters } from '../core/moods.js';
 export function renderHeroMoods(daypart) {
   const container = $('#hero-moods');
   if (!container) return;
-  container.innerHTML = moodsFor(daypart).map((mood) => `
+  // Передняя карточка — первая: её фото браузер грузит в первую очередь,
+  // остальные после неё. Иначе все шесть делят канал поровну, и первый
+  // экран на мобильном интернете ждёт лишние секунды
+  container.innerHTML = moodsFor(daypart).map((mood, i) => `
       <button type="button" class="mood-card" data-mood="${mood.id}" aria-pressed="false">
-        <img src="${escapeHtml(mood.photo)}" alt="" class="mood-card__img" width="360" height="480" decoding="async">
+        <img src="${escapeHtml(mood.photo)}" alt="" class="mood-card__img" width="360" height="480" decoding="async" fetchpriority="${i === 0 ? 'high' : 'low'}">
         <span class="mood-card__text">
           <span class="mood-card__label">${escapeHtml(mood.label)}</span>
         </span>
