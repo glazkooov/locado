@@ -40,9 +40,11 @@ if ($place) {
   if (!empty($place['address'])) $fill['place-address'] = og_esc($place['address']);
   if ($metro) $fill['place-metro'] = og_esc('м. ' . implode(', м. ', $metro));
   if (!empty($place['price'])) $fill['place-price'] = og_esc($place['price']);
-  if ($long !== '') $fill['place-description'] = '<p>' . og_esc($long) . '</p>';
+  // Пустая строка в тексте (\n\n) — новый абзац, как в place.js
+  $paragraphs = array_filter(array_map('trim', preg_split('/\n\s*\n/u', $long)), 'strlen');
+  if ($paragraphs) $fill['place-description'] = '<p>' . implode('</p><p>', array_map('og_esc', $paragraphs)) . '</p>';
 
-  $jsonld = og_place_jsonld($place, $type, $long);
+  $jsonld = og_place_jsonld($place, $type, implode(' ', $paragraphs));
 }
 
 og_render(__DIR__ . '/index.html', $place ? array(
