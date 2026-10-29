@@ -309,10 +309,14 @@ Locado помогает выбрать место или маршрут под �
 * Маркетинговые скиллы в `.claude/skills/` — `social` (в нём раздел про
   Telegram: охват, частота, взаимный пиар), `product-marketing`,
   `content-strategy`, `co-marketing`, `influencer-marketing` (реклама в
-  Telegram-каналах), `community-marketing`, `marketing-psychology`. Источник —
-  github.com/coreyhaines31/marketingskills, MIT, версия 0cd9b3a; взяты только
-  нужные каналу, без evals. Их примеры — англоязычный SaaS: брать приёмы и
-  цифры, а не тон; тон и запреты — из этого файла и скилла `locado-telegram`.
+  Telegram-каналах), `community-marketing`, `marketing-psychology`; для
+  аудита сайта и монетизации (#111) — `cro`, `seo-audit`, `programmatic-seo`,
+  `schema`, `copywriting`, `launch`, `analytics`, `pricing`, `offers`.
+  Источник — github.com/coreyhaines31/marketingskills, MIT, версия 0cd9b3a;
+  взяты только нужные, без evals. Их примеры — англоязычный SaaS и Google:
+  брать приёмы и цифры, а не тон; поиск — Яндекс, аналитика — Метрика
+  (`docs/analytics.md`), законы — российские; тон и запреты — из этого файла
+  и скилла `locado-telegram`.
 * Тире (§8 скилла): в неофициальном русском фразы, построенные на тире
   («Коломенское — это…», «Здесь всё просто — …»), читаются шаблонно. Такие
   конструкции избегать и переписывать проще. Тире, без которого фраза
