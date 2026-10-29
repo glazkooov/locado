@@ -370,7 +370,7 @@
 .collection-map .map-container { height: 300px; }
 /* На странице места кнопку маршрута на телефоне скрывает нижняя панель
    (place.css); здесь панели нет — кнопка нужна всегда */
-.collection-map .map-actions { display: block; }
+.collection-map .map-actions { display: block; margin-top: 16px; }
 
 .section-head--row {
   flex-direction: row;
