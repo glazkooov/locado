@@ -5543,6 +5543,16 @@ a.plan-stop__name:hover { color: var(--primary-text); }
   .fact-maprow { grid-area: map-t; }
   .fact-map { grid-area: map; }
   .fact-fix { grid-area: fix; }
+  /* Часов нет — адрес поднимается наверх, иначе слева над ним пустая ячейка */
+  .place-facts--no-hours {
+    grid-template-areas:
+      "addr price"
+      "addr acts"
+      "map-t map-t"
+      "map map"
+      "fix fix";
+  }
+  .place-facts--no-hours #address-row { align-self: start; padding-top: 0; border-top: 0; }
   .fact-map .map-container { height: 320px; }
   /* Плитки на широком экране — в строку: иконка слева от подписи */
   .fact-act { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 12px; }
@@ -6114,7 +6124,7 @@ a.plan-stop__name:hover { color: var(--primary-text); }
 .collection-map .map-container { height: 300px; }
 /* На странице места кнопку маршрута на телефоне скрывает нижняя панель
    (place.css); здесь панели нет — кнопка нужна всегда */
-.collection-map .map-actions { display: block; }
+.collection-map .map-actions { display: block; margin-top: 16px; }
 
 .section-head--row {
   flex-direction: row;

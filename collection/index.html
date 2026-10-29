@@ -36,7 +36,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link rel="preload" href="assets/fonts/unbounded-cyrillic-700-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/raleway-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="styles/site.css?v=f304c0e1">
+  <link rel="stylesheet" href="styles/site.css?v=f746a297">
   <!-- Данные о местах — сразу, вместе со стилями, а не после скриптов:
        без них не появятся ни фото, ни карточки -->
   <link rel="preload" href="data/places.json" as="fetch" crossorigin>
@@ -141,17 +141,6 @@
       </nav>
 
       <div class="collection-body" id="collection-body"></div>
-      <!-- Конец статьи: дочитал — предложить канал, где выходят новые
-           подборки (задача #111) -->
-      <aside class="collection-channel" aria-label="Telegram-канал Локадо">
-        <div class="collection-channel__text">
-          <p class="collection-channel__title">Хочешь такие подборки в Telegram?</p>
-          <p>В канале рассказываем о новых местах и о том, куда выбраться на выходные.</p>
-        </div>
-        <a class="btn collection-channel__btn" href="https://t.me/locado_msk" target="_blank" rel="noopener" data-channel="collection">
-          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#send"></use></svg> Открыть канал
-        </a>
-      </aside>
     </article>
 
     <!-- Все места подборки на карте -->
@@ -162,7 +151,7 @@
       <div class="map-container" id="collection-map-container" aria-label="Карта мест подборки"></div>
       <div class="map-actions" id="collection-route" hidden>
         <a class="btn route-btn" id="collection-route-link" href="https://yandex.ru/maps/" target="_blank" rel="noopener">
-          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#navigation"></use></svg> Маршрут в Яндекс.Картах
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#navigation"></use></svg> Проложить маршрут
         </a>
       </div>
     </section>
@@ -218,11 +207,6 @@
             <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#copy"></use></svg>
           </button>
         </div>
-        <!-- Канал — повод вернуться без аккаунтов и избранного (задача #111) -->
-        <a href="https://t.me/locado_msk" class="footer-channel" target="_blank" rel="noopener" data-channel="footer">
-          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#send"></use></svg>
-          <span>Канал в Telegram<small>Места недели и куда выбраться на выходные</small></span>
-        </a>
       </div>
     </div>
 

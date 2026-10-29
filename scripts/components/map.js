@@ -134,7 +134,7 @@ export async function initPlaceMap(container, place) {
 // ---------- Карта подборки (collection.html) ----------
 /** Пронумерованные метки мест в порядке статьи. Клик по метке вызывает
  *  onSelect(номер). Линию между точками не рисуем: по прямой она выглядела
- *  случайной, а настоящий пеший путь даёт кнопка «Маршрут в Яндекс.Картах». */
+ *  случайной, а настоящий пеший путь даёт кнопка «Проложить маршрут». */
 export async function initCollectionMap(container, places, { onSelect } = {}) {
   const points = places.filter((p) => p?.coords);
   if (!container || !points.length) return null;
