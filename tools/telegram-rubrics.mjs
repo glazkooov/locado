@@ -9,7 +9,8 @@ export const RUBRICS = {
   route: { label: 'Маршрут', tag: '#маршруты', kind: 'collection' },
   now: { label: 'Сейчас', tag: '#сезон', kind: 'place' },
   occasion: { label: 'Под повод', tag: '#под_повод', kind: 'collection' },
-  fact: { label: 'Интересное', tag: '#интересное', kind: 'place' }
+  fact: { label: 'Интересное', tag: '#интересное', kind: 'place' },
+  readers: { label: 'Читатели советуют', tag: '#читатели_советуют', kind: 'place' }
 };
 
 /** Хэштег категории места — по CATEGORIES из scripts/core/places.js. */

@@ -26,7 +26,8 @@
 // (или "collection": "<slug>" вместо "place"; у «Куда на выходные» —
 // "places": [три slug]). Фото, подписи авторов и хэштеги скрипт добавляет
 // сам. В тексте: [название](slug) — ссылка на место или подборку с метками,
-// **жирный** — если нужно что-то выделить. У «Под повод» можно "cards" —
+// **жирный** — если нужно что-то выделить; [текст](suggest) — ссылка на форму
+// «Предложить место». У «Под повод» можно "cards" —
 // альбом карточек «Журнал» вместо фото, у «Маршрута» — "scheme", схема
 // маршрута (tools/telegram-cards.mjs). Нет фото с подписью — пост уходит
 // текстом, Telegram покажет превью страницы сайта.
@@ -115,6 +116,9 @@ function formatText(raw, rubric) {
   return escapeHtml(raw)
     .replace(/\*\*(.+?)\*\*/g, '<b>$1</b>')
     .replace(/\[([^\]]+)\]\(([a-z0-9-]+)\)/g, (_, label, slug) => {
+      if (slug === 'suggest') {
+        return `<a href="${escapeHtml(`${SITE}suggest/?utm_source=telegram&utm_campaign=${rubric}`)}">${label}</a>`;
+      }
       const kind = places.some((p) => p.slug === slug) ? 'place'
         : collections.some((c) => c.slug === slug) ? 'collection' : null;
       if (!kind) fail(`Ссылка на «${slug}»: такого места или подборки нет.`);
@@ -312,6 +316,8 @@ function pick(rubricName) {
       pool = season.places.map((slug) => places.find((p) => p.slug === slug)).filter(Boolean);
     }
     // Без расписания (schedule: null) — часы не известны или открыто всегда: не отсекаем
+    // «Читатели советуют» — только места, которые прислали через «Предложить место»
+    if (rubricName === 'readers') pool = places.filter((p) => p.fromReaders);
     if (rubricName === 'weekend') pool = places.filter((p) => !p.schedule || p.schedule.sat || p.schedule.sun);
     items = pool.map((p) => ({
       slug: p.slug, name: p.name, type: p.type, metro: p.metro, description: p.description,
