@@ -258,8 +258,10 @@ function initInvite(place) {
 }
 
 function renderDescription(place) {
+  // Пустая строка в тексте (\n\n) — новый абзац
   const text = place.description_long || place.description || '';
-  setLine($('#place-description'), text ? `<p>${escapeHtml(text)}</p>` : '');
+  const paragraphs = text.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+  setLine($('#place-description'), paragraphs.map((p) => `<p>${escapeHtml(p)}</p>`).join(''));
   $('#place-readers').hidden = !place.fromReaders;
 }
 
