@@ -3,8 +3,8 @@
 Кладёшь в assets/images/places/ фото любого размера (с телефона, с
 foto.mos.ru) — скрипт делает из него две версии:
 
-  assets/images/places/<имя>      — для первого экрана: до 2000 px по
-                                    ширине, ~300–500 КБ
+  assets/images/places/<имя>      — для первого экрана: до 1600 px по
+                                    ширине, не тяжелее 600 КБ
   assets/images/places/sm/<имя>   — для карточек: 640 px по ширине
 
 Имя файла не меняется, поэтому в places.json ничего править не нужно.
@@ -30,9 +30,11 @@ from PIL import Image, ImageOps
 ROOT = Path(__file__).resolve().parent.parent
 PLACES = Path('assets/images/places')
 SMALL = PLACES / 'sm'
-FULL_WIDTH = 2000      # первый экран страницы места
+FULL_WIDTH = 1600      # первый экран страницы места: на телефоне разницы
+                       # с 2000 не видно, а фото на треть легче
 SMALL_WIDTH = 640      # карточки ленты, похожие места, превью
 MAX_BYTES = 600_000    # больше — пережимаем, даже если ширина в норме
+FULL_QUALITY = (82, 76, 70, 64)  # пробуем по очереди, пока не влезет в MAX_BYTES
 EXTS = {'.jpg', '.jpeg', '.png', '.webp'}
 AS_JPG = {'.jfif', '.jpe'}  # тот же JPEG под другим расширением — сохраним как .jpg
 
@@ -63,7 +65,12 @@ def process(src, force=False):
 
     before = src.stat().st_size
     if force or too_big:
-        save(img, src, FULL_WIDTH, 82)
+        # Качество снижаем, только пока фото тяжелее MAX_BYTES: иначе
+        # следующий запуск пережимал бы его снова и снова, каждый раз хуже
+        for quality in FULL_QUALITY:
+            save(img, src, FULL_WIDTH, quality)
+            if src.stat().st_size <= MAX_BYTES:
+                break
     SMALL.mkdir(exist_ok=True)
     save(img, small, SMALL_WIDTH, 78)
     return (f'{src.name}: {before // 1024} КБ → {src.stat().st_size // 1024} КБ, '

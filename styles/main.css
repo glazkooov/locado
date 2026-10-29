@@ -1,6 +1,7 @@
-/* Локадо — единая точка входа для стилей. Порядок каскада важен:
-   base -> layout -> components -> pages. Ничего, кроме этого файла,
-   в <head> подключать не нужно. */
+/* Локадо — список стилей и их порядок. Порядок каскада важен:
+   base -> layout -> components -> pages. Страницы подключают не этот
+   файл, а собранный из него styles/site.css: после правки любого файла
+   стилей — node tools/build-css.mjs (npm run check напомнит). */
 
 @import url('base/fonts.css');
 @import url('base/tokens.css');
