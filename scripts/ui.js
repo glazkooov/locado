@@ -168,6 +168,11 @@ const initCopyButtons = () => {
   });
 };
 
+/** Переходы в Telegram-канал: из подвала или из конца подборки. */
+const initChannelLinks = () => {
+  on(document, 'click', '[data-channel]', (e, link) => goal('channel_click', { 'Канал': link.dataset.channel }));
+};
+
 /** «Поиск» в шапке: на главной — к ленте «Все места» и курсор в строку
  *  поиска; с других страниц ссылка ведёт на index.html#search, и то же
  *  происходит после загрузки. */
@@ -254,6 +259,7 @@ initBackToTop();
 initHeaderOverlay();
 initScrollReveal();
 initCopyButtons();
+initChannelLinks();
 initConsent();
 initAnalytics();
 initInstall();

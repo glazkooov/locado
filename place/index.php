@@ -21,6 +21,30 @@ if ($place && !empty($place['photo']) && preg_match('~^assets/images/places/([^/
   $preload[$place['photo']] = 'low';
 }
 
+// Текст страницы — прямо в HTML (og_fill): поисковики и нейросети видят
+// его без скриптов. place.js потом рисует то же самое поверх
+$fill = array();
+$jsonld = null;
+if ($place) {
+  $categories = array('food' => 'Еда', 'nature' => 'Природа', 'art' => 'Искусство',
+    'photo' => 'Фотолокации', 'entertainment' => 'Развлечения', 'shops' => 'Магазины');
+  $category = isset($place['category']) && isset($categories[$place['category']]) ? $categories[$place['category']] : '';
+  $type = !empty($place['type']) ? $place['type'] : $category;
+  $short = !empty($place['subtitle']) ? $place['subtitle'] : (isset($place['description']) ? $place['description'] : '');
+  $long = !empty($place['description_long']) ? $place['description_long'] : (isset($place['description']) ? $place['description'] : '');
+  $metro = og_metro_list($place);
+
+  $fill['place-category'] = og_esc($type);
+  $fill['place-name'] = og_esc($place['name']);
+  $fill['place-subtitle'] = og_esc($short);
+  if (!empty($place['address'])) $fill['place-address'] = og_esc($place['address']);
+  if ($metro) $fill['place-metro'] = og_esc('м. ' . implode(', м. ', $metro));
+  if (!empty($place['price'])) $fill['place-price'] = og_esc($place['price']);
+  if ($long !== '') $fill['place-description'] = '<p>' . og_esc($long) . '</p>';
+
+  $jsonld = og_place_jsonld($place, $type, $long);
+}
+
 og_render(__DIR__ . '/index.html', $place ? array(
   'title' => $place['name'],
   'description' => isset($place['description']) ? $place['description'] : '',
@@ -28,5 +52,7 @@ og_render(__DIR__ . '/index.html', $place ? array(
   'card' => 'place=' . rawurlencode($place['slug']),
   'kind' => isset($place['type']) ? $place['type'] : '',
   'url' => 'place/' . rawurlencode($place['slug']),
-  'preload' => $preload
+  'preload' => $preload,
+  'fill' => $fill,
+  'jsonld' => $jsonld
 ) : null);

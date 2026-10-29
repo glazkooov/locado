@@ -757,6 +757,21 @@ a.plan-stop__name:hover { color: var(--primary-text); }
 
 .place-hero.is-loading .hero-subtitle { width: min(560px, 90%); min-height: 1.5em; }
 
+/* Текст уже пришёл с сервера (api/og.php): название и описание видны
+   сразу, мерцает только фон, пока не загрузилось фото */
+.place-hero.is-loading.is-prefilled .hero-category { visibility: visible; }
+
+.place-hero.is-loading.is-prefilled .hero-title,
+.place-hero.is-loading.is-prefilled .hero-subtitle {
+  width: auto;
+  color: inherit;
+  background: none;
+}
+
+.place-hero.is-loading.is-prefilled .hero-subtitle { color: rgba(255, 255, 255, 0.92); }
+
+.place-hero.is-loading.is-prefilled .hero-facts { visibility: visible; }
+
 @keyframes placeHeroShimmer {
   from { background-position: 100% 0; }
   to { background-position: -100% 0; }

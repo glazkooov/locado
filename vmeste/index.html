@@ -30,7 +30,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link rel="preload" href="assets/fonts/unbounded-cyrillic-700-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/raleway-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="styles/site.css?v=2c357837">
+  <link rel="stylesheet" href="styles/site.css?v=f304c0e1">
   <!-- Модули страницы: браузер качает их сразу, а не по цепочке импортов. Список — node tools/preload.mjs -->
   <link rel="modulepreload" href="scripts/ui.js">
   <link rel="modulepreload" href="scripts/pages/together.js">
@@ -173,6 +173,11 @@
             <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#copy"></use></svg>
           </button>
         </div>
+        <!-- Канал — повод вернуться без аккаунтов и избранного (задача #111) -->
+        <a href="https://t.me/locado_msk" class="footer-channel" target="_blank" rel="noopener" data-channel="footer">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#send"></use></svg>
+          <span>Канал в Telegram<small>Места недели и куда выбраться на выходные</small></span>
+        </a>
       </div>
     </div>
 
