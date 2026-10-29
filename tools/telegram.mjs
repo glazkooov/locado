@@ -229,7 +229,8 @@ function buildCards(input, topics) {
   if (input.rubric !== 'occasion') fail('Карточки «Журнал» — только для рубрики «Под повод».');
   const { cover, items } = input.cards;
   if (!cover?.trim()) fail('В "cards" нужна строка обложки "cover".');
-  if (!items?.length || items.length < 3 || items.length > 9) fail('В "cards" — от 3 до 9 мест.');
+  // Обложка, места и последняя карточка: в альбоме Telegram не больше 10 картинок
+  if (!items?.length || items.length < 3 || items.length > 8) fail('В "cards" — от 3 до 8 мест.');
   return {
     title: topics[0].item.title,
     cover,
