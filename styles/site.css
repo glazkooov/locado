@@ -4708,6 +4708,7 @@ body.feed-toolbar-stuck .main-header { box-shadow: none; }
   color: var(--ink);
   margin-bottom: 18px;
 }
+.description-text p + p { margin-top: 0.75em; }
 
 /* «Это место нам подсказали» — место от читателей */
 .place-readers {
