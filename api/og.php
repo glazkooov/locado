@@ -53,7 +53,9 @@ function og_set_meta($html, $attr, $name, $value) {
 
 /** Отдаёт шаблон с мета-тегами $meta = [title, description, image (фото,
  *  путь от корня сайта), card (параметр api/og-image.php: place=… или
- *  collection=…), kind, url]. $meta === null — шаблон как есть (общее превью). */
+ *  collection=…), kind, url, preload]. $meta === null — шаблон как есть
+ *  (общее превью). preload — [путь => 'high'|'low']: картинки, которые
+ *  браузеру стоит начать грузить сразу, не дожидаясь скриптов. */
 function og_render($template, $meta) {
   $html = is_file($template) ? file_get_contents($template) : '';
   header('Content-Type: text/html; charset=utf-8');
@@ -71,6 +73,15 @@ function og_render($template, $meta) {
     if (!empty($meta['url'])) {
       $html = og_set_meta($html, 'property', 'og:url', $site . $meta['url']);
       $html = str_replace('</head>', '  <link rel="canonical" href="' . og_esc(OG_CANONICAL_SITE . $meta['url']) . "\">\n</head>", $html);
+    }
+
+    if (!empty($meta['preload'])) {
+      $links = '';
+      foreach ($meta['preload'] as $href => $priority) {
+        if (strpos($href, '..') !== false || !is_file(dirname(__DIR__) . '/' . $href)) continue;
+        $links .= '  <link rel="preload" as="image" href="' . og_esc($href) . '" fetchpriority="' . og_esc($priority) . "\">\n";
+      }
+      $html = str_replace('</head>', $links . '</head>', $html);
     }
 
     // Картинка превью — своя для места или подборки (api/og-image.php:
