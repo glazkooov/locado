@@ -12,6 +12,9 @@
 //                                     с итоговым текстом владельца; --no-photo —
 //                                     без фото и подписи автора
 //   node tools/telegram.mjs resend <id> [подпись]  прислать черновик из журнала ещё раз
+//   node tools/telegram.mjs republish <id> <сообщение>  перевыпустить пост из журнала
+//                                     с текстом из канала (если владелец правил) и
+//                                     свежими картинками; старое сообщение удаляется
 //   node tools/telegram.mjs inbox                 что владелец писал боту (за сутки)
 //   node tools/telegram.mjs send <файл.html> owner|channel [--pin]
 //                                     своё сообщение: приветствие, навигация
@@ -391,6 +394,40 @@ async function resend(id, note) {
   console.log(`Черновик ${id} отправлен ещё раз.`);
 }
 
+/** Текст опубликованного сообщения из превью канала — в HTML для Bot API:
+ *  ссылки, жирный и курсив остаются, эмодзи и хэштеги — текстом. */
+async function channelPost(channel, messageId) {
+  const page = await (await fetch(`https://t.me/s/${channel.replace(/^@/, '')}/${messageId}`)).text();
+  const block = page.split('<div class="tgme_widget_message_wrap').find((b) => b.includes(`/${messageId}"`));
+  if (!block) fail(`В превью канала нет сообщения ${messageId}.`);
+  const html = /tgme_widget_message_text[^>]*>([\s\S]*?)<\/div>/.exec(block)?.[1] || '';
+  const caption = html
+    .replace(/<br\s*\/?>/g, '\n')
+    .replace(/<i class="emoji"[^>]*><b>(.*?)<\/b><\/i>/g, '$1')
+    .replace(/<a href="\?q=[^"]*">(.*?)<\/a>/g, '$1')
+    .replace(/<a href="([^"]*)"[^>]*>/g, (_, href) => `<a href="${href.replace(/&amp;amp;/g, '&amp;')}">`)
+    .replace(/<(?!\/?(a|b|i|u|s|code)\b)[^>]+>/g, '')
+    .trim();
+  const photos = (block.match(/tgme_widget_message_photo_wrap/g) || []).length;
+  return { caption, messageIds: Array.from({ length: Math.max(photos, 1) }, (_, i) => messageId + i) };
+}
+
+async function republish(id, messageId) {
+  const config = readJson(CONFIG, {});
+  const log = readJson(LOG, []);
+  const entry = log.find((e) => e.id === id);
+  if (!entry) fail(`В журнале нет поста «${id}».`);
+  if (!messageId) fail('Укажи номер сообщения в канале: republish <id> <сообщение>.');
+  const old = await channelPost(config.channel, Number(messageId));
+  const post = buildPost(entry);
+  post.caption = old.caption;
+  const sent = await sendPost(config.channel, post);
+  for (const oldId of old.messageIds) await api('deleteMessage', { chat_id: config.channel, message_id: oldId });
+  Object.assign(entry, { messageId: sent.message_id, channelCaption: old.caption, republishedAt: new Date().toISOString() });
+  writeJson(LOG, log);
+  console.log(`Перевыпущено: ${id}, сообщение ${sent.message_id}; старые ${old.messageIds.join(', ')} удалены.`);
+}
+
 async function publish(id, textFile, noPhoto) {
   const config = readJson(CONFIG, {});
   if (!config.channel) fail('Нет канала: node tools/telegram.mjs setup @канал');
@@ -471,11 +508,12 @@ const commands = {
   draft: () => draft(arg, rest.includes('--force')),
   publish: () => publish(arg, rest.find((a) => !a.startsWith('--')), rest.includes('--no-photo')),
   resend: () => resend(arg, rest.join(' ')),
+  republish: () => republish(arg, rest[0]),
   inbox: () => inbox(),
   send: () => send(arg, rest[0], rest.includes('--pin')),
   edit: () => edit(arg, rest[0]),
   avatar: () => avatar(arg),
   about: () => about(arg)
 };
-if (!commands[command]) fail('Команды: setup, pick, preview, draft, publish, resend, inbox, send, edit, avatar, about — см. начало tools/telegram.mjs.');
+if (!commands[command]) fail('Команды: setup, pick, preview, draft, publish, resend, republish, inbox, send, edit, avatar, about — см. начало tools/telegram.mjs.');
 await commands[command]();
