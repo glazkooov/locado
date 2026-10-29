@@ -85,13 +85,37 @@ function itemHtml(title, item, i, total) {
   </div>`;
 }
 
-/** Рисует альбом и возвращает пути к картинкам: обложка и карточки мест.
+/** Последняя карточка: зовёт на сайт. Картинку не нажать, поэтому ссылка —
+ *  в подписи к альбому, а здесь — зачем туда идти и превью всех мест. */
+function closingHtml(title, items) {
+  const credits = [...new Set(items.map((item) => credit(item.credit)))].join(' · ');
+  return `<div class="card">
+    <div class="run"><span>${escapeHtml(title)}</span><span>Локадо</span></div>
+    <div style="position:absolute;left:64px;right:64px;top:130px;display:grid;grid-template-columns:repeat(${items.length},1fr);gap:8px;height:300px">
+      ${items.map((item, i) => `<div class="photo" style="position:relative;height:100%"><img src="${item.photo}">
+        <span style="position:absolute;left:12px;bottom:10px;font:700 34px/1 U;color:#FBF7F2;letter-spacing:-.04em;text-shadow:0 2px 12px rgba(0,0,0,.45)">${pad(i + 1)}</span></div>`).join('')}
+    </div>
+    <div style="position:absolute;left:64px;right:64px;top:520px">
+      <div style="font:700 84px/1.02 U;letter-spacing:-.05em">Все места подборки на сайте</div>
+      <div class="text" style="font-size:32px;max-width:820px;margin-top:30px">Адреса, часы работы и что ещё есть рядом. Ссылка под постом.</div>
+    </div>
+    <div style="position:absolute;left:64px;right:64px;top:1000px;border-top:2px solid #1F1B18;padding-top:26px;font:700 112px/1 U;letter-spacing:-.06em;color:#FF570A">locado.ru</div>
+    <img class="logo" src="${logo}"><div class="credit">${credits}</div>
+  </div>`;
+}
+
+/** Рисует альбом и возвращает пути к картинкам: обложка, карточки мест и
+ *  последняя карточка со ссылкой на сайт.
  *  items: [{ name, text, metro, photo (путь от корня), credit }]. */
 export async function renderCards({ title, cover, items }) {
   const { chromium } = createRequire(import.meta.url)('playwright');
   const dir = mkdtempSync(join(tmpdir(), 'locado-cards-'));
   const withUrls = items.map((item) => ({ ...item, photo: root + item.photo }));
-  const slides = [coverHtml(title, cover, withUrls), ...withUrls.map((item, i) => itemHtml(title, item, i, items.length))];
+  const slides = [
+    coverHtml(title, cover, withUrls),
+    ...withUrls.map((item, i) => itemHtml(title, item, i, items.length)),
+    closingHtml(title, withUrls)
+  ];
 
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport: { width: 1080, height: 1350 } });
