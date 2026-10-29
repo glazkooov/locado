@@ -32,6 +32,7 @@ import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { renderCards, renderScheme } from './telegram-cards.mjs';
+import { RUBRICS, CATEGORY_TAGS } from './telegram-rubrics.mjs';
 
 // Файл поста — относительно папки, откуда запустили; остальное — от корня
 const startDir = process.cwd();
@@ -42,23 +43,6 @@ const CONFIG = 'tools/telegram.json';
 const LOG = 'data/telegram-log.json';
 const CAPTION_LIMIT = 1024; // столько Telegram разрешает в подписи к фото
 const TEXT_LIMIT = 4096; // а столько — в обычном сообщении
-
-/** Рубрики: метка utm_campaign → название, хэштег и что в ней бывает.
- *  Хэштеги — те же, что в навигационном посте (docs/telegram/nav.html). */
-const RUBRICS = {
-  place: { label: 'Место недели', tag: '#место_недели', kind: 'place' },
-  weekend: { label: 'Куда в выходные', tag: '#на_выходные', kind: 'place' },
-  route: { label: 'Маршрут', tag: '#маршруты', kind: 'collection' },
-  now: { label: 'Сейчас', tag: '#сезон', kind: 'place' },
-  occasion: { label: 'Под повод', tag: '#под_повод', kind: 'collection' },
-  fact: { label: 'Интересное', tag: '#интересное', kind: 'place' }
-};
-
-/** Хэштег категории места — по CATEGORIES из scripts/core/places.js. */
-const CATEGORY_TAGS = {
-  food: '#еда', nature: '#природа', art: '#искусство',
-  photo: '#фотолокации', entertainment: '#развлечения', shops: '#магазины'
-};
 
 /** Через сколько недель можно снова взять то же место или подборку. */
 const REPEAT_WEEKS = { place: 8, collection: 6 };
