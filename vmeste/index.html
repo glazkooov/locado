@@ -32,24 +32,48 @@
   <link rel="preload" href="assets/fonts/raleway-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles/site.css?v=7e0e6a09">
   <!-- Модули страницы: браузер качает их сразу, а не по цепочке импортов. Список — node tools/preload.mjs -->
-  <link rel="modulepreload" href="scripts/ui.js">
-  <link rel="modulepreload" href="scripts/pages/together.js">
-  <link rel="modulepreload" href="scripts/core/dom.js">
-  <link rel="modulepreload" href="scripts/components/install.js">
-  <link rel="modulepreload" href="scripts/components/consent.js">
-  <link rel="modulepreload" href="scripts/core/analytics.js">
-  <link rel="modulepreload" href="scripts/core/places.js">
-  <link rel="modulepreload" href="scripts/core/moods.js">
-  <link rel="modulepreload" href="scripts/core/now.js">
-  <link rel="modulepreload" href="scripts/core/format.js">
-  <link rel="modulepreload" href="scripts/core/icons.js">
-  <link rel="modulepreload" href="scripts/components/toast.js">
-  <link rel="modulepreload" href="scripts/components/modal.js">
-  <link rel="modulepreload" href="scripts/core/storage.js">
-  <link rel="modulepreload" href="scripts/core/search.js">
-  <link rel="modulepreload" href="scripts/core/daypart.js">
-  <link rel="modulepreload" href="scripts/core/sun.js">
-  <link rel="modulepreload" href="scripts/core/search-words.js">
+  <script type="importmap">
+  {
+    "imports": {
+      "./scripts/ui.js": "./scripts/ui.js?v=b96b906d",
+      "./scripts/pages/together.js": "./scripts/pages/together.js?v=5b2c8d04",
+      "./scripts/core/dom.js": "./scripts/core/dom.js?v=0ad11740",
+      "./scripts/components/install.js": "./scripts/components/install.js?v=f2fa0af4",
+      "./scripts/components/consent.js": "./scripts/components/consent.js?v=87b66909",
+      "./scripts/core/analytics.js": "./scripts/core/analytics.js?v=0db0be84",
+      "./scripts/components/toast.js": "./scripts/components/toast.js?v=20a557eb",
+      "./scripts/core/places.js": "./scripts/core/places.js?v=e0e77c13",
+      "./scripts/core/moods.js": "./scripts/core/moods.js?v=9644b4c8",
+      "./scripts/core/now.js": "./scripts/core/now.js?v=98e66d50",
+      "./scripts/core/format.js": "./scripts/core/format.js?v=b54e66a2",
+      "./scripts/core/icons.js": "./scripts/core/icons.js?v=4a40969f",
+      "./scripts/components/modal.js": "./scripts/components/modal.js?v=56b161f1",
+      "./scripts/core/storage.js": "./scripts/core/storage.js?v=094e3397",
+      "./scripts/core/search.js": "./scripts/core/search.js?v=f9bb2d25",
+      "./scripts/core/daypart.js": "./scripts/core/daypart.js?v=33eb6395",
+      "./scripts/core/sun.js": "./scripts/core/sun.js?v=c53cba6f",
+      "./scripts/core/search-words.js": "./scripts/core/search-words.js?v=1a4712ab"
+    }
+  }
+  </script>
+  <link rel="modulepreload" href="scripts/ui.js?v=b96b906d">
+  <link rel="modulepreload" href="scripts/pages/together.js?v=5b2c8d04">
+  <link rel="modulepreload" href="scripts/core/dom.js?v=0ad11740">
+  <link rel="modulepreload" href="scripts/components/install.js?v=f2fa0af4">
+  <link rel="modulepreload" href="scripts/components/consent.js?v=87b66909">
+  <link rel="modulepreload" href="scripts/core/analytics.js?v=0db0be84">
+  <link rel="modulepreload" href="scripts/core/places.js?v=e0e77c13">
+  <link rel="modulepreload" href="scripts/core/moods.js?v=9644b4c8">
+  <link rel="modulepreload" href="scripts/core/now.js?v=98e66d50">
+  <link rel="modulepreload" href="scripts/core/format.js?v=b54e66a2">
+  <link rel="modulepreload" href="scripts/core/icons.js?v=4a40969f">
+  <link rel="modulepreload" href="scripts/components/toast.js?v=20a557eb">
+  <link rel="modulepreload" href="scripts/components/modal.js?v=56b161f1">
+  <link rel="modulepreload" href="scripts/core/storage.js?v=094e3397">
+  <link rel="modulepreload" href="scripts/core/search.js?v=f9bb2d25">
+  <link rel="modulepreload" href="scripts/core/daypart.js?v=33eb6395">
+  <link rel="modulepreload" href="scripts/core/sun.js?v=c53cba6f">
+  <link rel="modulepreload" href="scripts/core/search-words.js?v=1a4712ab">
   <!-- /модули страницы -->
 </head>
 <body>
@@ -186,7 +210,7 @@
     </div>
   </footer>
 
-  <script type="module" src="scripts/ui.js"></script>
-  <script type="module" src="scripts/pages/together.js"></script>
+  <script type="module" src="scripts/ui.js?v=b96b906d"></script>
+  <script type="module" src="scripts/pages/together.js?v=5b2c8d04"></script>
 </body>
 </html>

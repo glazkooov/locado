@@ -23,16 +23,33 @@
   <link rel="preload" href="assets/fonts/raleway-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles/site.css?v=7e0e6a09">
   <!-- Модули страницы: браузер качает их сразу, а не по цепочке импортов. Список — node tools/preload.mjs -->
-  <link rel="modulepreload" href="scripts/ui.js">
-  <link rel="modulepreload" href="scripts/core/dom.js">
-  <link rel="modulepreload" href="scripts/components/install.js">
-  <link rel="modulepreload" href="scripts/components/consent.js">
-  <link rel="modulepreload" href="scripts/core/analytics.js">
-  <link rel="modulepreload" href="scripts/components/modal.js">
-  <link rel="modulepreload" href="scripts/core/places.js">
-  <link rel="modulepreload" href="scripts/core/storage.js">
-  <link rel="modulepreload" href="scripts/core/search.js">
-  <link rel="modulepreload" href="scripts/core/search-words.js">
+  <script type="importmap">
+  {
+    "imports": {
+      "./scripts/ui.js": "./scripts/ui.js?v=b96b906d",
+      "./scripts/core/dom.js": "./scripts/core/dom.js?v=0ad11740",
+      "./scripts/components/install.js": "./scripts/components/install.js?v=f2fa0af4",
+      "./scripts/components/consent.js": "./scripts/components/consent.js?v=87b66909",
+      "./scripts/core/analytics.js": "./scripts/core/analytics.js?v=0db0be84",
+      "./scripts/components/toast.js": "./scripts/components/toast.js?v=20a557eb",
+      "./scripts/components/modal.js": "./scripts/components/modal.js?v=56b161f1",
+      "./scripts/core/places.js": "./scripts/core/places.js?v=e0e77c13",
+      "./scripts/core/storage.js": "./scripts/core/storage.js?v=094e3397",
+      "./scripts/core/search.js": "./scripts/core/search.js?v=f9bb2d25",
+      "./scripts/core/search-words.js": "./scripts/core/search-words.js?v=1a4712ab"
+    }
+  }
+  </script>
+  <link rel="modulepreload" href="scripts/ui.js?v=b96b906d">
+  <link rel="modulepreload" href="scripts/core/dom.js?v=0ad11740">
+  <link rel="modulepreload" href="scripts/components/install.js?v=f2fa0af4">
+  <link rel="modulepreload" href="scripts/components/consent.js?v=87b66909">
+  <link rel="modulepreload" href="scripts/core/analytics.js?v=0db0be84">
+  <link rel="modulepreload" href="scripts/components/modal.js?v=56b161f1">
+  <link rel="modulepreload" href="scripts/core/places.js?v=e0e77c13">
+  <link rel="modulepreload" href="scripts/core/storage.js?v=094e3397">
+  <link rel="modulepreload" href="scripts/core/search.js?v=f9bb2d25">
+  <link rel="modulepreload" href="scripts/core/search-words.js?v=1a4712ab">
   <!-- /модули страницы -->
 </head>
 <body>
@@ -141,6 +158,6 @@
     </div>
   </footer>
 
-  <script type="module" src="scripts/ui.js"></script>
+  <script type="module" src="scripts/ui.js?v=b96b906d"></script>
 </body>
 </html>
