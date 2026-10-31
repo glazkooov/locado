@@ -29,6 +29,8 @@ AddDefaultCharset utf-8
   RewriteRule (^|/)\.(?!well-known) - [F]
   RewriteRule ^(docs|tools)(/|$) - [F]
   RewriteRule ^(CLAUDE\.md|package\.json)$ - [F]
+  # Журнал Telegram-канала: там черновики постов (tools/telegram.mjs)
+  RewriteRule ^data/telegram-log\.json$ - [F]
 
   # Красивые адреса: /place/kolomenskoe и /collection/vdol-reki. Старые
   # ?slug=… (ссылки в чатах, закладки) — постоянная переадресация на новые.
