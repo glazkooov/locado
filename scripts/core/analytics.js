@@ -29,7 +29,7 @@ function start() {
     clickmap: true, // карта кликов
     trackLinks: true, // переходы по внешним ссылкам и скачивания
     accurateTrackBounce: true, // отказ — меньше 15 секунд на странице
-    webvisor: false // запись действий выключена: её пришлось бы отдельно описывать в политике
+    webvisor: true // запись действий: описана в политике и согласии (privacy/, consent/)
   });
   telegramGoal();
 }

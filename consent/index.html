@@ -21,7 +21,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link rel="preload" href="assets/fonts/unbounded-cyrillic-700-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/raleway-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="styles/site.css?v=7e0e6a09">
+  <link rel="stylesheet" href="styles/site.css?v=4a71f4df">
   <!-- Модули страницы: браузер качает их сразу, а не по цепочке импортов. Список — node tools/preload.mjs -->
   <script type="importmap">
   {
@@ -29,8 +29,8 @@
       "./scripts/ui.js": "./scripts/ui.js?v=b96b906d",
       "./scripts/core/dom.js": "./scripts/core/dom.js?v=0ad11740",
       "./scripts/components/install.js": "./scripts/components/install.js?v=f2fa0af4",
-      "./scripts/components/consent.js": "./scripts/components/consent.js?v=87b66909",
-      "./scripts/core/analytics.js": "./scripts/core/analytics.js?v=0db0be84",
+      "./scripts/components/consent.js": "./scripts/components/consent.js?v=edf6dfaf",
+      "./scripts/core/analytics.js": "./scripts/core/analytics.js?v=7e3984bf",
       "./scripts/components/toast.js": "./scripts/components/toast.js?v=20a557eb",
       "./scripts/components/modal.js": "./scripts/components/modal.js?v=56b161f1",
       "./scripts/core/places.js": "./scripts/core/places.js?v=e0e77c13",
@@ -43,8 +43,8 @@
   <link rel="modulepreload" href="scripts/ui.js?v=b96b906d">
   <link rel="modulepreload" href="scripts/core/dom.js?v=0ad11740">
   <link rel="modulepreload" href="scripts/components/install.js?v=f2fa0af4">
-  <link rel="modulepreload" href="scripts/components/consent.js?v=87b66909">
-  <link rel="modulepreload" href="scripts/core/analytics.js?v=0db0be84">
+  <link rel="modulepreload" href="scripts/components/consent.js?v=edf6dfaf">
+  <link rel="modulepreload" href="scripts/core/analytics.js?v=7e3984bf">
   <link rel="modulepreload" href="scripts/components/modal.js?v=56b161f1">
   <link rel="modulepreload" href="scripts/core/places.js?v=e0e77c13">
   <link rel="modulepreload" href="scripts/core/storage.js?v=094e3397">
@@ -81,28 +81,28 @@
   <main class="legal container">
     <article class="legal__article">
       <h1 class="legal__title">Согласие на обработку персональных данных</h1>
-      <p class="legal__updated">Редакция от 10 октября 2026 года</p>
+      <p class="legal__updated">Редакция от 30 октября 2026 года</p>
 
-      <p>Продолжая пользоваться сайтом locado.ru после уведомления о cookie, отправляя форму на сайте locado.ru или письмо на <a href="mailto:hello@locado.ru">hello@locado.ru</a>, я свободно, своей волей и в своём интересе даю согласие на обработку моих персональных данных на условиях ниже.</p>
+      <p>Продолжая пользоваться сайтом locado.ru после уведомления о cookie, отправляя форму на сайте locado.ru или письмо на <a href="mailto:hello@locado.ru">hello@locado.ru</a> или <a href="mailto:privacy@locado.ru">privacy@locado.ru</a>, я свободно, своей волей и в своём интересе даю согласие на обработку моих персональных данных на условиях ниже.</p>
 
       <h2>Кому</h2>
-      <p>Глазков Григорий Константинович, сайт locado.ru, почта <a href="mailto:hello@locado.ru">hello@locado.ru</a> (далее — оператор).</p>
+      <p>Глазков Григорий Константинович, сайт locado.ru, почта <a href="mailto:privacy@locado.ru">privacy@locado.ru</a> (далее «оператор»).</p>
 
       <h2>На что именно</h2>
-      <p><strong>Пользование сайтом после уведомления о cookie</strong> — на сбор статистики посещений через Яндекс Метрику, чтобы улучшать сайт. Данные: cookie, IP-адрес, сведения о браузере и устройстве, просмотренные страницы, источник перехода, клики и переходы по ссылкам.</p>
-      <p><strong>Отправка формы «Предложить место» или «Сообщить о неточности», письмо на почту</strong> — чтобы рассмотреть обращение, ответить на него, исправить сведения о месте или опубликовать рассказ о месте. Данные: текст обращения, название места, адрес почты и имя — если они указаны.</p>
-      <p>Рассказ о месте оператор может отредактировать и опубликовать без моего имени и почты. Имя и почта не публикуются.</p>
+      <p><strong>Пользование сайтом после уведомления о cookie:</strong> на сбор статистики посещений через Яндекс Метрику, чтобы улучшать сайт. Данные: cookie, IP-адрес, сведения о браузере и устройстве, просмотренные страницы, источник перехода, клики и переходы по ссылкам, запись действий на странице (Вебвизор).</p>
+      <p><strong>Отправка формы «Предложить место» или «Что-то изменилось?», письмо на почту:</strong> чтобы рассмотреть обращение, ответить на него, исправить сведения о месте, договориться о фото или опубликовать рассказ о месте и фото. Данные: текст обращения, название места, фото и сведения в их файлах, а также имя, адрес почты, телефон и должность, если они указаны.</p>
+      <p>Рассказ о месте оператор может отредактировать и опубликовать без моего имени и почты. Фото оператор публикует, только если в форме отмечено разрешение, с подписью «Фото читателя», удалив из файла сведения о месте и времени съёмки. Имя и почта не публикуются.</p>
 
       <h2>Что с данными можно делать</h2>
-      <p>Собирать, записывать, хранить, уточнять, использовать, удалять и уничтожать — с помощью компьютера. Поручать обработку ООО «Яндекс» (Метрика, Формы, Почта) и ООО «Бегет» (хостинг). Данные хранятся в России и за границу не передаются.</p>
+      <p>Собирать, записывать, хранить, уточнять, использовать, удалять и уничтожать с помощью компьютера. Поручать обработку ООО «Яндекс» (Метрика, Формы) и ООО «Бегет» (хостинг, почта). Данные хранятся в России и за границу не передаются.</p>
 
       <h2>Сколько действует</h2>
-      <p>Согласие на статистику — пока я его не отзову. Согласие на обработку обращения — до ответа на него или публикации места и ещё 30 дней.</p>
+      <p>Согласие на статистику действует, пока я его не отзову. Согласие на обработку обращения: до ответа на него или публикации места и ещё 30 дней; для опубликованных фото: пока они на сайте; для переписки о месте: пока место или его фото есть на сайте, и ещё 30 дней.</p>
 
       <h2>Как отозвать</h2>
-      <p>Согласие на статистику — кнопкой «Отключить статистику» в <a href="privacy/">политике конфиденциальности</a>, отключив cookie в браузере или перестав пользоваться сайтом. Любое согласие — письмом на <a href="mailto:hello@locado.ru">hello@locado.ru</a>. После отзыва оператор прекратит обработку и удалит данные в течение 30 дней.</p>
+      <p>Согласие на статистику можно отозвать кнопкой «Отключить статистику» в <a href="privacy/">политике конфиденциальности</a>, запретом cookie в браузере или отказом от использования сайта. Любое согласие можно отозвать письмом на <a href="mailto:privacy@locado.ru">privacy@locado.ru</a>. После отзыва оператор прекратит обработку и удалит данные в течение 30 дней.</p>
 
-      <p>Как оператор обращается с данными и какие у меня права — в <a href="privacy/">политике конфиденциальности</a>.</p>
+      <p>Как оператор обращается с данными и какие у меня права, описано в <a href="privacy/">политике конфиденциальности</a>.</p>
     </article>
   </main>
 

@@ -2939,7 +2939,8 @@ body.has-install-banner .back-to-top { bottom: 96px; }
   gap: 12px;
   padding: 6px 6px 6px 16px;
   border: 1px solid var(--line);
-  border-radius: var(--radius-pill);
+  /* Не «таблетка»: текст бывает в две строки, и круглые края его поджимают */
+  border-radius: 20px;
   background: rgba(255, 255, 255, 0.97);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
