@@ -9,8 +9,8 @@
 import { categoryLabel } from './places.js';
 import { onAnalyticsConsent } from '../components/consent.js';
 
-const COUNTER_ID = 113169704;
-const TAG_URL = 'https://mc.yandex.ru/metrika/tag.js';
+const COUNTER_ID = 113990190;
+const TAG_URL = `https://mc.yandex.ru/metrika/tag.js?id=${COUNTER_ID}`; // так в коде из кабинета
 
 let started = false;
 
