@@ -31,7 +31,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link rel="preload" href="assets/fonts/unbounded-cyrillic-700-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="assets/fonts/raleway-cyrillic-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="styles/site.css?v=2c357837">
+  <link rel="stylesheet" href="styles/site.css?v=4a71f4df">
   <!-- Данные о местах — сразу, вместе со стилями, а не после скриптов:
        без них не появятся ни фото, ни карточки -->
   <link rel="preload" href="data/places.json" as="fetch" crossorigin>
@@ -45,34 +45,69 @@
     })();
   </script>
   <!-- Модули страницы: браузер качает их сразу, а не по цепочке импортов. Список — node tools/preload.mjs -->
-  <link rel="modulepreload" href="scripts/ui.js">
-  <link rel="modulepreload" href="scripts/pages/home.js">
-  <link rel="modulepreload" href="scripts/core/dom.js">
-  <link rel="modulepreload" href="scripts/components/install.js">
-  <link rel="modulepreload" href="scripts/components/consent.js">
-  <link rel="modulepreload" href="scripts/core/analytics.js">
-  <link rel="modulepreload" href="scripts/core/format.js">
-  <link rel="modulepreload" href="scripts/core/places.js">
-  <link rel="modulepreload" href="scripts/components/card.js">
-  <link rel="modulepreload" href="scripts/components/feed.js">
-  <link rel="modulepreload" href="scripts/components/randomizer.js">
-  <link rel="modulepreload" href="scripts/components/hero-moods.js">
-  <link rel="modulepreload" href="scripts/components/hero-carousel.js">
-  <link rel="modulepreload" href="scripts/core/daypart.js">
-  <link rel="modulepreload" href="scripts/components/category-buttons.js">
-  <link rel="modulepreload" href="scripts/components/map.js">
-  <link rel="modulepreload" href="scripts/components/toast.js">
-  <link rel="modulepreload" href="scripts/core/collections.js">
-  <link rel="modulepreload" href="scripts/components/collection-card.js">
-  <link rel="modulepreload" href="scripts/core/now.js">
-  <link rel="modulepreload" href="scripts/components/modal.js">
-  <link rel="modulepreload" href="scripts/core/storage.js">
-  <link rel="modulepreload" href="scripts/core/search.js">
-  <link rel="modulepreload" href="scripts/core/icons.js">
-  <link rel="modulepreload" href="scripts/core/search-words.js">
-  <link rel="modulepreload" href="scripts/core/moods.js">
-  <link rel="modulepreload" href="scripts/core/sun.js">
+  <script type="importmap">
+  {
+    "imports": {
+      "./scripts/ui.js": "./scripts/ui.js?v=b96b906d",
+      "./scripts/pages/home.js": "./scripts/pages/home.js?v=a851d4e4",
+      "./scripts/core/dom.js": "./scripts/core/dom.js?v=0ad11740",
+      "./scripts/components/install.js": "./scripts/components/install.js?v=f2fa0af4",
+      "./scripts/components/consent.js": "./scripts/components/consent.js?v=edf6dfaf",
+      "./scripts/core/analytics.js": "./scripts/core/analytics.js?v=7e3984bf",
+      "./scripts/components/toast.js": "./scripts/components/toast.js?v=20a557eb",
+      "./scripts/core/format.js": "./scripts/core/format.js?v=b54e66a2",
+      "./scripts/core/places.js": "./scripts/core/places.js?v=e0e77c13",
+      "./scripts/components/card.js": "./scripts/components/card.js?v=afa8324c",
+      "./scripts/components/feed.js": "./scripts/components/feed.js?v=f6aea4ef",
+      "./scripts/components/randomizer.js": "./scripts/components/randomizer.js?v=ed12815f",
+      "./scripts/components/hero-moods.js": "./scripts/components/hero-moods.js?v=aafa53dc",
+      "./scripts/components/hero-carousel.js": "./scripts/components/hero-carousel.js?v=0e31fd7c",
+      "./scripts/core/daypart.js": "./scripts/core/daypart.js?v=33eb6395",
+      "./scripts/components/category-buttons.js": "./scripts/components/category-buttons.js?v=8d4b7430",
+      "./scripts/components/map.js": "./scripts/components/map.js?v=d068badd",
+      "./scripts/core/collections.js": "./scripts/core/collections.js?v=a9736ca1",
+      "./scripts/components/collection-card.js": "./scripts/components/collection-card.js?v=04c0af62",
+      "./scripts/core/now.js": "./scripts/core/now.js?v=98e66d50",
+      "./scripts/components/modal.js": "./scripts/components/modal.js?v=56b161f1",
+      "./scripts/core/storage.js": "./scripts/core/storage.js?v=094e3397",
+      "./scripts/core/search.js": "./scripts/core/search.js?v=f9bb2d25",
+      "./scripts/core/icons.js": "./scripts/core/icons.js?v=4a40969f",
+      "./scripts/core/search-words.js": "./scripts/core/search-words.js?v=1a4712ab",
+      "./scripts/core/moods.js": "./scripts/core/moods.js?v=9644b4c8",
+      "./scripts/core/sun.js": "./scripts/core/sun.js?v=c53cba6f"
+    }
+  }
+  </script>
+  <link rel="modulepreload" href="scripts/ui.js?v=b96b906d">
+  <link rel="modulepreload" href="scripts/pages/home.js?v=a851d4e4">
+  <link rel="modulepreload" href="scripts/core/dom.js?v=0ad11740">
+  <link rel="modulepreload" href="scripts/components/install.js?v=f2fa0af4">
+  <link rel="modulepreload" href="scripts/components/consent.js?v=edf6dfaf">
+  <link rel="modulepreload" href="scripts/core/analytics.js?v=7e3984bf">
+  <link rel="modulepreload" href="scripts/core/format.js?v=b54e66a2">
+  <link rel="modulepreload" href="scripts/core/places.js?v=e0e77c13">
+  <link rel="modulepreload" href="scripts/components/card.js?v=afa8324c">
+  <link rel="modulepreload" href="scripts/components/feed.js?v=f6aea4ef">
+  <link rel="modulepreload" href="scripts/components/randomizer.js?v=ed12815f">
+  <link rel="modulepreload" href="scripts/components/hero-moods.js?v=aafa53dc">
+  <link rel="modulepreload" href="scripts/components/hero-carousel.js?v=0e31fd7c">
+  <link rel="modulepreload" href="scripts/core/daypart.js?v=33eb6395">
+  <link rel="modulepreload" href="scripts/components/category-buttons.js?v=8d4b7430">
+  <link rel="modulepreload" href="scripts/components/map.js?v=d068badd">
+  <link rel="modulepreload" href="scripts/components/toast.js?v=20a557eb">
+  <link rel="modulepreload" href="scripts/core/collections.js?v=a9736ca1">
+  <link rel="modulepreload" href="scripts/components/collection-card.js?v=04c0af62">
+  <link rel="modulepreload" href="scripts/core/now.js?v=98e66d50">
+  <link rel="modulepreload" href="scripts/components/modal.js?v=56b161f1">
+  <link rel="modulepreload" href="scripts/core/storage.js?v=094e3397">
+  <link rel="modulepreload" href="scripts/core/search.js?v=f9bb2d25">
+  <link rel="modulepreload" href="scripts/core/icons.js?v=4a40969f">
+  <link rel="modulepreload" href="scripts/core/search-words.js?v=1a4712ab">
+  <link rel="modulepreload" href="scripts/core/moods.js?v=9644b4c8">
+  <link rel="modulepreload" href="scripts/core/sun.js?v=c53cba6f">
   <!-- /модули страницы -->
+  <!-- schema.org: сайт и редакция; у мест и подборок разметку пишет api/og.php -->
+  <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://locado.ru/#website","name":"Локадо","url":"https://locado.ru/","inLanguage":"ru","description":"Куда сходить в Москве под настроение: проверенные места, подборки под повод и маршруты на день.","publisher":{"@id":"https://locado.ru/#organization"}},{"@type":"Organization","@id":"https://locado.ru/#organization","name":"Локадо","url":"https://locado.ru/","logo":"https://locado.ru/assets/app/apple-touch-icon.png","email":"hello@locado.ru","sameAs":["https://t.me/locado_msk"]}]}</script>
 </head>
 <body>
   <main class="main-content">
@@ -348,6 +383,11 @@
             <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#copy"></use></svg>
           </button>
         </div>
+        <!-- Канал — повод вернуться без аккаунтов и избранного (задача #111) -->
+        <a href="https://t.me/locado_msk" class="footer-channel" target="_blank" rel="noopener" data-channel="footer">
+          <svg class="icon" aria-hidden="true" focusable="false"><use href="assets/icons.svg#send"></use></svg>
+          <span>Канал в Telegram<small>Места недели и куда выбраться на выходные</small></span>
+        </a>
       </div>
     </div>
 
@@ -409,7 +449,7 @@
     </div>
   </div>
 
-  <script type="module" src="scripts/ui.js"></script>
-  <script type="module" src="scripts/pages/home.js"></script>
+  <script type="module" src="scripts/ui.js?v=b96b906d"></script>
+  <script type="module" src="scripts/pages/home.js?v=a851d4e4"></script>
 </body>
 </html>

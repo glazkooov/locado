@@ -1066,6 +1066,36 @@ body:not(.nav-open) .main-header--overlay:not(.is-scrolled) .header-search {
 
 .footer-email__copy:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
 
+/* Telegram-канал под почтой: иконка и две строки — что это и зачем подписываться */
+.site-footer__col .footer-channel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 14px 0 0;
+  padding: 0;
+  color: #fff;
+  font-weight: 600;
+}
+
+.footer-channel .icon {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  padding: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.footer-channel small {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--fs-xs);
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.site-footer__col .footer-channel:hover { color: #FFB38A; }
+
 /* Телефон: «Навигация» и «Где работаем» — в две колонки, футер вдвое короче */
 @media (max-width: 767px) {
   .site-footer__top { grid-template-columns: 1fr 1fr; column-gap: 20px; }
@@ -2909,7 +2939,8 @@ body.has-install-banner .back-to-top { bottom: 96px; }
   gap: 12px;
   padding: 6px 6px 6px 16px;
   border: 1px solid var(--line);
-  border-radius: var(--radius-pill);
+  /* Не «таблетка»: текст бывает в две строки, и круглые края его поджимают */
+  border-radius: 20px;
   background: rgba(255, 255, 255, 0.97);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
@@ -4678,6 +4709,7 @@ body.feed-toolbar-stuck .main-header { box-shadow: none; }
   color: var(--ink);
   margin-bottom: 18px;
 }
+.description-text p + p { margin-top: 0.75em; }
 
 /* «Это место нам подсказали» — место от читателей */
 .place-readers {
@@ -5173,6 +5205,21 @@ a.plan-stop__name:hover { color: var(--primary-text); }
 
 .place-hero.is-loading .hero-subtitle { width: min(560px, 90%); min-height: 1.5em; }
 
+/* Текст уже пришёл с сервера (api/og.php): название и описание видны
+   сразу, мерцает только фон, пока не загрузилось фото */
+.place-hero.is-loading.is-prefilled .hero-category { visibility: visible; }
+
+.place-hero.is-loading.is-prefilled .hero-title,
+.place-hero.is-loading.is-prefilled .hero-subtitle {
+  width: auto;
+  color: inherit;
+  background: none;
+}
+
+.place-hero.is-loading.is-prefilled .hero-subtitle { color: rgba(255, 255, 255, 0.92); }
+
+.place-hero.is-loading.is-prefilled .hero-facts { visibility: visible; }
+
 @keyframes placeHeroShimmer {
   from { background-position: 100% 0; }
   to { background-position: -100% 0; }
@@ -5498,6 +5545,16 @@ a.plan-stop__name:hover { color: var(--primary-text); }
   .fact-maprow { grid-area: map-t; }
   .fact-map { grid-area: map; }
   .fact-fix { grid-area: fix; }
+  /* Часов нет — адрес поднимается наверх, иначе слева над ним пустая ячейка */
+  .place-facts--no-hours {
+    grid-template-areas:
+      "addr price"
+      "addr acts"
+      "map-t map-t"
+      "map map"
+      "fix fix";
+  }
+  .place-facts--no-hours #address-row { align-self: start; padding-top: 0; border-top: 0; }
   .fact-map .map-container { height: 320px; }
   /* Плитки на широком экране — в строку: иконка слева от подписи */
   .fact-act { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 12px; }
@@ -5981,6 +6038,32 @@ a.plan-stop__name:hover { color: var(--primary-text); }
   color: var(--primary-text);
 }
 
+/* Канал в конце статьи: та же тёплая плашка, что у совета, с кнопкой */
+.collection-channel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 24px;
+  margin-top: 40px;
+  padding: 20px 22px;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--accent-line);
+  background: linear-gradient(160deg, #FFF6EE 0%, #FBE6D6 100%);
+}
+
+.collection-channel__text { flex: 1 1 280px; min-width: 0; color: var(--text-light); line-height: 1.5; }
+
+.collection-channel__title {
+  margin-bottom: 4px;
+  font-family: var(--font-heading);
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  color: var(--text);
+}
+
+.collection-channel__btn { flex: none; gap: 8px; }
+
 /* Практическое: из базы мест, не из текста — не устаревает */
 .c-place__footer {
   display: flex;
@@ -6043,7 +6126,7 @@ a.plan-stop__name:hover { color: var(--primary-text); }
 .collection-map .map-container { height: 300px; }
 /* На странице места кнопку маршрута на телефоне скрывает нижняя панель
    (place.css); здесь панели нет — кнопка нужна всегда */
-.collection-map .map-actions { display: block; }
+.collection-map .map-actions { display: block; margin-top: 16px; }
 
 .section-head--row {
   flex-direction: row;

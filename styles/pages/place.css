@@ -262,6 +262,7 @@
   color: var(--ink);
   margin-bottom: 18px;
 }
+.description-text p + p { margin-top: 0.75em; }
 
 /* «Это место нам подсказали» — место от читателей */
 .place-readers {
@@ -757,6 +758,21 @@ a.plan-stop__name:hover { color: var(--primary-text); }
 
 .place-hero.is-loading .hero-subtitle { width: min(560px, 90%); min-height: 1.5em; }
 
+/* Текст уже пришёл с сервера (api/og.php): название и описание видны
+   сразу, мерцает только фон, пока не загрузилось фото */
+.place-hero.is-loading.is-prefilled .hero-category { visibility: visible; }
+
+.place-hero.is-loading.is-prefilled .hero-title,
+.place-hero.is-loading.is-prefilled .hero-subtitle {
+  width: auto;
+  color: inherit;
+  background: none;
+}
+
+.place-hero.is-loading.is-prefilled .hero-subtitle { color: rgba(255, 255, 255, 0.92); }
+
+.place-hero.is-loading.is-prefilled .hero-facts { visibility: visible; }
+
 @keyframes placeHeroShimmer {
   from { background-position: 100% 0; }
   to { background-position: -100% 0; }
@@ -1082,6 +1098,16 @@ a.plan-stop__name:hover { color: var(--primary-text); }
   .fact-maprow { grid-area: map-t; }
   .fact-map { grid-area: map; }
   .fact-fix { grid-area: fix; }
+  /* Часов нет — адрес поднимается наверх, иначе слева над ним пустая ячейка */
+  .place-facts--no-hours {
+    grid-template-areas:
+      "addr price"
+      "addr acts"
+      "map-t map-t"
+      "map map"
+      "fix fix";
+  }
+  .place-facts--no-hours #address-row { align-self: start; padding-top: 0; border-top: 0; }
   .fact-map .map-container { height: 320px; }
   /* Плитки на широком экране — в строку: иконка слева от подписи */
   .fact-act { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 12px; }

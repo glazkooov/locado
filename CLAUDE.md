@@ -309,10 +309,14 @@ Locado помогает выбрать место или маршрут под �
 * Маркетинговые скиллы в `.claude/skills/` — `social` (в нём раздел про
   Telegram: охват, частота, взаимный пиар), `product-marketing`,
   `content-strategy`, `co-marketing`, `influencer-marketing` (реклама в
-  Telegram-каналах), `community-marketing`, `marketing-psychology`. Источник —
-  github.com/coreyhaines31/marketingskills, MIT, версия 0cd9b3a; взяты только
-  нужные каналу, без evals. Их примеры — англоязычный SaaS: брать приёмы и
-  цифры, а не тон; тон и запреты — из этого файла и скилла `locado-telegram`.
+  Telegram-каналах), `community-marketing`, `marketing-psychology`; для
+  аудита сайта и монетизации (#111) — `cro`, `seo-audit`, `programmatic-seo`,
+  `schema`, `copywriting`, `launch`, `analytics`, `pricing`, `offers`.
+  Источник — github.com/coreyhaines31/marketingskills, MIT, версия 0cd9b3a;
+  взяты только нужные, без evals. Их примеры — англоязычный SaaS и Google:
+  брать приёмы и цифры, а не тон; поиск — Яндекс, аналитика — Метрика
+  (`docs/analytics.md`), законы — российские; тон и запреты — из этого файла
+  и скилла `locado-telegram`.
 * Тире (§8 скилла): в неофициальном русском фразы, построенные на тире
   («Коломенское — это…», «Здесь всё просто — …»), читаются шаблонно. Такие
   конструкции избегать и переписывать проще. Тире, без которого фраза
@@ -327,6 +331,7 @@ Locado помогает выбрать место или маршрут под �
   `data/now.json` (блок «Сейчас»). Схема места — в первых записях
   `places.json`; `alsoIn` — вторая категория, `story` — тексты для «Сейчас»,
   `links: { telegram, vk }` — соцсети рядом с `website` (полные ссылки t.me/…, vk.com/…).
+  В `description_long` абзацы делит пустая строка (`\n\n`).
 * Адреса: `/place/<slug>` и `/collection/<slug>` (правила в `.htaccess`,
   старые `?slug=` переадресуются). PHP вписывает в HTML заголовок,
   описание и картинку превью (`api/og.php`); картинку 1200×630 рисует
@@ -336,8 +341,10 @@ Locado помогает выбрать место или маршрут под �
 * После изменения списка мест или подборок — `node tools/sitemap.mjs`.
 * Стили правятся в отдельных файлах `styles/`, а страницы подключают
   собранный `styles/site.css`: после правки стилей — `node tools/build-css.mjs`.
-  Появился, пропал или переехал `import` в скриптах — `node tools/preload.mjs`
-  (список модулей в `<head>`). `npm run check` напомнит про оба.
+  После любой правки скриптов — `node tools/preload.mjs`: он обновляет
+  список модулей в `<head>` и их версии (`?v=` от содержимого, через карту
+  импортов). nginx Бегета кэширует `.js` на неделю, без новой версии
+  посетитель получит старый скрипт. `npm run check` напомнит про оба.
 
 ## Проверка перед коммитом
 

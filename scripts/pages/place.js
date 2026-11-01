@@ -129,6 +129,7 @@ function renderInfo(place) {
   // Часы: сверху «Открыто до 22:00» / «Откроется завтра в 10:00», под ними
   // часы на сегодня и «Все дни». Круглосуточно во все дни — хватает статуса
   $('#hours-row').hidden = !place.schedule;
+  $('#place-facts').classList.toggle('place-facts--no-hours', !place.schedule);
   const scheduleContainer = $('#place-schedule');
   scheduleContainer.innerHTML = place.schedule && !isAlwaysOpen(place.schedule)
     ? scheduleHtml(place.schedule, new Date(), place.season) : '';
@@ -258,8 +259,10 @@ function initInvite(place) {
 }
 
 function renderDescription(place) {
+  // Пустая строка в тексте (\n\n) — новый абзац
   const text = place.description_long || place.description || '';
-  setLine($('#place-description'), text ? `<p>${escapeHtml(text)}</p>` : '');
+  const paragraphs = text.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+  setLine($('#place-description'), paragraphs.map((p) => `<p>${escapeHtml(p)}</p>`).join(''));
   $('#place-readers').hidden = !place.fromReaders;
 }
 
