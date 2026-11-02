@@ -17,7 +17,7 @@ process.chdir(fileURLToPath(new URL('..', import.meta.url)));
 
 const CONFIG = 'tools/telegram.json';
 const SNAPSHOTS = 'data/telegram-stats.json';
-const METRIKA = 'https://metrika.yandex.ru/dashboard?id=113169704';
+const METRIKA = 'https://metrika.yandex.ru/dashboard?id=113990190';
 const DAY = 24 * 3600 * 1000;
 
 const readJson = (path, fallback) => (existsSync(path) ? JSON.parse(readFileSync(path, 'utf8')) : fallback);
