@@ -127,6 +127,15 @@ function formatText(raw, rubric) {
     });
 }
 
+/** Первая строка поста — заголовок: в списке чатов видна только она.
+ *  Полужирным по решению владельца; уже выделенную не трогаем. */
+function boldHeadline(html) {
+  const end = html.indexOf('\n');
+  const first = end < 0 ? html : html.slice(0, end);
+  if (/^<b>.*<\/b>$/.test(first.trim())) return html;
+  return `<b>${first}</b>${end < 0 ? '' : html.slice(end)}`;
+}
+
 /** Темы поста: одно место или подборка, у «Куда на выходные» — три места. */
 function postTopics(input, rubric) {
   if (input.places) {
@@ -159,7 +168,7 @@ function buildPost(input) {
     return { kind, slug, item, photo, url };
   });
 
-  const text = formatText(input.text.trim(), input.rubric);
+  const text = boldHeadline(formatText(input.text.trim(), input.rubric));
   // Каждая тема поста должна быть ссылкой в тексте: читатель переходит в моменте.
   // Без ссылок в тексте (старые записи журнала) — одна ссылка в конце
   const missing = topics.filter((t) => !text.includes(`/${t.kind}/${t.slug}?`));
