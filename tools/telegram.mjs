@@ -128,12 +128,15 @@ function formatText(raw, rubric) {
 }
 
 /** Первая строка поста — заголовок: в списке чатов видна только она.
- *  Полужирным по решению владельца; уже выделенную не трогаем. */
+ *  Полужирным и без точки в конце — по решению владельца. */
 function boldHeadline(html) {
   const end = html.indexOf('\n');
-  const first = end < 0 ? html : html.slice(0, end);
-  if (/^<b>.*<\/b>$/.test(first.trim())) return html;
-  return `<b>${first}</b>${end < 0 ? '' : html.slice(end)}`;
+  // Точку в конце заголовка не ставим (решение владельца); ? и ! остаются
+  const first = (end < 0 ? html : html.slice(0, end)).trim()
+    .replace(/(?<!\.)\.(<\/b>)?$/, '$1');
+  const rest = end < 0 ? '' : html.slice(end);
+  if (/^<b>.*<\/b>$/.test(first)) return first + rest;
+  return `<b>${first}</b>${rest}`;
 }
 
 /** Темы поста: одно место или подборка, у «Куда на выходные» — три места. */
