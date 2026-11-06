@@ -357,7 +357,18 @@ function currentSeason() {
 function readPost(file) {
   const path = file && resolve(startDir, file);
   if (!path || !existsSync(path)) fail('Укажи файл поста: node tools/telegram.mjs draft post.json');
-  return buildPost(JSON.parse(readFileSync(path, 'utf8')));
+  const input = JSON.parse(readFileSync(path, 'utf8'));
+  checkStyle(input.text || '');
+  return buildPost(input);
+}
+
+/** Правила владельца для новых постов: без тире и без точки в конце абзаца. */
+function checkStyle(text) {
+  const problems = [];
+  if (/[—–]|\s-\s/.test(text)) problems.push('тире: у читателей на него триггер «нейрослоп», перепиши фразу без него');
+  const dotted = text.split(/\n\s*\n/).map((p) => p.trim()).filter((p) => /[^.]\.$/.test(p));
+  for (const p of dotted) problems.push(`точка в конце абзаца: «…${p.slice(-40)}»`);
+  if (problems.length) fail(`Стиль поста:\n- ${problems.join('\n- ')}`);
 }
 
 async function preview(path) {
