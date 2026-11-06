@@ -6,7 +6,7 @@
 //   node tools/telegram.mjs setup [@канал]   найти личку владельца и канал
 //   node tools/telegram.mjs pick <рубрика>    кандидаты, которых давно не было
 //   node tools/telegram.mjs preview <post.json>   подпись, как она уйдёт
-//   node tools/telegram.mjs draft <post.json>     черновик владельцу в личку
+//   node tools/telegram.mjs draft <post.json> [--note утро]  черновик владельцу в личку
 //   node tools/telegram.mjs publish <id> [текст.txt] [--no-photo]
 //                                     опубликовать черновик в канал; с файлом —
 //                                     с итоговым текстом владельца; --no-photo —
@@ -366,7 +366,7 @@ async function preview(path) {
   console.log(`${post.caption}\n\n— ${post.length} из ${post.limit} знаков, ${post.photos.length ? `фото: ${post.photos.join(', ')}` : 'без фото'}`);
 }
 
-async function draft(path, force) {
+async function draft(path, force, note) {
   const config = readJson(CONFIG, {});
   if (!config.ownerChatId) fail('Нет лички владельца: node tools/telegram.mjs setup');
   const post = readPost(path);
@@ -385,7 +385,7 @@ async function draft(path, force) {
   await api('sendMessage', {
     chat_id: config.ownerChatId,
     reply_to_message_id: sent.message_id,
-    text: `Черновик · ${RUBRICS[post.rubric].label} · ${id}${post.photos.length ? '' : ' · без фото'}`
+    text: `${note ? `${note} · ` : ''}Черновик · ${RUBRICS[post.rubric].label} · ${id}${post.photos.length ? '' : ' · без фото'}`
   });
 
   log.push({
@@ -523,7 +523,7 @@ const commands = {
   setup: () => setup(arg),
   pick: () => pick(arg),
   preview: () => preview(arg),
-  draft: () => draft(arg, rest.includes('--force')),
+  draft: () => draft(arg, rest.includes('--force'), rest.includes('--note') ? rest[rest.indexOf('--note') + 1] : ''),
   publish: () => publish(arg, rest.find((a) => !a.startsWith('--')), rest.includes('--no-photo')),
   resend: () => resend(arg, rest.join(' ')),
   republish: () => republish(arg, rest[0]),
