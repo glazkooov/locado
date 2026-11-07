@@ -18,7 +18,7 @@
 //   node tools/telegram.mjs inbox                 что владелец писал боту (за сутки)
 //   node tools/telegram.mjs send <файл.html> owner|channel [--pin]
 //                                     своё сообщение: приветствие, навигация
-//   node tools/telegram.mjs edit <id> <файл.html> поправить сообщение в канале
+//   node tools/telegram.mjs edit <id> <файл.html> [--caption] поправить сообщение в канале
 //   node tools/telegram.mjs avatar <файл.png>     аватарка канала
 //   node tools/telegram.mjs about <файл.txt>      описание канала (до 255 знаков)
 //
@@ -504,10 +504,12 @@ async function send(file, to, pin) {
 }
 
 /** Поправить уже опубликованное сообщение канала (например, закреп). */
-async function edit(messageId, file) {
+async function edit(messageId, file, caption) {
   const { channel } = readJson(CONFIG, {});
-  await api('editMessageText', {
-    chat_id: channel, message_id: Number(messageId), text: readFile(file).trim(), parse_mode: 'HTML'
+  const html = readFile(file).trim();
+  // У поста с фото текст — это подпись, её правит другой метод
+  await api(caption ? 'editMessageCaption' : 'editMessageText', {
+    chat_id: channel, message_id: Number(messageId), [caption ? 'caption' : 'text']: html, parse_mode: 'HTML'
   });
   console.log(`Сообщение ${messageId} в канале обновлено.`);
 }
@@ -540,7 +542,7 @@ const commands = {
   republish: () => republish(arg, rest[0]),
   inbox: () => inbox(),
   send: () => send(arg, rest[0], rest.includes('--pin')),
-  edit: () => edit(arg, rest[0]),
+  edit: () => edit(arg, rest[0], rest.includes('--caption')),
   avatar: () => avatar(arg),
   about: () => about(arg)
 };
