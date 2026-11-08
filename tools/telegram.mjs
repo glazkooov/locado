@@ -273,7 +273,9 @@ function topicFields(post) {
 
 /** Когда тему брали последний раз (черновик тоже считается). */
 function lastUsed(log, kind, slug) {
-  const dates = log.filter((e) => e[kind] === slug || (kind === 'place' && e.places?.includes(slug)))
+  // Место, упомянутое ссылкой в опубликованном посте (подборка, соседнее место), тоже уже было
+  const mentioned = (e) => e.status === 'published' && (e.text || '').includes(`](${slug})`);
+  const dates = log.filter((e) => e[kind] === slug || (kind === 'place' && (e.places?.includes(slug) || mentioned(e))))
     .map((e) => e.publishedAt || e.draftedAt);
   return dates.sort().at(-1) || null;
 }
