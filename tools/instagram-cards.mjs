@@ -110,7 +110,7 @@ function closing(post, items) {
     <div class="abs sh" style="left:60px;right:60px;top:470px;text-align:center">
       <div class="s" style="font-size:150px;line-height:.9">Сохрани</div>
       <div class="u" style="font-size:64px;text-transform:uppercase;margin-top:6px">на выходные</div>
-      <div style="font:500 32px/1.45 Ra;margin-top:44px;opacity:.9">Адреса и часы на locado.ru<br>ссылка в шапке профиля</div></div>
+      <div style="font:500 32px/1.45 Ra;margin-top:44px;opacity:.9">Адреса и часы на locado.ru,<br>ссылка в шапке профиля</div></div>
     <img class="logo" src="${logo}" style="left:50%;margin-left:-70px;bottom:56px"></div>`;
 }
 
