@@ -1,0 +1,253 @@
+{
+  "source_commit": "4cea24d66c632ec1b0ee842997156feb33942f84",
+  "browser": "Chromium 156.0.8078.79",
+  "svg_files": [
+    {
+      "file": "current/locado-logo-inverse.svg",
+      "width": 2048,
+      "height": 395,
+      "paintedPixels": 321199,
+      "edgePixels": 0,
+      "bounds": [
+        12,
+        12,
+        2035,
+        382
+      ],
+      "standalone": true
+    },
+    {
+      "file": "current/locado-logo-mono-dark.svg",
+      "width": 2048,
+      "height": 395,
+      "paintedPixels": 321199,
+      "edgePixels": 0,
+      "bounds": [
+        12,
+        12,
+        2035,
+        382
+      ],
+      "standalone": true
+    },
+    {
+      "file": "current/locado-logo-mono-white.svg",
+      "width": 2048,
+      "height": 395,
+      "paintedPixels": 321199,
+      "edgePixels": 0,
+      "bounds": [
+        12,
+        12,
+        2035,
+        382
+      ],
+      "standalone": true
+    },
+    {
+      "file": "current/locado-logo-primary.svg",
+      "width": 2048,
+      "height": 395,
+      "paintedPixels": 321199,
+      "edgePixels": 0,
+      "bounds": [
+        12,
+        12,
+        2035,
+        382
+      ],
+      "standalone": true
+    },
+    {
+      "file": "current/locado-mark-dark.svg",
+      "width": 2048,
+      "height": 1704,
+      "paintedPixels": 1140337,
+      "edgePixels": 0,
+      "bounds": [
+        55,
+        55,
+        1992,
+        1648
+      ],
+      "standalone": true
+    },
+    {
+      "file": "current/locado-mark-orange.svg",
+      "width": 2048,
+      "height": 1704,
+      "paintedPixels": 1140337,
+      "edgePixels": 0,
+      "bounds": [
+        55,
+        55,
+        1992,
+        1648
+      ],
+      "standalone": true
+    },
+    {
+      "file": "current/locado-mark-white.svg",
+      "width": 2048,
+      "height": 1704,
+      "paintedPixels": 1140337,
+      "edgePixels": 0,
+      "bounds": [
+        55,
+        55,
+        1992,
+        1648
+      ],
+      "standalone": true
+    },
+    {
+      "file": "prototype/locado-logo-behind-inverse.svg",
+      "width": 2048,
+      "height": 395,
+      "paintedPixels": 321176,
+      "edgePixels": 0,
+      "bounds": [
+        12,
+        12,
+        2035,
+        382
+      ],
+      "standalone": true
+    },
+    {
+      "file": "prototype/locado-logo-behind-primary.svg",
+      "width": 2048,
+      "height": 395,
+      "paintedPixels": 321176,
+      "edgePixels": 0,
+      "bounds": [
+        12,
+        12,
+        2035,
+        382
+      ],
+      "standalone": true
+    }
+  ],
+  "layout": [
+    {
+      "width": 375,
+      "scrollWidth": 375,
+      "images": 33,
+      "broken": []
+    },
+    {
+      "width": 390,
+      "scrollWidth": 390,
+      "images": 33,
+      "broken": []
+    },
+    {
+      "width": 430,
+      "scrollWidth": 430,
+      "images": 33,
+      "broken": []
+    },
+    {
+      "width": 1280,
+      "scrollWidth": 1280,
+      "images": 33,
+      "broken": []
+    }
+  ],
+  "header": [
+    {
+      "width": 375,
+      "scrollWidth": 375,
+      "duplicateIds": [],
+      "logoWord": "rgb(255, 255, 255)",
+      "logoRoute": "rgb(255, 87, 10)",
+      "logoBounds": {
+        "x": 16,
+        "y": 19.59375,
+        "width": 141.328125,
+        "height": 28.796875
+      }
+    },
+    {
+      "width": 390,
+      "scrollWidth": 390,
+      "duplicateIds": [],
+      "logoWord": "rgb(255, 255, 255)",
+      "logoRoute": "rgb(255, 87, 10)",
+      "logoBounds": {
+        "x": 16,
+        "y": 19.59375,
+        "width": 141.328125,
+        "height": 28.796875
+      }
+    },
+    {
+      "width": 430,
+      "scrollWidth": 430,
+      "duplicateIds": [],
+      "logoWord": "rgb(255, 255, 255)",
+      "logoRoute": "rgb(255, 87, 10)",
+      "logoBounds": {
+        "x": 16,
+        "y": 19.59375,
+        "width": 141.328125,
+        "height": 28.796875
+      }
+    },
+    {
+      "width": 1280,
+      "scrollWidth": 1280,
+      "duplicateIds": [],
+      "logoWord": "rgb(255, 255, 255)",
+      "logoRoute": "rgb(255, 87, 10)",
+      "logoBounds": {
+        "x": 64,
+        "y": 17.203125,
+        "width": 164.875,
+        "height": 33.59375
+      }
+    }
+  ],
+  "screenshots": [
+    "header-mobile-dark.png",
+    "header-mobile-light.png",
+    "header-desktop-dark.png",
+    "header-desktop-light.png",
+    "footer-desktop-dark.png",
+    "comparison-mobile.png",
+    "comparison-desktop.png",
+    "sizes-desktop.png",
+    "contexts-desktop.png",
+    "mono-desktop.png"
+  ],
+  "current_geometry_comparison": {
+    "raster_size": [
+      2048,
+      396
+    ],
+    "mean_absolute_channel_difference_0_255": 0.0034398381699191666,
+    "pixels_with_difference_over_8": 227
+  },
+  "page_errors": [],
+  "site_check": {
+    "command": "npm run check",
+    "result": "passed",
+    "places": 179,
+    "collections": 25,
+    "pages": 211,
+    "viewports": [
+      390,
+      1280
+    ],
+    "internal_links": 412,
+    "php": "8.4.27",
+    "playwright": "1.65.0",
+    "project_dependencies_changed": false
+  },
+  "source_consistency": {
+    "header_and_footer_paths_match_assets_logo": true,
+    "unused_legacy_logo": "assets/images/ui/logo1.png",
+    "existing_site_files_changed": false
+  }
+}
