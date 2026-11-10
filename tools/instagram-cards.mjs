@@ -15,9 +15,8 @@
 //     "sub": "не уезжая из Москвы",            — строка курсивом под заголовком
 //     "cover": "glavny-botanichesky-sad",      — фото обложки (slug места)
 //     "items": [{ "place": "soldatenkovsky-park",
-//                 "line": "где деревья похожи на брокколи",
-//                 "meta": "м. Пионерская · вход свободный",   — по умолчанию: метро
-//                 "name": "Ботанический сад" }, …],         — короче, чем на сайте (необязательно)
+//                 "name": "Солдатёнковский парк" }, …],     — короткое название (необязательно)
+//                                                   метро берётся из данных места
 //     "close": "meshchersky-park",             — фото последнего слайда (по умолчанию — последнее место)
 //     "caption": "Подпись к посту…"
 //   }
@@ -82,7 +81,7 @@ const photo = (src, shade) =>
   `<img class="ph" src="${src}"><div class="warm"></div><div class="abs" style="inset:0;background:${shade}"></div><div class="grain"></div>`;
 const TOP = 'linear-gradient(180deg,rgba(0,0,0,.62),rgba(0,0,0,.2) 32%,rgba(0,0,0,0) 50%)';
 const BOTTOM = 'linear-gradient(180deg,rgba(0,0,0,0) 45%,rgba(0,0,0,.55))';
-const metaOf = (item, p) => item.meta || (p.metro ? `м. ${p.metro}` : '');
+const metroOf = (p) => p.metro ? `м. ${p.metro}` : '';
 
 // ——— «Цифра»: подборки ———
 
@@ -95,12 +94,10 @@ function collectionSlides(post) {
       <div style="padding-top:28px"><div class="u" style="font-size:62px;line-height:1;text-transform:uppercase;">${tidy(post.title)}</div>
       ${post.sub ? `<div class="s" style="font-size:58px;margin-top:14px">${tidy(post.sub)}</div>` : ''}</div></div>
     <img class="logo" src="${logo}" style="left:60px;bottom:56px"></div>`;
-  const slides = items.map((item, i) => `<div class="c">${photo(item.p.src, BOTTOM)}
-    <div class="cap" style="position:absolute;left:60px;top:60px;opacity:.85">${pad(i + 1)} / ${pad(total)}</div>
+  const slides = items.map((item) => `<div class="c">${photo(item.p.src, BOTTOM)}
     <div class="abs sh" style="left:60px;right:60px;bottom:120px;text-align:center">
       <div class="u" style="font-size:${item.name.length > 22 ? 42 : 50}px;text-transform:uppercase">${tidy(item.name)}</div>
-      ${item.line ? `<div class="s" style="font-size:52px;margin-top:10px">${tidy(item.line)}</div>` : ''}
-      <div class="cap" style="margin-top:26px;opacity:.85">${escapeHtml(metaOf(item, item.p))}</div></div></div>`);
+      <div class="cap" style="margin-top:26px;opacity:.85">${escapeHtml(metroOf(item.p))}</div></div></div>`);
   return [cover, ...slides, closing(post, items)];
 }
 
@@ -137,9 +134,8 @@ function routeSlides(post) {
     <img class="logo" src="${logo}" style="left:64px;bottom:64px;height:32px"></div>`;
   const slides = items.map((item, i) => `<div class="c">${photo(item.p.src, ROUTE_SHADE)}
     ${lineSvg(wave(0, 1080), i % 2 ? 660 : 420)}
-    <div class="abs sh" style="left:64px;right:64px;top:80px"><div class="cap" style="opacity:.85">${pad(i + 1)} · ${escapeHtml(metaOf(item, item.p))}</div>
-      <div class="u" style="font-size:64px;line-height:1.05;margin-top:16px">${tidy(item.name)}</div>
-      ${item.line ? `<div style="font:500 32px/1.4 Ra;margin-top:14px;opacity:.92;max-width:820px">${tidy(item.line)}</div>` : ''}</div></div>`);
+    <div class="abs sh" style="left:64px;right:64px;top:80px"><div class="cap" style="opacity:.85">${escapeHtml(metroOf(item.p))}</div>
+      <div class="u" style="font-size:64px;line-height:1.05;margin-top:16px">${tidy(item.name)}</div></div></div>`);
   const finish = `<div class="c" style="background:#FBF7F2;color:#2A2521">
     ${lineSvg(`M 0 ${LINE_Y} C 160 ${LINE_Y - 60} 300 ${LINE_Y + 60} 460 ${LINE_Y} C 620 ${LINE_Y - 60} 700 860 760 760`, 760, 760)}
     <div class="abs" style="left:64px;right:64px;top:150px"><div class="cap" style="color:#B93C05">Весь маршрут</div>
