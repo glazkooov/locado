@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "status": "proposal_not_installed",
+  "timezone": "Europe/Moscow",
+  "state_branch_proposal": "claude/telegram",
+  "concurrency_group": "locado-telegram-state",
+  "secret_requirements": [
+    "TELEGRAM_BOT_TOKEN"
+  ],
+  "allowed_hosts_required": [
+    "api.telegram.org",
+    "t.me"
+  ],
+  "routines": [
+    {
+      "name": "Локадо: ежедневные черновики",
+      "enabled": false,
+      "cron": "37 9 * * *",
+      "cron_utc": "37 6 * * *",
+      "timezone": "Europe/Moscow",
+      "runner_kind": "repository_agent",
+      "instructions_file": "tools/automation/daily.md",
+      "output": "Три черновика владельцу: утро, день, вечер; никогда не публикация в канал"
+    },
+    {
+      "name": "Локадо: недельный разбор",
+      "enabled": false,
+      "cron": "41 10 * * 1",
+      "cron_utc": "41 7 * * 1",
+      "timezone": "Europe/Moscow",
+      "runner_kind": "repository_agent_or_reviewed_shell_runner",
+      "instructions_file": "tools/automation/weekly.md",
+      "command_after_approval": "node tools/telegram-stats.mjs --send"
+    }
+  ]
+}

@@ -10,7 +10,8 @@ export const RUBRICS = {
   now: { label: 'Сейчас', tag: '#сезон', kind: 'place' },
   occasion: { label: 'Под повод', tag: '#под_повод', kind: 'collection' },
   fact: { label: 'Интересное', tag: '#интересное', kind: 'place' },
-  readers: { label: 'Читатели советуют', tag: '#читатели_советуют', kind: 'place' }
+  readers: { label: 'Читатели советуют', tag: '#читатели_советуют', kind: 'place' },
+  today: { label: 'Куда сегодня', tag: '#куда_сегодня', kind: 'place' }
 };
 
 /** Хэштег категории места — по CATEGORIES из scripts/core/places.js. */
