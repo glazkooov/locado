@@ -6,7 +6,7 @@
 //   node tools/telegram.mjs setup [@канал]   найти личку владельца и канал
 //   node tools/telegram.mjs pick <рубрика>    кандидаты, которых давно не было
 //   node tools/telegram.mjs preview <post.json>   подпись, как она уйдёт
-//   node tools/telegram.mjs draft <post.json>     черновик владельцу в личку
+//   node tools/telegram.mjs draft <post.json> [--note утро]  черновик владельцу в личку
 //   node tools/telegram.mjs publish <id> [текст.txt] [--no-photo]
 //                                     опубликовать черновик в канал; с файлом —
 //                                     с итоговым текстом владельца; --no-photo —
@@ -18,7 +18,7 @@
 //   node tools/telegram.mjs inbox                 что владелец писал боту (за сутки)
 //   node tools/telegram.mjs send <файл.html> owner|channel [--pin]
 //                                     своё сообщение: приветствие, навигация
-//   node tools/telegram.mjs edit <id> <файл.html> поправить сообщение в канале
+//   node tools/telegram.mjs edit <id> <файл.html> [--caption] поправить сообщение в канале
 //   node tools/telegram.mjs avatar <файл.png>     аватарка канала
 //   node tools/telegram.mjs about <файл.txt>      описание канала (до 255 знаков)
 //
@@ -127,6 +127,18 @@ function formatText(raw, rubric) {
     });
 }
 
+/** Первая строка поста — заголовок: в списке чатов видна только она.
+ *  Полужирным и без точки в конце — по решению владельца. */
+function boldHeadline(html) {
+  const end = html.indexOf('\n');
+  // Точку в конце заголовка не ставим (решение владельца); ? и ! остаются
+  const first = (end < 0 ? html : html.slice(0, end)).trim()
+    .replace(/(?<!\.)\.(<\/b>)?$/, '$1');
+  const rest = end < 0 ? '' : html.slice(end);
+  if (/^<b>.*<\/b>$/.test(first)) return first + rest;
+  return `<b>${first}</b>${rest}`;
+}
+
 /** Темы поста: одно место или подборка, у «Куда на выходные» — три места. */
 function postTopics(input, rubric) {
   if (input.places) {
@@ -159,7 +171,7 @@ function buildPost(input) {
     return { kind, slug, item, photo, url };
   });
 
-  const text = formatText(input.text.trim(), input.rubric);
+  const text = boldHeadline(formatText(input.text.trim(), input.rubric));
   // Каждая тема поста должна быть ссылкой в тексте: читатель переходит в моменте.
   // Без ссылок в тексте (старые записи журнала) — одна ссылка в конце
   const missing = topics.filter((t) => !text.includes(`/${t.kind}/${t.slug}?`));
@@ -261,7 +273,9 @@ function topicFields(post) {
 
 /** Когда тему брали последний раз (черновик тоже считается). */
 function lastUsed(log, kind, slug) {
-  const dates = log.filter((e) => e[kind] === slug || (kind === 'place' && e.places?.includes(slug)))
+  // Место, упомянутое ссылкой в опубликованном посте (подборка, соседнее место), тоже уже было
+  const mentioned = (e) => e.status === 'published' && (e.text || '').includes(`](${slug})`);
+  const dates = log.filter((e) => e[kind] === slug || (kind === 'place' && (e.places?.includes(slug) || mentioned(e))))
     .map((e) => e.publishedAt || e.draftedAt);
   return dates.sort().at(-1) || null;
 }
@@ -345,7 +359,18 @@ function currentSeason() {
 function readPost(file) {
   const path = file && resolve(startDir, file);
   if (!path || !existsSync(path)) fail('Укажи файл поста: node tools/telegram.mjs draft post.json');
-  return buildPost(JSON.parse(readFileSync(path, 'utf8')));
+  const input = JSON.parse(readFileSync(path, 'utf8'));
+  checkStyle(input.text || '');
+  return buildPost(input);
+}
+
+/** Правила владельца для новых постов: без тире и без точки в конце абзаца. */
+function checkStyle(text) {
+  const problems = [];
+  if (/[—–]|\s-\s/.test(text)) problems.push('тире: у читателей на него триггер «нейрослоп», перепиши фразу без него');
+  const dotted = text.split(/\n\s*\n/).map((p) => p.trim()).filter((p) => /[^.]\.$/.test(p));
+  for (const p of dotted) problems.push(`точка в конце абзаца: «…${p.slice(-40)}»`);
+  if (problems.length) fail(`Стиль поста:\n- ${problems.join('\n- ')}`);
 }
 
 async function preview(path) {
@@ -354,7 +379,7 @@ async function preview(path) {
   console.log(`${post.caption}\n\n— ${post.length} из ${post.limit} знаков, ${post.photos.length ? `фото: ${post.photos.join(', ')}` : 'без фото'}`);
 }
 
-async function draft(path, force) {
+async function draft(path, force, note) {
   const config = readJson(CONFIG, {});
   if (!config.ownerChatId) fail('Нет лички владельца: node tools/telegram.mjs setup');
   const post = readPost(path);
@@ -373,7 +398,7 @@ async function draft(path, force) {
   await api('sendMessage', {
     chat_id: config.ownerChatId,
     reply_to_message_id: sent.message_id,
-    text: `Черновик · ${RUBRICS[post.rubric].label} · ${id}${post.photos.length ? '' : ' · без фото'}`
+    text: `${note ? `${note} · ` : ''}Черновик · ${RUBRICS[post.rubric].label} · ${id}${post.photos.length ? '' : ' · без фото'}`
   });
 
   log.push({
@@ -481,10 +506,12 @@ async function send(file, to, pin) {
 }
 
 /** Поправить уже опубликованное сообщение канала (например, закреп). */
-async function edit(messageId, file) {
+async function edit(messageId, file, caption) {
   const { channel } = readJson(CONFIG, {});
-  await api('editMessageText', {
-    chat_id: channel, message_id: Number(messageId), text: readFile(file).trim(), parse_mode: 'HTML'
+  const html = readFile(file).trim();
+  // У поста с фото текст — это подпись, её правит другой метод
+  await api(caption ? 'editMessageCaption' : 'editMessageText', {
+    chat_id: channel, message_id: Number(messageId), [caption ? 'caption' : 'text']: html, parse_mode: 'HTML'
   });
   console.log(`Сообщение ${messageId} в канале обновлено.`);
 }
@@ -511,13 +538,13 @@ const commands = {
   setup: () => setup(arg),
   pick: () => pick(arg),
   preview: () => preview(arg),
-  draft: () => draft(arg, rest.includes('--force')),
+  draft: () => draft(arg, rest.includes('--force'), rest.includes('--note') ? rest[rest.indexOf('--note') + 1] : ''),
   publish: () => publish(arg, rest.find((a) => !a.startsWith('--')), rest.includes('--no-photo')),
   resend: () => resend(arg, rest.join(' ')),
   republish: () => republish(arg, rest[0]),
   inbox: () => inbox(),
   send: () => send(arg, rest[0], rest.includes('--pin')),
-  edit: () => edit(arg, rest[0]),
+  edit: () => edit(arg, rest[0], rest.includes('--caption')),
   avatar: () => avatar(arg),
   about: () => about(arg)
 };
