@@ -370,9 +370,11 @@
         }
       ]
     },
-    "status": "draft",
+    "status": "published",
     "draftedAt": "2026-11-12T06:46:18.126Z",
-    "revisedAt": "2026-11-12T20:53:24.762Z"
+    "revisedAt": "2026-11-12T20:53:24.762Z",
+    "publishedAt": "2026-11-12T21:04:14.261Z",
+    "messageId": 42
   },
   {
     "id": "2026-11-12-muzey-zilart",
