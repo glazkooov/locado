@@ -527,8 +527,10 @@
         }
       ]
     },
-    "status": "draft",
-    "draftedAt": "2026-11-18T06:44:23.870Z"
+    "status": "published",
+    "draftedAt": "2026-11-18T06:44:23.870Z",
+    "publishedAt": "2026-11-18T08:34:42.890Z",
+    "messageId": 46
   },
   {
     "id": "2026-11-18-muzey-gorodskogo-hozyaystva",
