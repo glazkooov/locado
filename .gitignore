@@ -1,3 +1,7 @@
 # Картинки превью, которые рисует сервер (api/og-image.php)
 api/og-cache/
 
+# Graphify: в Git хранится только переносимая карта кода.
+graphify-out/*
+!graphify-out/graph.json
+
