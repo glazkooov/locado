@@ -1,0 +1,6 @@
+.git/
+.codex/
+graphify-out/
+work/
+node_modules/
+api/og-cache/
