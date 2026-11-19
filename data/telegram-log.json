@@ -579,8 +579,10 @@
         }
       ]
     },
-    "status": "draft",
-    "draftedAt": "2026-11-19T06:49:34.634Z"
+    "status": "published",
+    "draftedAt": "2026-11-19T06:49:34.634Z",
+    "publishedAt": "2026-11-19T09:44:38.333Z",
+    "messageId": 50
   },
   {
     "id": "2026-11-19-odeon",
