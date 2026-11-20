@@ -616,7 +616,13 @@
     "status": "published",
     "draftedAt": "2026-11-20T06:38:54.152Z",
     "publishedAt": "2026-11-20T13:57:06.976Z",
-    "messageId": 57
+    "messageId": 57,
+    "repeats": [
+      {
+        "publishedAt": "2026-11-20T15:03:15.551Z",
+        "messageId": 60
+      }
+    ]
   },
   {
     "id": "2026-11-20-osobnyak-ryabushinskogo",
